@@ -1,3 +1,4 @@
+extern const unsigned short TABLE_TEXT[54][1];
 
 class Progress {
 	private:

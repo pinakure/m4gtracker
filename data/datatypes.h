@@ -18,7 +18,7 @@ typedef struct _Display {
 	const u8 y;							// Vertical origin in the map
 	const bool invert;					// If true, active will be true when var = 0
 	const Cache *cache;				// Cache data used in this display (if type requires cached data)
-	const u8 *var;						// Variable binded (8 bit ponter)
+	const u8 *var;						// Variable bound (8 bit ponter)
 	bool active;					// If true, a special background highlights in bgh color
 	bool redraw;					// If true, this display will be rendered again next redraw check time
 }Display;
@@ -30,7 +30,7 @@ typedef struct _Callback Callback;
 typedef struct _Callback {
 	void(*callback)	(Control*, bool, bool, u32*); // Function Pointer to be called on trigger
 	const u16 msg;								// Message causing this callback to trigger
-	void  *var;									// Variable binded
+	void  *var;									// Variable bound
 	const Callback *next;						// If not null, another callback will be checked, only if message didnt match
 } Callback;
 
@@ -42,8 +42,8 @@ typedef struct _Control {
 	const Control *right;				// Control reached when jumping right
 	const Control *down;				// Control reached when jumping down
 	const Control *left;				// Control reached when jumping left
-	const Cache *cache;					// Cache this control uses to represent var
-	u8 *var;							// Variable binded (8 bit ponter)
+	const Cache *cache;					// Cache used by this control to represent var
+	u8 *var;							// Variable bound (8 bit ponter)
 	const Callback *callback;
 } Control;
 

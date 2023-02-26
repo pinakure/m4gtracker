@@ -1,9 +1,20 @@
 Sram SRAM;
 
+void SRAM_WriteByte(u16 position, u8 byte){
+	return;
+	// *(SRAM)[position] = byte;
+}
+
+u8 SRAM_ReadByte(u16 position){
+	return 0;
+	//return *(SRAM)[position];
+}
+/*
 extern "C" {
 	u8 	 SRAM_ReadByte(u16 position);
-	void SRAM_WriteByte(u16 position, u8 byte);
+	extern void SRAM_WriteByte(u16 position, u8 byte);
 };
+*/
 
 void Sram::Init(void){
 	// Set WAITCNT (Waitstate controller) to 8 wait cycle mode	

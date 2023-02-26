@@ -253,7 +253,7 @@ void instrument27VAL(Control *c,bool bigstep, bool add, u32 *pointer);
 
 
 
-#include "data/tables.c"
+//#include "data/tables.c"
 #include "data/caches.c"
 #include "data/controls.c"
 #include "data/displays.c"

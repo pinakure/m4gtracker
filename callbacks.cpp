@@ -2,6 +2,17 @@
 /*                                                 SPECIFIC TYPE VARIABLE MODIFIERS														 */
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 
+extern const unsigned short TABLE_HEXADECIMAL[16][1];
+extern const unsigned short TABLE_DECIMAL[10][1];
+extern const unsigned short TABLE_HEXADECIMAL_TWOTILES[256][2];
+extern const unsigned short TABLE_HEXADECIMAL_DOUBLE[256][1];
+extern const unsigned short TABLE_DECIMAL[10][1];
+extern const unsigned short TABLE_DECIMAL_DOUBLE_TWOTILES[320][2];
+extern const unsigned short TABLE_DECIMAL_DOUBLE[100][1];
+extern const unsigned short TABLE_TEXT[54][1];
+extern const unsigned short TABLE_NIBBLE[16][2];
+extern const unsigned short TABLE_WAVE_DOUBLE[64][2];
+
 #define CURRENT_PATTERN 		VAR_SONG.PATTERNS[VAR_CFG.CURRENTCHANNEL].ORDER[VAR_CHANNEL[VAR_CFG.CURRENTCHANNEL].POSITION]
 #define VARIABLE	(*(u8*) c->var)
 void modifyCHAR(Control *c, bool bigstep, bool add, u32 *pointer){}
@@ -43,8 +54,8 @@ void paste7BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE ==
 void paste8BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient8BIT; return; } transient7BIT = VARIABLE; transientChanged=true; }
 
 
-void modify3VAL(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? (add?0x2:0) : (VARIABLE + (add?1:-1)) ) % 3; 	}
-void modify6VAL(Control *c, bool bigstep, bool add, u32 *pointer){  VARIABLE = ( bigstep ? (add?0x5:0) : (VARIABLE + (add?1:-1)) ) % 6;		}
+void modify3VAL(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + (add?1:-1)) % 3;VARIABLE=VARIABLE>2?2:VARIABLE; 	}
+void modify6VAL(Control *c, bool bigstep, bool add, u32 *pointer){  VARIABLE = (VARIABLE + (add?1:-1)) % 6;VARIABLE=VARIABLE>5?5:VARIABLE; 	}
 
 void modify5VAL(Control *c, bool bigstep, bool add, u32 *pointer){  
 	VARIABLE = (add ? (VARIABLE+1) : (VARIABLE-1)) % 5;	
