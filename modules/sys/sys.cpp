@@ -1,16 +1,27 @@
-Sys sys;
+#include "sys.hpp"
+#include "../../data/enum.h"
+#include "../../data/variables.hpp"
+#include "../regionhandler/regionhandler.hpp"
+#include "../key/key.hpp"
+#include "../spu/spu.hpp"
 
-void Sys::reset(){
-	//SPU.stop();
+u16  SYS::keyboard 	= 0x00;
+u8   SYS::cursor	= 0x0000;
+bool SYS::var_reset	= false;
+
+
+void SYS::reset(){
+	//SPU::stop();
 	var_reset = true;
 }
 
+void SYS::init(){
+	cursor	 = 0x00; 
+	keyboard = 0x0000;
 
-
-void Sys::init(){
-	KEY.init();
-	SPU.Init(VAR_SONG.BPM);		
-	SPU.enable(2);
+	KEY::init();
+	SPU::init( VAR_SONG.BPM );		
+	SPU::enable(2);
 	var_reset = false;
 	
 	//keyrate  = 40;
@@ -45,107 +56,106 @@ void Sys::init(){
 #define CURSOR_UP		0x10
 #define CURSOR_DOWN		0x40
 
-void Sys::updateInput(){
+void SYS::updateInput(){
 	u32 msg = 0;
 
 	if(VAR_LIVE.PERFORM.LOCK)return;
 	// Handle Navigation
-	if(KEY.press(KEY_SELECT)){
-		msg  = KEY.down(KEY_LEFT ) ? MESSAGE_NAVIGATE_LEFT  :
-			   KEY.down(KEY_RIGHT) ? MESSAGE_NAVIGATE_RIGHT :
-			   KEY.down(KEY_UP   ) ? MESSAGE_NAVIGATE_UP    :
-			   KEY.down(KEY_DOWN ) ? MESSAGE_NAVIGATE_DOWN  :
+	if(KEY::press(KEY_SELECT)){
+		msg  = KEY::down(KEY_LEFT ) ? MESSAGE_NAVIGATE_LEFT  :
+			   KEY::down(KEY_RIGHT) ? MESSAGE_NAVIGATE_RIGHT :
+			   KEY::down(KEY_UP   ) ? MESSAGE_NAVIGATE_UP    :
+			   KEY::down(KEY_DOWN ) ? MESSAGE_NAVIGATE_DOWN  :
 			   0x0;
-		if(regHnd.region && msg){
-			regHnd.sendMessage(msg | (unsigned)regHnd.region);
+		if(REGHND::region && msg){
+			REGHND::sendMessage(msg | (unsigned)REGHND::region);
 			return;
 		}
 	}
 	
 	// Handle ACTIVATE message
-	if(KEY.down(KEY_A) && regHnd.control) {
-		regHnd.sendMessage(MESSAGE_ACTIVATE | (unsigned)regHnd.control);
+	if(KEY::down(KEY_A) && REGHND::control) {
+		REGHND::sendMessage(MESSAGE_ACTIVATE | (unsigned)REGHND::control);
 		return;		
 	}
 	
-	if(KEY.down(KEY_START)) {
-		if(SPU.playing) {
-			SPU.stop();
+	if(KEY::down(KEY_START)) {
+		if(SPU::playing) {
+			SPU::stop();
 			return;
 		}
 		
-		if(KEY.press(KEY_SELECT)) {
-			SPU.play(true);
+		if(KEY::press(KEY_SELECT)) {
+			SPU::play(true);
 			return;
 		}		
-		if(!SPU.playing) SPU.play(false);
+		if(!SPU::playing) SPU::play(false);
 		return;
 	}
 	
 	
 	// Handle Copy Command (B+A)
-	if(KEY.press(KEY_B) && regHnd.control) {
-		if(KEY.down(KEY_A)) {
-			//regHnd.sendMessage(MESSAGE_COPY | (unsigned)regHnd.control);
+	if(KEY::press(KEY_B) && REGHND::control) {
+		if(KEY::down(KEY_A)) {
+			//REGHND::sendMessage(MESSAGE_COPY | (unsigned)REGHND::control);
 			return;		
 		}
 		
-		msg = KEY.down(KEY_LEFT ) ? MESSAGE_OTHER_PREV : 
-			  KEY.down(KEY_RIGHT) ? MESSAGE_OTHER_NEXT : 
-			  KEY.down(KEY_DOWN ) ? MESSAGE_OTHER_BIGPREV : 
-			  KEY.down(KEY_UP   ) ? MESSAGE_OTHER_BIGNEXT : 
+		msg = KEY::down(KEY_LEFT ) ? MESSAGE_OTHER_PREV : 
+			  KEY::down(KEY_RIGHT) ? MESSAGE_OTHER_NEXT : 
+			  KEY::down(KEY_DOWN ) ? MESSAGE_OTHER_BIGPREV : 
+			  KEY::down(KEY_UP   ) ? MESSAGE_OTHER_BIGNEXT : 
 			  0;
 		
-		if(msg)regHnd.sendMessage(msg);
+		if(msg)REGHND::sendMessage(msg);
 		return;
 	}
 	
 	// Handle control modifiers
-	if(KEY.press(KEY_A)){
-		msg  = KEY.down(KEY_LEFT ) ? MESSAGE_MODIFY_SUB 	:
-			   KEY.down(KEY_RIGHT) ? MESSAGE_MODIFY_ADD 	:
-			   KEY.down(KEY_UP   ) ? MESSAGE_MODIFY_BIGADD  :
-			   KEY.down(KEY_DOWN ) ? MESSAGE_MODIFY_BIGSUB  :
+	if(KEY::press(KEY_A)){
+		msg  = KEY::down(KEY_LEFT ) ? MESSAGE_MODIFY_SUB 	:
+			   KEY::down(KEY_RIGHT) ? MESSAGE_MODIFY_ADD 	:
+			   KEY::down(KEY_UP   ) ? MESSAGE_MODIFY_BIGADD  :
+			   KEY::down(KEY_DOWN ) ? MESSAGE_MODIFY_BIGSUB  :
 			   0x0;
-		if(regHnd.control && msg){
-			regHnd.sendMessage(msg | (unsigned)regHnd.control);
+		if(REGHND::control && msg){
+			REGHND::sendMessage(msg | (unsigned)REGHND::control);
 			return;
 		}
 		
 		// Handle A Cancel (A, then B)
-		if(KEY.down(KEY_B) && regHnd.control) {
-			regHnd.sendMessage(MESSAGE_CANCEL | (unsigned)regHnd.control);
+		if(KEY::down(KEY_B) && REGHND::control) {
+			REGHND::sendMessage(MESSAGE_CANCEL | (unsigned)REGHND::control);
 			return;
 		}
 	}
 		
 	// Handle other arbitrary keypresses (MESSAGE_KEYPRESS)
-	msg =  KEY.down(KEY_LEFT  ) ? 1 :
-		   KEY.down(KEY_RIGHT ) ? 1 :
-		   KEY.down(KEY_UP    ) ? 1 :
-		   KEY.down(KEY_DOWN  ) ? 1 :
-		/*   KEY.down(KEY_A     ) ? 1 :
-		   KEY.down(KEY_B     ) ? 1 :*/	
-		   KEY.down(KEY_SELECT) ? 1 :
-		   KEY.down(KEY_START ) ? 1 :
+	msg =  KEY::down(KEY_LEFT  ) ? 1 :
+		   KEY::down(KEY_RIGHT ) ? 1 :
+		   KEY::down(KEY_UP    ) ? 1 :
+		   KEY::down(KEY_DOWN  ) ? 1 :
+		/*   KEY::down(KEY_A     ) ? 1 :
+		   KEY::down(KEY_B     ) ? 1 :*/	
+		   KEY::down(KEY_SELECT) ? 1 :
+		   KEY::down(KEY_START ) ? 1 :
 		   0;
 		   
-	if(regHnd.control && msg ){
-		regHnd.sendMessage(MESSAGE_KEYPRESS | (unsigned)regHnd.control);
+	if(REGHND::control && msg ){
+		REGHND::sendMessage(MESSAGE_KEYPRESS | (unsigned)REGHND::control);
 	}
 	
 }
 
 
-void Sys::update(){
+void SYS::update(){
 	
-	SPU.update();	
+	SPU::update();	
 	
-	KEY.update();
+	KEY::update();
 	updateInput();
 	
-	
-	// if(KEY.Press(KEY_L))overloadTest(regHnd);
-	// if(KEY.Press(KEY_R))gpu.vs->draw(14,2);
+	// if(KEY::Press(KEY_L))overloadTest(REGHND);
+	// if(KEY::Press(KEY_R))GPU::vs->draw(14,2);
 }
 

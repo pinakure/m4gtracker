@@ -110,38 +110,38 @@ void DECIMAL_DOUBLE_TWOTILES(u8 x, u8 y, u16 color, u16 value);
 #include "../data/datatypes.h"
 
 /* Display update controller Callbacks (@ callbacks.c) */
-void updateLIVE2(RegionHandler* rh);
-void updateLIVE1(RegionHandler* rh);
-void updateHLP(RegionHandler* rh);
-void updateSNG(RegionHandler* rh);
-void updateINS_WAV(RegionHandler* rh);
-void updateINS_FMW(RegionHandler* rh);
-void updateINS_SMP(RegionHandler* rh);
-void updateINS_PWM(RegionHandler* rh);
-void updatePAT(RegionHandler* rh);
-void updateTABLE(RegionHandler* rh);
-void updateVIS(RegionHandler* rh);
-void updateHEADER1(RegionHandler* rh);
-void updateHEADER0(RegionHandler* rh);
-void updateCHANNEL0(RegionHandler* rh);
-void updateCHANNEL1(RegionHandler* rh);
-void updateCHANNEL2(RegionHandler* rh);
-void updateCHANNEL3(RegionHandler* rh);
-void updateCHANNEL4(RegionHandler* rh);
-void updateCHANNEL5(RegionHandler* rh);
-void updateSNK(RegionHandler* rh);
-void updateLOOKNFEEL(RegionHandler* rh);
-void updateLINKMODE(RegionHandler* rh);
-void updateBEHAVIOR(RegionHandler* rh);
-void updateTRACKER(RegionHandler* rh);
-void updateMEMORY(RegionHandler* rh);
-void updateCOLOREDITOR(RegionHandler* rh);
-void updateCHANNELMIXER(RegionHandler* rh);
-void updateMEMORYSONGMAP(RegionHandler* rh);
-void updateMEMORYTEST(RegionHandler* rh);
-void updateLINKSTATUS(RegionHandler* rh);
-void updateCREDITS(RegionHandler* rh);
-void updatePROGRESS(RegionHandler* rh);
+void updateLIVE2(REGHND* rh);
+void updateLIVE1(REGHND* rh);
+void updateHLP(REGHND* rh);
+void updateSNG(REGHND* rh);
+void updateINS_WAV(REGHND* rh);
+void updateINS_FMW(REGHND* rh);
+void updateINS_SMP(REGHND* rh);
+void updateINS_PWM(REGHND* rh);
+void updatePAT(REGHND* rh);
+void updateTABLE(REGHND* rh);
+void updateVIS(REGHND* rh);
+void updateHEADER1(REGHND* rh);
+void updateHEADER0(REGHND* rh);
+void updateCHANNEL0(REGHND* rh);
+void updateCHANNEL1(REGHND* rh);
+void updateCHANNEL2(REGHND* rh);
+void updateCHANNEL3(REGHND* rh);
+void updateCHANNEL4(REGHND* rh);
+void updateCHANNEL5(REGHND* rh);
+void updateSNK(REGHND* rh);
+void updateLOOKNFEEL(REGHND* rh);
+void updateLINKMODE(REGHND* rh);
+void updateBEHAVIOR(REGHND* rh);
+void updateTRACKER(REGHND* rh);
+void updateMEMORY(REGHND* rh);
+void updateCOLOREDITOR(REGHND* rh);
+void updateCHANNELMIXER(REGHND* rh);
+void updateMEMORYSONGMAP(REGHND* rh);
+void updateMEMORYTEST(REGHND* rh);
+void updateLINKSTATUS(REGHND* rh);
+void updateCREDITS(REGHND* rh);
+void updatePROGRESS(REGHND* rh);
 
 /* Button Callbacks (callbacks.c) */
 void SOLO0(Control *c, bool bigstep, bool add, u32 *pointer);
@@ -235,8 +235,8 @@ void instrument27VAL(Control *c,bool bigstep, bool add, u32 *pointer);
 #define M4G_VERSION			0x81
 #define M4GEEK_SIGNATURE	0xE5ACFECA
 
-#define EXPECT(a, up, down)			{VAR_CFG.loadCount = 0;regHnd.progress.set(0, a, STATUS_##up, STATUS_##down, &VAR_CFG.loadCount);}
-#define OK()						{VAR_CFG.loadCount++;regHnd.update(1);	DECIMAL_DOUBLE(28,1,9, SRAM.position-1);}
+#define EXPECT(a, up, down)			{CFG::loadCount = 0;REGHND::progress.set(0, a, STATUS_##up, STATUS_##down, &CFG::loadCount);}
+#define OK()						{CFG::loadCount++;REGHND::update(1);	DECIMAL_DOUBLE(28,1,9, SRAM.position-1);}
 
 
 #define PRINTPOINTER(x, y, c, a)	TEXT(x,y, 0x6, c-13); \

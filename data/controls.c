@@ -28,7 +28,7 @@ const Control SNG_CONTROLS[CONTROL_SNG_MAX] = {
 	{	0x10 , 0x12	, T(GROOVE_09)			, T(GROOVE_0E)			, T(LOAD)			, T(GROOVE_0C)		, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[13])	, &cb_sng_groove_0D 	},
 	{	0x15 , 0x12	, T(GROOVE_0A)			, T(GROOVE_0F)			, T(LOAD)			, T(GROOVE_0D)		, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[14])	, &cb_sng_groove_0E 	},
 	{	0x1a , 0x12	, T(GROOVE_0B)			, T(SONGSELECTOR)		, T(LOAD)			, T(GROOVE_0E)		, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[15])	, &cb_sng_groove_0F 	},
-	{	0x04 , 0x07	, T(SONGSELECTOR)		, T(ARTIST)				, T(SONGSELECTOR)	, T(ARTIST)			, &CACHE_SONGSLOTS				, (u8*)&(VAR_CFG.SLOT)	, &cb_sng_slot		},
+	{	0x04 , 0x07	, T(SONGSELECTOR)		, T(ARTIST)				, T(SONGSELECTOR)	, T(ARTIST)			, &CACHE_SONGSLOTS				, (u8*)&(CFG::SLOT)	, &cb_sng_slot		},
 	{	0x0d , 0x01	, T(GROOVE_0F)			, T(SONGSELECTOR)		, T(SAVE)			, T(SONGSELECTOR)	, &CACHE_ARROW_LEFT				, NULL					, &cb_sng_load		},
 	{	0x0d , 0x02	, T(LOAD)				, T(SONGSELECTOR)		, T(PURGE)			, T(SONGSELECTOR)	, &CACHE_ARROW_LEFT				, NULL					, &cb_sng_save		},
 	{	0x0d , 0x03	, T(SAVE)				, T(SONGSELECTOR)		, T(COPY)			, T(SONGSELECTOR)	, &CACHE_ARROW_LEFT				, NULL					, &cb_sng_purge		},
@@ -215,10 +215,10 @@ enum E_LOOKNFEEL_CONTROLS {
 	CONTROL_LOOKNFEEL_MAX};
 
 #define THIS(a) &LOOKNFEEL_CONTROLS[CONTROL_LOOKNFEEL_##a]
-#define THISVAR(a) ((u8*)&(VAR_CFG.LOOKNFEEL.a))
+#define THISVAR(a) ((u8*)&(CFG::LOOKNFEEL.a))
 const Control LOOKNFEEL_CONTROLS[CONTROL_LOOKNFEEL_MAX] = { 
 	//  x    y      up						right					down					left					cache						var						callback	
-	{	0x04 , 0x04 , NULL					, THIS(INTERFACE)		, NULL					, NULL					, NULL						, (u8*)&(VAR_CFG.MENUSLOT)	, &cb_cfg_menuindex		},
+	{	0x04 , 0x04 , NULL					, THIS(INTERFACE)		, NULL					, NULL					, NULL						, (u8*)&(CFG::MENUSLOT)	, &cb_cfg_menuindex		},
 	{	0x19 , 0x06 , THIS(EDITPAL)			, THIS(INTERFACE)		, THIS(FONT)			, THIS(MENU1)			, &CACHE_INTERFACE			, THISVAR(INTERFACE)		, &cb_cfg_interface		},
 	{	0x17 , 0x07 , THIS(INTERFACE)		, THIS(FONT)			, THIS(BORDER)			, THIS(MENU1)			, &CACHE_FONTSTYLE			, THISVAR(FONT)				, &cb_cfg_font			},
 	{	0x17 , 0x08 , THIS(FONT)			, THIS(BORDER)			, THIS(SHOWLOGO)		, THIS(MENU1)			, &CACHE_BORDERSTYLE		, THISVAR(BORDER)			, &cb_cfg_border			},
@@ -236,10 +236,10 @@ enum E_LINKMODE_CONTROLS {
 	CONTROL_LINKMODE_MAX
 };
 #define THIS(a) &LINKMODE_CONTROLS[CONTROL_LINKMODE_##a]
-#define THISVAR(a) ((u8*)&(VAR_CFG.LINKMODE.a))
+#define THISVAR(a) ((u8*)&(CFG::LINKMODE.a))
 const Control LINKMODE_CONTROLS[CONTROL_LINKMODE_MAX] = { 
 	//  x    y     	up						right					down					left					cache						var							callback		
-	{	0x04 , 0x04 , NULL					, THIS(MODE)			, NULL					, NULL					, NULL						, (u8*)&(VAR_CFG.MENUSLOT)	, &cb_cfg_menuindex		},
+	{	0x04 , 0x04 , NULL					, THIS(MODE)			, NULL					, NULL					, NULL						, (u8*)&(CFG::MENUSLOT)	, &cb_cfg_menuindex		},
 	{	0x19 , 0x06 , THIS(SEND)			, THIS(MODE)			, THIS(MASTER)			, THIS(MENU2)			, &CACHE_LIVE_MODE			, THISVAR(LINKMODE)			, &cb_cfg_linkmode		},
 	{	0x1b , 0x07 , THIS(MODE)			, THIS(MASTER)			, THIS(MIDICHAN)		, THIS(MENU2)			, &CACHE_CHECK 				, THISVAR(MASTERCLOCK)		, &cb_cfg_masterclock	},
 	{	0x1b , 0x08 , THIS(MASTER)			, THIS(MIDICHAN)		, THIS(TEMPO)			, THIS(MENU2)			, &CACHE_HEXADECIMAL		, THISVAR(MIDICHAN)			, &cb_cfg_midichan		},
@@ -257,10 +257,10 @@ enum E_BEHAVIOR_CONTROLS {
 	CONTROL_BEHAVIOR_MAX
 };
 #define THIS(a) &BEHAVIOR_CONTROLS[CONTROL_BEHAVIOR_##a]
-#define THISVAR(a) ((u8*)&(VAR_CFG.BEHAVIOR.a))
+#define THISVAR(a) ((u8*)&(CFG::BEHAVIOR.a))
 const Control BEHAVIOR_CONTROLS[CONTROL_BEHAVIOR_MAX] = { 
 	//  x    y     	up						right					down					left					cache						var							callback
-	{	0x04 , 0x04 , NULL					, THIS(AUTOLOAD)		, NULL					, NULL					, NULL						, (u8*)&(VAR_CFG.MENUSLOT)	, &cb_cfg_menuindex		}, /*MENU3*/ 
+	{	0x04 , 0x04 , NULL					, THIS(AUTOLOAD)		, NULL					, NULL					, NULL						, (u8*)&(CFG::MENUSLOT)	, &cb_cfg_menuindex		}, /*MENU3*/ 
 	{	0x1b , 0x06 , THIS(DEFAULTS)		, THIS(AUTOLOAD)		, THIS(KEYRATE)			, THIS(MENU3)			, &CACHE_CHECK				, THISVAR(AUTOLOAD)			, &cb_cfg_autoload	 	}, /*AUTOLOAD*/
 	{	0x1b , 0x07 , THIS(AUTOLOAD)		, THIS(KEYRATE)			, THIS(BUTTONSET)		, THIS(MENU3)			, &CACHE_HEXADECIMAL		, THISVAR(KEYRATE)			, &cb_cfg_keyrate		}, /*keyrate*/
 	{	0x19 , 0x08 , THIS(KEYRATE)			, THIS(BUTTONSET)		, THIS(SAVE)			, THIS(MENU3)			, &CACHE_BUTTON_SET			, THISVAR(BUTTONSET)		, &cb_cfg_buttonset		}, /*buttonset*/
@@ -278,10 +278,10 @@ enum E_TRACKER_CONTROLS {
 	CONTROL_TRACKER_MAX
 };
 #define THIS(a) &TRACKER_CONTROLS[CONTROL_TRACKER_##a]
-#define THISVAR(a) ((u8*)&(VAR_CFG.TRACKER.a))
+#define THISVAR(a) ((u8*)&(CFG::TRACKER.a))
 const Control TRACKER_CONTROLS[CONTROL_TRACKER_MAX] = { 
 	//  x	 y     	up						right					down					left					cache						var							callback
-	{	0x04 , 0x04 , NULL					, THIS(FINETUNE)		, NULL					, NULL					, NULL						, (u8*)&(VAR_CFG.MENUSLOT)	, &cb_cfg_menuindex		}, /*MENU4*/ 
+	{	0x04 , 0x04 , NULL					, THIS(FINETUNE)		, NULL					, NULL					, NULL						, (u8*)&(CFG::MENUSLOT)	, &cb_cfg_menuindex		}, /*MENU4*/ 
 	{	0x1b , 0x06 , THIS(MIXER)			, THIS(FINETUNE)		, THIS(PRELISTEN)		, THIS(MENU4)			, &CACHE_HEXADECIMAL		, THISVAR(FINETUNE)			, &cb_cfg_finetune		}, /*finetune*/
 	{	0x1b , 0x07 , THIS(FINETUNE)		, THIS(PRELISTEN)		, THIS(TRANSPOSE)		, THIS(MENU4)			, &CACHE_CHECK				, THISVAR(PRELISTEN)		, &cb_cfg_prelisten		}, /*prelisten*/
 	{	0x1b , 0x08 , THIS(PRELISTEN)		, THIS(TRANSPOSE)		, THIS(INPUTMODE)		, THIS(MENU4)			, &CACHE_HEXADECIMAL_DOUBLE	, THISVAR(TRANSPOSE)		, &cb_cfg_transpose		}, /*transpose*/
@@ -299,10 +299,10 @@ enum E_MEMORY_CONTROLS {
 	CONTROL_MEMORY_MAX	
 };
 #define THIS(a) &MEMORY_CONTROLS[CONTROL_MEMORY_##a]
-#define THISVAR(a) ((u8*)&(VAR_CFG.MEMORY.a))
+#define THISVAR(a) ((u8*)&(CFG::MEMORY.a))
 const Control MEMORY_CONTROLS[CONTROL_MEMORY_MAX] = { 
 	//  x    y     	up						right					down					left					cache						var							callback
-	{	0x04 , 0x04 , NULL					, THIS(PREFETCH)		, NULL					, NULL					, NULL						, (u8*)&(VAR_CFG.MENUSLOT)	, &cb_cfg_menuindex		}, /*MENU5*/ 
+	{	0x04 , 0x04 , NULL					, THIS(PREFETCH)		, NULL					, NULL					, NULL						, (u8*)&(CFG::MENUSLOT)	, &cb_cfg_menuindex		}, /*MENU5*/ 
 	{	0x1b , 0x06 , THIS(RESET)			, THIS(PREFETCH)		, THIS(SLOTUSAGE)		, THIS(MENU5)			, &CACHE_CHECK				, THISVAR(PREF)				, &cb_cfg_prefetch		}, /*prefetch*/
 	{	0x1b , 0x07 , THIS(PREFETCH)		, THIS(SLOTUSAGE)		, THIS(PURGESONGS)		, THIS(MENU5)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_backup			}, /*slotusage ->backup*/
 	{	0x1b , 0x08 , THIS(SLOTUSAGE)		, THIS(PURGESONGS)		, THIS(MEMORYTEST)		, THIS(MENU5)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_revert			}, /*purgesongs -> revert*/
@@ -335,7 +335,7 @@ enum E_INS_PWM_CONTROLS {
 #define THISVAR(a) ((u8*)&(VAR_PWM.a))
 const Control INS_PWM_CONTROLS[CONTROL_INS_PWM_MAX] = { 
 	//	x	 y		up						right					down					left					cache							var									callback
-	{	0x05 , 0x04 , THIS(VOLUMEFADE)		, THIS(TSP_TABLE_04)	, THIS(NAME)			, THIS(TSP_TABLE_07)	, &CACHE_HEXADECIMAL_INSTRUMENT	, (u8*)&(VAR_CFG.CURRENTINSTRUMENT)	, &cb_ins_index			},
+	{	0x05 , 0x04 , THIS(VOLUMEFADE)		, THIS(TSP_TABLE_04)	, THIS(NAME)			, THIS(TSP_TABLE_07)	, &CACHE_HEXADECIMAL_INSTRUMENT	, (u8*)&(CFG::CURRENTINSTRUMENT)	, &cb_ins_index			},
 	{	0x09 , 0x03 , THIS(TSP_ENVELOPE)	, THIS(TSP_TABLE_01)	, THIS(TSP_TABLE_04)	, THIS(INDEX)			, &CACHE_HEXADECIMAL			, THISVAR(TSP[0])					, &cb_ins_tsp_00			},
 	{	0x0a , 0x03 , THIS(TSP_ENVELOPE)	, THIS(TSP_TABLE_02)	, THIS(TSP_TABLE_05)	, THIS(TSP_TABLE_00)	, &CACHE_HEXADECIMAL			, THISVAR(TSP[1])					, &cb_ins_tsp_01			},
 	{	0x0b , 0x03 , THIS(TSP_ENVELOPE)	, THIS(TSP_TABLE_03)	, THIS(TSP_TABLE_06)	, THIS(TSP_TABLE_01)	, &CACHE_HEXADECIMAL			, THISVAR(TSP[2])					, &cb_ins_tsp_02			},
@@ -405,7 +405,7 @@ enum E_INS_WAV_CONTROLS {
 #define THISVAR(a) ((u8*)&(VAR_WAV.a))
 const Control INS_WAV_CONTROLS[CONTROL_INS_WAV_MAX] = { 
 	//  x	 y		up						right					down					left					cache							var									callback		
-	{	0x05 , 0x04 , THIS(WAVPRESET_05)	, THIS(OP1_ADSR_02)		, THIS(NAME)			, THIS(OP1_TYPE)		, &CACHE_HEXADECIMAL_INSTRUMENT	, (u8*)&(VAR_CFG.CURRENTINSTRUMENT)	, &cb_ins_index			},
+	{	0x05 , 0x04 , THIS(WAVPRESET_05)	, THIS(OP1_ADSR_02)		, THIS(NAME)			, THIS(OP1_TYPE)		, &CACHE_HEXADECIMAL_INSTRUMENT	, (u8*)&(CFG::CURRENTINSTRUMENT)	, &cb_ins_index			},
 	{	0x01 , 0x05 , THIS(INDEX)			, THIS(OP2_ADSR_00)		, THIS(TYPE)			, THIS(OP2_TYPE)		, &CACHE_TEXT					, INSTRUM(NAME)						, &cb_ins_name			},
 	{	0x06 , 0x07 , THIS(NAME)			, THIS(OP2_ADSR_00)		, THIS(PHASE)			, THIS(OP2_TYPE)		, &CACHE_INSTYPES				, INSTRUM(TYPE)						, &cb_ins_type			},
 	{	0x06 , 0x08 , THIS(TYPE)			, THIS(OP2_ADSR_02)		, THIS(AM)				, THIS(OP2_TYPE)		, &CACHE_CHECK					, THISVAR(PHASE)					, &cb_ins_phase			},
@@ -456,7 +456,7 @@ enum E_INS_FMW_CONTROLS {
 #define THISVAR(a) ((u8*)&(VAR_FMW.a))
 const Control INS_FMW_CONTROLS[CONTROL_INS_FMW_MAX] = { 
 	//  x	 y		up						right					down					left					cache							var									callback		
-	{	0x05 , 0x04 , THIS(MODE)			, THIS(FM1_ADSR_02)		, THIS(NAME)			, THIS(FM1_ADSR_03)		, &CACHE_HEXADECIMAL_INSTRUMENT	, (u8*)&(VAR_CFG.CURRENTINSTRUMENT)	, &cb_ins_index			},
+	{	0x05 , 0x04 , THIS(MODE)			, THIS(FM1_ADSR_02)		, THIS(NAME)			, THIS(FM1_ADSR_03)		, &CACHE_HEXADECIMAL_INSTRUMENT	, (u8*)&(CFG::CURRENTINSTRUMENT)	, &cb_ins_index			},
 	{	0x01 , 0x05 , THIS(INDEX)			, THIS(FM2_ADSR_00)		, THIS(TYPE)			, THIS(FM2_ADSR_01)		, &CACHE_TEXT					, INSTRUM(NAME)						, &cb_ins_name			},
 	{	0x06 , 0x07 , THIS(NAME)			, THIS(FM2_ADSR_02)		, THIS(FM1_TYPE)		, THIS(FM2_ADSR_03)		, &CACHE_INSTYPES				, INSTRUM(TYPE)						, &cb_ins_type			},
 	{	0x06 , 0x0a , THIS(FM1_TYPE)		, THIS(FM3_ADSR_02)		, THIS(FM3_TYPE)		, THIS(FM3_ADSR_03)		, &CACHE_OPERATORS				, THISVAR(OP2_TYPE)					, &cb_ins_fm_op2type		},
@@ -500,7 +500,7 @@ const Control INS_SMP_CONTROLS[CONTROL_INS_SMP_MAX] = {
 #define THIS(a) &INS_SMP_CONTROLS[CONTROL_INS_SMP_##a]
 #define THISVAR(a) ((u8*)&(VAR_SMP.a))
 	//  x	 y		up						right					down					left					cache							var									callback
-	{	0x05 , 0x04 , THIS(SMPKIT_0A)		, THIS(B)				, THIS(NAME)			, THIS(B)				, &CACHE_HEXADECIMAL_INSTRUMENT	, (u8*)&(VAR_CFG.CURRENTINSTRUMENT)	, &cb_ins_index			},
+	{	0x05 , 0x04 , THIS(SMPKIT_0A)		, THIS(B)				, THIS(NAME)			, THIS(B)				, &CACHE_HEXADECIMAL_INSTRUMENT	, (u8*)&(CFG::CURRENTINSTRUMENT)	, &cb_ins_index			},
 	{	0x01 , 0x05 , THIS(INDEX)			, THIS(S)				, THIS(TYPE)			, THIS(S)				, &CACHE_TEXT					, INSTRUM(NAME)						, &cb_ins_name			},
 	{	0x06 , 0x07 , THIS(NAME)			, THIS(R)				, THIS(START)			, THIS(R)				, &CACHE_INSTYPES				, INSTRUM(TYPE)						, &cb_ins_type			},
 	{	0x06 , 0x08 , THIS(TYPE)			, THIS(PLAYMODE)		, THIS(END)				, THIS(PLAYMODE)		, &CACHE_HEXADECIMAL_DOUBLE		, THISVAR(START)					, &cb_ins_smp_start		},

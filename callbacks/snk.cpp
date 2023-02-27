@@ -50,15 +50,15 @@ class SnakeGame{
 			resetPosition();
 		}
 		
-		void draw(GPU *gpu){
-			gpu->vs->clear();
+		void draw(){
+			GPU::vs->clear();
 			
 			int i;
 			for(i=0;i<length; i++){
-				gpu->vs->set(cells[i].x, cells[i].y);
+				GPU::vs->set(cells[i].x, cells[i].y);
 			}
 			
-			gpu->vs->draw(11,6);
+			GPU::vs->draw(11,6);
 			redraw = false;			
 		}
 		
@@ -77,7 +77,7 @@ class SnakeGame{
 			cells[0].y &= 31;
 		}
 		
-		void update(GPU *gpu){
+		void update(){
 			if(tick>0){
 				tick--;
 				
@@ -88,11 +88,11 @@ class SnakeGame{
 				tick = tickLevel>>turbo;
 			}
 			
-			if(redraw)draw(gpu);
+			if(redraw)draw();
 		}
 };
 
-void updateSNK(RegionHandler* rh){
+void updateSNK(){
 	static SnakeGame snake;
 	 
 	if(KEYPRESS_LEFT  && (snake.direction !=SNAKE_RIGHT) ) snake.nextdirection = SNAKE_LEFT	; else
@@ -106,6 +106,6 @@ void updateSNK(RegionHandler* rh){
 		snake.start();
 	}
 	
-	snake.update(&gpu);	
+	snake.update();	
 }
 

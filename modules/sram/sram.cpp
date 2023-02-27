@@ -91,7 +91,7 @@ void Sram::songSave(){
 	int i;
 	
 	seek(0x80);
-	forward(32 * VAR_CFG.SLOT);
+	forward(32 * CFG::SLOT);
 
 	// Write Song details
 	write( VAR_SONG.TRANSPOSE);
@@ -109,7 +109,7 @@ void Sram::songSave(){
 	//0x140
 	
 	// Write Groove Steps
-	forward(16 * VAR_CFG.SLOT);
+	forward(16 * CFG::SLOT);
 	for(i=0; i<16; i++){
 		write(VAR_SONG.GROOVE.STEP[i]);
 	}
@@ -118,7 +118,7 @@ void Sram::songSave(){
 	drawPosition(27, 3, 2);	
 	seek(0x200);
 		
-	forward(1536 * VAR_CFG.SLOT);	
+	forward(1536 * CFG::SLOT);	
 	for(i=0; i<256; i++){
 		write(VAR_SONG.PATTERNS[0].ORDER[i]);
 		write(VAR_SONG.PATTERNS[1].ORDER[i]);
@@ -138,7 +138,7 @@ void Sram::songLoad(){
 	u8 h;
 	
 	seek(0x80);
-	forward(32 * VAR_CFG.SLOT);
+	forward(32 * CFG::SLOT);
 	
 	// Song details
 	VAR_SONG.TRANSPOSE = read();
@@ -160,7 +160,7 @@ void Sram::songLoad(){
 
 	drawPosition(27, 2, 6);	
 
-	forward(16 * VAR_CFG.SLOT);
+	forward(16 * CFG::SLOT);
 	for(i=0; i<16; i++){
 		VAR_SONG.GROOVE.STEP[i] = read();
 	}
@@ -170,7 +170,7 @@ void Sram::songLoad(){
 	seek(0x200);
 	
 	
-	forward(1536 * VAR_CFG.SLOT);
+	forward(1536 * CFG::SLOT);
 	for(i=0; i<256; i++){
 		VAR_SONG.PATTERNS[0].ORDER[i] = read();
 		VAR_SONG.PATTERNS[1].ORDER[i] = read();
@@ -180,7 +180,7 @@ void Sram::songLoad(){
 		VAR_SONG.PATTERNS[5].ORDER[i] = read();
 	}
 	
-	patternSync(VAR_CFG.ORDERPOSITION);
+	patternSync(CFG::ORDERPOSITION);
 	cellSync();
 	
 	drawPosition(27, 4, 6);	
@@ -195,7 +195,7 @@ void Sram::songDefaults(void){
 		VAR_SONG.TITLE[i]  = 0xFF;
 		VAR_SONG.ARTIST[i] = 0xFF;
 	}
-	//SPU.setTempo(0x80);
+	//SPU::setTempo(0x80);
 	VAR_SONG.BPM = 0x80;
 	VAR_SONG.PATTERNLENGTH = 0xF;
 	
@@ -262,7 +262,7 @@ void Sram::sharedDataSave(void){
 	seek(0x5000);
 	
 	//Dump instruments (these are shared along all songs)
-	instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT]);
+	instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[CFG::CURRENTINSTRUMENT]);
 
 	for(i=0; i<64; i++){
 		write(VAR_INSTRUMENTS[i].TYPE);
@@ -325,9 +325,9 @@ void Sram::sharedDataLoad(void){
 		}
 	}
 
-	instcopy(&VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT], &VAR_INSTRUMENT);
+	instcopy(&VAR_INSTRUMENTS[CFG::CURRENTINSTRUMENT], &VAR_INSTRUMENT);
 	
-	SPU.setTempo(VAR_SONG.BPM);
+	SPU::setTempo(VAR_SONG.BPM);
 
 	drawPosition(27, 5, 6);
 }

@@ -1,5 +1,5 @@
 // General Callbacks
-CALLBACK( cb_ins_index		, instrumentIndex	, EVENT_MODIFY_B 	, &VAR_CFG.CURRENTINSTRUMENT	, NULL);
+CALLBACK( cb_ins_index		, instrumentIndex	, EVENT_MODIFY_B 	, &CFG::CURRENTINSTRUMENT	, NULL);
 CALLBACK( cb_ins_name		, ALPHA6			, EVENT_KEYDOWN_B 	, &VAR_INSTRUMENT.NAME			, NULL);
 CALLBACK( cb_ins_type		, instrumentType	, EVENT_MODIFY_B 	, &VAR_INSTRUMENT.TYPE			, NULL);
 // PWM Controls
@@ -230,15 +230,15 @@ void instType(void){
 
 // Called on index change
 void instLoad(void){	
-	instcopy(&VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT], &VAR_INSTRUMENT);	
+	instcopy(&VAR_INSTRUMENTS[CFG::CURRENTINSTRUMENT], &VAR_INSTRUMENT);	
 	instrumentUnpack(&VAR_INSTRUMENT);
-	regHnd.redraw = true;	
+	REGHND::redraw = true;	
 }
 
 // Called on value change (against index and type)
 void instSync(void){	
 	instrumentPack(&VAR_INSTRUMENT);
-	instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT]);	
+	instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[CFG::CURRENTINSTRUMENT]);	
 }
 
 void instrument1BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify1BIT(c,bigstep, add, pointer); instSync(); }
@@ -441,13 +441,13 @@ void instcopy(INSTRUMENT *s, INSTRUMENT *d){
 static void instrumentSync(){
 	static u8 LASTINSTRUMENT = 63;
 	
-	if(LASTINSTRUMENT != VAR_CFG.CURRENTINSTRUMENT){
-		instcopy(&VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT], &VAR_INSTRUMENT);
+	if(LASTINSTRUMENT != CFG::CURRENTINSTRUMENT){
+		instcopy(&VAR_INSTRUMENTS[CFG::CURRENTINSTRUMENT], &VAR_INSTRUMENT);
 		instrumentUnpack(&VAR_INSTRUMENT);
-		LASTINSTRUMENT = VAR_CFG.CURRENTINSTRUMENT;
-		regHnd.redraw = true;
+		LASTINSTRUMENT = CFG::CURRENTINSTRUMENT;
+		REGHND::redraw = true;
 	} /*else {
-		instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT]);
+		instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[CFG::CURRENTINSTRUMENT]);
 		instrumentPack(&VAR_INSTRUMENT);
 	}*/
 }
@@ -455,37 +455,37 @@ static void instrumentSync(){
 void insDispatchMessage(u32 msg) {
 	switch(msg) {
 		case MESSAGE_OTHER_PREV:
-			VAR_CFG.CURRENTINSTRUMENT--;
-			VAR_CFG.CURRENTINSTRUMENT &= 0x3f;
+			CFG::CURRENTINSTRUMENT--;
+			CFG::CURRENTINSTRUMENT &= 0x3f;
 			instLoad();
 			return;
 		
 		case MESSAGE_OTHER_NEXT:			
-			VAR_CFG.CURRENTINSTRUMENT++;
-			VAR_CFG.CURRENTINSTRUMENT &= 0x3f;
+			CFG::CURRENTINSTRUMENT++;
+			CFG::CURRENTINSTRUMENT &= 0x3f;
 			instLoad();
 			return;
 	}	
 }
 
 
-void updateINS_WAV(RegionHandler* rh){
+void updateINS_WAV(){
 	const Control *cname = &INS_WAV_CONTROLS[CONTROL_INS_WAV_NAME];
 	STRING(false, cname->x, cname->y, cname->var);
 	
 	instrumentSync();
 }
-void updateINS_FMW(RegionHandler* rh){
+void updateINS_FMW(){
 	const Control *cname = &INS_FMW_CONTROLS[CONTROL_INS_FMW_NAME];
 	STRING(false, cname->x, cname->y, cname->var);
 	instrumentSync();
 }
-void updateINS_SMP(RegionHandler* rh){
+void updateINS_SMP(){
 	const Control *cname = &INS_SMP_CONTROLS[CONTROL_INS_SMP_NAME];
 	STRING(false, cname->x, cname->y, cname->var);
 	instrumentSync();
 }
-void updateINS_PWM(RegionHandler* rh){
+void updateINS_PWM(){
 	const Control *cname = &INS_PWM_CONTROLS[CONTROL_INS_PWM_NAME];
 	STRING(false, cname->x, cname->y, cname->var);
 	instrumentSync();

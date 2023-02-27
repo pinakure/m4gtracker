@@ -1,15 +1,14 @@
-class cMEM 
-{
-	private:
-		
+#ifndef __MODULES_MEM
+#define __MODULES_MEM
+
+#include "../../agb.h"
+
+class MEM {
 	public:
-		cMEM(){}
-		~cMEM(){}
-		void Init(void);
-		void Test(void);
-		void Get(u8 blocks);
-		void Free(u16 addr);
+		static void init();
+		static void test();
+		static void Get(u8 blocks);
+		static void Free(u16 addr);
 };
 
-extern cMEM MEM;
-
+#endif

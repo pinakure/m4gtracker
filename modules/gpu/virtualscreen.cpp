@@ -1,11 +1,6 @@
 #include "gpu.hpp"
 
-extern const unsigned short TABLE_PIXEL[16][4];
-extern const unsigned short Palette[256];
-extern const unsigned char 	TILESET_0[8192];
-extern const unsigned char 	TILESET_1[16384];
-extern const unsigned char 	TILESET_2[32768];
-extern const unsigned short MAPDATA[4096*3*5];
+#include "../../data/tables.hpp"
 
 const bool circledata[32*32] = { 	
 	0,0,0,0,0,0,0,0, 0,0,0,0,0,1,1,1, 1,1,1,0,0,0,0,0, 0,0,0,0,0,0,0,0,
@@ -72,7 +67,7 @@ void VirtualScreen::set(u8 ox, u8 oy){
 	u8 y 		= oy >> 1;
 	u8 pos 		= (y<<4) + x;
 	u8 current 	= this->data[pos] - 0x60;
-	data[pos] 	= TABLE_PIXEL[current][(rx<<1) | ry];
+	data[pos] 	= Tables::PIXEL[current][(rx<<1) | ry];
 }
 
 void unset(u8 x, u8 y){

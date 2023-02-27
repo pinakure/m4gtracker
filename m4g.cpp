@@ -3,7 +3,7 @@ CHANGES:
 STEP 1 : Interfaces
 20150812 * Add data structures (no viewports), fixed strict syntax to be able to compile converted data into the rom.
 20150925 * Add variable tree, consistently linked to their respective displays & controls
-20150926 * Add RegionHandler instance, its duty is to handle the regions , keep navigation
+20150926 * Add REGHND instance, its duty is to handle the regions , keep navigation
 		   consistent, and set the active display and control groups.
 20150928 * Region navigation implemented. Fastest than ever.
 		 * Controls loaded and displaying on right place, for every region
@@ -53,10 +53,10 @@ Nombres de funciones:
 Nombres de métodos:    
 	cINT::Init    
 	GPU::safeblit    
-	RegionHandler::dispatchMessages 
+	REGHND::dispatchMessages 
 Nombres de clases y estructuras:    
 	cINT    GPU    
-	RegionHandler    t_chunk    
+	REGHND    t_chunk    
 	PATTERN_CELL 
 Nombres de enums: 
 	enum E_Messages 
@@ -83,9 +83,9 @@ Nombres y contenidos de macros:
 	_VER_M    
 	_VER_m 
 Codigo repetido: 
-	RegionHandler::controlTrigger 
-	RegionHandler::controlAdd 
-	RegionHandler::controlSub 
+	REGHND::controlTrigger 
+	REGHND::controlAdd 
+	REGHND::controlSub 
 Numeros magicos: 
 	callbacks.c:90 (y callbacks.c en general) 
 	int.cpp:59 hasta int.cpp:65 
@@ -194,13 +194,13 @@ Lo que debes evitar comentar:
 			void Init(void);   
 			[...] 
 		}; 
-		class RegionHandler {    
-			RegionHandler() {       [...]    }    
+		class REGHND {    
+			REGHND() {       [...]    }    
 			void load(...) {       [...]    } 
 		}; 
 		
 	Seguro que puedes ver el patrón: Init hace el trabajo del constructor y el constructor no hace nada! 
-	(excepto en RegionHandler, pero en el caso de RegionHandler puedes añadir un segundo constructor que 
+	(excepto en REGHND, pero en el caso de REGHND puedes añadir un segundo constructor que 
 	acepte un const Region *. 
 ------------------------------ 
 Hay definiciones en archivos hpp. 
@@ -329,7 +329,7 @@ Segundo, la idea de los archivos hpp/cpp:
 						puede hacer expansión en linea de la función y luego borrar directamente la funcion del ejecutable. 
 						
 ------------------------------ 
-Los defines en gpu.hpp tienen los nombres y comentarios mal. 
+Los defines en GPU::hpp tienen los nombres y comentarios mal. 
 En concreto: 
 	#define DISP_MODE_0             0x0000      // BG Mode 0  <---- 
 	#define DISP_MODE_1             0x0001      // BG Mode 0  <---- 
@@ -368,13 +368,13 @@ pero muchisimo más confuso y potencialmente mas lento:
 	[...] 
 
 ------------------------------ 
-He visto que en RegionHandler::dispatchMessages utilizas punteros etiquetados al almacenar 
+He visto que en REGHND::dispatchMessages utilizas punteros etiquetados al almacenar 
 en los 4 bits superiores el tipo de mensaje. 
 Supongo que estás al corriente del peligro que esto conlleva. 
 También he visto que decides ejecutar tan solo 4 mensajes pero puedes almacenar hasta 1024 mensajes. 
 Si vas a poner una limitación de mensajes haz que dependa del tiempo, no de un número de mensajes. 
 (e.g. ejecutar tantos mensajes como quepan en un milisegundo). 1024 * 4 son 4K. 
-El objeto RegionHandler que he visto creado en main reside en la pila. 
+El objeto REGHND que he visto creado en main reside en la pila. 
 Eso son 4K en la pila. 
 La pila reside en IWRAM. 
 Por cierto la variable local 'max', para representar lo que representa, tiene un nombre extraño.
@@ -394,38 +394,36 @@ El archivo int.s es un archivo compilado.
 #include "m4g.hpp"
 #include "modules/modules.cpp"
 
-GPU gpu;
-
 #include "callbacks.cpp"
-RegionHandler regHnd;
 
 int main(void){
+	bool lock;
+	
 	while(1){
 		PREFETCH
-		
-		INT.Init();	
-		MEM.Init();
-		sys.init();
-		//KEY.Init();
+		INT::init();	
+		MEM::init();
+		SYS::init(); //KEY::init() is called from inside SYS
 		SRAM.Init();
-		gpu.start();
-		INT.Enable(IRQ_VBLANK);
-		INT.Enable(IRQ_HBLANK);
-		TIM0.Init(0);
+		GPU::start();
+		INT::enable(IRQ_VBLANK);
+		INT::enable(IRQ_HBLANK);
+		TIM0.init(0);
 		//INT.Enable(IRQ_KEYPAD);
-		TIM0.Setup(0x0004, 1);
-		TIM0.Enable();
+		TIM0.setup(0x0004, 1);
+		TIM0.enable();
 
-		sys.init();
+		REGHND::init();
+		SYS::init();
 		
 		
-		bool lock = false;
+		lock = false;
 		
 		// Create and bind virtual screen to the GPU
 		VirtualScreen VS;
-		gpu.vs = &VS;
+		GPU::vs = &VS;
 
-		regHnd.load(&REGION_MAP_2_INS);
+		REGHND::load(&REGION_MAP_2_INS);
 		
 		LOADCONFIG(NULL, 0, 0, NULL);
 		SRAM.dataRevert();
@@ -434,11 +432,11 @@ int main(void){
 		// PROGRAM START
 /*
 		*/
-		while(!sys.var_reset){
-			if(!gpu.isVblank()) {lock= false; continue;}
+		while( !SYS::var_reset ){
+			if(!GPU::isVblank()) {lock= false; continue;}
 			if(!lock) { lock = true; continue; }							
-			sys.update();			
-			regHnd.update(1);
+			SYS::update();			
+			REGHND::update(1);
 		};
 	}
 	return 0;

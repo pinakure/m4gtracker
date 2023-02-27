@@ -1,6 +1,6 @@
 
 // Stress test for GUI Display Functions
-void overloadTest(RegionHandler &regHnd){
+void overloadTest(REGHND &regHnd){
 	static u16 i, o;
 	// M4G0 code offers a great collection of macros which you
 	// can use to display a value in a bunch of different formats:

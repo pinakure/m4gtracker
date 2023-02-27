@@ -1,27 +1,32 @@
 #include "gpu.hpp"
 
-extern const unsigned short TABLE_PIXEL[16][4];
-extern const unsigned short Palette[256];
-extern const unsigned char 	TILESET_0[8192];
-extern const unsigned char 	TILESET_1[16384];
-extern const unsigned char 	TILESET_2[32768];
-extern const unsigned short MAPDATA[4096*3*5];
+#include "../../data/tileset.hpp"
+#include "../../data/layers.hpp"
+#include "../../data/palette.hpp"
 
-GPU::GPU(){
-	this->redraw = 0;
-}
+vu8 					GPU::redraw;
+VirtualScreen*			GPU::vs;
+const unsigned short*	GPU::MAP0;
+const unsigned short*	GPU::MAP1;
+const unsigned short*	GPU::MAP2;
+const u32 				GPU::LAYERS[3] = {
+	SCREEN_BASE0_ADDR,
+	SCREEN_BASE1_ADDR,
+	SCREEN_BASE2_ADDR
+};
 
 bool GPU::isVblank(){
     return (R_VCOUNT & 0x00FF) >= 160;
 }
 
 void GPU::start(){
+	redraw = 0;
 
     // Force HBLANK to access VRAM
     R_DISPCNT = DISP_FORCE_HBLANK; 
             
     // Load palette
-    DmaArrayCopy(3, Palette, BG_PALETTE, 16);
+    DmaArrayCopy(3, Palette::DATA, BG_PALETTE, 16);
     
     /* txt layer's palette trick */
         for(int i=0;i<16;i++)
@@ -33,9 +38,9 @@ void GPU::start(){
         }					
         
     // Load tilesets
-    DmaCopy(3, TILESET_0,CHAR_BASE0_ADDR, 8192, 16);//256 tiles
-    DmaCopy(3, TILESET_1,CHAR_BASE1_ADDR, 16384, 16);//512 tiles
-    DmaCopy(3, TILESET_2,CHAR_BASE2_ADDR, 16384*2, 16);//1024 tiles
+    DmaCopy(3, Tiles::SET_0,CHAR_BASE0_ADDR, 8192, 16);//256 tiles
+    DmaCopy(3, Tiles::SET_1,CHAR_BASE1_ADDR, 16384, 16);//512 tiles
+    DmaCopy(3, Tiles::SET_2,CHAR_BASE2_ADDR, 16384*2, 16);//1024 tiles
     
     // Initialize layers
     R_BG0CNT = SCR_BASE4 | CHAR_BASE_0 | BG_PRIORITY_2 | BG_COLOR_16 | BG_SCREEN_SIZE_0;
@@ -59,7 +64,7 @@ void GPU::blit_0(E_Maps mapIndex, u8 startx, int starty, u8 x, u8 y, u8 width, u
     width = width << 1; //double word per item!
     x<<=1;
     
-    MAP0 = MAPDATA + ((mapIndex * 3) << 12);
+    MAP0 = Layers::DATA + ((mapIndex * 3) << 12);
         
     for(int sy=starty; sy<height+starty; sy++){
         offsetSrc = (sy<<6)+startx;
@@ -77,18 +82,18 @@ void GPU::blit(E_Maps mapIndex, int startx, int starty, int x, int y, int width,
     width = width << 1; //double word per item!
     x<<=1;
     
-    this->MAP0 = MAPDATA + ((mapIndex * 3) << 12);
-    this->MAP1 = this->MAP0 + 4096;
-    this->MAP2 = this->MAP1 + 4096;
+    MAP0 = Layers::DATA + ((mapIndex * 3) << 12);
+    MAP1 = MAP0 + 4096;
+    MAP2 = MAP1 + 4096;
         
     //R_DISPCNT = DISP_FORCE_HBLANK | (DISP_BG0_ON | DISP_BG1_ON |  DISP_BG2_ON) &0x0f00;			
     for(int sy=starty; sy<height+starty; sy++){
         offsetSrc = (sy<<6)+startx;
         offsetDst = (y<<6)+x;
         
-        DmaCopy(3, this->MAP0+offsetSrc, (SCREEN_BASE0_ADDR)+offsetDst, width, 32);
-        DmaCopy(3, this->MAP1+offsetSrc, (SCREEN_BASE1_ADDR)+offsetDst, width, 32);
-        DmaCopy(3, this->MAP2+offsetSrc, (SCREEN_BASE2_ADDR)+offsetDst, width, 32);
+        DmaCopy(3, MAP0+offsetSrc, (SCREEN_BASE0_ADDR)+offsetDst, width, 32);
+        DmaCopy(3, MAP1+offsetSrc, (SCREEN_BASE1_ADDR)+offsetDst, width, 32);
+        DmaCopy(3, MAP2+offsetSrc, (SCREEN_BASE2_ADDR)+offsetDst, width, 32);
         y++;
     }
     //R_DISPCNT = (DISP_BG0_ON | DISP_BG1_ON |  DISP_BG2_ON) &0x0f00;
@@ -109,4 +114,3 @@ void GPU::update(u8 delta){
         redraw--;
     } 
 }
-	

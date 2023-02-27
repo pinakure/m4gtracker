@@ -1,16 +1,15 @@
-typedef struct
-{
+#include "mem.hpp"
+
+typedef struct{
 
 }t_chunk;
 
 
-void cMEM::Init(void)
-{
+void MEM::init(){
 	
 }
 
-void cMEM::Test(void)
-{
+void MEM::test(){
 	u8* test8=(u8*)malloc(sizeof(u8)*256);
 	u16* test16=(u16*)malloc(sizeof(u16)*256);
 	u32* test32=(u32*)malloc(sizeof(u32)*256);
@@ -32,6 +31,4 @@ void cMEM::Test(void)
 	free(test16);
 	free(test32);
 }
-
-cMEM MEM;
 

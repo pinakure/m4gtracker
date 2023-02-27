@@ -2,9 +2,21 @@ PROGNAME=m4g
 #rm C:/agb/BATTERY/*.SAV
 # NOTE: REMOVE DEBUG.O FROM OFILES WHEN RELEASING TO STRIP 5 KB OF USELESS DATA
 OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
-	data/tables.o \
-	modules/gpu/gpu.o \
 	modules/gpu/virtualscreen.o \
+	modules/mem/mem.o \
+	modules/int/int.o \
+	modules/tim/tim.o \
+	modules/gpu/gpu.o \
+	modules/key/key.o \
+	modules/spu/spu.o \
+	modules/regionhandler/regionhandler.o \
+	modules/sys/sys.o \
+	data/variables.o \
+	data/palette.o \
+	data/caches.o \
+	data/tables.o \
+	data/layers.o \
+	data/tileset.o \
 	m4g.o 
 
 HAM_VERSION_MAJOR = 2
@@ -79,4 +91,13 @@ fixheader:
 
 clean:
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f *.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f data/*.o 
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/gpu/*.o 
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/int/*.o 
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/tim/*.o 
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/mem/*.o 
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/key/*.o 
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/spu/*.o 
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/sys/*.o 
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/regionhandler/*.o 
 	

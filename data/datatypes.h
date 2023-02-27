@@ -1,53 +1,13 @@
+#ifndef _DATATYPES_H
+#define _DATATYPES_H
+
 //Cache declaration 
-typedef struct _Cache {
-	void (*element)(u8, u8, u16, u16);					// If not null, data is read from a table instead of a map
-	const u8 mapIndex;
-	const u8 x; 
-	const u8 y; 
-	const u8 width;					// Width of the cache
-	const u8 height;				// Height of the cache
-	const u8 itemwidth;				// Width of each ELEMENT
-	const u8 itemheight;			// Height of each ELEMENT
-	const u8 palActive;				// Focused palette (0xF0 == White Over Black, 0x0F == Black Over White)
-	const u8 palInactive;			// Unfocused palette (0xF0 == White Over Black, 0x0F == Black Over White)
-	const u8 vertical;				// If vertical, reverse the read order
-} Cache;
+#include "cache.hpp"
+#include "display.hpp"
+#include "callback.hpp"
+#include "control.hpp"
 
-typedef struct _Display {
-	const u8 x;							// Horizontal origin in the map
-	const u8 y;							// Vertical origin in the map
-	const bool invert;					// If true, active will be true when var = 0
-	const Cache *cache;				// Cache data used in this display (if type requires cached data)
-	const u8 *var;						// Variable bound (8 bit ponter)
-	bool active;					// If true, a special background highlights in bgh color
-	bool redraw;					// If true, this display will be rendered again next redraw check time
-}Display;
-
-//Controls are processed even when they are not reachable in navigation order!
-typedef struct _Control Control;
-typedef struct _Callback Callback;
-
-typedef struct _Callback {
-	void(*callback)	(Control*, bool, bool, u32*); // Function Pointer to be called on trigger
-	const u16 msg;								// Message causing this callback to trigger
-	void  *var;									// Variable bound
-	const Callback *next;						// If not null, another callback will be checked, only if message didnt match
-} Callback;
-
-
-typedef struct _Control {
-	const u8 x;							// Horizontal origin in the map
-	const u8 y;							// Vertical origin in the map
-	const Control *up;					// Control reached when jumping up
-	const Control *right;				// Control reached when jumping right
-	const Control *down;				// Control reached when jumping down
-	const Control *left;				// Control reached when jumping left
-	const Cache *cache;					// Cache used by this control to represent var
-	u8 *var;							// Variable bound (8 bit ponter)
-	const Callback *callback;
-} Control;
-
-class RegionHandler;
+class REGHND;
 
 typedef struct _Viewport Viewport;
 typedef struct _Region Region;
@@ -69,7 +29,7 @@ typedef struct _Region {
 	const Display *displays;	// Array of existing displays
 	Control *focus;				// Which one of the controls is the active
 	u8 *controlVars;			// Copy of the values being monitored by controls, to know when to redraw
-	void(*updater)(RegionHandler *rh);	
+	void(*updater)();	
 	const Viewport *viewport;			// If not NULL, viewport to be processed with this region
 }Region;
 
@@ -99,3 +59,5 @@ typedef struct s_Help_Topic {
 	const u16			*map_data;
 	const int 		 	*button_list;
 } helptopic;
+
+#endif

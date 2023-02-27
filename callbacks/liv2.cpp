@@ -7,8 +7,8 @@ CALLBACK( cb_live_quantize2 , modify3BIT		, EVENT_MODIFY_B		, &VAR_LIVE.PIANO.QU
 CALLBACK( cb_live_midichan1	, modify4BIT		, EVENT_MODIFY_B		, &VAR_LIVE.PIANO.MIDICHAN[0]	, NULL);
 CALLBACK( cb_live_midichan2	, modify4BIT		, EVENT_MODIFY_B		, &VAR_LIVE.PIANO.MIDICHAN[1]	, NULL);
 
-#define REDRAW(a)	rh->sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&rh->region->displays[a])&0x0fffffff);
-void updateLIVE2(RegionHandler* rh){
+#define REDRAW(a)	REGHND::sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&REGHND::region->displays[a])&0x0fffffff);
+void updateLIVE2(){
 	static u8 lastValue = VAR_LIVE.PIANO.MODE;
 	if(VAR_LIVE.PIANO.MODE != lastValue){
 		lastValue = VAR_LIVE.PIANO.MODE;

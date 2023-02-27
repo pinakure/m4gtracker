@@ -1,10 +1,11 @@
 #ifndef _GPU_HPP
 #define _GPU_HPP
+
 #include "../dma/dma.h" 
 #include "../../agb.h"
 
-#define VLOCK() R_DISPCNT = DISP_FORCE_HBLANK | (DISP_BG0_ON | DISP_BG1_ON |  DISP_BG2_ON) &0x0f00
-#define VUNLOCK() R_DISPCNT = (DISP_BG0_ON | DISP_BG1_ON |  DISP_BG2_ON) &0x0f00
+#define VLOCK() 				( R_DISPCNT = DISP_FORCE_HBLANK | (DISP_BG0_ON | DISP_BG1_ON |  DISP_BG2_ON) &0x0f00 )
+#define VUNLOCK() 				( R_DISPCNT = (DISP_BG0_ON | DISP_BG1_ON |  DISP_BG2_ON) &0x0f00 )
 	
 #define BG_BG					0
 #define BG_HUD					1
@@ -41,82 +42,66 @@
 #define DISP_BG_ALL_ON          0x0f00      // All BG ON
 
 // Screen & Character Database Address
-#define CHAR_BASE0_ADDR		(VRAM+0x0000)
-#define CHAR_BASE1_ADDR		(VRAM+0x4000)
-#define CHAR_BASE2_ADDR		(VRAM+0x8000)
-#define CHAR_BASE3_ADDR		(VRAM+0xc000)
-#define SCREEN_BASE0_ADDR	(CHAR_BASE0_ADDR+0x2000) //screen base block #4
-#define SCREEN_BASE1_ADDR	(CHAR_BASE0_ADDR+0x2800) //screen base block #5
-#define SCREEN_BASE2_ADDR	(CHAR_BASE0_ADDR+0x3000) //screen base block #6
+#define CHAR_BASE0_ADDR			(VRAM+0x0000)
+#define CHAR_BASE1_ADDR			(VRAM+0x4000)
+#define CHAR_BASE2_ADDR			(VRAM+0x8000)
+#define CHAR_BASE3_ADDR			(VRAM+0xc000)
+#define SCREEN_BASE0_ADDR		(CHAR_BASE0_ADDR+0x2000) //screen base block #4
+#define SCREEN_BASE1_ADDR		(CHAR_BASE0_ADDR+0x2800) //screen base block #5
+#define SCREEN_BASE2_ADDR		(CHAR_BASE0_ADDR+0x3000) //screen base block #6
 
 // Character Base Block Specification
-#define CHAR_BASE_0  0x0
-#define CHAR_BASE_1  0x4
-#define CHAR_BASE_2  0x8
-#define CHAR_BASE_3  0xC
+#define CHAR_BASE_0  			0x0
+#define CHAR_BASE_1  			0x4
+#define CHAR_BASE_2  			0x8
+#define CHAR_BASE_3  			0xC
 
 // Screen Base Block Specification
-#define SCR_BASE0  0x0000
-#define SCR_BASE1  0x0100
-#define SCR_BASE2  0x0200
-#define SCR_BASE3  0x0300
-#define SCR_BASE4  0x0400
-#define SCR_BASE5  0x0500
-#define SCR_BASE6  0x0600
-#define SCR_BASE7  0x0700
+#define SCR_BASE0  				0x0000
+#define SCR_BASE1  				0x0100
+#define SCR_BASE2  				0x0200
+#define SCR_BASE3  				0x0300
+#define SCR_BASE4  				0x0400
+#define SCR_BASE5  				0x0500
+#define SCR_BASE6  				0x0600
+#define SCR_BASE7  				0x0700
 
-#define R_BGCNT       *(u16*)(REG_BASE + 0x8)    // BG Control
-#define R_BG0CNT      *(u16*)(REG_BASE + 0x8)    // BG 0 Control
-#define R_BG1CNT      *(u16*)(REG_BASE + 0xa)    // BG 1 Control
-#define R_BG2CNT      *(u16*)(REG_BASE + 0xc)    // BG 2 Control
-#define R_BG3CNT      *(u16*)(REG_BASE + 0xe)    // BG 3 Control
-#define R_BGOFS       (REG_BASE + 0x10)   // BG Offset
-#define R_BG0HOFS     (REG_BASE + 0x10)   // BG 0 H Offset
-#define R_BG0VOFS     (REG_BASE + 0x12)   // BG 0 V Offset
-#define R_BG1HOFS     (REG_BASE + 0x14)   // BG 1 H Offset
-#define R_BG1VOFS     (REG_BASE + 0x16)   // BG 1 V Offset
-#define R_BG2HOFS     (REG_BASE + 0x18)   // BG 2 H Offset
-#define R_BG2VOFS     (REG_BASE + 0x1a)   // BG 2 V Offset
-#define R_BG3HOFS     (REG_BASE + 0x1c)   // BG 3 H Offset
-#define R_BG3VOFS     (REG_BASE + 0x1e)   // BG 3 V Offset
-#define R_BG2AFFINE   (REG_BASE + 0x20)   // BG 2 Affin Transformation Parameters
-#define R_BG2PA       (REG_BASE + 0x20)   // BG 2 Line Direction X Coordinate Difference
-#define R_BG2PB       (REG_BASE + 0x22)   // BG 3 Vertical Direction X Coordinate Difference
-#define R_BG2PC       (REG_BASE + 0x24)   // BG 2 Line Direction Y coordinate Difference
-#define R_BG2PD       (REG_BASE + 0x26)   // BG 2 Vertical Direction Y Coordinate Difference
-#define R_BG2X        (REG_BASE + 0x28)   // BG 2 Start X Coordinate
-#define R_BG2X_L      (REG_BASE + 0x28)
-#define R_BG2X_H      (REG_BASE + 0x2a)
-#define R_BG2Y        (REG_BASE + 0x2c)   // BG 2 Start Y Coordinate
-#define R_BG2Y_L      (REG_BASE + 0x2c)
-#define R_BG2Y_H      (REG_BASE + 0x2e)
-#define R_BG3AFFINE   (REG_BASE + 0x30)   // BG 3 Affin Transformation Parameters
-#define R_BG3PA       (REG_BASE + 0x30)   // BG 3 Line Direction X Coordinate Difference
-#define R_BG3PB       (REG_BASE + 0x32)   // BG 3 Vertical Direction X Coordinate Difference
-#define R_BG3PC       (REG_BASE + 0x34)   // BG 3 Line Direction Y Coordinate Difference
-#define R_BG3PD       (REG_BASE + 0x36)   // BG 3 Vertical Direction Y Coordinate Difference
-#define R_BG3X        (REG_BASE + 0x38)   // BG 3 Start X Coordinate
-#define R_BG3X_L      (REG_BASE + 0x38)
-#define R_BG3X_H      (REG_BASE + 0x3a)
-#define R_BG3Y        (REG_BASE + 0x3c)   // BG 3 Start Y Coordinate
-#define R_BG3Y_L      (REG_BASE + 0x3c)
-#define R_BG3Y_H      (REG_BASE + 0x3e)
-
-class VirtualScreen;
-
-enum E_Maps {
-	MAP_HLP = 0,
-	MAP_INS,
-	MAP_TRK,
-	MAP_CFG,
-	MAP_CACHE,
-	MAP_NONE };
-
-const u32 LAYERS[3] = {
-	SCREEN_BASE0_ADDR,
-	SCREEN_BASE1_ADDR,
-	SCREEN_BASE2_ADDR
-};
+#define R_BGCNT       			*(u16*)(REG_BASE + 0x8)    // BG Control
+#define R_BG0CNT      			*(u16*)(REG_BASE + 0x8)    // BG 0 Control
+#define R_BG1CNT      			*(u16*)(REG_BASE + 0xa)    // BG 1 Control
+#define R_BG2CNT      			*(u16*)(REG_BASE + 0xc)    // BG 2 Control
+#define R_BG3CNT      			*(u16*)(REG_BASE + 0xe)    // BG 3 Control
+#define R_BGOFS       			(REG_BASE + 0x10)   // BG Offset
+#define R_BG0HOFS     			(REG_BASE + 0x10)   // BG 0 H Offset
+#define R_BG0VOFS     			(REG_BASE + 0x12)   // BG 0 V Offset
+#define R_BG1HOFS     			(REG_BASE + 0x14)   // BG 1 H Offset
+#define R_BG1VOFS     			(REG_BASE + 0x16)   // BG 1 V Offset
+#define R_BG2HOFS     			(REG_BASE + 0x18)   // BG 2 H Offset
+#define R_BG2VOFS     			(REG_BASE + 0x1a)   // BG 2 V Offset
+#define R_BG3HOFS     			(REG_BASE + 0x1c)   // BG 3 H Offset
+#define R_BG3VOFS     			(REG_BASE + 0x1e)   // BG 3 V Offset
+#define R_BG2AFFINE   			(REG_BASE + 0x20)   // BG 2 Affin Transformation Parameters
+#define R_BG2PA       			(REG_BASE + 0x20)   // BG 2 Line Direction X Coordinate Difference
+#define R_BG2PB       			(REG_BASE + 0x22)   // BG 3 Vertical Direction X Coordinate Difference
+#define R_BG2PC       			(REG_BASE + 0x24)   // BG 2 Line Direction Y coordinate Difference
+#define R_BG2PD       			(REG_BASE + 0x26)   // BG 2 Vertical Direction Y Coordinate Difference
+#define R_BG2X        			(REG_BASE + 0x28)   // BG 2 Start X Coordinate
+#define R_BG2X_L      			(REG_BASE + 0x28)
+#define R_BG2X_H      			(REG_BASE + 0x2a)
+#define R_BG2Y        			(REG_BASE + 0x2c)   // BG 2 Start Y Coordinate
+#define R_BG2Y_L      			(REG_BASE + 0x2c)
+#define R_BG2Y_H      			(REG_BASE + 0x2e)
+#define R_BG3AFFINE   			(REG_BASE + 0x30)   // BG 3 Affin Transformation Parameters
+#define R_BG3PA       			(REG_BASE + 0x30)   // BG 3 Line Direction X Coordinate Difference
+#define R_BG3PB       			(REG_BASE + 0x32)   // BG 3 Vertical Direction X Coordinate Difference
+#define R_BG3PC       			(REG_BASE + 0x34)   // BG 3 Line Direction Y Coordinate Difference
+#define R_BG3PD       			(REG_BASE + 0x36)   // BG 3 Vertical Direction Y Coordinate Difference
+#define R_BG3X        			(REG_BASE + 0x38)   // BG 3 Start X Coordinate
+#define R_BG3X_L      			(REG_BASE + 0x38)
+#define R_BG3X_H      			(REG_BASE + 0x3a)
+#define R_BG3Y        			(REG_BASE + 0x3c)   // BG 3 Start Y Coordinate
+#define R_BG3Y_L      			(REG_BASE + 0x3c)
+#define R_BG3Y_H      			(REG_BASE + 0x3e)
 
 class VirtualScreen {
 	private:
@@ -135,25 +120,33 @@ class VirtualScreen {
 
 class GPU {	
   private:  
-	vu8 redraw;
-
+	static vu8 redraw;
+	
   public:
-	const unsigned short *MAP0;
-	const unsigned short *MAP1;
-	const unsigned short *MAP2;
+	static const unsigned short *MAP0;
+	static const unsigned short *MAP1;
+	static const unsigned short *MAP2;	
+	static const u32 LAYERS[3];
 
-	VirtualScreen *vs;
+	enum E_Maps {
+		MAP_HLP = 0,
+		MAP_INS,
+		MAP_TRK,
+		MAP_CFG,
+		MAP_CACHE,
+		MAP_NONE 
+	};
 	
-	GPU();
+	static VirtualScreen *vs;
 	
-	bool isVblank();
-	void start();	
-	void safeblit(E_Maps mapIndex, int startx, int starty, int x, int y, int width, int height); // TODO
-	void blit_0(E_Maps mapIndex, u8 startx, int starty, u8 x, u8 y, u8 width, u8 height);
-	void blit(E_Maps mapIndex, int startx, int starty, int x, int y, int width, int height);
-	void set(u8 layer, u8 x, u8 y, u16 index);
-	u16  get(u8 layer, u8 x, u8 y);
-	void update(u8 delta);
+	static bool isVblank();
+	static void start();	
+	static void safeblit(E_Maps mapIndex, int startx, int starty, int x, int y, int width, int height); // TODO
+	static void blit_0(E_Maps mapIndex, u8 startx, int starty, u8 x, u8 y, u8 width, u8 height);
+	static void blit(E_Maps mapIndex, int startx, int starty, int x, int y, int width, int height);
+	static void set(u8 layer, u8 x, u8 y, u16 index);
+	static u16  get(u8 layer, u8 x, u8 y);
+	static void update(u8 delta);
 };
 
 extern GPU gpu;
