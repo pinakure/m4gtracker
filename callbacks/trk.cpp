@@ -47,7 +47,7 @@ const u8 tracker_positions_x[6] = {
 const u8 tracker_positions_y[6] = {  
 	1,  1,  1,  2,  2,  2 
 };    
-const u16 channel_symbols[6][6] = {
+const u16 channel_symbols[ 6 ][ 6 ] = {
 	{ 0x7035, 0xB035, 0xB036, 0xB037, 0xB038, 0xB039 },
 	{ 0xB035, 0x7035, 0xB036, 0xB037, 0xB038, 0xB039 },
 	{ 0xB035, 0xB035, 0x7036, 0xB037, 0xB038, 0xB039 },
@@ -59,32 +59,32 @@ const u16 channel_symbols[6][6] = {
 void cellSync(void){
 	for(int c=0; c<6; c++){
 		for(int i=0, pattern; i<16; i++){
-			pattern = song.patterns[ c ].order[ VAR_CHANNEL[c].POSITION ];
-			VAR_CELLS[c].KEY[i] = VAR_DATA[pattern].KEY[i];
-			VAR_CELLS[c].INS[i] = VAR_DATA[pattern].INS[i];
-			VAR_CELLS[c].VOL[i] = VAR_DATA[pattern].VOL[i];
-			VAR_CELLS[c].CMD[i] = VAR_DATA[pattern].CMD[i];
-			VAR_CELLS[c].VAL[i] = VAR_DATA[pattern].VAL[i];
+			pattern = song.patterns[ c ].order[ channel[ c ].position ];
+			VAR_CELLS[ c ].key[ i ] = VAR_DATA[ pattern ].key[ i ];
+			VAR_CELLS[ c ].ins[ i ] = VAR_DATA[ pattern ].ins[ i ];
+			VAR_CELLS[ c ].vol[ i ] = VAR_DATA[ pattern ].vol[ i ];
+			VAR_CELLS[ c ].cmd[ i ] = VAR_DATA[ pattern ].cmd[ i ];
+			VAR_CELLS[ c ].val[ i ] = VAR_DATA[ pattern ].val[ i ];
 		}
 	}
 }
 
 void cellSyncChannel(u8 c){
 	for(int i=0, pattern; i<16; i++){
-		pattern = song.patterns[ c ].order[ VAR_CHANNEL[c].POSITION ];
-		VAR_CELLS[c].KEY[i] = VAR_DATA[pattern].KEY[i];
-		VAR_CELLS[c].INS[i] = VAR_DATA[pattern].INS[i];
-		VAR_CELLS[c].VOL[i] = VAR_DATA[pattern].VOL[i];
-		VAR_CELLS[c].CMD[i] = VAR_DATA[pattern].CMD[i];
-		VAR_CELLS[c].VAL[i] = VAR_DATA[pattern].VAL[i];
+		pattern = song.patterns[ c ].order[ channel[ c ].position ];
+		VAR_CELLS[ c ].key[ i ] = VAR_DATA[ pattern ].key[ i ];
+		VAR_CELLS[ c ].ins[ i ] = VAR_DATA[ pattern ].ins[ i ];
+		VAR_CELLS[ c ].vol[ i ] = VAR_DATA[ pattern ].vol[ i ];
+		VAR_CELLS[ c ].cmd[ i ] = VAR_DATA[ pattern ].cmd[ i ];
+		VAR_CELLS[ c ].val[ i ] = VAR_DATA[ pattern ].val[ i ];
 
 	}
 	
 	if(REGHND::region != &REGION_MAP_3_TRK) return;
 	
-	int  len = (CFG::CURRENTCHANNEL==c?(16*5):16);
+	int  len = ( CFG::current_channel == c ? ( 16 * 5 ) : 16 );
 	
-	switch(CFG::CURRENTCHANNEL){
+	switch( CFG::current_channel ){
 		case 0:	
 			switch(c){
 				case 0:	for(int i=0, li=len; i<li; i++){ REGHND::drawControl(&CHAN0_CONTROLS[i		]); } return;
@@ -143,21 +143,21 @@ void cellSyncChannel(u8 c){
 }
 
 // TBC on channel data change
-void cellCopy(u8 channel){
+void cellCopy(u8 index){
 		
 	for( int i=0, pattern; i < 16; i++){		
 		
-		pattern = song.patterns[ channel ].order[ VAR_CHANNEL[ channel ].POSITION ];
+		pattern = song.patterns[ index ].order[ channel[ index ].position];
 		
-		VAR_DATA[pattern].KEY[i] = VAR_CELLS[channel].KEY[i];
-		VAR_DATA[pattern].INS[i] = VAR_CELLS[channel].INS[i];
-		VAR_DATA[pattern].VOL[i] = VAR_CELLS[channel].VOL[i];
-		VAR_DATA[pattern].CMD[i] = VAR_CELLS[channel].CMD[i];
-		VAR_DATA[pattern].VAL[i] = VAR_CELLS[channel].VAL[i];
+		VAR_DATA[pattern].key[ i ] = VAR_CELLS[ index ].key[ i ];
+		VAR_DATA[pattern].ins[ i ] = VAR_CELLS[ index ].ins[ i ];
+		VAR_DATA[pattern].vol[ i ] = VAR_CELLS[ index ].vol[ i ];
+		VAR_DATA[pattern].cmd[ i ] = VAR_CELLS[ index ].cmd[ i ];
+		VAR_DATA[pattern].val[ i ] = VAR_CELLS[ index ].val[ i ];
 	}
 	for( int i=0; i < 6; i++ ){
-		if(i==channel)continue;
-		cellSyncChannel(i);
+		if( i == index )continue;
+		cellSyncChannel( i );
 	}
 }
 
@@ -171,7 +171,7 @@ void modifyNote(Control *c, bool bigstep, bool add, u32 *pointer){
 	if(VARIABLE == 0)VARIABLE = 1;
 	transientNote = VARIABLE;
 	transientChanged = true;
-	cellCopy(CFG::CURRENTCHANNEL);
+	cellCopy( CFG::current_channel );
 	#undef VARIABLE
 }
 void trkDrawTransientInfo(void){
@@ -183,22 +183,22 @@ void trkDrawTransientInfo(void){
 	transientChanged = false;
 }
 
-void trkDrawPosition(int channel, bool hl){
-	GPU::set(2, tracker_positions_x[channel], tracker_positions_y[channel], channel_symbols[CFG::CURRENTCHANNEL][channel]);
-	HEXADECIMAL(tracker_positions_x[channel]+1	, tracker_positions_y[channel]	, 0x1+hl , VAR_CHANNEL[channel].POSITION>>4);
-	HEXADECIMAL(tracker_positions_x[channel]+2	, tracker_positions_y[channel]	, 0x1+hl , VAR_CHANNEL[channel].POSITION&0xf);
-	HEXADECIMAL_TWOTILES(tracker_positions_x[channel]+3	, tracker_positions_y[channel]	, hl?0x6:0xD , song.patterns[ channel ].order[ VAR_CHANNEL[ channel ].POSITION ] );
-	VAR_CHANNEL[channel].LASTPOSITION =  VAR_CHANNEL[channel].POSITION;	
+void trkDrawPosition(int index, bool hl){
+	GPU::set( 2, tracker_positions_x[ index ]	 			, tracker_positions_y[ index ] , channel_symbols[ CFG::current_channel ][ index ] );
+	HEXADECIMAL( tracker_positions_x[ index ] + 1 			, tracker_positions_y[ index ] , 0x1 + hl 	, channel[ index ].position >> 4   );
+	HEXADECIMAL( tracker_positions_x[ index ] + 2 			, tracker_positions_y[ index ] , 0x1 + hl 	, channel[ index ].position  & 0xf );
+	HEXADECIMAL_TWOTILES( tracker_positions_x[ index ] + 3	, tracker_positions_y[ index ] , hl?0x6:0xD , song.patterns[ index ].order[ channel[ index ].position ] );
+	channel[ index ].last_position = channel[ index ].position;	
 }
 
-void trkDrawLine(int channel){
-	int y = 4+VAR_CHANNEL[channel].STEP;
-	int x = tracker_cols[CFG::CURRENTCHANNEL][channel];
-	for(int i=0, li=(channel==CFG::CURRENTCHANNEL?9:3); i<li; i++){
-		GPU::set(0, x+i, 4+VAR_CHANNEL[channel].LASTSTEP, 0x0);
-		GPU::set(0, x+i, y, 0x15);
+void trkDrawLine(int index){
+	int y = 4 + channel[ index ].step;
+	int x = tracker_cols[ CFG::current_channel ][ index ];
+	for( int i=0, li = ( index == CFG::current_channel ? 9 : 3 ); i < li; i++ ){
+		GPU::set( 0, x + i, 4 + channel[ index ].last_step, 0x0 );
+		GPU::set( 0, x + i, y, 0x15 );
 	}	
-	VAR_CHANNEL[channel].LASTSTEP =  VAR_CHANNEL[channel].STEP;	
+	channel[ index ].last_step = channel[ index ].step;	
 }
 
 void trkDispatchMessage(u32 msg){
@@ -208,19 +208,19 @@ void trkDispatchMessage(u32 msg){
 			return;*/
 			
 		case MESSAGE_OTHER_PREV:
-			CFG::CURRENTCHANNEL = CFG::CURRENTCHANNEL>0?CFG::CURRENTCHANNEL-1:5;
-			for(int i=0; i<6;i++){
-				trkDrawPosition(i, i==CFG::CURRENTCHANNEL);
+			CFG::current_channel = CFG::current_channel > 0 ? CFG::current_channel - 1 : 5;
+			for( int i=0; i < 6 ;i++ ){
+				trkDrawPosition( i, i == CFG::current_channel );
 			}	
-			REGHND::updateViewport(&VIEWPORT_TRK, REGHND::region->xadd,REGHND::region->yadd);
+			REGHND::updateViewport( &VIEWPORT_TRK, REGHND::region->xadd, REGHND::region->yadd );
 			return;
 		
 		case MESSAGE_OTHER_NEXT:
-			CFG::CURRENTCHANNEL = CFG::CURRENTCHANNEL<5?CFG::CURRENTCHANNEL+1:0;
-			for(int i=0; i<6;i++){
-				trkDrawPosition(i, i==CFG::CURRENTCHANNEL);
+			CFG::current_channel = CFG::current_channel < 5 ? CFG::current_channel + 1 : 0;
+			for( int i=0; i < 6 ;i++ ){
+				trkDrawPosition( i, i == CFG::current_channel );
 			}	
-			REGHND::updateViewport(&VIEWPORT_TRK, REGHND::region->xadd, REGHND::region->yadd);
+			REGHND::updateViewport( &VIEWPORT_TRK, REGHND::region->xadd, REGHND::region->yadd );
 			return;
 	}
 }
@@ -235,7 +235,7 @@ void trkGlobalUpdater(){
 	if(REGHND::redraw){
 		for(int i=0; i<6;i++){
 			
-			trkDrawPosition(i,i==CFG::CURRENTCHANNEL);
+			trkDrawPosition( i, i==CFG::current_channel );
 			
 		}
 	}
@@ -244,18 +244,18 @@ void trkGlobalUpdater(){
 		for(int i=0; i<6;i++){
 			
 			// Update vumeters
-			u8 last_peak = VAR_CHANNEL[i].lastpeak;
-			u8 peak = VAR_CHANNEL[i].peak;
+			u8 last_peak = channel[ i ].last_peak;
+			u8 peak = channel[ i ].peak;
 			if(last_peak!=peak) VUMETER_V3(8+i, 0, 0x0, peak>12?12:peak);			
 			
 			// Update next step (cell) reactive elements
-			if(VAR_CHANNEL[i].LASTSTEP != VAR_CHANNEL[i].STEP) trkDrawLine(i);
+			if( channel[ i ].last_step != channel[ i ].step ) trkDrawLine(i);
 			
 			// Update next pattern reactive elements
-			if((VAR_CHANNEL[i].LASTPOSITION != VAR_CHANNEL[i].POSITION) || REGHND::redraw) {
-				trkDrawPosition(i, i==CFG::CURRENTCHANNEL);
-				cellSyncChannel(i);
-				VAR_CHANNEL[i].LASTPOSITION =  VAR_CHANNEL[i].POSITION;
+			if( ( channel[ i ].last_position != channel[ i ].position ) || REGHND::redraw ) {
+				trkDrawPosition( i, i == CFG::current_channel );
+				cellSyncChannel( i );
+				channel[ i ].last_position = channel[i].position;
 			}
 		}
 		tracker_clean = false;
@@ -303,16 +303,16 @@ void updateTable(){
 }
 
 #define CALLBACK(n, c, t, v, nx)			const Callback n = { c , t , v, nx}
-#define CB_CHAN_KEY(c,a)	CALLBACK( cb_ch##c##_keypaste_0##a 	, pasteNote	    , EVENT_KEYDOWN_B 	, &VAR_CELLS[ 0x##c ].KEY[ 0x##a ], NULL						);	\
-							CALLBACK( cb_ch##c##_key_0##a 		, modifyNote	, EVENT_MODIFY_B 	, &VAR_CELLS[ 0x##c ].KEY[ 0x##a ], &cb_ch##c##_keypaste_0##a 	);
-#define CB_CHAN_INS(c,a)	CALLBACK( cb_ch##c##_inspaste_0##a 	, pasteInst		, EVENT_KEYDOWN_B 	, &VAR_CELLS[ 0x##c ].INS[ 0x##a ], NULL						);	\
-							CALLBACK( cb_ch##c##_ins_0##a 		, modifyInst	, EVENT_MODIFY_B 	, &VAR_CELLS[ 0x##c ].INS[ 0x##a ], &cb_ch##c##_inspaste_0##a 	);
-#define CB_CHAN_VOL(c,a)	CALLBACK( cb_ch##c##_volpaste_0##a 	, pasteVolume	, EVENT_KEYDOWN_B 	, &VAR_CELLS[ 0x##c ].VOL[ 0x##a ], NULL						);	\
-							CALLBACK( cb_ch##c##_vol_0##a 		, modifyVolume	, EVENT_MODIFY_B 	, &VAR_CELLS[ 0x##c ].VOL[ 0x##a ], &cb_ch##c##_volpaste_0##a	); 
-#define CB_CHAN_CMD(c,a)	CALLBACK( cb_ch##c##_cmdpaste_0##a 	, pasteCommand	, EVENT_KEYDOWN_B 	, &VAR_CELLS[ 0x##c ].CMD[ 0x##a ], NULL						);	\
-							CALLBACK( cb_ch##c##_cmd_0##a 		, modifyCommand	, EVENT_MODIFY_B 	, &VAR_CELLS[ 0x##c ].CMD[ 0x##a ], &cb_ch##c##_cmdpaste_0##a 	); 
-#define CB_CHAN_VAL(c,a)	CALLBACK( cb_ch##c##_valpaste_0##a 	, pasteValue	, EVENT_KEYDOWN_B 	, &VAR_CELLS[ 0x##c ].VAL[ 0x##a ], NULL						);	\
-							CALLBACK( cb_ch##c##_val_0##a 		, modifyValue	, EVENT_MODIFY_B 	, &VAR_CELLS[ 0x##c ].VAL[ 0x##a ], &cb_ch##c##_valpaste_0##a	); 
+#define CB_CHAN_KEY(c,a)	CALLBACK( cb_ch##c##_keypaste_0##a 	, pasteNote	    , EVENT_KEYDOWN_B 	, &VAR_CELLS[ 0x##c ].key[ 0x##a ], NULL						);	\
+							CALLBACK( cb_ch##c##_key_0##a 		, modifyNote	, EVENT_MODIFY_B 	, &VAR_CELLS[ 0x##c ].key[ 0x##a ], &cb_ch##c##_keypaste_0##a 	);
+#define CB_CHAN_INS(c,a)	CALLBACK( cb_ch##c##_inspaste_0##a 	, pasteInst		, EVENT_KEYDOWN_B 	, &VAR_CELLS[ 0x##c ].ins[ 0x##a ], NULL						);	\
+							CALLBACK( cb_ch##c##_ins_0##a 		, modifyInst	, EVENT_MODIFY_B 	, &VAR_CELLS[ 0x##c ].ins[ 0x##a ], &cb_ch##c##_inspaste_0##a 	);
+#define CB_CHAN_VOL(c,a)	CALLBACK( cb_ch##c##_volpaste_0##a 	, pasteVolume	, EVENT_KEYDOWN_B 	, &VAR_CELLS[ 0x##c ].vol[ 0x##a ], NULL						);	\
+							CALLBACK( cb_ch##c##_vol_0##a 		, modifyVolume	, EVENT_MODIFY_B 	, &VAR_CELLS[ 0x##c ].vol[ 0x##a ], &cb_ch##c##_volpaste_0##a	); 
+#define CB_CHAN_CMD(c,a)	CALLBACK( cb_ch##c##_cmdpaste_0##a 	, pasteCommand	, EVENT_KEYDOWN_B 	, &VAR_CELLS[ 0x##c ].cmd[ 0x##a ], NULL						);	\
+							CALLBACK( cb_ch##c##_cmd_0##a 		, modifyCommand	, EVENT_MODIFY_B 	, &VAR_CELLS[ 0x##c ].cmd[ 0x##a ], &cb_ch##c##_cmdpaste_0##a 	); 
+#define CB_CHAN_VAL(c,a)	CALLBACK( cb_ch##c##_valpaste_0##a 	, pasteValue	, EVENT_KEYDOWN_B 	, &VAR_CELLS[ 0x##c ].val[ 0x##a ], NULL						);	\
+							CALLBACK( cb_ch##c##_val_0##a 		, modifyValue	, EVENT_MODIFY_B 	, &VAR_CELLS[ 0x##c ].val[ 0x##a ], &cb_ch##c##_valpaste_0##a	); 
 CB_CHAN_VAL(0, 0);	CB_CHAN_CMD(0, 0);	CB_CHAN_VOL(0, 0);	CB_CHAN_INS(0, 0);	CB_CHAN_KEY(0, 0);
 CB_CHAN_VAL(0, 1);	CB_CHAN_CMD(0, 1);	CB_CHAN_VOL(0, 1);	CB_CHAN_INS(0, 1);	CB_CHAN_KEY(0, 1);
 CB_CHAN_VAL(0, 2);	CB_CHAN_CMD(0, 2);	CB_CHAN_VOL(0, 2);	CB_CHAN_INS(0, 2);	CB_CHAN_KEY(0, 2);

@@ -12,16 +12,16 @@ REVISION DATE 	2023-02-28
 #include "../data/controls.hpp"
 #include "../macros.hpp"
 
-void instrumentUnpack(INSTRUMENT *i);
-void instcopy(INSTRUMENT *s, INSTRUMENT *d);
+void instrumentUnpack(Instrument *i);
+void instcopy(Instrument *s, Instrument *d);
 void instSync();
-void instrumentPack(INSTRUMENT *i);
+void instrumentPack(Instrument *i);
 
 
 #define CALLBACK(n, c, t, v, nx)			const Callback n = { c , t , v, nx}
 //-----------------------------------------------------------------------------
 // General Callbacks
-CALLBACK( cb_ins_index		, instrumentIndex	, EVENT_MODIFY_B 	, &CFG::CURRENTINSTRUMENT	, NULL);
+CALLBACK( cb_ins_index		, instrumentIndex	, EVENT_MODIFY_B 	, &CFG::current_instrument	, NULL);
 CALLBACK( cb_ins_name		, ALPHA6			, EVENT_KEYDOWN_B 	, &VAR_INSTRUMENT.NAME			, NULL);
 CALLBACK( cb_ins_type		, instrumentType	, EVENT_MODIFY_B 	, &VAR_INSTRUMENT.TYPE			, NULL);
 //-----------------------------------------------------------------------------
@@ -254,7 +254,7 @@ void instType(){
 
 // Called on index change
 void instLoad(){	
-	instcopy(&VAR_INSTRUMENTS[CFG::CURRENTINSTRUMENT], &VAR_INSTRUMENT);	
+	instcopy(&VAR_INSTRUMENTS[CFG::current_instrument], &VAR_INSTRUMENT);	
 	instrumentUnpack(&VAR_INSTRUMENT);
 	REGHND::redraw = true;	
 }
@@ -262,7 +262,7 @@ void instLoad(){
 // Called on value change (against index and type)
 void instSync(){	
 	instrumentPack(&VAR_INSTRUMENT);
-	instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[CFG::CURRENTINSTRUMENT]);	
+	instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[CFG::current_instrument]);	
 }
 
 void instrument1Bit	(Control *c, bool bigstep, bool add, u32 *pointer){	modify1Bit(c,bigstep, add, pointer); 	instSync(); }
@@ -281,7 +281,7 @@ void instrumentType (Control *c, bool bigstep, bool add, u32 *pointer){	modify2B
 void instrumentIndex(Control *c, bool bigstep, bool add, u32 *pointer){	instSync(); modify6Bit(c,bigstep, add, pointer); instLoad(); }
 
 /* SYNCRONIZES Specific instrument data with Generic Abstract Instrument byte array */
-void instrumentPack(INSTRUMENT *i){
+void instrumentPack(Instrument *i){
 	int c, di;
 	
 	switch(i->TYPE){
@@ -344,7 +344,7 @@ void instrumentPack(INSTRUMENT *i){
 }
 
 /* SYNCRONIZES Abstract Instrument data to current type specific data */
-void instrumentUnpack(INSTRUMENT *i){
+void instrumentUnpack(Instrument *i){
 	int c, di;
 	switch(i->TYPE){
 		case INSTRUMENT_TYPE_PWM:
@@ -435,7 +435,7 @@ void instrumentUnpack(INSTRUMENT *i){
 	}
 }
 
-void instcopy(INSTRUMENT *s, INSTRUMENT *d){
+void instcopy(Instrument *s, Instrument *d){
 	int i;
 	
 	d->TYPE = s->TYPE;
@@ -464,13 +464,13 @@ void instcopy(INSTRUMENT *s, INSTRUMENT *d){
 static void instrumentSync(){
 	static u8 LASTINSTRUMENT = 63;
 	
-	if(LASTINSTRUMENT != CFG::CURRENTINSTRUMENT){
-		instcopy(&VAR_INSTRUMENTS[CFG::CURRENTINSTRUMENT], &VAR_INSTRUMENT);
+	if(LASTINSTRUMENT != CFG::current_instrument){
+		instcopy(&VAR_INSTRUMENTS[CFG::current_instrument], &VAR_INSTRUMENT);
 		instrumentUnpack(&VAR_INSTRUMENT);
-		LASTINSTRUMENT = CFG::CURRENTINSTRUMENT;
+		LASTINSTRUMENT = CFG::current_instrument;
 		REGHND::redraw = true;
 	} /*else {
-		instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[CFG::CURRENTINSTRUMENT]);
+		instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[CFG::current_instrument]);
 		instrumentPack(&VAR_INSTRUMENT);
 	}*/
 }
@@ -478,14 +478,14 @@ static void instrumentSync(){
 void insDispatchMessage(u32 msg) {
 	switch(msg) {
 		case MESSAGE_OTHER_PREV:
-			CFG::CURRENTINSTRUMENT--;
-			CFG::CURRENTINSTRUMENT &= 0x3f;
+			CFG::current_instrument--;
+			CFG::current_instrument &= 0x3f;
 			instLoad();
 			return;
 		
 		case MESSAGE_OTHER_NEXT:			
-			CFG::CURRENTINSTRUMENT++;
-			CFG::CURRENTINSTRUMENT &= 0x3f;
+			CFG::current_instrument++;
+			CFG::current_instrument &= 0x3f;
 			instLoad();
 			return;
 	}	

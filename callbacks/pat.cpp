@@ -33,17 +33,17 @@ static bool pat_solo_clean 		= false;
 // TBC on value change @ PATtern editor
 void patternCopy(u8 channel){
 	
-	CFG::CURRENTCHANNEL = channel;
+	CFG::current_channel = channel;
 	// *REGION_MAP_3_TRK.viewport->var = channel;	
 	
 	for(int i=0; i<16;i++){		
-		song.patterns[ channel ].order[ CFG::ORDERPOSITION + i ] = VAR_PATTERN[ channel ].order[ i ];
+		song.patterns[ channel ].order[ CFG::order_position + i ] = VAR_PATTERN[ channel ].order[ i ];
 	}
 	
 	cellSync();
 }
 
-// TBC each time CFG::ORDERPOSITION CHANGES
+// TBC each time CFG::order_position CHANGES
 void patternSync(u8 position){
 	for( int i=0, p=position; i < 16; i++, p++){
 		//p = i + position;
@@ -70,12 +70,12 @@ void patternCH3_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7B
 void patternCH4_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7Bit(c, bigstep, add, pointer); patternCopy(4);}
 void patternCH5_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7Bit(c, bigstep, add, pointer); patternCopy(5);}
 
-void patternCH0_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 0; pattern_bookmark_row = *(u8*)pointer;}
-void patternCH1_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 1; pattern_bookmark_row = *(u8*)pointer;}
-void patternCH2_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 2; pattern_bookmark_row = *(u8*)pointer;}
-void patternCH3_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 3; pattern_bookmark_row = *(u8*)pointer;}
-void patternCH4_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 4; pattern_bookmark_row = *(u8*)pointer;}
-void patternCH5_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 5; pattern_bookmark_row = *(u8*)pointer;}
+void patternCH0_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::current_channel = 0; pattern_bookmark_row = *(u8*)pointer;}
+void patternCH1_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::current_channel = 1; pattern_bookmark_row = *(u8*)pointer;}
+void patternCH2_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::current_channel = 2; pattern_bookmark_row = *(u8*)pointer;}
+void patternCH3_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::current_channel = 3; pattern_bookmark_row = *(u8*)pointer;}
+void patternCH4_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::current_channel = 4; pattern_bookmark_row = *(u8*)pointer;}
+void patternCH5_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::current_channel = 5; pattern_bookmark_row = *(u8*)pointer;}
 
 #define CALLBACK(n, c, t, v, nx)			const Callback n = { c , t , v, nx}
 #define CB_PATTERNS(c, a)	CALLBACK( cb_patterns_focus_##c##_0##a 	, patternCH##c##_focus	, EVENT_FOCUS 		, (u32*)&NUMBERS[0x0##a] 					, NULL							);\
@@ -118,7 +118,7 @@ void patGlobalUpdater(){
 	if(KEY::press(KEY_B)) {
 		bookmark_timer++;
 		if(bookmark_timer > 2000) {			
-			pattern_bookmarks[CFG::CURRENTCHANNEL] = CFG::ORDERPOSITION + pattern_bookmark_row;
+			pattern_bookmarks[ CFG::current_channel ] = CFG::order_position + pattern_bookmark_row;
 			pat_clean = false;
 			bookmark_timer = 0;
 		}
@@ -133,20 +133,20 @@ void updatePat(){
 	patGlobalUpdater();
 	
 	// Draw position arrows
-	for(int c=0, x=0, y=0; c < 6; c++) {
-		if((!pat_clean)|| (REGHND::redraw) || (VAR_CHANNEL[c].POSITION != VAR_CHANNEL[c].LASTPOSITION)){
+	for( int c=0, x=0, y=0; c < 6; c++ ) {
+		if( ( !pat_clean ) || ( REGHND::redraw ) || ( channel[ c ].position != channel[ c ].last_position ) ){
 			
-			if(pattern_bookmarks[c]>0) {
-				y = pattern_bookmarks[c] - CFG::ORDERPOSITION;
-				if((y<=15)&&(y>=0)){
-					GPU::set(0, pattern_arrow_position[c]+1, 4+y, 0x8);
-					GPU::set(0, pattern_arrow_position[c]+2, 4+y, 0x8);
+			if( pattern_bookmarks[ c ] > 0 ) {
+				y = pattern_bookmarks[ c ] - CFG::order_position;
+				if( ( y <= 15 ) && ( y >= 0 ) ){
+					GPU::set( 0, pattern_arrow_position[ c ] + 1, 4 + y, 0x8 );
+					GPU::set( 0, pattern_arrow_position[ c ] + 2, 4 + y, 0x8 );
 				}
 			}
-			y = VAR_CHANNEL[c].POSITION - CFG::ORDERPOSITION;
-			x = VAR_CHANNEL[c].LASTPOSITION - CFG::ORDERPOSITION;
-			if((x<=15)&&(x>=0)) GPU::set(2, pattern_arrow_position[c], 4+x, 0x00FC);
-			if((y<=15)&&(y>=0)) GPU::set(2, pattern_arrow_position[c], 4+y, 0x408D);
+			y = channel[ c ].position - CFG::order_position;
+			x = channel[ c ].last_position - CFG::order_position;
+			if( ( x <= 15 ) && ( x >= 0 ) ) GPU::set( 2, pattern_arrow_position[ c ], 4 + x, 0x00FC );
+			if( ( y <= 15 ) && ( y >= 0 ) ) GPU::set( 2, pattern_arrow_position[ c ], 4 + y, 0x408D );
 		}
 		pat_solo_clean = false;
 	}
@@ -154,25 +154,25 @@ void updatePat(){
 	if(!pat_solo_clean){
 		/* ------------------------------------------------------------
 		Redraw mute / solo icons 									 */
-		for(int c=0; c < 6; c++) {
+		for( int c=0; c < 6; c++ ) {
 			/* ------------------------------------------------------------
 			If mute is enabled, draw MUTE on High Red color 			 */
-			if(VAR_CHANNEL[c].mute) { 
-				GPU::set(2, pattern_arrow_position[c]+1, 3, 0x3057);
-				GPU::set(2, pattern_arrow_position[c]+2, 3, 0x3058); 
+			if( channel[ c ].mute ){ 
+				GPU::set(2, pattern_arrow_position[ c ] + 1, 3, 0x3057 );
+				GPU::set(2, pattern_arrow_position[ c ] + 2, 3, 0x3058 ); 
 				continue; 
 			}
 			/* ------------------------------------------------------------
 			If solo is enabled, draw SOLO on High green color	   		 */
-			if(VAR_CHANNEL[c].solo) { 
-				GPU::set(2, pattern_arrow_position[c]+1, 3, 0xF055);
-				GPU::set(2, pattern_arrow_position[c]+2, 3, 0xF056); 
+			if( channel[ c ].solo ){ 
+				GPU::set(2, pattern_arrow_position[ c ] + 1, 3, 0xF055 );
+				GPU::set(2, pattern_arrow_position[ c ] + 2, 3, 0xF056 ); 
 				continue;
 			}
 			/* ------------------------------------------------------------
 			Else, draw channel icon		 								 */
-				GPU::set(2, pattern_arrow_position[c]+1, 3, pattern_channel_symbols[c]); 
-				GPU::set(2, pattern_arrow_position[c]+2, 3, 0x00FC); 
+				GPU::set(2, pattern_arrow_position[ c ] + 1, 3, pattern_channel_symbols[ c ] ); 
+				GPU::set(2, pattern_arrow_position[ c ] + 2, 3, 0x00FC ); 
 			// ------------------------------------------------------------
 		}
 		// ------------------------------------------------------------
@@ -180,21 +180,18 @@ void updatePat(){
 	}
 	
 	// Draw position tags (Sides)
-	if((!pat_clean)||(last_position != CFG::ORDERPOSITION)||(REGHND::redraw)){		
-		for(int c=0, h=0, y=4, v=CFG::ORDERPOSITION; c < 16; c++) {
+	if( ( !pat_clean ) || ( last_position != CFG::order_position ) || ( REGHND::redraw ) ){		
+		for( int c=0, h=0, y=4, v=CFG::order_position; c < 16; c++ ) {
 			h = (c & 1) ? 0x3 : 0x5;
-			HEXADECIMAL( 1, y, h, v>>4);
-			HEXADECIMAL( 2, y, h, v&0xf);
-			HEXADECIMAL(27, y, h, v>>4);
-			HEXADECIMAL(28, y, h, v&0xf);
-			
+			HEXADECIMAL(  1, y, h, v >>  4);
+			HEXADECIMAL(  2, y, h, v & 0xf);
+			HEXADECIMAL( 27, y, h, v >>  4);
+			HEXADECIMAL( 28, y, h, v & 0xf);
 			v++;
 			y++;
 		}
-		last_position = CFG::ORDERPOSITION;
+		last_position = CFG::order_position;
 		pat_clean = true;
-		
-		
 	}
 }
 //----------------------------------------------------------------------------------------
@@ -221,7 +218,7 @@ void patSync(void){
 		for(int i=0; i<16;i++){
 			/* ------------------------------------------------------------
 			Copy data from VISIBLE CONTROL VARS -> Song Data Order Memory*/
-			VAR_PATTERN[ c ].order[ i ] = song.patterns[ c ].order[ i + CFG::ORDERPOSITION ];
+			VAR_PATTERN[ c ].order[ i ] = song.patterns[ c ].order[ i + CFG::order_position ];
 			/* ------------------------------------------------------------
 			Manually draw the controls (good to avoid message overflow)  */
 			REGHND::drawControl(&PAT_CONTROLS[o]);
@@ -235,18 +232,18 @@ void patSync(void){
 }
 
 void patDispatchMessage(u32 msg){
-	switch(msg){
+	switch( msg ){
 		/* Scroll up */
 		case MESSAGE_OTHER_PREV:
-			if(CFG::ORDERPOSITION>0){
+			if( CFG::order_position > 0 ){
 				/* ------------------------------------------------------------
 				Clear Arrows when pattern scrolls down 						 */
-				for(int c=0, x=0; c<6;c++){
-					x = VAR_CHANNEL[c].POSITION - CFG::ORDERPOSITION;
-					if((x<=15)&&(x>=0))GPU::set(2, pattern_arrow_position[c], 4+x, 0x00FC);
+				for( int c=0, x=0; c<6; c++ ){
+					x = channel[ c ].position - CFG::order_position;
+					if( ( x <= 15 ) && ( x >= 0 ) ) GPU::set( 2, pattern_arrow_position[ c ], 4 + x, 0x00FC );
 				}
 				// ------------------------------------------------------------
-				CFG::ORDERPOSITION--;
+				CFG::order_position--;
 				/* ------------------------------------------------------------
 				Copy cells from VAR_DATA(Memory)->VAR_PATTERN (Visible Vars) */
 				patSync();
@@ -260,15 +257,15 @@ void patDispatchMessage(u32 msg){
 		/* Scroll down */
 		case MESSAGE_OTHER_NEXT: 
 			/* about the 240 below, it is 256 patterns - 16 visible entries */
-			if(CFG::ORDERPOSITION < 240){ 
+			if( CFG::order_position < 240 ){ 
 				/* ------------------------------------------------------------
 				Clear Arrows when pattern scrolls down 						 */
-				for(int c=0, x=0; c<6;c++){
-					x = VAR_CHANNEL[c].POSITION - CFG::ORDERPOSITION;
-					if((x<=15)&&(x>=0))GPU::set(2, pattern_arrow_position[c], 4+x, 0x00FC);
+				for( int c=0, x=0; c<6; c++ ){
+					x = channel[ c ].position - CFG::order_position;
+					if( ( x <= 15 ) && ( x >= 0 ) ) GPU::set( 2, pattern_arrow_position[ c ], 4 + x, 0x00FC );
 				}
 				// ------------------------------------------------------------
-				CFG::ORDERPOSITION++;
+				CFG::order_position++;
 				/* ------------------------------------------------------------
 				Copy cells from VAR_DATA(Memory)->VAR_PATTERN (Visible Vars) */
 				patSync();

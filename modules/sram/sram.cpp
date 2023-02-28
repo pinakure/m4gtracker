@@ -93,7 +93,7 @@ void SRAM::songSave(){
 	int i;
 	
 	seek(0x80);
-	forward(32 * CFG::SLOT);
+	forward(32 * CFG::slot);
 
 	// Write Song details
 	write( song.transpose	);
@@ -111,7 +111,7 @@ void SRAM::songSave(){
 	//0x140
 	
 	// Write Groove Steps
-	forward( 16 * CFG::SLOT );
+	forward( 16 * CFG::slot );
 	for( i=0; i < 16; i++ ){
 		write( song.groove.step[ i ] );
 	}
@@ -120,7 +120,7 @@ void SRAM::songSave(){
 	drawPosition( 27, 3, 2 );	
 	seek( 0x200 );
 		
-	forward( 1536 * CFG::SLOT );	
+	forward( 1536 * CFG::slot );	
 	for( i=0; i < 256; i++ ){
 		write( song.patterns[ 0 ].order[ i ] );
 		write( song.patterns[ 1 ].order[ i ] );
@@ -140,7 +140,7 @@ void SRAM::songLoad(){
 	u8  h;
 	
 	seek( 0x80 );
-	forward( 32 * CFG::SLOT );
+	forward( 32 * CFG::slot );
 	
 	// Song details
 	song.transpose 		= read();
@@ -162,7 +162,7 @@ void SRAM::songLoad(){
 
 	drawPosition( 27, 2, 6 );	
 
-	forward( 16 * CFG::SLOT );
+	forward( 16 * CFG::slot );
 	for( i=0; i < 16; i++ ){
 		song.groove.step[ i ] = read();
 	}
@@ -171,7 +171,7 @@ void SRAM::songLoad(){
 	drawPosition( 27, 3, 6 );	
 	seek( 0x200 );
 	
-	forward( 1536 * CFG::SLOT );
+	forward( 1536 * CFG::slot );
 	for( i=0; i < 256; i++ ){
 		song.patterns[ 0 ].order[ i ] = read();
 		song.patterns[ 1 ].order[ i ] = read();
@@ -181,7 +181,7 @@ void SRAM::songLoad(){
 		song.patterns[ 5 ].order[ i ] = read();
 	}
 	
-	patternSync( CFG::ORDERPOSITION );
+	patternSync( CFG::order_position );
 	cellSync();
 	
 	drawPosition( 27, 4, 6 );
@@ -207,28 +207,28 @@ void SRAM::songDefaults(){
 	// Pattern data clear
 	for(i=0; i<128; i++){
 		for(di=0; di<16; di++){
-			VAR_DATA[i].KEY[di] = 0;
-			VAR_DATA[i].INS[di] = 0;
-			VAR_DATA[i].VOL[di] = 0;
-			VAR_DATA[i].CMD[di] = 0;
-			VAR_DATA[i].VAL[di] = 0;
+			VAR_DATA[i].key[di] = 0;
+			VAR_DATA[i].ins[di] = 0;
+			VAR_DATA[i].vol[di] = 0;
+			VAR_DATA[i].cmd[di] = 0;
+			VAR_DATA[i].val[di] = 0;
 		}
 	}
 
 	// Live Perform table clear
 	for(i=0; i<8; i++){
-		VAR_LIVE.PERFORM.LEFT.KEY[i] = 0;
-		VAR_LIVE.PERFORM.LEFT.INS[i] = 0;
-		VAR_LIVE.PERFORM.LEFT.CHAN[i] = 0;
-		VAR_LIVE.PERFORM.LEFT.VOL[i] = 0;
-		VAR_LIVE.PERFORM.LEFT.CMD[i] = 0;
-		VAR_LIVE.PERFORM.LEFT.VAL[i] = 0;
-		VAR_LIVE.PERFORM.RIGHT.KEY[i] = 0;
-		VAR_LIVE.PERFORM.RIGHT.INS[i] = 0;
-		VAR_LIVE.PERFORM.RIGHT.CHAN[i] = 0;
-		VAR_LIVE.PERFORM.RIGHT.VOL[i] = 0;
-		VAR_LIVE.PERFORM.RIGHT.CMD[i] = 0;
-		VAR_LIVE.PERFORM.RIGHT.VAL[i] = 0;
+		live.perform.left.key[i] = 0;
+		live.perform.left.ins[i] = 0;
+		live.perform.left.chan[i] = 0;
+		live.perform.left.vol[i] = 0;
+		live.perform.left.cmd[i] = 0;
+		live.perform.left.val[i] = 0;
+		live.perform.right.key[i] = 0;
+		live.perform.right.ins[i] = 0;
+		live.perform.right.chan[i] = 0;
+		live.perform.right.vol[i] = 0;
+		live.perform.right.cmd[i] = 0;
+		live.perform.right.val[i] = 0;
 	}
 
 	// Empty Order chains
@@ -249,11 +249,11 @@ void SRAM::sharedDataSave(void){
 	seek(0x2600);
 	for(i=0;i<128;i++){
 		for(di=0;di<16;di++){
-			write(VAR_DATA[i].KEY[di]);
-			write(VAR_DATA[i].INS[di]);
-			write(VAR_DATA[i].VOL[di]);
-			write(VAR_DATA[i].CMD[di]);
-			write(VAR_DATA[i].VAL[di]);
+			write(VAR_DATA[i].key[di]);
+			write(VAR_DATA[i].ins[di]);
+			write(VAR_DATA[i].vol[di]);
+			write(VAR_DATA[i].cmd[di]);
+			write(VAR_DATA[i].val[di]);
 		}
 	}	
 	
@@ -262,7 +262,7 @@ void SRAM::sharedDataSave(void){
 	seek(0x5000);
 	
 	//Dump instruments (these are shared along all songs)
-	instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[CFG::CURRENTINSTRUMENT]);
+	instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[ CFG::current_instrument ]);
 
 	for(i=0; i<64; i++){
 		write(VAR_INSTRUMENTS[i].TYPE);
@@ -293,11 +293,11 @@ void SRAM::sharedDataLoad(void){
 	// Pattern data
 	for(i=0;i<128;i++){
 		for(di=0;di<16;di++){
-			VAR_DATA[i].KEY[di] = read();
-			VAR_DATA[i].INS[di] = read();
-			VAR_DATA[i].VOL[di] = read();
-			VAR_DATA[i].CMD[di] = read();
-			VAR_DATA[i].VAL[di] = read();
+			VAR_DATA[i].key[di] = read();
+			VAR_DATA[i].ins[di] = read();
+			VAR_DATA[i].vol[di] = read();
+			VAR_DATA[i].cmd[di] = read();
+			VAR_DATA[i].val[di] = read();
 		}
 	}	
 	
@@ -325,7 +325,7 @@ void SRAM::sharedDataLoad(void){
 		}
 	}
 
-	instcopy(&VAR_INSTRUMENTS[CFG::CURRENTINSTRUMENT], &VAR_INSTRUMENT);
+	instcopy(&VAR_INSTRUMENTS[CFG::current_instrument], &VAR_INSTRUMENT);
 	
 	SPU::setTempo( song.bpm );
 

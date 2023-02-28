@@ -25,14 +25,14 @@ void SPU::jumpToPatternAsync(int p){
 	currentPattern = p;
 }
 
-void SPU::setKey(	u8 channel, u8 key		){ VAR_CHANNEL[channel].key    = key; 	}
-void SPU::setInst(  u8 channel, u8 inst		){ VAR_CHANNEL[channel].inst   = inst; 	}
-void SPU::setCmd(	u8 channel, u8 cmd		){ VAR_CHANNEL[channel].cmd    = cmd;	}
-void SPU::setValue( u8 channel, u8 value	){ VAR_CHANNEL[channel].value  = value; }
-void SPU::setVolume(u8 channel, u8 volume	){ 
-	VAR_CHANNEL[channel].volume = volume; 
-	VAR_CHANNEL[channel].lastpeak = VAR_CHANNEL[channel].peak; 
-	VAR_CHANNEL[channel].peak = volume;
+void SPU::setKey(	u8 index, u8 key	){ channel[ index ].key    = key; 	}
+void SPU::setInst(  u8 index, u8 inst	){ channel[ index ].inst   = inst; 	}
+void SPU::setCmd(	u8 index, u8 cmd	){ channel[ index ].cmd    = cmd;	}
+void SPU::setValue( u8 index, u8 value	){ channel[ index ].value  = value; }
+void SPU::setVolume(u8 index, u8 volume	){ 
+	channel[ index ].volume 	= volume; 
+	channel[ index ].last_peak	= channel[ index ].peak; 
+	channel[ index ].peak 		= volume;
 }
 
 void SPU::init(int bpm){
@@ -61,8 +61,8 @@ void SPU::init(int bpm){
 
 #define SOUND_PWM_MASTER_RIGHT(vol)		(vol&0x7)
 #define SOUND_PWM_MASTER_LEFT(vol)		((vol&0x7)<<4)
-#define SOUND_PWM_ENABLE_RIGHT(channel)	((1<<8)<<channel)
-#define SOUND_PWM_ENABLE_LEFT(channel)	((1<<12)<<channel)
+#define SOUND_PWM_ENABLE_RIGHT(index)	((1<<8)<<index)
+#define SOUND_PWM_ENABLE_LEFT(index)	((1<<12)<<index)
 #define SOUND_PWM_ENABLE_PSG_FIFO		0x0080
 
 
@@ -80,14 +80,14 @@ const u16 PWM_FREQ_TABLE[120]={ 0		,
 								2044	,2045	,2046	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,
 								2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	};
 
-void SPU::enable(int channel){
+void SPU::enable(int index){
 	
 	
 	
 	// TODO: handle channel to enable arbitrary channels
 	
 	*((volatile u16*)0x04000084) |= SOUND_PWM_ENABLE_PSG_FIFO;
-	*((volatile u16*)0x04000080) |= SOUND_PWM_ENABLE_LEFT(channel) | SOUND_PWM_ENABLE_RIGHT(channel) | SOUND_PWM_MASTER_LEFT(7) | SOUND_PWM_MASTER_RIGHT(7);
+	*((volatile u16*)0x04000080) |= SOUND_PWM_ENABLE_LEFT(index) | SOUND_PWM_ENABLE_RIGHT(index) | SOUND_PWM_MASTER_LEFT(7) | SOUND_PWM_MASTER_RIGHT(7);
 	//Enable SOUND 1 and 2
 	*((volatile u16*)0x04000082) |= 0xE;//PWM 100% DMA 100% (set volume)
 }
@@ -116,9 +116,9 @@ void SPU::play(bool from_start){
 	
 	if(from_start){
 		currentPattern 	= 0;
-		for(int i=0; i<6;i++){
-			VAR_CHANNEL[i].STEP = 0;
-			VAR_CHANNEL[i].POSITION = 0;
+		for( int i=0; i < 6; i++ ){
+			channel[ i ].step		= 0;
+			channel[ i ].position	= 0;
 		}		
 		playing = true;
 
@@ -129,8 +129,8 @@ void SPU::play(bool from_start){
 		return;
 	}
 	
-	for(int i=0; i<6;i++){
-		VAR_CHANNEL[i].STEP = 255;
+	for( int i=0; i < 6; i++ ){
+		channel[ i ].step = 255;
 	}
 	
 	playing = true;
@@ -146,69 +146,69 @@ bool updateChannel(u8 chan){
 	
 	
 	// DONT UPDATE CHANNELS WHEN THEY ARE ON PATTERN 0 (this is empty)
-	if( song.patterns[ chan ].order[ VAR_CHANNEL[chan].POSITION ] == 0x00 ){
+	if( song.patterns[ chan ].order[ channel[chan].position ] == 0x00 ){
 		// Rewind until a pattern break (0x00) is found, or the beginning of the chain is reach
-		while( VAR_CHANNEL[chan].POSITION > 0 ){
+		while( channel[chan].position > 0 ){
 		
-			VAR_CHANNEL[chan].POSITION--;
+			channel[chan].position--;
 			
-			if( song.patterns[ chan ].order[ VAR_CHANNEL[chan].POSITION ] == 0x00 ) {
-				VAR_CHANNEL[chan].POSITION++;
+			if( song.patterns[ chan ].order[ channel[chan].position ] == 0x00 ) {
+				channel[chan].position++;
 				return true;
 			}
 		}
 		// If after rewind, first pattern is still 0, stop this channel
-		if( song.patterns[ chan ].order[ 0 ] == 0x00 ) return VAR_CHANNEL[chan].PLAYING = false;
+		if( song.patterns[ chan ].order[ 0 ] == 0x00 ) return channel[chan].playing = false;
 		return true;
 	}
-	VAR_CHANNEL[chan].PLAYING = true;
+	channel[chan].playing = true;
 		
-	VAR_CHANNEL[chan].LASTSTEP =  VAR_CHANNEL[chan].STEP;
-	VAR_CHANNEL[chan].STEP++;
+	channel[chan].last_step =  channel[chan].step;
+	channel[chan].step++;
 	
-	if(VAR_CHANNEL[chan].STEP == 16 /*VAR_CHANNEL[chan].LENGTH*/){
-		VAR_CHANNEL[chan].STEP = 0;
-		VAR_CHANNEL[chan].LASTPOSITION = VAR_CHANNEL[chan].POSITION;
-		VAR_CHANNEL[chan].POSITION++;
+	if(channel[chan].step == 16 /*channel[chan].LENGTH*/){
+		channel[chan].step = 0;
+		channel[chan].last_position = channel[chan].position;
+		channel[chan].position++;
 		SPU::currentBeats=-1;
-		if( song.patterns[ chan ].order[ VAR_CHANNEL[ chan ].POSITION ] == 0x00 ) return updateChannel( chan );
+		if( song.patterns[ chan ].order[ channel[ chan ].position ] == 0x00 ) return updateChannel( chan );
 	}
 	return true;
 }
 
-void SPU::mute(int channel){
+void SPU::mute(int index){
 	// ------------------------------------------------------------
-	VAR_CHANNEL[channel].mute ^= 1;
+	channel[index].mute ^= 1;
 	/* ------------------------------------------------------------
 	Since a channel was unmuted, disable solo on every channel   */
 	// Sync with audio registers
 	/* ------------------------------------------------------------
 	If a channel was unmuted, disable solo on every channel   	 */
-	if(VAR_CHANNEL[channel].mute) return;
+	if(channel[index].mute) return;
 	for(int i=0; i<6;i++){
-		VAR_CHANNEL[i].solo = false;
+		channel[i].solo = false;
 	}
 }
 
-void SPU::solo(int channel){
+void SPU::solo(int index){
 	/* ------------------------------------------------------------
 	if channel has solo enabled unmute channels and disable solo */
-	if(VAR_CHANNEL[channel].solo){
+	if(channel[index].solo){
 		for(int i=0; i<6;i++){
-			VAR_CHANNEL[channel].solo = false;
-			VAR_CHANNEL[i].mute = false;
+			channel[index].solo = false;
+			channel[i].mute = false;
 		}
 		return;
 	}
 	/* ------------------------------------------------------------
 	Mute all channels 											 */
 	for(int i=0; i<6;i++){
-		VAR_CHANNEL[i].mute = true;
+		channel[i].mute = true;
 	}
 	/* ------------------------------------------------------------
 	Unmute and enable solo on selected channel 				     */
-	VAR_CHANNEL[channel].solo = true;
-	VAR_CHANNEL[channel].mute = false;
+	channel[index].solo = true;
+	channel[index].mute = false;
 	
 	// Sync with audio registers
 }
@@ -220,22 +220,22 @@ void SPU::noteOnNZE(void){
 }
 
 void SPU::noteOnPWM1(void){
-	*(u16*)(0x04000064) = 0x8000 | PWM_FREQ_TABLE[VAR_CHANNEL[0].key];
+	*(u16*)(0x04000064) = 0x8000 | PWM_FREQ_TABLE[channel[0].key];
 	retrig_note[0] = false;			
 }
 
 void SPU::noteOnPWM2(void){
-	*(u16*)(0x0400006C) = 0x8000 | PWM_FREQ_TABLE[VAR_CHANNEL[1].key];	
+	*(u16*)(0x0400006C) = 0x8000 | PWM_FREQ_TABLE[channel[1].key];	
 	retrig_note[1] = false;			
 }
 
 void SPU::triggerChannel(int channel_index){
 	
-	u8 vol = VAR_CHANNEL[channel_index].volume;
-	u8 ins = VAR_CHANNEL[channel_index].inst;
+	u8 vol = channel[channel_index].volume;
+	u8 ins = channel[channel_index].inst;
 	
 	// Fill correspondant VAR_XXX setting temporal struct
-	INSTRUMENT *i = &VAR_INSTRUMENTS[ins];
+	Instrument *i = &VAR_INSTRUMENTS[ins];
 	
 
 	switch(channel_index){
@@ -324,21 +324,21 @@ void SPU::update(){
 		If current tick%4 == 0, time to trigger notes					 */
 		if(!(currentTicks&0x3)){
 			for(int i=0, s = 0; i<6; i++){
-				s = VAR_CHANNEL[i].STEP;
+				s = channel[i].step;
 				retrig_note[i] = false;
-				if(VAR_CELLS[i].KEY[s] > 0x0) {
+				if(VAR_CELLS[i].key[s] > 0x0) {
 					retrig_note[i] = true;
-					setKey(i, VAR_CELLS[i].KEY[s]); 
-					setVolume(i	, VAR_CELLS[i].VOL[s]); 
+					setKey(i, VAR_CELLS[i].key[s]); 
+					setVolume(i	, VAR_CELLS[i].vol[s]); 
 				}
-				if(VAR_CELLS[i].INS[s] > 0x0) {				
-					setInst(i	, VAR_CELLS[i].INS[s] ); 
-					if(!retrig_note[i]) setVolume(i	, VAR_CELLS[i].VOL[s]); 
+				if(VAR_CELLS[i].ins[s] > 0x0) {				
+					setInst(i	, VAR_CELLS[i].ins[s] ); 
+					if(!retrig_note[i]) setVolume(i	, VAR_CELLS[i].vol[s]); 
 				}
 				
-				if(VAR_CELLS[i].CMD[s]  > 0x0) {
-					setCmd(i 	, VAR_CELLS[i].CMD[s] ); 
-					setValue(i 	, VAR_CELLS[i].VAL[s]); 
+				if(VAR_CELLS[i].cmd[s]  > 0x0) {
+					setCmd(i 	, VAR_CELLS[i].cmd[s] ); 
+					setValue(i 	, VAR_CELLS[i].val[s]); 
 				}
 				
 				

@@ -90,16 +90,16 @@ void SYS::updateInput(){
 	
 	u32 msg = 0;
 
-	if(VAR_LIVE.PERFORM.LOCK)return;
+	if( live.perform.lock )return;
 	// Handle Navigation
-	if(KEY::press(KEY_SELECT)){
-		msg  = KEY::down(KEY_LEFT ) ? MESSAGE_NAVIGATE_LEFT  :
-			   KEY::down(KEY_RIGHT) ? MESSAGE_NAVIGATE_RIGHT :
-			   KEY::down(KEY_UP   ) ? MESSAGE_NAVIGATE_UP    :
-			   KEY::down(KEY_DOWN ) ? MESSAGE_NAVIGATE_DOWN  :
+	if( KEY::press( KEY_SELECT ) ){
+		msg  = KEY::down( KEY_LEFT  ) ? MESSAGE_NAVIGATE_LEFT  :
+			   KEY::down( KEY_RIGHT ) ? MESSAGE_NAVIGATE_RIGHT :
+			   KEY::down( KEY_UP    ) ? MESSAGE_NAVIGATE_UP    :
+			   KEY::down( KEY_DOWN  ) ? MESSAGE_NAVIGATE_DOWN  :
 			   0x0;
-		if(REGHND::region && msg){
-			REGHND::sendMessage(msg | (unsigned)REGHND::region);
+		if( REGHND::region && msg ){
+			REGHND::sendMessage( msg | (unsigned)REGHND::region );
 			return;
 		}
 	}

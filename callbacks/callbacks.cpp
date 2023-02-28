@@ -52,7 +52,7 @@ void modify5Val(Control *c, bool bigstep, bool add, u32 *pointer){  VARIABLE = (
 
 void cellCopy(u8 channel);
 void modifyCommand(Control *c, bool bigstep, bool add, u32 *pointer){
-	if(CURRENT_PATTERN == 0x00)return;
+	if( CURRENT_PATTERN == 0x00 )return;
 	
 	if(bigstep&!add)VARIABLE = 0;
 	else {
@@ -63,20 +63,20 @@ void modifyCommand(Control *c, bool bigstep, bool add, u32 *pointer){
 	transientCommand = VARIABLE;
 	transientChanged = true;
 	
-	cellCopy(CFG::CURRENTCHANNEL);
+	cellCopy(CFG::current_channel);
 }
 void modifyNote(Control *c, bool bigstep, bool add, u32 *pointer);
 
 
-void modifyInst		(Control *c, bool bigstep, bool add, u32 *pointer){if(CURRENT_PATTERN == 0x00)return;VARIABLE = (VARIABLE + ((bigstep?0x4:0x1) * (add?1:-1))      ) & 0x3F;	transientInstrument = VARIABLE; transientChanged=true; cellCopy(CFG::CURRENTCHANNEL);}
-void modifyVolume	(Control *c, bool bigstep, bool add, u32 *pointer){if(CURRENT_PATTERN == 0x00)return;VARIABLE = ( bigstep ? (add?0xF:0) : (VARIABLE + (add?1:-1)) ) & 0xF; 	transientVolume 	= VARIABLE; transientChanged=true; cellCopy(CFG::CURRENTCHANNEL);}	
-void modifyValue	(Control *c, bool bigstep, bool add, u32 *pointer){if(CURRENT_PATTERN == 0x00)return;VARIABLE = (VARIABLE + ((bigstep?0x10:0x1)* (add?1:-1))      ) & 0xFF;	transientValue		= VARIABLE; transientChanged=true; cellCopy(CFG::CURRENTCHANNEL);}
+void modifyInst		(Control *c, bool bigstep, bool add, u32 *pointer){if(CURRENT_PATTERN == 0x00)return;VARIABLE = (VARIABLE + ((bigstep?0x4:0x1) * (add?1:-1))      ) & 0x3F;	transientInstrument = VARIABLE; transientChanged=true; cellCopy(CFG::current_channel);}
+void modifyVolume	(Control *c, bool bigstep, bool add, u32 *pointer){if(CURRENT_PATTERN == 0x00)return;VARIABLE = ( bigstep ? (add?0xF:0) : (VARIABLE + (add?1:-1)) ) & 0xF; 	transientVolume 	= VARIABLE; transientChanged=true; cellCopy(CFG::current_channel);}	
+void modifyValue	(Control *c, bool bigstep, bool add, u32 *pointer){if(CURRENT_PATTERN == 0x00)return;VARIABLE = (VARIABLE + ((bigstep?0x10:0x1)* (add?1:-1))      ) & 0xFF;	transientValue		= VARIABLE; transientChanged=true; cellCopy(CFG::current_channel);}
 
-void pasteCommand	(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientCommand; 	cellCopy(CFG::CURRENTCHANNEL); return; } transientCommand 	= VARIABLE; transientChanged=true; }
-void pasteInst		(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientInstrument; cellCopy(CFG::CURRENTCHANNEL); return; } transientInstrument = VARIABLE; transientChanged=true; }
-void pasteNote		(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientNote; 		cellCopy(CFG::CURRENTCHANNEL); return; } transientNote 		= VARIABLE; transientChanged=true; }
-void pasteVolume	(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientVolume;		cellCopy(CFG::CURRENTCHANNEL); return; } transientVolume 	= VARIABLE; transientChanged=true; }
-void pasteValue		(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientValue; 		cellCopy(CFG::CURRENTCHANNEL); return; } transientValue 		= VARIABLE; transientChanged=true; }
+void pasteCommand	(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientCommand; 	cellCopy(CFG::current_channel); return; } transientCommand 	= VARIABLE; transientChanged=true; }
+void pasteInst		(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientInstrument; cellCopy(CFG::current_channel); return; } transientInstrument = VARIABLE; transientChanged=true; }
+void pasteNote		(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientNote; 		cellCopy(CFG::current_channel); return; } transientNote 		= VARIABLE; transientChanged=true; }
+void pasteVolume	(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientVolume;		cellCopy(CFG::current_channel); return; } transientVolume 	= VARIABLE; transientChanged=true; }
+void pasteValue		(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientValue; 		cellCopy(CFG::current_channel); return; } transientValue 		= VARIABLE; transientChanged=true; }
 
 #undef VARIABLE
 

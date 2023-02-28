@@ -35,11 +35,11 @@ PATTERN VARIABLE STRUCTURE
 ************************************************************************************************
 ************************************************************************************************/
 typedef struct sPatternCell {
-	u16				KEY[16] /*7*/;
-	u8				INS[16] /*6*/;
-	u8				VOL[16] /*4*/;
-	u8				CMD[16] /*5*/;
-	u8				VAL[16];
+	u16				key[16] /*7*/;
+	u8				ins[16] /*6*/;
+	u8				vol[16] /*4*/;
+	u8				cmd[16] /*5*/;
+	u8				val[16];
 }PatternCell;
 
 typedef struct sPattern {	//Pattern data for a single channel!!!
@@ -86,8 +86,6 @@ extern PatternCell 	VAR_DATA[128];
 extern Pattern 		VAR_PATTERN[6]; 
 extern PatternCell 	VAR_CELLS[6]; 	// Current pattern cells, 6 pointers dereferenced
 
-
-
 /***********************************************************************************************
 ************************************************************************************************
 
@@ -96,7 +94,7 @@ INSTRUMENT VARIABLE STRUCTURE
 ************************************************************************************************
 ************************************************************************************************/
 
-typedef struct _TABLE_CELL {
+typedef struct sTableCell {
 	u8				TRANSPOSE[16] /*8*/;
 	u8				VOLUME[16] /*4*/;
 	u8				COMMAND[2][16]/*5*/;
@@ -105,9 +103,9 @@ typedef struct _TABLE_CELL {
 	u8				POSITION[2]/*4*/;
 	bool			PLAYING;
 	
-}TABLE_CELL;
+}TableCell;
 
-typedef struct _SETTINGS_PWM {	
+typedef struct sSettingsPwm {	
 	u8				SWEEPDIR;		/*1*/	/*1*/
 	u8				ENVELOPEDIR;	/*1*/	/*2*/
 	u8				TSP_ENABLE;		/*1*/	/*3*/
@@ -128,9 +126,9 @@ typedef struct _SETTINGS_PWM {
 	u8				TSP_ENVELOPE;	/*8*/	/*62*/
 	u8				TSP[16];		/*16x4*//*126*/
 	u8				VOL[16];		/*16x4*//*190*/
-}SETTINGS_PWM;
+} SettingsPwm;
 
-typedef struct _SETTINGS_WAV {
+typedef struct sSettingsWav {
 	u8	 			PHASE;
 	u8	 			AM;
 	u8	 			MIXPERCENT /*4*/;
@@ -144,10 +142,9 @@ typedef struct _SETTINGS_WAV {
 	u8 				OP4_ADSR[4] /*4*/;
 	u8 				WAVEDATA[16] /*4x16*/;	
 	void 			*WAVPRESET[5] /*4x16*/;	
-	
-}SETTINGS_WAV;
+} SettingsWav;
 
-typedef struct _SETTINGS_FMW {
+typedef struct sSettingsFmw {
 	u8 				MULT /*4*/;
 	u8 				ALGORITHM /*3*/;
 	u8 				OP1_TYPE /*3*/;
@@ -159,9 +156,9 @@ typedef struct _SETTINGS_FMW {
 	u8 				OP4_TYPE /*3*/;
 	u8 				OP4_ADSR[4] /*4*/;
 	u8 				WAVEDATA[16] /*4x16*/;
-}SETTINGS_FMW;
+} SettingsFmw;
 
-typedef struct _SETTINGS_SMP {
+typedef struct sSettingsSmp {
 	u8 				START /*8*/;
 	u8 				END /*8*/;
 	u8 				LOOP /*2*/;
@@ -174,23 +171,23 @@ typedef struct _SETTINGS_SMP {
 	u8 				KIT /*5*/;
 	u8 				KITINDEX /*4*/;
 	void 			*SMPKIT[12] /*4x16*/;	
-}SETTINGS_SMP;
+} SettingsSmp;
 
-typedef struct _INSTRUMENT {
-	TABLE_CELL		TABLE;
+typedef struct sInstrument {
+	TableCell		TABLE;
 	u8				VISPOSITION[2];
 	char 			NAME[6];
 	u8				TYPE /*2*/;
 	u8				SETTINGS[32];
-}INSTRUMENT;
+}Instrument;
 
-extern SETTINGS_PWM VAR_PWM;
-extern SETTINGS_FMW VAR_FMW;
-extern SETTINGS_SMP VAR_SMP;
-extern SETTINGS_WAV VAR_WAV;
+extern SettingsPwm VAR_PWM;
+extern SettingsFmw VAR_FMW;
+extern SettingsSmp VAR_SMP;
+extern SettingsWav VAR_WAV;
 
-extern INSTRUMENT VAR_INSTRUMENTS[64];
-extern INSTRUMENT VAR_INSTRUMENT; // Current instrument MUST be operated from here
+extern Instrument VAR_INSTRUMENTS[64];
+extern Instrument VAR_INSTRUMENT; // Current instrument MUST be operated from here
 /***********************************************************************************************
 ************************************************************************************************
 
@@ -198,73 +195,73 @@ CFG VARIABLE STRUCTURE
 
 ************************************************************************************************
 ************************************************************************************************/
-typedef struct _CFG_PAL {
-	u8 				R /*4*/;
-	u8 				G /*4*/;
-	u8 				B /*4*/;
-}CFG_PAL;
+typedef struct sCfgPal {
+	u8 				r /*4*/;
+	u8 				g /*4*/;
+	u8 				b /*4*/;
+} CfgPal;
 
-typedef struct _CFG_LOOKNFEEL {
-	u8	 			INTERFACE;
-	u8				FONT /*3*/;
-	u8				BORDER /*3*/;
-	u8	 			SHOWLOGO;
-	u8	 			STARTUPSFX;
-}CFG_LOOKNFEEL;
+typedef struct sCfgLookNFeel {
+	u8	 			interface;
+	u8				font /*3*/;
+	u8				border/*3*/;
+	u8	 			show_logo;
+	u8	 			startup_sfx;
+} CfgLookNFeel;
 
-typedef struct _CFG_LINKMODE {
-	u8 				LINKMODE /*2*/;
-	u8				MASTERCLOCK;
-	u8 				MIDICHAN /*4*/;
-	u8 				CLOCKTEMPO;
-}CFG_LINKMODE;
+typedef struct sCfgLinkMode {
+	u8 				link_mode/*2*/;
+	u8				master_clock;
+	u8 				midi_chan/*4*/;
+	u8 				clock_tempo;
+} CfgLinkMode;
 
-typedef struct _CFG_BEHAVIOR {
-	u8				AUTOLOAD;
-	u8				KEYRATE /*4*/;
-	u8				BUTTONSET /*2*/;
-	u8				VISTYPE;
-}CFG_BEHAVIOR;
+typedef struct sCfgBehavior {
+	u8				auto_load;
+	u8				key_rate /*4*/;
+	u8				button_set /*2*/;
+	u8				vis_type;
+} CfgBehavior;
 
-typedef struct _CFG_TRACKER {
-	u8 				FINETUNE;
-	u8				PRELISTEN;
-	u8				TRANSPOSE;
-	u8				INPUTMODE;
-	u8				SOUNDBIAS;
+typedef struct sCfgTracker {
+	u8 				fine_tune;
+	u8				prelisten;
+	u8				transpose;
+	u8				input_mode;
+	u8				sound_bias;
 	// NOT USED
-	u8				HEADERTYPE;
-}CFG_TRACKER;
+	u8				header_type;
+} CfgTracker;
 
-typedef struct _CFG_MEMORY {
-	u8				PREF;
+typedef struct sCfgMemory {
+	u8				pref;
 	int nothing;
-}CFG_MEMORY;
+} CfgMemory;
 
 class CFG {
 	public:
-		static u32				loadCount;
-		static CFG_PAL 			PAL[16];
-		static CFG_LOOKNFEEL	LOOKNFEEL;
-		static CFG_LINKMODE		LINKMODE;
-		static CFG_BEHAVIOR 	BEHAVIOR;
-		static CFG_TRACKER		TRACKER;
-		static CFG_MEMORY		MEMORY;
-		static u8 				SLOT /*3*/;//Currently selected song
-		static u8				MENUSLOT /*3*/;	
-		static u8	 			REALLYRETURN;
-		static char				ALPHARETURN[14];
-		static u8	 			CLIPRETURN /*2*/;
-		static u8	 			PROGRESS /*6*/;
-		static u8	 			INSTRUMENTVISTYPE;
+		static u32				load_count;
+		static CfgPal			pal[16];
+		static CfgLookNFeel		look_n_feel;
+		static CfgLinkMode		link_mode;
+		static CfgBehavior		behavior;
+		static CfgTracker		tracker;
+		static CfgMemory		memory;
+		static u8 				slot 				/*3*/;//Currently selected song
+		static u8				menu_slot			/*3*/;	
+		static u8	 			really_return;
+		static char				alpha_return[14];
+		static u8	 			clip_return			/*2*/;
+		static u8	 			progress 			/*6*/;
+		static u8	 			instrument_vis_type;
 		static GrooveTable		groove; 			// Pointer to the table being edited/displayed on INS screeen
-		static TABLE_CELL 		INSTRUMENTTABLE; 	// Pointer to the table being edited/displayed on INS screeen
-		static u8 				CURRENTCHANNEL /*3*/;
-		static u8 				CURRENTINSTRUMENT 	/*6*/;
-		static u8 				ORDERPOSITION; 		// Index where the PAT screen begins to display pattern orders
-		static u8				MUTE[2][3]; // Two mute arrays, PPN - WFS
-		static u8				SOLO[2][3]; // Two solo arrays, PPN - WFS
-		static bool				RELOADSKIN;
+		static TableCell		instrument_table; 	// Pointer to the table being edited/displayed on INS screeen
+		static u8 				current_channel		/*3*/;
+		static u8 				current_instrument	/*6*/;
+		static u8 				order_position;		// Index where the PAT screen begins to display pattern orders
+		static u8				mute[2][3]; 		// Two mute arrays, PPN - WFS
+		static u8				solo[2][3]; 		// Two solo arrays, PPN - WFS
+		static bool				reload_skin;
 };
 
 /***********************************************************************************************
@@ -274,40 +271,40 @@ LIVE VARIABLE STRUCTURE
 
 ************************************************************************************************
 ************************************************************************************************/
-typedef struct _LIVE_TABLE {
-	u8				KEY[ 8] /*7*/;
-	u8				INS[ 8] /*6*/;
-	u8				CHAN[8] /*3*/;
-	u8				VOL[ 8] /*4*/;
-	u8				CMD[ 8] /*5*/;
-	u8				VAL[ 8];
-}LIVE_TABLE;
+typedef struct sLiveTable {
+	u8				key[ 8] /*7*/;
+	u8				ins[ 8] /*6*/;
+	u8				chan[8] /*3*/;
+	u8				vol[ 8] /*4*/;
+	u8				cmd[ 8] /*5*/;
+	u8				val[ 8];
+} LiveTable;
 
-typedef struct _LIVE_PERFORM {
-	LIVE_TABLE		LEFT;
-	LIVE_TABLE		RIGHT;
-	u8 				RETRIG;
-	u8 				SPEED /*4*/;
-	u8	 			QUANTIZE /*3*/;
-	u8				LOCK;
-}LIVE_PERFORM;
+typedef struct sLivePerform {
+	LiveTable		left;
+	LiveTable		right;
+	u8 				retrig;
+	u8 				speed /*4*/;
+	u8	 			quantize /*3*/;
+	u8				lock;
+} LivePerform;
 
-typedef struct _LIVE_PIANO {
-	u8				MODE /*2*/;
-	u8				OCTAVE /*4*/;
-	u8				QUANTIZE /*3*/;
-	u8				TRANSPOSE;
-	u8				CHANNEL[2];
-	u8				MIDICHAN[2];
-}LIVE_PIANO;
+typedef struct sLivePiano {
+	u8				mode /*2*/;
+	u8				octave /*4*/;
+	u8				quantize /*3*/;
+	u8				transpose;
+	u8				channel[2];
+	u8				midi_chan[2];
+} LivePiano;
 
-typedef struct _LIVE {
-	LIVE_PERFORM	PERFORM;
-	LIVE_PIANO		PIANO;
-	u8	 			KEYPRESS[10];
-}LIVE;
+typedef struct sLive {
+	LivePerform		perform;
+	LivePiano		piano;
+	u8	 			key_press[10];
+} Live;
 
-extern LIVE VAR_LIVE;
+extern Live live;
 
 /***********************************************************************************************
 ************************************************************************************************
@@ -316,7 +313,7 @@ CHANNEL VARIABLE STRUCTURE
 
 ************************************************************************************************
 ************************************************************************************************/
-typedef struct _CHANNEL {
+typedef struct sChannel {
 	bool 			mute;
 	bool			solo;
 
@@ -328,22 +325,22 @@ typedef struct _CHANNEL {
 
 	PatternCell*	cell;
 	PatternCell*	next_cell;
-	u8				VOLUME /*5*/;
-	u8				lastpeak /*4*/;
+	// u8				VOLUME /*5*/;
+	u8				last_peak /*4*/;
 	u8				peak /*4*/;
-	bool			PLAYING;
+	bool			playing;
 
-	u8				LENGTH;
-	u8				LASTSTEP /*4*/;
-	u8				STEP /*4*/; 		// Current pattern step
-	u8				JUMPSTEP /*4*/; 	// Next pattern step
+	u8				length;
+	u8				last_step /*4*/;
+	u8				step /*4*/; 		// Current pattern step
+	u8				jump_step /*4*/; 	// Next pattern step
 
-	u8				POSITION /*8*/;  	// Index on chanel Pattern Order array
-	u8				NEXTPOSITION /*8*/; // Next index on channel pattern order array
-	u8				LASTPOSITION /*8*/; // Next index on channel pattern order array
-}CHANNEL;
+	u8				position /*8*/;  	// Index on chanel Pattern Order array
+	u8				next_position /*8*/; // Next index on channel pattern order array
+	u8				last_position /*8*/; // Next index on channel pattern order array
+} Channel;
 
-extern CHANNEL VAR_CHANNEL[6];
+extern Channel channel[6];
 
 /***********************************************************************************************
 ************************************************************************************************

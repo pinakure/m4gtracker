@@ -7,7 +7,7 @@
 #include "../../data/layers.hpp"
 #include "../../data/variables.hpp"
 
-extern LIVE VAR_LIVE;
+extern Live live;
 extern void STATUS(u8 x, u8 y, u16 color, u16 value);
 extern void PROGRESS(u8 x, u8 y, u16 color, u16 value);
 void trkDispatchMessage(u32);
@@ -531,10 +531,10 @@ void REGHND::draw(){
 }
 
 void REGHND::jumpToControl( const Control *c ){
-	if(VAR_LIVE.PERFORM.LOCK)return;
-	if(!c)return;
-	Control *o = control;
-	control = (Control*)c;
+	if( live.perform.lock ) return;
+	if( !c ) return;
+	Control *o 	= control;
+	control 	= ( Control* )c;
 	
 	dispatchCallback(c->callback, c, false, false, EVENT_FOCUS);
 	sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)o);

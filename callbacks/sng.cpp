@@ -19,7 +19,7 @@ CALLBACK( cb_sng_save		, saveSlot		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
 CALLBACK( cb_sng_purge		, purgeSlot		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
 CALLBACK( cb_sng_copy		, copySlot		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
 CALLBACK( cb_sng_erase		, eraseSlot		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
-CALLBACK( cb_sng_slot		, modify6Val	, EVENT_MODIFY_B			, &CFG::SLOT			, NULL	);
+CALLBACK( cb_sng_slot		, modify6Val	, EVENT_MODIFY_B			, &CFG::slot			, NULL	);
 CALLBACK( cb_sng_artist		, ALPHA14		, EVENT_KEYDOWN_B			, &song.artist			, NULL	);
 CALLBACK( cb_sng_title		, ALPHA14		, EVENT_KEYDOWN_B			, &song.title			, NULL	);
 CALLBACK( cb_sng_tempotap	, tempoTap		, EVENT_KEYDOWN_B			, NULL					, NULL	);
@@ -92,7 +92,7 @@ void eraseSlot(Control *c, bool bigstep, bool add, u32 *pointer){
 	
 	r.enable();
 	if(r.result){
-		CFG::loadCount = 0;		
+		CFG::load_count = 0;		
 		// Clear SongData
 		SRAM::songDefaults();		
 		// Load shared data
@@ -113,7 +113,7 @@ void modifyBPM(Control *c, bool bigstep, bool add, u32 *pointer){
 /* Calculates new a new BPM Values each 4th time user calls this function based on previous 3 calls */
 void tempoTap(Control *c, bool bigstep, bool add, u32 *pointer){
 	
-	SPU::jumpToPatternAsync( VAR_PATTERN[ CFG::CURRENTCHANNEL ].order[ VAR_CHANNEL[ CFG::CURRENTCHANNEL ].POSITION ] );
+	SPU::jumpToPatternAsync( VAR_PATTERN[ CFG::current_channel ].order[ channel[ CFG::current_channel ].position ] );
 	return;
 	
 	//TODO: WRITE PROPER TEMPO TAP FUNCTION WHICH DOES NOT TURN BPM CRAZY!

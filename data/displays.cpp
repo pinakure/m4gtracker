@@ -3,8 +3,8 @@
 
 const Display LIVE1_DISPLAYS[LIVE1_DISPLAY_MAX] = { 
 					//x		y		invert	cache			var								active	redraw
-	/*STATUS_LOCK*/	{ 0x18, 0x01, 	false, 	&CACHE_LOCKED, 	(u8*)&(VAR_LIVE.PERFORM.LOCK), 	false, 	false 	},
-	/*STATUS_FREE*/	{ 0x13, 0x01, 	true , 	&CACHE_FREE, 	(u8*)&(VAR_LIVE.PERFORM.LOCK), 	false, 	false 	},
+	/*STATUS_LOCK*/	{ 0x18, 0x01, 	false, 	&CACHE_LOCKED, 	(u8*)&(live.perform.lock), 	false, 	false 	},
+	/*STATUS_FREE*/	{ 0x13, 0x01, 	true , 	&CACHE_FREE, 	(u8*)&(live.perform.lock), 	false, 	false 	},
 	/*SELECT*/		{ 0x13, 0x11, 	false, 	&CACHE_SELECT, 	(u8*)&(VAR_INPUT.SELECT), 		false, 	false 	},
 	/*START*/		{ 0x09, 0x00, 	false, 	&CACHE_START, 	(u8*)&(VAR_INPUT.START), 		false, 	false 	},
 	/*RIGHT_A*/		{ 0x1c, 0x06, 	false, 	&CACHE_A, 		(u8*)&(VAR_INPUT.A), 			false, 	false 	},
@@ -29,9 +29,9 @@ const Display LIVE1_DISPLAYS[LIVE1_DISPLAY_MAX] = {
 const Display LIVE2_DISPLAYS[LIVE2_DISPLAY_MAX] = { 
 					//x		y		invert	cache					var								active	redraw
 	/*KEY00*/		{ 0x1, 0x08, 	false,	&CACHE_KEYS,	 		(u8*)&(VAR_KEY[0]),	 		false, 	false } ,
-	/*KEYLAYOUT_A*/	{ 0x1, 0x04,  	false, 	&CACHE_KEYLAYOUT_A, 	(u8*)&(VAR_LIVE.PIANO.MODE), 	false,  false } ,
-	/*KEYLAYOUT_C*/	{ 0x1, 0x11,  	false, 	&CACHE_KEYLAYOUT_C, 	(u8*)&(VAR_LIVE.PIANO.MODE), 	false,  false } ,
-	/*KEYLAYOUT_B*/	{ 0x1, 0x0a,  	false, 	&CACHE_KEYLAYOUT_B, 	(u8*)&(VAR_LIVE.PIANO.MODE), 	false,  false } ,
+	/*KEYLAYOUT_A*/	{ 0x1, 0x04,  	false, 	&CACHE_KEYLAYOUT_A, 	(u8*)&(live.piano.mode), 	false,  false } ,
+	/*KEYLAYOUT_C*/	{ 0x1, 0x11,  	false, 	&CACHE_KEYLAYOUT_C, 	(u8*)&(live.piano.mode), 	false,  false } ,
+	/*KEYLAYOUT_B*/	{ 0x1, 0x0a,  	false, 	&CACHE_KEYLAYOUT_B, 	(u8*)&(live.piano.mode), 	false,  false } ,
 	/*KEY12*/		{ 0x10, 0x08,  	false, 	&CACHE_KEYS, 			(u8*)&(VAR_KEY[0]), 			false,  false } ,
 	/*KEY24*/		{ 0x1, 0x0f,  	false, 	&CACHE_KEYS, 			(u8*)&(VAR_KEY[0]), 			false,  false } ,
 	/*KEY36*/		{ 0x10, 0x0f,  	false, 	&CACHE_KEYS, 			(u8*)&(VAR_KEY[0]), 			false,  false } ,

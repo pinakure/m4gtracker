@@ -106,14 +106,14 @@ const Region *const VIEWPORT_CFG_REGIONS[5] = {
 	&REGION_MAP_4_MEMORY	
 };
 
-const Viewport VIEWPORT_INS = { 0x00, 0x00, 0x0E, 0x14, &(VAR_INSTRUMENT.TYPE),		VIEWPORT_INS_REGIONS, 		4};
-const Viewport VIEWPORT_CFG = { 0x04, 0x04, 0x19, 0x0A, &(CFG::MENUSLOT), 		VIEWPORT_CFG_REGIONS,		5};
-const Viewport VIEWPORT_TRK = { 0x01, 0x03, 0x1D, 0x11, &(CFG::CURRENTCHANNEL),	VIEWPORT_TRK_REGIONS,		6};
+const Viewport VIEWPORT_INS = { 0x00, 0x00, 0x0E, 0x14, &( VAR_INSTRUMENT.TYPE	)	, VIEWPORT_INS_REGIONS	, 4};
+const Viewport VIEWPORT_CFG = { 0x04, 0x04, 0x19, 0x0A, &( CFG::menu_slot 		)	, VIEWPORT_CFG_REGIONS	, 5};
+const Viewport VIEWPORT_TRK = { 0x01, 0x03, 0x1D, 0x11, &( CFG::current_channel )	, VIEWPORT_TRK_REGIONS	, 6};
 
 /*const Viewport VIEWPORT_TABLEVIS = (Viewport) {
-.x=0x0E, .y=0x15, .width=0x10, .height=0x12, .var=CFG.INSTRUMENTVISTYPE, .regions=NULL, .count=0, .region=NULL
+.x=0x0E, .y=0x15, .width=0x10, .height=0x12, .var=CFG.instrument_vis_type, .regions=NULL, .count=0, .region=NULL
 const Viewport VIEWPORT_HEADER = (Viewport) {
 .x=0x00, .y=0x00, .width=0x1E, .height=0x03, .var=NULL, .regions=NULL, .count=0, .region=NULL
 const Viewport VIEWPORT_SUBMENU2 = (Viewport) {
-.x=0x0B, .y=0x0F, .width=0x12, .height=0x04, .var=CFG.MENUSLOT, .regions=NULL, .count=0, .region=NULL
+.x=0x0B, .y=0x0F, .width=0x12, .height=0x04, .var=CFG.menu_slot, .regions=NULL, .count=0, .region=NULL
 */

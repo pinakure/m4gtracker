@@ -10,8 +10,8 @@
 #define M4G_VERSION			0x81
 #define M4GEEK_SIGNATURE	0xE5ACFECA
 
-#define EXPECT(a, up, down)			{CFG::loadCount = 0;REGHND::progress.set(0, a, STATUS_##up, STATUS_##down, &CFG::loadCount);}
-#define OK()						{CFG::loadCount++;REGHND::update(1);	DECIMAL_DOUBLE(28,1,9, SRAM.position-1);}
+#define EXPECT(a, up, down)			{CFG::load_count=0; REGHND::progress.set(0, a, STATUS_##up, STATUS_##down, &CFG::load_count);}
+#define OK()						{CFG::load_count++; REGHND::update(1);	DECIMAL_DOUBLE(28,1,9, SRAM.position-1);}
 
 #define PRINTPOINTER(x, y, c, a)	TEXT(x,y, 0x6, c-13); \
 						HEXADECIMAL_DOUBLE(x+1,y, 0x6, (((unsigned)a)&0xFF000000) >> 24); \

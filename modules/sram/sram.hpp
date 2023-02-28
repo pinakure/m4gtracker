@@ -42,8 +42,8 @@ class SRAM {
 		static void drawPosition(u8 x, u8 y,u8 color);
 };
 
-void instrumentUnpack(INSTRUMENT *i);
-void instrumentPack(INSTRUMENT *i);
-void instcopy(INSTRUMENT *s, INSTRUMENT *d);
+void instrumentUnpack(Instrument *i);
+void instrumentPack(Instrument *i);
+void instcopy(Instrument *s, Instrument *d);
 
 #endif
