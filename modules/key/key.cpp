@@ -10,7 +10,7 @@ EXAMPLES		TIM0.Setup(0x0004,1);  //Configure overflow reg on 0xFFFF-0x0004, freq
 				TIM0.Enable();         //Activate timer (start counting)
  --------------------------------------------------------------------------- */
 #include "key.hpp"
-extern volatile bool SYS_QUERYKEY;
+#include "../sys/sys.hpp"
 
 vu16	KEY::keytrig;
 u16 	KEY::keyinput;
@@ -81,7 +81,7 @@ void KEY::update(){
 	keydown	= kd;
 	keypress= kp;
 	keyup	= ku;
-	if(((!keytrig)&&(!keyup))&&(!keypress)&&(!keydown))SYS_QUERYKEY = false;
+	if(((!keytrig)&&(!keyup))&&(!keypress)&&(!keydown)) SYS::query_key = false;
 	R_IME=0x1;	
 }
 

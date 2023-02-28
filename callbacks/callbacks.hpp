@@ -7,7 +7,7 @@
 // TRK CALLBACKS 																			//
 //------------------------------------------------------------------------------------------//
 
-#define CURRENT_PATTERN 		VAR_SONG.PATTERNS[CFG::CURRENTCHANNEL].ORDER[VAR_CHANNEL[CFG::CURRENTCHANNEL].POSITION]
+#define CURRENT_PATTERN 		song.patterns[ CFG::CURRENTCHANNEL ].order[ VAR_CHANNEL[CFG::CURRENTCHANNEL].POSITION ]
 #define VARIABLE	(*(u8*) c->var)
 
 #define CALLBACKDEC(a, i)		extern const Callback cb_##a##_0##i ;

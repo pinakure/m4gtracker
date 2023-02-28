@@ -18,7 +18,7 @@ REVISION DATE 	2023-02-28
 #include "../mem/mem.hpp"
 #include "../gpu/gpu.hpp"
 #include "../sram/sram.hpp"
-
+typedef volatile bool vbool;
 vu32 	SYS::timer			= 0;
 u32 	SYS::profiled_time	= 0;
 vu32 	SYS::profile_timer	= 0;
@@ -27,6 +27,8 @@ vu32 	SYS::frames			= 0;
 u16 	SYS::keyboard 		= 0x00;
 u8  	SYS::cursor			= 0x0000;
 bool	SYS::var_reset		= false;
+vbool	SYS::soundtime		= false;
+vbool 	SYS::query_key		= false;
 
 
 void SYS::reset(){
@@ -45,10 +47,9 @@ void SYS::init(){
 	INT::init();	
 	MEM::init();	
 	KEY::init();
-	SPU::init( VAR_SONG.BPM );		
+	SPU::init( song.bpm );		
 	SPU::enable(2);
 
-	// This block may be moved before int init...
 	SRAM::init();
 	GPU::start();
    	INT::enable(IRQ_VBLANK);

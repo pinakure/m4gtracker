@@ -15,18 +15,18 @@ REVISION DATE 	2023-02-28
 SnakeCell 		SNK::cells[32];
 u8 				SNK::data[32*32];
 u8 				SNK::length			= 3;
-u8 				SNK::tickLevel		= 0;
+u8 				SNK::tick_level		= 255;
 u8 				SNK::tick			= 0;
 u8 				SNK::speed			= 0;
 SnakeDir 		SNK::direction		= SNAKE_UP;
-SnakeDir 		SNK::nextdirection	= SNAKE_RIGHT;
+SnakeDir 		SNK::next_direction	= SNAKE_RIGHT;
 VirtualScreen*	SNK::vs				= NULL;
 bool 			SNK::turbo			= false;
-bool 			SNK::redraw			= true;
+bool 			SNK::game_start		= false;
 
 void SNK::init(){
-	redraw 	= true;
-	vs 		= &GPU::vs;
+	vs 			= &GPU::vs;
+	game_start  = false;
 }
 
 void SNK::resetPosition(){
@@ -40,25 +40,24 @@ void SNK::resetPosition(){
 
 void SNK::start(){
 	direction 		= SNAKE_RIGHT;
-	nextdirection 	= SNAKE_RIGHT;
+	next_direction 	= SNAKE_RIGHT;
 	speed 			= 1;
-	tickLevel 		= 255;
-	length 			= 3;	
-	tick 			= tickLevel;
-	redraw			= true;			
+	tick_level 		= 32;
+	length 			= 6;	
+	tick 			= tick_level;
+	game_start 		= true;
 	resetPosition();
 }
 
 void SNK::draw(){
-	vs->clear();
+	GPU::vs.clear();
 	
 	int i;
 	for( i=0; i<length; i++ ){
 		vs->set( cells[i].x, cells[i].y );
 	}
 	
-	vs->draw( 11, 6 );
-	redraw = false;			
+	GPU::vs.draw( 11, 6 );
 }
 
 void SNK::move(){
@@ -77,27 +76,30 @@ void SNK::move(){
 }
 
 void SNK::update(){
-	if( KEYPRESS_LEFT  && ( direction !=SNAKE_RIGHT ) ) nextdirection = SNAKE_LEFT	; else
-	if( KEYPRESS_UP    && ( direction !=SNAKE_DOWN  ) ) nextdirection = SNAKE_UP	; else
-	if( KEYPRESS_RIGHT && ( direction !=SNAKE_LEFT  ) ) nextdirection = SNAKE_RIGHT ; else
-	if( KEYPRESS_DOWN  && ( direction !=SNAKE_UP    ) ) nextdirection = SNAKE_DOWN	;
+	if( !game_start ){
+		if( KEYUP_START ){
+			game_start = true;
+			start();
+			//TODO: avoid START signal propagation from this point
+		}
+		return;
+	}
+
+	if( KEYPRESS_LEFT  && ( direction !=SNAKE_RIGHT ) ) next_direction = SNAKE_LEFT	; else
+	if( KEYPRESS_UP    && ( direction !=SNAKE_DOWN  ) ) next_direction = SNAKE_UP	; else
+	if( KEYPRESS_RIGHT && ( direction !=SNAKE_LEFT  ) ) next_direction = SNAKE_RIGHT ; else
+	if( KEYPRESS_DOWN  && ( direction !=SNAKE_UP    ) ) next_direction = SNAKE_DOWN	;
 	
 	turbo = KEYPRESS_B ? true : false;
 	
-	if( KEYUP_START ){
-		start();
-		//TODO: avoid START signal propagation from this point
-	}
-
+	
 	// Legacy UPDATE code
 	if( tick > 0 ){
 		tick--;
 	} else {
 		move();				
-		redraw 		= true;
-		direction 	= nextdirection;
-		tick 		= tickLevel >> turbo;
+		direction 	= next_direction;
+		tick 		= tick_level >> turbo;
+		SNK::draw();
 	}
-	
-	if( redraw ) draw();
 }

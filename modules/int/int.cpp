@@ -11,15 +11,8 @@ REVISION DATE 	2023-02-28
 
 #define DISABLE_INTERRUPTS()	R_IME = 0x0;
 #define ENABLE_INTERRUPTS()		R_IME = 0x1;
+#define ACKNOWLEDGE( signal )	REG_IFBIOS = signal##_IF; //Interrupt ACK
 	
-//vu32 SYS_TIMER=0;
-//u32 SYS_PROFILEDTIME=0;
-//vu32 SYS_PROFILETIMER=0;
-//vu32 SYS_FPS=0;
-//vu32 SYS_FRAMES=0;
-volatile bool SYS_SOUNDTIME=false;
-volatile bool SYS_QUERYKEY=false;
-
 /*------------------------------------------------------------------------------
                             Interrupt Class & Handler
 --------------------------------------------------------------------------------
@@ -155,7 +148,7 @@ void INT::sigVBlank(){
 /*
 We know AGB can do 60 VBlanks per second, so if we count 60 Interrupts,we
 also know a second has elapsed, so it's time to calculate the CPS rate
-(cycles of program per second), but call it SYS_FPS to be more convenient
+(cycles of program per second), but call it SYS::fps to be more convenient
 */
 	DISABLE_INTERRUPTS();
     SYS::timer++;
@@ -164,23 +157,23 @@ also know a second has elapsed, so it's time to calculate the CPS rate
 		SYS::frames = 0;
 		SYS::timer  = 0;		
 	}	
-	SYS_SOUNDTIME 	= true;
-	REG_IFBIOS 		= VBLANK_IF; //Interrupt ACK!!
+	SYS::soundtime 	= true;
+	ACKNOWLEDGE( VBLANK );
 	/***************************************************************************/
-	SYS_QUERYKEY = true;	
+	SYS::query_key = true;	
 	/***************************************************************************/
 	ENABLE_INTERRUPTS();
 }
 
 void INT::sigHBlank(){	
 	DISABLE_INTERRUPTS();
-	REG_IFBIOS = HBLANK_IF;	//Interrupt ACK!!	
+	ACKNOWLEDGE( HBLANK );
 	ENABLE_INTERRUPTS();
 }
 
 void INT::sigVCount(){	
 	DISABLE_INTERRUPTS();
-	REG_IFBIOS = VCOUNT_IF;	//Interrupt ACK!!
+	ACKNOWLEDGE( VCOUNT );
 	ENABLE_INTERRUPTS();
 }
 
@@ -188,40 +181,40 @@ void INT::sigTimer0(){
 	DISABLE_INTERRUPTS();
 	SYS::profile_timer += 1;
 	if( SYS::profile_timer < 10 ) SYS::profiled_time = 0;
-	REG_IFBIOS = TIMER0_IF;	//Interrupt ACK!!
+	ACKNOWLEDGE( TIMER0 );
 	ENABLE_INTERRUPTS();
 }
 
 void INT::sigTimer1(){
 	DISABLE_INTERRUPTS();
-	REG_IFBIOS = TIMER1_IF; //Interrupt ACK!!
+	ACKNOWLEDGE( TIMER1 );
 	ENABLE_INTERRUPTS();
 }
 
 void INT::sigTimer2(){
 	DISABLE_INTERRUPTS();
-	REG_IFBIOS = TIMER2_IF; //Interrupt ACK!!
+	ACKNOWLEDGE( TIMER2 );
 	ENABLE_INTERRUPTS();
 }
 	
 void INT::sigTimer3(){
 	DISABLE_INTERRUPTS();
-	REG_IFBIOS = TIMER3_IF; //Interrupt ACK!!
+	ACKNOWLEDGE( TIMER3 );
 	ENABLE_INTERRUPTS();
 }
 	
 void INT::sigKeyPad(){
 	DISABLE_INTERRUPTS();
-	//SYS_QUERYKEY = true;
+	//SYS::query_key = true;
 	
-	REG_IFBIOS = KEYPAD_IF;	//Interrupt ACK!!
+	ACKNOWLEDGE( KEYPAD );
 	ENABLE_INTERRUPTS();
 }
 
 void INT::sigAgbPak(){
 	DISABLE_INTERRUPTS();
 	/*should branch into AGBLoop, saving ret address for latter returning*/
-	REG_IFBIOS = AGBPAK_IF;	//Interrupt ACK!!
+	ACKNOWLEDGE( AGBPAK );
 	ENABLE_INTERRUPTS();
 }
 

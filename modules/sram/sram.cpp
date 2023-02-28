@@ -12,21 +12,11 @@ u8* SRAM::sram;
 int SRAM::position;
 u16 SRAM::waitstateBackup;
 
-void SRAM_WriteByte(u16 position, u8 byte){
-	return;
-	// *(SRAM)[position] = byte;
-}
-
-u8 SRAM_ReadByte(u16 position){
-	return 0;
-	//return *(SRAM)[position];
-}
-/*
+// This declares both functions defined @ asm/sram.s
 extern "C" {
-	u8 	 SRAM_ReadByte(u16 position);
-	extern void SRAM_WriteByte(u16 position, u8 byte);
-};
-*/
+	void SRAM_WriteByte(u16 position, u8 byte);
+	u8 SRAM_ReadByte(u16 position);
+}
 
 void SRAM::init(void){
 	// Set WAITCNT (Waitstate controller) to 8 wait cycle mode	
@@ -106,38 +96,38 @@ void SRAM::songSave(){
 	forward(32 * CFG::SLOT);
 
 	// Write Song details
-	write( VAR_SONG.TRANSPOSE);
-	write( VAR_SONG.BPM);
-	write( (VAR_SONG.PATTERNLENGTH <<4) | (VAR_SONG.GROOVE.LENGTH));
-	write( (VAR_SONG.GROOVE.ENABLE <<2) | VAR_SONG.NOTEMPTY);//6 bit left unused!!
+	write( song.transpose	);
+	write( song.bpm 		);
+	write( ( song.pattern_length << 4 ) | ( song.groove.length ) );
+	write( ( song.groove.enable  << 2 ) | song.not_empty );//6 bit left unused!!
 		
 	// Write Artist and title
 	for(i=0; i<14;i++){
-		write(VAR_SONG.TITLE[i]);
-		write(VAR_SONG.ARTIST[i]);
+		write( song.title[ i ] );
+		write( song.artist[ i ] );
 	} 
 
 	drawPosition(27, 2, 2);	
 	//0x140
 	
 	// Write Groove Steps
-	forward(16 * CFG::SLOT);
-	for(i=0; i<16; i++){
-		write(VAR_SONG.GROOVE.STEP[i]);
+	forward( 16 * CFG::SLOT );
+	for( i=0; i < 16; i++ ){
+		write( song.groove.step[ i ] );
 	}
 	
 	//0x1A0
-	drawPosition(27, 3, 2);	
-	seek(0x200);
+	drawPosition( 27, 3, 2 );	
+	seek( 0x200 );
 		
-	forward(1536 * CFG::SLOT);	
-	for(i=0; i<256; i++){
-		write(VAR_SONG.PATTERNS[0].ORDER[i]);
-		write(VAR_SONG.PATTERNS[1].ORDER[i]);
-		write(VAR_SONG.PATTERNS[2].ORDER[i]);
-		write(VAR_SONG.PATTERNS[3].ORDER[i]);
-		write(VAR_SONG.PATTERNS[4].ORDER[i]);
-		write(VAR_SONG.PATTERNS[5].ORDER[i]);
+	forward( 1536 * CFG::SLOT );	
+	for( i=0; i < 256; i++ ){
+		write( song.patterns[ 0 ].order[ i ] );
+		write( song.patterns[ 1 ].order[ i ] );
+		write( song.patterns[ 2 ].order[ i ] );
+		write( song.patterns[ 3 ].order[ i ] );
+		write( song.patterns[ 4 ].order[ i ] );
+		write( song.patterns[ 5 ].order[ i ] );
 	}
 	
 	drawPosition(27, 4, 2);	
@@ -147,71 +137,70 @@ void SRAM::songSave(){
 
 void SRAM::songLoad(){
 	int i;
-	u8 h;
+	u8  h;
 	
-	seek(0x80);
-	forward(32 * CFG::SLOT);
+	seek( 0x80 );
+	forward( 32 * CFG::SLOT );
 	
 	// Song details
-	VAR_SONG.TRANSPOSE = read();
-	VAR_SONG.BPM = read();
+	song.transpose 		= read();
+	song.bpm 			= read();
 		
 	h = read();
-	VAR_SONG.PATTERNLENGTH = EXTRACT( h, 4, 0xF);
-	VAR_SONG.GROOVE.LENGTH = h & 0xF;
+	song.pattern_length = EXTRACT( h, 4, 0xF);
+	song.groove.length	= h & 0xF;
 		
 	h = read();
-	VAR_SONG.GROOVE.ENABLE = EXTRACT( h, 2, 0x1);
-	VAR_SONG.NOTEMPTY = h & 0x1;
+	song.groove.enable	= EXTRACT( h, 2, 0x1);
+	song.not_empty		= h & 0x1;
 		
 	// Artist and title
-	for(i=0; i<14;i++){
-		VAR_SONG.TITLE[i]  = read();
-		VAR_SONG.ARTIST[i] = read();
+	for( i=0; i < 14; i++ ){
+		song.title[ i ]  = read();
+		song.artist[ i ] = read();
 	} 
 
-	drawPosition(27, 2, 6);	
+	drawPosition( 27, 2, 6 );	
 
-	forward(16 * CFG::SLOT);
-	for(i=0; i<16; i++){
-		VAR_SONG.GROOVE.STEP[i] = read();
+	forward( 16 * CFG::SLOT );
+	for( i=0; i < 16; i++ ){
+		song.groove.step[ i ] = read();
 	}
 		
 	//1A0
-	drawPosition(27, 3, 6);	
-	seek(0x200);
+	drawPosition( 27, 3, 6 );	
+	seek( 0x200 );
 	
-	
-	forward(1536 * CFG::SLOT);
-	for(i=0; i<256; i++){
-		VAR_SONG.PATTERNS[0].ORDER[i] = read();
-		VAR_SONG.PATTERNS[1].ORDER[i] = read();
-		VAR_SONG.PATTERNS[2].ORDER[i] = read();
-		VAR_SONG.PATTERNS[3].ORDER[i] = read();
-		VAR_SONG.PATTERNS[4].ORDER[i] = read();
-		VAR_SONG.PATTERNS[5].ORDER[i] = read();
+	forward( 1536 * CFG::SLOT );
+	for( i=0; i < 256; i++ ){
+		song.patterns[ 0 ].order[ i ] = read();
+		song.patterns[ 1 ].order[ i ] = read();
+		song.patterns[ 2 ].order[ i ] = read();
+		song.patterns[ 3 ].order[ i ] = read();
+		song.patterns[ 4 ].order[ i ] = read();
+		song.patterns[ 5 ].order[ i ] = read();
 	}
 	
-	patternSync(CFG::ORDERPOSITION);
+	patternSync( CFG::ORDERPOSITION );
 	cellSync();
 	
-	drawPosition(27, 4, 6);	
+	drawPosition( 27, 4, 6 );
 	
 	sharedDataLoad();
 }
 
-void SRAM::songDefaults(void){
+void SRAM::songDefaults(){
 	int i,di;
 	
-	for(i=0; i<14; i++){
-		VAR_SONG.TITLE[i]  = 0xFF;
-		VAR_SONG.ARTIST[i] = 0xFF;
+	for( i=0; i < 14; i++ ){
+		song.title[i]  	= 0xFF;
+		song.artist[i] 	= 0xFF;
 	}
 	//SPU::setTempo(0x80);
-	VAR_SONG.BPM = 0x80;
-	VAR_SONG.PATTERNLENGTH = 0xF;
+	song.bpm 			= 0x80;
+	song.pattern_length = 0xF;
 	
-	for(i=0; i<6; i++){
+	for( i=0; i < 6; i++ ){
 		VAR_INSTRUMENT.NAME[i] = 0xFF;
 	}
 	
@@ -243,14 +232,13 @@ void SRAM::songDefaults(void){
 	}
 
 	// Empty Order chains
-	for(i=0; i<6; i++){
-		for(di=0; di<256; di++){
-			VAR_SONG.PATTERNS[i].ORDER[di] = 0;
+	for( i=0; i < 6; i++ ){
+		for( di=0; di < 256; di++ ){
+			song.patterns[ i ].order[ di ] = 0;
 		}
-		VAR_SONG.PATTERNS[i].POSITION = 0;
+		song.patterns[ i ].position = 0;
 	}	
 }
-
 
 
 
@@ -339,9 +327,9 @@ void SRAM::sharedDataLoad(void){
 
 	instcopy(&VAR_INSTRUMENTS[CFG::CURRENTINSTRUMENT], &VAR_INSTRUMENT);
 	
-	SPU::setTempo(VAR_SONG.BPM);
+	SPU::setTempo( song.bpm );
 
-	drawPosition(27, 5, 6);
+	drawPosition( 27, 5, 6 );
 }
 
 void SRAM::dataBackup(void){
@@ -349,47 +337,47 @@ void SRAM::dataBackup(void){
 	
 	// Dump 6 Song Headers (32 bytes each one, 192 total)
 	seek(0x80);
-	for(i=0; i<6; i++){
+	for( i=0; i < 6; i++ ){
 		// Song details
-		write( VAR_SONGS[i].TRANSPOSE);
-		write( VAR_SONGS[i].BPM);
-		write( (VAR_SONGS[i].PATTERNLENGTH <<4) | (VAR_SONGS[i].GROOVE.LENGTH));
-		write( (VAR_SONGS[i].GROOVE.ENABLE <<2) | VAR_SONGS[i].NOTEMPTY);//6 bit left unused!!
+		write( songs[ i ].transpose		);
+		write( songs[ i ].bpm			);
+		write( ( songs[ i ].pattern_length  << 4 ) | ( songs[ i ].groove.length ) );
+		write( ( songs[ i ].groove.enable	<< 2 ) |   songs[ i ].not_empty );//6 bit left unused!!
 		
 		// Artist and title
-		for(di=0; di<14;di++){
-			write(VAR_SONGS[i].TITLE[di]);
-			write(VAR_SONGS[i].ARTIST[di]);
+		for( di=0; di < 14; di++ ){
+			write( songs[ i ].title[ di ] );
+			write( songs[ i ].artist[ di ] );
 		} 
 	} 
 
 	//0x140
 	
 	// Groove Steps
-	for(i=0; i<6; i++){
-		for(di=0; di<16; di++){
-			write(VAR_SONGS[i].GROOVE.STEP[di]);
+	for( i=0; i < 6; i++ ){
+		for( di=0; di < 16; di++ ){
+			write( songs[ i ].groove.step[ di ] );
 		}
 	} 
 	
 	//0x1A0
 	
 	// Dump pattern orders (256 * 6)
-	seek(0x200);
-	for(i=0; i<6; i++){
-		for(di=0; di<256; di++){
-			write(VAR_SONGS[i].PATTERNS[0].ORDER[di]);
-			write(VAR_SONGS[i].PATTERNS[1].ORDER[di]);
-			write(VAR_SONGS[i].PATTERNS[2].ORDER[di]);
-			write(VAR_SONGS[i].PATTERNS[3].ORDER[di]);
-			write(VAR_SONGS[i].PATTERNS[4].ORDER[di]);
-			write(VAR_SONGS[i].PATTERNS[5].ORDER[di]);
+	seek( 0x200 );
+	for( i=0; i < 6; i++ ){
+		for( di=0; di < 256; di++ ){
+			write( songs[ i ].patterns[ 0 ].order[ di ] );
+			write( songs[ i ].patterns[ 1 ].order[ di ] );
+			write( songs[ i ].patterns[ 2 ].order[ di ] );
+			write( songs[ i ].patterns[ 3 ].order[ di ] );
+			write( songs[ i ].patterns[ 4 ].order[ di ] );
+			write( songs[ i ].patterns[ 5 ].order[ di ] );
 		}
 	}
 	
 	sharedDataSave();
 	
-	drawPosition(27, 1, 5);
+	drawPosition( 27, 1, 5 );
 }
 
 void SRAM::dataRevert(void){
@@ -397,49 +385,49 @@ void SRAM::dataRevert(void){
 	u8  h;
 	
 	// Load 6 Song Headers (32 bytes each one, 192 total)
-	seek(0x80);
+	seek( 0x80 );
 	for(i=0; i<6; i++){
 		// Song details
-		VAR_SONGS[i].TRANSPOSE = read();
-		VAR_SONGS[i].BPM = read();
+		songs[ i ].transpose	 	= read();
+		songs[ i ].bpm 				= read();
 		
 		h = read();
-		VAR_SONGS[i].PATTERNLENGTH = EXTRACT( h, 4, 0xF);
-		VAR_SONGS[i].GROOVE.LENGTH = h & 0xF;
+		songs[ i ].pattern_length	= EXTRACT( h, 4, 0xF );
+		songs[ i ].groove.length	= h & 0xF;
 		
 		h = read();
-		VAR_SONGS[i].GROOVE.ENABLE = EXTRACT( h, 2, 0x1);
-		VAR_SONGS[i].NOTEMPTY = h & 0x1;
+		songs[ i ].groove.enable	= EXTRACT( h, 2, 0x1 );
+		songs[ i ].not_empty		= h & 0x1;
 		
 		// Artist and title
-		for(di=0; di<14;di++){
-			VAR_SONGS[i].TITLE[di] = read();
-			VAR_SONGS[i].ARTIST[di] = read();
+		for( di=0; di < 14;di++ ){
+			songs[ i ].title[ di ] 	= read();
+			songs[ i ].artist[ di ] = read();
 		} 
 	} 
 
 	// Groove Steps (96 bytes)
-	for(i=0; i<6; i++){
-		for(di=0; di<16; di++){
-			VAR_SONGS[i].GROOVE.STEP[di] = read();
+	for( i=0; i < 6; i++ ){
+		for( di=0; di < 16; di++ ){
+			songs[ i ].groove.step[ di ] = read();
 		}
 	} 
 	
 	
 	// Dump pattern orders (256 * 6)
-	seek(0x200);
-	for(i=0; i<6; i++){
-		for(di=0; di<256; di++){
-			VAR_SONGS[i].PATTERNS[0].ORDER[di] = read();
-			VAR_SONGS[i].PATTERNS[1].ORDER[di] = read();
-			VAR_SONGS[i].PATTERNS[2].ORDER[di] = read();
-			VAR_SONGS[i].PATTERNS[3].ORDER[di] = read();
-			VAR_SONGS[i].PATTERNS[4].ORDER[di] = read();
-			VAR_SONGS[i].PATTERNS[5].ORDER[di] = read();
+	seek( 0x200 );
+	for( i=0; i < 6; i++ ){
+		for( di=0; di < 256; di++ ){
+			songs[ i ].patterns[ 0 ].order[ di ] = read();
+			songs[ i ].patterns[ 1 ].order[ di ] = read();
+			songs[ i ].patterns[ 2 ].order[ di ] = read();
+			songs[ i ].patterns[ 3 ].order[ di ] = read();
+			songs[ i ].patterns[ 4 ].order[ di ] = read();
+			songs[ i ].patterns[ 5 ].order[ di ] = read();
 		}
 	}
 	
 	sharedDataLoad();
 	
-	drawPosition(27, 1, 7);
+	drawPosition( 27, 1, 7 );
 }

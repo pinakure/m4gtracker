@@ -14,7 +14,7 @@ char			CFG::ALPHARETURN[14];
 u8	 			CFG::CLIPRETURN /*2*/;
 u8	 			CFG::PROGRESS /*6*/;
 u8	 			CFG::INSTRUMENTVISTYPE;
-GROOVE_TABLE	CFG::GROOVE; 			// Pointer to the table being edited/displayed on INS screeen
+GrooveTable		CFG::groove; 			// Pointer to the table being edited/displayed on INS screeen
 TABLE_CELL 		CFG::INSTRUMENTTABLE; 	// Pointer to the table being edited/displayed on INS screeen
 u8 				CFG::CURRENTCHANNEL /*3*/;
 u8 				CFG::CURRENTINSTRUMENT 	/*6*/;

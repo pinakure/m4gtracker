@@ -34,14 +34,7 @@
 
 // Global callbacks and vars
 
-extern vu32 SYS_TIMER;						 //Global program timer
-extern volatile bool SYS_QUERYKEY;			 //True when a key is triggered
 extern int main(void);						 //Needed by INTERRUPTS!!!
-extern u32	SYS_PROFILEDTIME;				 //Profiled time (Debug Only)
-extern volatile bool SYS_SOUNDTIME;			 //Sound processing flag
-extern vu32 SYS_PROFILETIMER;				 //Profiling timer (Debug Only)
-extern vu32 SYS_FPS;						 //Frames(program cycles) / sec
-extern vu32 SYS_FRAMES;						 //Current framecount	
 
 #include "macros.hpp"
 
@@ -95,11 +88,11 @@ void updatePROGRESS();
 
 // Global variables
 
-MEM_IN_EWRAM SONG			VAR_SONG;
-MEM_IN_EWRAM SONG			VAR_SONGS[6];
+MEM_IN_EWRAM Song			song;
+MEM_IN_EWRAM Song			songs[6];
 MEM_IN_EWRAM INPUT 			VAR_INPUT; 
 MEM_IN_EWRAM u8 			VAR_KEY[4];
-MEM_IN_EWRAM PATTERN 		VAR_PATTERN[6];
+MEM_IN_EWRAM Pattern		VAR_PATTERN[6];
 MEM_IN_EWRAM SETTINGS_PWM 	VAR_PWM;
 MEM_IN_EWRAM SETTINGS_FMW 	VAR_FMW;
 MEM_IN_EWRAM SETTINGS_SMP 	VAR_SMP;
@@ -109,7 +102,7 @@ MEM_IN_EWRAM INSTRUMENT 	VAR_INSTRUMENT;
 MEM_IN_EWRAM CFG 			VAR_CFG;
 MEM_IN_EWRAM LIVE 			VAR_LIVE;
 MEM_IN_EWRAM CHANNEL 		VAR_CHANNEL[6];
-MEM_IN_EWRAM PATTERN_CELL 	VAR_CELLS[6]; 
-MEM_IN_EWRAM PATTERN_CELL 	VAR_DATA[128]; 
+MEM_IN_EWRAM PatternCell 	VAR_CELLS[6]; 
+MEM_IN_EWRAM PatternCell 	VAR_DATA[128]; 
 
 #endif

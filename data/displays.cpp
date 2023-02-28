@@ -40,12 +40,12 @@ const Display LIVE2_DISPLAYS[LIVE2_DISPLAY_MAX] = {
 
 const Display SNG_DISPLAYS[SNG_DISPLAY_MAX] = { 
 	//	  			  x		 y		 invert	 cache				 var							 active	 redraw
-	/*SLOT00*/		{ 0x23	,0x07	,false	,&CACHE_SONGSTATUS	,(u8*)&(VAR_SONGS[0].NOTEMPTY)	,false	,false },
-	/*SLOT01*/		{ 0x23	,0x09	,false	,&CACHE_SONGSTATUS	,(u8*)&(VAR_SONGS[1].NOTEMPTY)	,false	,false },
-	/*SLOT02*/		{ 0x23	,0x0b	,false	,&CACHE_SONGSTATUS	,(u8*)&(VAR_SONGS[2].NOTEMPTY)	,false	,false },
-	/*SLOT03*/		{ 0x23	,0x0d	,false	,&CACHE_SONGSTATUS	,(u8*)&(VAR_SONGS[3].NOTEMPTY)	,false	,false },
-	/*SLOT04*/		{ 0x23	,0x0f	,false	,&CACHE_SONGSTATUS	,(u8*)&(VAR_SONGS[4].NOTEMPTY)	,false	,false },
-	/*SLOT05*/		{ 0x23	,0x11	,false	,&CACHE_SONGSTATUS	,(u8*)&(VAR_SONGS[5].NOTEMPTY)	,false	,false },
+	/*SLOT00*/		{ 0x23	,0x07	,false	,&CACHE_SONGSTATUS	,(u8*)&(songs[0].not_empty)	,false	,false },
+	/*SLOT01*/		{ 0x23	,0x09	,false	,&CACHE_SONGSTATUS	,(u8*)&(songs[1].not_empty)	,false	,false },
+	/*SLOT02*/		{ 0x23	,0x0b	,false	,&CACHE_SONGSTATUS	,(u8*)&(songs[2].not_empty)	,false	,false },
+	/*SLOT03*/		{ 0x23	,0x0d	,false	,&CACHE_SONGSTATUS	,(u8*)&(songs[3].not_empty)	,false	,false },
+	/*SLOT04*/		{ 0x23	,0x0f	,false	,&CACHE_SONGSTATUS	,(u8*)&(songs[4].not_empty)	,false	,false },
+	/*SLOT05*/		{ 0x23	,0x11	,false	,&CACHE_SONGSTATUS	,(u8*)&(songs[5].not_empty)	,false	,false },
 	/*TERMINATOR*/	{ 0xff	,0xff	,0x0	,NULL				,NULL							,false 	,false }
 };
 

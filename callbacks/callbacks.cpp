@@ -35,7 +35,7 @@ void modify6Bit(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (V
 void modify7Bit(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x4:0x1) * (add?1:-1))      ) & 0x7F;	transient7BIT = VARIABLE; transientChanged=true;}
 void modify8Bit(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x10:0x1)* (add?1:-1))      ) & 0xFF;	transient8BIT = VARIABLE; transientChanged=true;}
 
-void modifyTempo(Control *c, bool bigstep, bool add, u32 *pointer){	modify8Bit(c, bigstep, add, pointer); SPU::setTempo(VAR_SONG.BPM); }
+void modifyTempo(Control *c, bool bigstep, bool add, u32 *pointer){	modify8Bit(c, bigstep, add, pointer); SPU::setTempo( song.bpm ); }
 
 void paste2Bit(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient2BIT; return; } transient2BIT = VARIABLE; transientChanged=true; }
 void paste3Bit(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient3BIT; return; } transient3BIT = VARIABLE; transientChanged=true; }

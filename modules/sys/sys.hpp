@@ -78,6 +78,9 @@ class SYS {
 		static vu32 profile_timer;
 		static vu32 fps;
 		static vu32 frames;
+		static volatile bool soundtime;
+		static volatile bool query_key;
+
 
 		static bool var_reset;
 		

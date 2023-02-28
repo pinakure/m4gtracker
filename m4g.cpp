@@ -68,7 +68,7 @@ Uso de tipos de tamaño generico cuando hacen falta tipos de tamaño especifico:
 Nombres de instancias de objetos globales:    
 	GPU gpu    -> eliminada instancia, es un singleton
 	cINT INT   -> eliminada instancia, es un singleton
-	SYS_TIMER  -> mover a SYS
+	SYS_TIMER  -> SOLVED: movidos a SYS
 >>> A solucionar en dos pasos:
 	1. Eliminar todas las instancias unicas y convertirlas en singletons
 	2. Renombrar las clases de fullcaps a capitalizadas
@@ -447,7 +447,6 @@ El archivo int.s es un archivo compilado.
 																					m
 ---------------------------------------------------------------------------------------------
 */
-
 #include "m4g.hpp"
 #include "modules/modules.hpp"
 
@@ -466,8 +465,12 @@ int main(void){
 		SRAM::dataRevert();
 		instrumentUnpack(&VAR_INSTRUMENT);	
 
+		// Auto load
+		SRAM::songLoad();
+		
 		while( !SYS::var_reset ){
-			if(!GPU::isVblank()) {lock = false; continue;}
+			// Skip execution beyond this point unless VBlank is TRUE
+			if(!GPU::isVblank()) { lock = false; continue;}
 			if(!lock) { lock = true; continue; }							
 			SYS::update();			
 			REGHND::update(1);

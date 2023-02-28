@@ -97,7 +97,7 @@ void SPU::disable(void){
 
 void SPU::setTempo(int bpm){
 	timerTarget = (BPM_MAGIC / bpm)*10; 
-	VAR_SONG.BPM = bpm;
+	song.bpm = bpm;
 	*((volatile u16*)0x0400010A) = 0x0; //Disable timer (bit 7)
 	*((volatile u16*)0x04000108) = 0x0000; //'reset' timer counter
 	*((volatile u16*)0x0400010A) = 0x82; //Enable (bit 7)		
@@ -146,19 +146,19 @@ bool updateChannel(u8 chan){
 	
 	
 	// DONT UPDATE CHANNELS WHEN THEY ARE ON PATTERN 0 (this is empty)
-	if(VAR_SONG.PATTERNS[chan].ORDER[VAR_CHANNEL[chan].POSITION] == 0x00){			
+	if( song.patterns[ chan ].order[ VAR_CHANNEL[chan].POSITION ] == 0x00 ){
 		// Rewind until a pattern break (0x00) is found, or the beginning of the chain is reach
-		while(VAR_CHANNEL[chan].POSITION > 0){
+		while( VAR_CHANNEL[chan].POSITION > 0 ){
 		
 			VAR_CHANNEL[chan].POSITION--;
 			
-			if(VAR_SONG.PATTERNS[chan].ORDER[VAR_CHANNEL[chan].POSITION] == 0x00) {
+			if( song.patterns[ chan ].order[ VAR_CHANNEL[chan].POSITION ] == 0x00 ) {
 				VAR_CHANNEL[chan].POSITION++;
 				return true;
 			}
 		}
 		// If after rewind, first pattern is still 0, stop this channel
-		if(VAR_SONG.PATTERNS[chan].ORDER[0] == 0x00) return VAR_CHANNEL[chan].PLAYING = false;
+		if( song.patterns[ chan ].order[ 0 ] == 0x00 ) return VAR_CHANNEL[chan].PLAYING = false;
 		return true;
 	}
 	VAR_CHANNEL[chan].PLAYING = true;
@@ -171,7 +171,7 @@ bool updateChannel(u8 chan){
 		VAR_CHANNEL[chan].LASTPOSITION = VAR_CHANNEL[chan].POSITION;
 		VAR_CHANNEL[chan].POSITION++;
 		SPU::currentBeats=-1;
-		if(VAR_SONG.PATTERNS[chan].ORDER[VAR_CHANNEL[chan].POSITION] == 0x00) return updateChannel(chan);
+		if( song.patterns[ chan ].order[ VAR_CHANNEL[ chan ].POSITION ] == 0x00 ) return updateChannel( chan );
 	}
 	return true;
 }

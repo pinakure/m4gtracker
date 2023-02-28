@@ -20,17 +20,18 @@ typedef struct sSnakeCell{
 class SNK{
 	public:
 		static bool 			turbo;
-		static bool 			redraw;
-		static u8 				tickLevel;
+		static bool 			game_start;
+		static u8 				tick_level;
 		static u8 				tick;
 		static u8 				speed;
 		static SnakeDir 		direction;
-		static SnakeDir 		nextdirection;
+		static SnakeDir 		next_direction;
 		
 		static u8 				data[32*32];
 		static SnakeCell 		cells[32];
 		static u8 				length;
 		static VirtualScreen 	*vs;
+			
 		
 		static void init();
 		static void resetPosition();		

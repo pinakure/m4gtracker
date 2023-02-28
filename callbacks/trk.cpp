@@ -59,7 +59,7 @@ const u16 channel_symbols[6][6] = {
 void cellSync(void){
 	for(int c=0; c<6; c++){
 		for(int i=0, pattern; i<16; i++){
-			pattern = VAR_SONG.PATTERNS[c].ORDER[VAR_CHANNEL[c].POSITION];
+			pattern = song.patterns[ c ].order[ VAR_CHANNEL[c].POSITION ];
 			VAR_CELLS[c].KEY[i] = VAR_DATA[pattern].KEY[i];
 			VAR_CELLS[c].INS[i] = VAR_DATA[pattern].INS[i];
 			VAR_CELLS[c].VOL[i] = VAR_DATA[pattern].VOL[i];
@@ -71,7 +71,7 @@ void cellSync(void){
 
 void cellSyncChannel(u8 c){
 	for(int i=0, pattern; i<16; i++){
-		pattern = VAR_SONG.PATTERNS[c].ORDER[VAR_CHANNEL[c].POSITION];
+		pattern = song.patterns[ c ].order[ VAR_CHANNEL[c].POSITION ];
 		VAR_CELLS[c].KEY[i] = VAR_DATA[pattern].KEY[i];
 		VAR_CELLS[c].INS[i] = VAR_DATA[pattern].INS[i];
 		VAR_CELLS[c].VOL[i] = VAR_DATA[pattern].VOL[i];
@@ -145,9 +145,9 @@ void cellSyncChannel(u8 c){
 // TBC on channel data change
 void cellCopy(u8 channel){
 		
-	for(int i=0, pattern; i<16;i++){		
+	for( int i=0, pattern; i < 16; i++){		
 		
-		pattern = VAR_SONG.PATTERNS[channel].ORDER[VAR_CHANNEL[channel].POSITION];
+		pattern = song.patterns[ channel ].order[ VAR_CHANNEL[ channel ].POSITION ];
 		
 		VAR_DATA[pattern].KEY[i] = VAR_CELLS[channel].KEY[i];
 		VAR_DATA[pattern].INS[i] = VAR_CELLS[channel].INS[i];
@@ -155,7 +155,7 @@ void cellCopy(u8 channel){
 		VAR_DATA[pattern].CMD[i] = VAR_CELLS[channel].CMD[i];
 		VAR_DATA[pattern].VAL[i] = VAR_CELLS[channel].VAL[i];
 	}
-	for(int i=0; i<6;i++){
+	for( int i=0; i < 6; i++ ){
 		if(i==channel)continue;
 		cellSyncChannel(i);
 	}
@@ -187,7 +187,7 @@ void trkDrawPosition(int channel, bool hl){
 	GPU::set(2, tracker_positions_x[channel], tracker_positions_y[channel], channel_symbols[CFG::CURRENTCHANNEL][channel]);
 	HEXADECIMAL(tracker_positions_x[channel]+1	, tracker_positions_y[channel]	, 0x1+hl , VAR_CHANNEL[channel].POSITION>>4);
 	HEXADECIMAL(tracker_positions_x[channel]+2	, tracker_positions_y[channel]	, 0x1+hl , VAR_CHANNEL[channel].POSITION&0xf);
-	HEXADECIMAL_TWOTILES(tracker_positions_x[channel]+3	, tracker_positions_y[channel]	, hl?0x6:0xD , VAR_SONG.PATTERNS[channel].ORDER[VAR_CHANNEL[channel].POSITION]);
+	HEXADECIMAL_TWOTILES(tracker_positions_x[channel]+3	, tracker_positions_y[channel]	, hl?0x6:0xD , song.patterns[ channel ].order[ VAR_CHANNEL[ channel ].POSITION ] );
 	VAR_CHANNEL[channel].LASTPOSITION =  VAR_CHANNEL[channel].POSITION;	
 }
 

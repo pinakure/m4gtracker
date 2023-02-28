@@ -14,13 +14,13 @@ REVISION DATE 	2023-02-28
 #include "../modules/regionhandler/regionhandler.hpp"
 #include "../data/controls.hpp"
 
-const u8 pattern_arrow_position[6] = { 
+static const u8 pattern_arrow_position[6] = { 
 	3, 7, 11, 15, 19, 23 
 };
-const u16 pattern_channel_symbols[6] = { 
+static const u16 pattern_channel_symbols[6] = { 
 	0x7035, 0x7035, 0x7036, 0x7037, 0x7038, 0x7039 
 };
-const u8 NUMBERS[16] = { 
+static const u8 NUMBERS[16] = { 
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 
 };
 static u8 pattern_bookmarks[6] = {
@@ -37,7 +37,7 @@ void patternCopy(u8 channel){
 	// *REGION_MAP_3_TRK.viewport->var = channel;	
 	
 	for(int i=0; i<16;i++){		
-		VAR_SONG.PATTERNS[channel].ORDER[CFG::ORDERPOSITION + i] = VAR_PATTERN[channel].ORDER[i];
+		song.patterns[ channel ].order[ CFG::ORDERPOSITION + i ] = VAR_PATTERN[ channel ].order[ i ];
 	}
 	
 	cellSync();
@@ -45,14 +45,14 @@ void patternCopy(u8 channel){
 
 // TBC each time CFG::ORDERPOSITION CHANGES
 void patternSync(u8 position){
-	for(int i=0, p; i<16; i++){
-		p = i+position;
-		VAR_PATTERN[0].ORDER[i] = VAR_SONG.PATTERNS[0].ORDER[p];
-		VAR_PATTERN[1].ORDER[i] = VAR_SONG.PATTERNS[1].ORDER[p];
-		VAR_PATTERN[2].ORDER[i] = VAR_SONG.PATTERNS[2].ORDER[p];
-		VAR_PATTERN[3].ORDER[i] = VAR_SONG.PATTERNS[3].ORDER[p];
-		VAR_PATTERN[4].ORDER[i] = VAR_SONG.PATTERNS[4].ORDER[p];
-		VAR_PATTERN[5].ORDER[i] = VAR_SONG.PATTERNS[5].ORDER[p];
+	for( int i=0, p=position; i < 16; i++, p++){
+		//p = i + position;
+		VAR_PATTERN[ 0 ].order[ i ] = song.patterns[ 0 ].order[ p ];
+		VAR_PATTERN[ 1 ].order[ i ] = song.patterns[ 1 ].order[ p ];
+		VAR_PATTERN[ 2 ].order[ i ] = song.patterns[ 2 ].order[ p ];
+		VAR_PATTERN[ 3 ].order[ i ] = song.patterns[ 3 ].order[ p ];
+		VAR_PATTERN[ 4 ].order[ i ] = song.patterns[ 4 ].order[ p ];
+		VAR_PATTERN[ 5 ].order[ i ] = song.patterns[ 5 ].order[ p ];
 	}
 }
 
@@ -79,8 +79,8 @@ void patternCH5_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CU
 
 #define CALLBACK(n, c, t, v, nx)			const Callback n = { c , t , v, nx}
 #define CB_PATTERNS(c, a)	CALLBACK( cb_patterns_focus_##c##_0##a 	, patternCH##c##_focus	, EVENT_FOCUS 		, (u32*)&NUMBERS[0x0##a] 					, NULL							);\
-							CALLBACK( cb_patterns_paste_##c##_0##a 	, patternCH##c##_paste	, EVENT_KEYDOWN_B 	, &VAR_PATTERN[0x##c].ORDER[0x##a] 	, &cb_patterns_focus_##c##_0##a );\
-							CALLBACK( cb_patterns_##c##_0##a 		, patternCH##c##_alter	, EVENT_MODIFY_B 	, &VAR_PATTERN[0x##c].ORDER[0x##a] 	, &cb_patterns_paste_##c##_0##a );  
+							CALLBACK( cb_patterns_paste_##c##_0##a 	, patternCH##c##_paste	, EVENT_KEYDOWN_B 	, &VAR_PATTERN[0x##c].order[0x##a] 	, &cb_patterns_focus_##c##_0##a );\
+							CALLBACK( cb_patterns_##c##_0##a 		, patternCH##c##_alter	, EVENT_MODIFY_B 	, &VAR_PATTERN[0x##c].order[0x##a] 	, &cb_patterns_paste_##c##_0##a );  
 CB_PATTERNS(0, 0);		CB_PATTERNS(1, 0);		CB_PATTERNS(2, 0);		CB_PATTERNS(3, 0);		CB_PATTERNS(4, 0);		CB_PATTERNS(5, 0);
 CB_PATTERNS(0, 1);		CB_PATTERNS(1, 1);		CB_PATTERNS(2, 1);		CB_PATTERNS(3, 1);		CB_PATTERNS(4, 1);		CB_PATTERNS(5, 1);
 CB_PATTERNS(0, 2);		CB_PATTERNS(1, 2);		CB_PATTERNS(2, 2);		CB_PATTERNS(3, 2);		CB_PATTERNS(4, 2);		CB_PATTERNS(5, 2);
@@ -221,7 +221,7 @@ void patSync(void){
 		for(int i=0; i<16;i++){
 			/* ------------------------------------------------------------
 			Copy data from VISIBLE CONTROL VARS -> Song Data Order Memory*/
-			VAR_PATTERN[c].ORDER[i] = VAR_SONG.PATTERNS[c].ORDER[i+CFG::ORDERPOSITION];
+			VAR_PATTERN[ c ].order[ i ] = song.patterns[ c ].order[ i + CFG::ORDERPOSITION ];
 			/* ------------------------------------------------------------
 			Manually draw the controls (good to avoid message overflow)  */
 			REGHND::drawControl(&PAT_CONTROLS[o]);

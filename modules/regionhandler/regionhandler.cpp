@@ -10,6 +10,9 @@
 extern LIVE VAR_LIVE;
 extern void STATUS(u8 x, u8 y, u16 color, u16 value);
 extern void PROGRESS(u8 x, u8 y, u16 color, u16 value);
+void trkDispatchMessage(u32);
+void insDispatchMessage(u32);
+void patDispatchMessage(u32);
 
 s_Clipboard Clipboard;
 
@@ -24,6 +27,19 @@ bool 			Progress::enabled;
 u8 				Progress::redraw;
 u32*			Progress::var=NULL;
 
+
+Progress 				REGHND::progress;
+const unsigned short*	REGHND::map0;
+const unsigned short*	REGHND::map1;
+const unsigned short*	REGHND::map2;
+Cache* 					REGHND::dirty;
+Region* 				REGHND::region;
+Control* 				REGHND::control; //focused control
+bool 					REGHND::redraw;
+u32 					REGHND::messages[1024];
+s32 					REGHND::messagecount;
+u8 						REGHND::viewportLastValue;// <--- warning!: this disrupts recursive functionality!
+		
 void Progress::update(){
 	if(current != *var){
 		current = *var;
@@ -223,25 +239,6 @@ void dispatchCallback(const Callback *cb, const Control *ctl, u8 add, u8 bigstep
 }
 
 
-void trkDispatchMessage(u32);
-void insDispatchMessage(u32);
-void patDispatchMessage(u32);
-
-Progress 				REGHND::progress;
-const unsigned short*	REGHND::map0;
-const unsigned short*	REGHND::map1;
-const unsigned short*	REGHND::map2;
-
-Cache* 					REGHND::dirty;
-Region* 				REGHND::region;
-Control* 				REGHND::control; //focused control
-bool 					REGHND::redraw;
-
-u32 					REGHND::messages[1024];
-s32 					REGHND::messagecount;
-
-u8 						REGHND::viewportLastValue;// <--- warning!: this disrupts recursive functionality!
-		
 void REGHND::init(){
 	region = NULL;
 	redraw = true;

@@ -20,14 +20,14 @@ CALLBACK( cb_sng_purge		, purgeSlot		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
 CALLBACK( cb_sng_copy		, copySlot		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
 CALLBACK( cb_sng_erase		, eraseSlot		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
 CALLBACK( cb_sng_slot		, modify6Val	, EVENT_MODIFY_B			, &CFG::SLOT			, NULL	);
-CALLBACK( cb_sng_artist		, ALPHA14		, EVENT_KEYDOWN_B			, &VAR_SONG.ARTIST		, NULL	);
-CALLBACK( cb_sng_title		, ALPHA14		, EVENT_KEYDOWN_B			, &VAR_SONG.TITLE		, NULL	);
+CALLBACK( cb_sng_artist		, ALPHA14		, EVENT_KEYDOWN_B			, &song.artist			, NULL	);
+CALLBACK( cb_sng_title		, ALPHA14		, EVENT_KEYDOWN_B			, &song.title			, NULL	);
 CALLBACK( cb_sng_tempotap	, tempoTap		, EVENT_KEYDOWN_B			, NULL					, NULL	);
-CALLBACK( cb_sng_patlength	, modify4Bit	, EVENT_MODIFY_B			, &VAR_SONG.PATTERNLENGTH,NULL	);
-CALLBACK( cb_sng_transpose	, modify8Bit	, EVENT_MODIFY_B			, &VAR_SONG.TRANSPOSE	, NULL	);
-CALLBACK( cb_sng_bpm		, modifyBPM		, EVENT_MODIFY_B			, &VAR_SONG.BPM			, NULL	);
-CALLBACK( cb_sng_groove		, modify1Bit	, EVENT_KEYDOWN_B			, &VAR_SONG.GROOVE.ENABLE, NULL	);
-#define CB_SNG_GROOVE(a)	CALLBACK(cb_sng_groove_0##a, modify4Bit	, EVENT_MODIFY_B			, &VAR_SONG.GROOVE.STEP[0x##a],	NULL)
+CALLBACK( cb_sng_patlength	, modify4Bit	, EVENT_MODIFY_B			, &song.pattern_length	, NULL	);
+CALLBACK( cb_sng_transpose	, modify8Bit	, EVENT_MODIFY_B			, &song.transpose		, NULL	);
+CALLBACK( cb_sng_bpm		, modifyBPM		, EVENT_MODIFY_B			, &song.bpm				, NULL	);
+CALLBACK( cb_sng_groove		, modify1Bit	, EVENT_KEYDOWN_B			, &song.groove.enable	, NULL	);
+#define CB_SNG_GROOVE(a)	CALLBACK(cb_sng_groove_0##a, modify4Bit	, EVENT_MODIFY_B			, &song.groove.step[0x##a],	NULL)
 CB_SNG_GROOVE(0);
 CB_SNG_GROOVE(1);
 CB_SNG_GROOVE(2);
@@ -60,12 +60,12 @@ void updateSng(){
 	const Control *ct = &SNG_CONTROLS[CONTROL_SNG_TITLE];
 	const Control *ca = &SNG_CONTROLS[CONTROL_SNG_ARTIST];
 	
-	if(compstr( (ca->var), (u8*)VAR_SONG.ARTIST, 14)){
-		copystr( (ca->var), (u8*)VAR_SONG.ARTIST, 14);
+	if(compstr( (ca->var), (u8*)song.artist, 14)){
+		copystr( (ca->var), (u8*)song.artist, 14);
 	}
 	STRING(true, ca->x, ca->y, ca->var);
-	if(compstr( (ct->var), (u8*)VAR_SONG.TITLE, 14)){
-		copystr( (ct->var), (u8*)VAR_SONG.TITLE, 14);
+	if(compstr( (ct->var), (u8*)song.title, 14)){
+		copystr( (ct->var), (u8*)song.title, 14);
 	}
 	STRING(true, ct->x, ct->y, ct->var);
 }
@@ -113,11 +113,11 @@ void modifyBPM(Control *c, bool bigstep, bool add, u32 *pointer){
 /* Calculates new a new BPM Values each 4th time user calls this function based on previous 3 calls */
 void tempoTap(Control *c, bool bigstep, bool add, u32 *pointer){
 	
-	SPU::jumpToPatternAsync(VAR_PATTERN[CFG::CURRENTCHANNEL].ORDER[VAR_CHANNEL[CFG::CURRENTCHANNEL].POSITION]);
+	SPU::jumpToPatternAsync( VAR_PATTERN[ CFG::CURRENTCHANNEL ].order[ VAR_CHANNEL[ CFG::CURRENTCHANNEL ].POSITION ] );
 	return;
 	
 	//TODO: WRITE PROPER TEMPO TAP FUNCTION WHICH DOES NOT TURN BPM CRAZY!
-	//(u8*)&(VAR_SONG.TAPTICKS)
+	//(u8*)&( song.tap_ticks )
 	/*
 	static bool calc = false;
 	if(!calc) {

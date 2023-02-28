@@ -34,26 +34,21 @@ PATTERN VARIABLE STRUCTURE
 
 ************************************************************************************************
 ************************************************************************************************/
-typedef struct _PATTERN_CELL {
+typedef struct sPatternCell {
 	u16				KEY[16] /*7*/;
 	u8				INS[16] /*6*/;
 	u8				VOL[16] /*4*/;
 	u8				CMD[16] /*5*/;
 	u8				VAL[16];
-}PATTERN_CELL;
+}PatternCell;
 
-extern PATTERN_CELL VAR_CELLS[6]; // Current pattern cells, 6 pointers dereferenced
-
-typedef struct _PATTERN {	//Pattern data for a single channel!!!
-	u8				ORDER[256];
+typedef struct sPattern {	//Pattern data for a single channel!!!
+	u8				order[256];
 		//set pointer to first visible position (in pat screen), and mannipulate order directly by POINTER[x]
-	u8 				*POINTER;
-	u8				POSITION;	//Internal position
-}PATTERN;
+	u8 				*pointer;
+	u8				position;	//Internal position
+}Pattern;
 
-
-extern PATTERN_CELL	VAR_DATA[128];
-extern PATTERN VAR_PATTERN[6]; 
 
 /***********************************************************************************************
 ************************************************************************************************
@@ -62,27 +57,36 @@ SONG VARIABLE STRUCTURE
 
 ************************************************************************************************
 ************************************************************************************************/
-typedef struct _GROOVE_TABLE {
-	u8				STEP[16] /*8*/;
-	u8				ENABLE;
-	u8				LENGTH /*4*/;
-}GROOVE_TABLE;
+typedef struct sGrooveTable {
+	u8				step[16] /*8*/;
+	u8				enable;
+	u8				length /*4*/;
+}GrooveTable;
 
-typedef struct _SONG {
-	GROOVE_TABLE	GROOVE;
-	PATTERN_CELL	DATA[128];//This should BE ON PATTERN STRUCTURE!!!*/
-	PATTERN			PATTERNS[6];//orders and pattern for each
-	u8				TRANSPOSE;
-	u8				BPM;
-	u8				PATTERNLENGTH /*4*/;
-	u8				TITLE[14];
-	char			ARTIST[14];
-	u8 				TAPTICKS;
-	bool			NOTEMPTY;		// If true, song has data
-}SONG;
 
-extern SONG VAR_SONGS[6]; //Song data for 6 song slots
-extern SONG VAR_SONG; //Current loaded song (copied from active one)
+class Song {
+public:
+	GrooveTable		groove;
+	PatternCell		data[128];		// This should BE ON PATTERN STRUCTURE!!!*/
+	Pattern			patterns[6];	// Orders and pattern for each
+	u8				transpose;
+	u8				bpm;
+	u8				pattern_length;
+	u8				title[14];
+	char			artist[14];
+	u8 				tap_ticks;
+	bool			not_empty;		// If true, song has data	
+};
+
+extern Song songs[6]; //Song data for 6 song slots
+extern Song song; 	  //Current loaded song (copied from active one)
+
+// This may be moved to song!
+extern PatternCell 	VAR_DATA[128];
+extern Pattern 		VAR_PATTERN[6]; 
+extern PatternCell 	VAR_CELLS[6]; 	// Current pattern cells, 6 pointers dereferenced
+
+
 
 /***********************************************************************************************
 ************************************************************************************************
@@ -253,7 +257,7 @@ class CFG {
 		static u8	 			CLIPRETURN /*2*/;
 		static u8	 			PROGRESS /*6*/;
 		static u8	 			INSTRUMENTVISTYPE;
-		static GROOVE_TABLE		GROOVE; 			// Pointer to the table being edited/displayed on INS screeen
+		static GrooveTable		groove; 			// Pointer to the table being edited/displayed on INS screeen
 		static TABLE_CELL 		INSTRUMENTTABLE; 	// Pointer to the table being edited/displayed on INS screeen
 		static u8 				CURRENTCHANNEL /*3*/;
 		static u8 				CURRENTINSTRUMENT 	/*6*/;
@@ -322,8 +326,8 @@ typedef struct _CHANNEL {
 	u8 				value;
 	u8 				volume;
 
-	PATTERN_CELL	*CELL;
-	PATTERN_CELL	*NEXTCELL;
+	PatternCell*	cell;
+	PatternCell*	next_cell;
 	u8				VOLUME /*5*/;
 	u8				lastpeak /*4*/;
 	u8				peak /*4*/;
