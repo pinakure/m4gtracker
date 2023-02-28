@@ -73,6 +73,12 @@
 
 class SYS {
 	public:
+		static vu32 timer;
+		static u32 	profiled_time;
+		static vu32 profile_timer;
+		static vu32 fps;
+		static vu32 frames;
+
 		static bool var_reset;
 		
 		static u16 keyboard;

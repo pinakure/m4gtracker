@@ -1,3 +1,10 @@
+/* ----------------------------------------------------------------------------
+AUTHOR		 	Al P.Area ( Smiker )
+PURPOSE			Singleton. 
+				Provides user friendly interfacing with the graphic registers.
+ORIGINAL DATE 	2016, October
+REVISION DATE 	2023-02-28
+ --------------------------------------------------------------------------- */
 #include "gpu.hpp"
 
 #include "../../data/tileset.hpp"
@@ -5,7 +12,7 @@
 #include "../../data/palette.hpp"
 
 vu8 					GPU::redraw;
-VirtualScreen*			GPU::vs;
+VirtualScreen			GPU::vs;
 const unsigned short*	GPU::MAP0;
 const unsigned short*	GPU::MAP1;
 const unsigned short*	GPU::MAP2;
@@ -20,9 +27,12 @@ bool GPU::isVblank(){
 }
 
 void GPU::start(){
+	
+	vs.init();
+	
 	redraw = 0;
-
-    // Force HBLANK to access VRAM
+	
+	// Force HBLANK to access VRAM
     R_DISPCNT = DISP_FORCE_HBLANK; 
             
     // Load palette

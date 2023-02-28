@@ -1,4 +1,13 @@
 /*
+TODO:
+----------------------------------------
+- Clear EWRAM & IWRAM @ Initialization (crt0.s)
+- Achieve passive wait and avoid spending too much time @ KEY::update / INT::sigVBlank
+
+*/
+
+
+/*
 ---------------------------------------------------------------------------------------------
 M's observations at September 29
 ---------------------------------------------------------------------------------------------
@@ -13,46 +22,70 @@ Tras leer el texto de nuevo noto que tiene un tono un poco brusco.
 Esa no es mi intención, recuerda que no te estoy echando la bronca! :)
 ------------------------------ 
 El crt0 no limpia la sección de datos no inicializados. Esto es muy importante! 
-No sigas sin arreglar esto. 
+No sigas sin arreglar esto.
+>>> No sé cómo hacerlo en ASM, pero tendré que aprender.
 ------------------------------ 
 Haciendo un profiling rápido encuentro que el código pasa una cantidad de tiempo enorme 
 ejecutando las funciones cKEY::Update y INT_VBlank, incluso al no hacer nada. 
+>>> Debo investigar cómo realizar una espera pasiva en este sistema. 
 ------------------------------ 
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 Hay una ausencia total de consistencia en el estilo de todo el código, 
 incluyendo nombres de funciones, estructuras etc: 
-
+-------------------------------------------------------------------------------
 Nombres de funciones:    
 	_add_1BIT    
 	HEXADECIMAL    
     overloadTest    
 	start_vector    
 	IntHandler    
-	INT_VBlank 
+	INT_VBlank
+>>> En proceso de normalización.
+-------------------------------------------------------------------------------
 Nombres de métodos:    
 	cINT::Init    
 	GPU::safeblit    
 	REGHND::dispatchMessages 
+>>> En proceso de normalización.
+-------------------------------------------------------------------------------
 Nombres de clases y estructuras:    
 	cINT    GPU    
 	REGHND    t_chunk    
 	PATTERN_CELL 
+>>> En proceso de normalización.
+-------------------------------------------------------------------------------
 Nombres de enums: 
 	enum E_Messages 
 	enum E_DISPLAY_MAP_5 
+>>>	PENDING: RENAME
+-------------------------------------------------------------------------------
 Uso de tipos de tamaño generico cuando hacen falta tipos de tamaño especifico: 
 	const unsigned short Palette[] (debe ser const u16 Palette[]) 
+>>> PENDING: RESEARCH & REFACTOR (Asumía short = 16 bit, long 32 bit)
+-------------------------------------------------------------------------------
 Nombres de instancias de objetos globales:    
-	GPU gpu    
-	cINT INT    
-	SYS_TIMER 
+	GPU gpu    -> eliminada instancia, es un singleton
+	cINT INT   -> eliminada instancia, es un singleton
+	SYS_TIMER  -> mover a SYS
+>>> A solucionar en dos pasos:
+	1. Eliminar todas las instancias unicas y convertirlas en singletons
+	2. Renombrar las clases de fullcaps a capitalizadas
+-------------------------------------------------------------------------------
 Nombres de miembros:    
 	VirtualScreen::data    
 	GPU::MAP0    
 	GPU::vs 
-Nombres de tablas constantes:    
+>>> Esto está bastante resuelto, los miembros siempre deben ir en camelcase,
+    y los atributos en lower separados con undercase
+-------------------------------------------------------------------------------
+Nombres de tablas constantes:
 	Palette    
 	TILESET_0    
-	IntrSender 
+	IntrSender
+>>> PENDING: REFACTOR
+-------------------------------------------------------------------------------
 Nombres y contenidos de macros:    
 	PREFETCH (por cierto para que hacer una macro para esto?)    
 	SystemCall(n)    
@@ -60,19 +93,27 @@ Nombres y contenidos de macros:
 	PROGRAM_NAME    
 	_VER_M    
 	_VER_m 
+>>> Las macros deben ir TODAS en MAYUSCULAS. Punto.
+-------------------------------------------------------------------------------
 Codigo repetido: 
 	REGHND::controlTrigger 
 	REGHND::controlAdd 
 	REGHND::controlSub 
+>>> PENDING: RESEARCH AND REFACTOR
+-------------------------------------------------------------------------------
 Numeros magicos: 
 	callbacks.c:90 (y callbacks.c en general) 
 	int.cpp:59 hasta int.cpp:65 
 	key.cpp:16 
 	tim.cpp:28 
+>>> PENDING: DOCUMENT
+-------------------------------------------------------------------------------
 'Stunts' peligrosisimos: 
 	regionhandler.cpp:186 
 	regionhandler.cpp:202 
------------------------------- 
+>>> Con el cambio de código no tengo claro a qué líneas te refieres, aunque a 
+	estas alturas debiera ser evidente a la vista si leo el código del modulo.
+-------------------------------------------------------------------------------
 Hay una regla del estándar C muy clara que dice lo siguiente: 
 Los nombres de identificadores que el programador escribe no deben empezar por '_' (barra baja). 
 Las barras bajas al comienzo sirven para definir un 'espacio de nombres' para el compilador y compañia. 
@@ -104,7 +145,8 @@ Basicamente esta es la idea:
 		donde las 'funciones' __builtin_... las genera (por decirlo de algun modo) el compilador. 
 		
 		Esto incluye tambien nombres de macros enums structs etc etc 
------------------------------- 
+>>> Esto lo tenemos superado...solamente uso _ en el #ifndef...#define de las cabeceras
+-------------------------------------------------------------------------------
 Comentas poco y mal el codigo. 
 	Cuando comentes escribe:    
 	1. 	Comentarios que describan el porque del codigo (es decir, el algoritmo, la estructura de la funcion...) 
@@ -180,8 +222,10 @@ Lo que debes evitar comentar:
 	Seguro que puedes ver el patrón: Init hace el trabajo del constructor y el constructor no hace nada! 
 	(excepto en REGHND, pero en el caso de REGHND puedes añadir un segundo constructor que 
 	acepte un const Region *. 
+>>> Me encanta esta guia de cómo documentar <3. Te sales bro!
 ------------------------------ 
-Hay definiciones en archivos hpp. 
+Hay definiciones en archivos hpp [...] 
+[...]
 Primero lo que dice el estandar:     
 	- Una declaración dice el nombre, el tipo y 'como localizar' un objeto.       
 		Por ejemplo:           
@@ -217,10 +261,12 @@ Primero lo que dice el estandar:
 			Ya me lo dirá el compilador cuando alguien la defina. 
 			Pero por ahora puedo usarla porque se su nombre y su tipo 
 			(cuando alguien me diga donde está ya remplazaré el nombre por su dirección) 
-
+	>>> SOLVED: REFACTORIZADO (mover a clases)
+-------------------------------------------------------------------------------
 	- Regla importante (conocida como 'one definition rule').            
 		Un objeto solo puede estar definido en un sitio 
-		
+	>>> GOTCHA. SOLVED.
+-------------------------------------------------------------------------------
 Segundo, la idea de los archivos hpp/cpp:     
 	- En los archivos hpp se meten las declaraciones. 
 		De esta forma incluir un hpp da a conocer variables y funciones pero no las crea
@@ -232,7 +278,9 @@ Segundo, la idea de los archivos hpp/cpp:
 	- Incluir un archivo hpp varias veces o incluirlo en cada cpp o lo que sea no puede causar problemas. 
 		Un archivo hpp 'da a conocer' variables, funciones... 
 		Si los das a conocer dos veces no pasa nada, solo pierdes el tiempo ;)
-	
+>>> SOLVED: Después de años haciendo las cosas bien, veo cómo está montado y 
+			tengo recuerdos incómodos. ¡¿En qué estaba pensando?!
+-------------------------------------------------------------------------------
 	Tercero, la situacion con tu codigo:     
 		- Hay algunos archivos cpp que no son unidades individuales:
 			key.cpp, 
@@ -246,31 +294,49 @@ Segundo, la idea de los archivos hpp/cpp:
 			
 			En vez de eso los incluyes unos a otros, empezando en m4g.cpp.      
 			
+		>>> Esto ya no es así, se compilan como o las partes y luego se linkean juntas.
+-------------------------------------------------------------------------------			
 		- Defines objetos en las cabeceras. 
 			Por ejemplo empezando en m4g.hpp:
 				Basicamente recursivamente todo desde m4g.hpp:114 hasta m4g.hpp:151. 
-			
+		>>> Ya no hay objetos definidos en cabeceras.
+-------------------------------------------------------------------------------	
 		Te preguntarás que problema hay, si al fin y al cabo tal como lo tienes 
 		compila bien (no hay simbolos redefinidos...) y tampoco hay que molestarse 
 		con un makefile chungo: solo compila m4g.cpp y ya está. 
 		Pues no. 
 		Hay varios problemas:    
+-------------------------------------------------------------------------------
 			1. 	Hay archivos .c y archivos .cpp. 
 				Lo logico es esperar que en los archivos .c haya lenguaje C y en 
 				los archivos .cpp haya lenguaje C++. Pero no. 
 				Al estar todo incluido textualmente todo se compila como C++. 
 				C y C++ son lenguajes distintos.    
+				
+				>>> SOLVED Esto también ha sido corregido. Hpp para cabeceras C++, y Cpp para sources C++
+-------------------------------------------------------------------------------
 			2. Hace el debugging más dificil. 
 				Como el debugger se despiste lo mas minimo verás que todo el codigo 
 				viene de m4g.cpp. 
 				Y tecnicamente todos los simbolos están definidos en m4g.cpp, asi que 
 				olvidate de localizar un objeto viendo en que .o esta definido.    
-				
+			
+				>>> SOLVED: Esto ya no es problema tampoco.
+-------------------------------------------------------------------------------
 			3. Olvidate de listados en ensamblador para cada archivo .o.    
+				
+				>>> SOLVED.
+-------------------------------------------------------------------------------				
 			4. No le gusta a los IDE. 
 				'Ir a definicion' e 'Ir a declaracion' funcionan perfectamente cuando programas como yo digo. 
 				Cuando no el IDE tiene que adivinar.    
+				
+				>>> SOLVED.
+-------------------------------------------------------------------------------
 			5. Tarda mucho mas en compilar    
+			
+				>>> SOLVED. Quick as Hell now.
+-------------------------------------------------------------------------------
 			6. Mas importante aún, al hacerlo como haces has eliminado uno de los 'espacios de nombres' que están en C y C++. 
 				Es el espacio de la 'unidad de traduccion'.        
 				Una 'unidad de traduccion' es lo que queda despues de preprocesar un cpp.        
@@ -305,14 +371,17 @@ Segundo, la idea de los archivos hpp/cpp:
 					
 					Por ejemplo        
 						puede hacer expansión en linea de la función y luego borrar directamente la funcion del ejecutable. 
-						
------------------------------- 
+				
+				>>> SOLVED: Ahora todo esto ya es posible.
+-------------------------------------------------------------------------------
 Los defines en GPU::hpp tienen los nombres y comentarios mal. 
 En concreto: 
 	#define DISP_MODE_0             0x0000      // BG Mode 0  <---- 
 	#define DISP_MODE_1             0x0001      // BG Mode 0  <---- 
 	#define DISP_MODE_2             0x0002      // BG Mode 0  <---- 
 	
+>>> SOLVED: Estos están corregidos, typo tonto.
+-------------------------------------------------------------------------------	
 ... Además el bit 7 (DISP_FORCE_HBLANK) no fuerza HBlank. 
 Más bien desconecta el LCD de la VRAM, haciendo que el LCD lea todo unos, 
 provocando así dos cosas: 
@@ -320,16 +389,23 @@ provocando así dos cosas:
 1. 	La pantalla se vuelve blanca 
 2. 	Se puede acceder a VRAM en cualquier momento sin el ciclo extra que hay cuando uno 
 accede a VRAM mientras el LCD está accediendo a VRAM 
------------------------------- 
+>>> Es bueno saber para qué sirve, pero no le he puesto yo el nombre a la macro, 
+	viene del SDK de nintendo directamente...:P
+-------------------------------------------------------------------------------
 Tengo curiosidad porque decides borrar las memorias de video en cINT::Init. 
------------------------------- 
+>>> Por probar que DmaClear funcionaba bien...en efecto no supone diferencia.
+-------------------------------------------------------------------------------
 cKEY::Update es incomprensible. 
-Además se ejecuta con interrupciones desactivadas? 
------------------------------- 
+Además se ejecuta con interrupciones desactivadas?
+>>> "Cuando lo escribí, sólamente dios y yo sabíamos cómo funcionaba.
+	 Ahora sólo lo sabe dios. =)"
+	Memes al margen, me acabo de partir el ojal leyendo la función. Para poster.
+-------------------------------------------------------------------------------
 En 'm4g.cpp', el comentario "* Control asumible redraw is working, in a multitasked flavourand" es incomprensible. 
 De verdad que no entiendo nada! 
 'flavourand'? 
------------------------------- 
+>>> Jajaja! la droga...el no dormir...la juventud...xD
+-------------------------------------------------------------------------------
 En la clase VirtualScreen he visto que hay un miembro llamado i y un miembro llamado d que, 
 a juzgar por el código de load y clear, parece que están haciendo el trabajo de funciones locales? 
 Además quisiera que me explicases esto:             
@@ -344,8 +420,8 @@ pero muchisimo más confuso y potencialmente mas lento:
 
 	for(i=0; i<1024; i++) 
 	[...] 
-
------------------------------- 
+>>> No hay mucho que comentar, referirse al punto anterior.
+-------------------------------------------------------------------------------
 He visto que en REGHND::dispatchMessages utilizas punteros etiquetados al almacenar 
 en los 4 bits superiores el tipo de mensaje. 
 Supongo que estás al corriente del peligro que esto conlleva. 
@@ -355,16 +431,19 @@ Si vas a poner una limitación de mensajes haz que dependa del tiempo, no de un 
 El objeto REGHND que he visto creado en main reside en la pila. 
 Eso son 4K en la pila. 
 La pila reside en IWRAM. 
+>>> Esto se soluciona si usamos un tamaño más pequeño y metemos los objetos en static dentro de clases.
+-------------------------------------------------------------------------------
 Por cierto la variable local 'max', para representar lo que representa, tiene un nombre extraño.
 Lo mismo en el parámetro de drawViewport, que se llama 'c', en vez de (supongo) 'v'. 
 La funcion drawDisplay acepta un objeto constante de tipo Display. 
 No compruebas en sendMessage si está desbordando el buffer de mensajes. Pon por lo menos un assert o algo ahi. 
 En load() aceptas un objeto Region constante pero luego lo asignas a un miembro de tipo puntero a Region no constante. 
------------------------------- 
+>>> PENDING
+-------------------------------------------------------------------------------
 El archivo int.s es un archivo compilado. 
 	Lo ha autogenerado un compilador. 
 	Aunque tecnicamente su contenido sea ensamblador no es un archivo de codigo fuente. 
-	
+>>> Ok, no sé qué relevancia tiene, pero no discrepo.
 																					m
 ---------------------------------------------------------------------------------------------
 */
@@ -373,30 +452,14 @@ El archivo int.s es un archivo compilado.
 #include "modules/modules.hpp"
 
 int main(void){
-	bool lock;
+	bool lock=false;
 	
 	while(1){
 		PREFETCH
-		INT::init();	
-		MEM::init();
 		SYS::init(); 
-		SRAM::init();
-		GPU::start();
-		INT::enable(IRQ_VBLANK);
-		INT::enable(IRQ_HBLANK);
-		TIM0.init(0);
-		//INT.Enable(IRQ_KEYPAD);
-		TIM0.setup(0x0004, 1);
-		TIM0.enable();
-
-		REGHND::init();
-		SYS::init();
-				
+		SNK::init();
 		lock = false;
-		
-		VirtualScreen VS; // Create and bind virtual screen to the GPU
-		GPU::vs = &VS;
-
+				
 		REGHND::load(&REGION_MAP_2_INS);
 		
 		loadConfig(NULL, 0, 0, NULL);

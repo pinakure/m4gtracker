@@ -1,17 +1,14 @@
+/* ----------------------------------------------------------------------------
+AUTHOR		 	Al P.Area ( Smiker )
+PURPOSE			Singleton. 
+				Provides user friendly interfacing with the hardware timers.
+ORIGINAL DATE 	2016, October
+REVISION DATE 	2023-02-28
+EXAMPLES		TIM0.Setup(0x0004,1);  //Configure overflow reg on 0xFFFF-0x0004, freq 1
+				TIM0.Enable();         //Activate timer (start counting)
+ --------------------------------------------------------------------------- */
 #include "../int/int.hpp" 
 #include "../tim/tim.hpp" 
-
-/*------------------------------------------------------------------------------
-                             Timer Control Class                                
---------------------------------------------------------------------------------
- This module is the responsible of handling TIMER registers, setup the counters
- and take general control on the system timers. It abstracts the whole timer 
- registers in two sentences to enable a timer:
- i.e:
-		TIM0.Setup(0x0004,1);  //Configure overflow reg on 0xFFFF-0x0004, freq 1
-		TIM0.Enable();         //Activate timer (start counting)
-Pretty much convenient huh? ;)
-------------------------------------------------------------------------------*/
 TIM TIM0(0);
 TIM TIM1(1);
 TIM TIM2(2);

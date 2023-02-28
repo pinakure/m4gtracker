@@ -1,5 +1,13 @@
+/* ----------------------------------------------------------------------------
+AUTHOR		 	Al P.Area ( Smiker )
+PURPOSE			Singleton. 
+				Provides a virtual screen object which will be represented in 
+				screen using a (skinnable) tileset made of all possible pixels
+				combinations in a 4x4 matrix. 
+ORIGINAL DATE 	2016, October
+REVISION DATE 	2023-02-28
+ --------------------------------------------------------------------------- */
 #include "gpu.hpp"
-
 #include "../../data/tables.hpp"
 
 const bool circledata[32*32] = { 	
@@ -39,8 +47,8 @@ const bool circledata[32*32] = {
 	0,0,0,0,0,0,0,0, 0,0,1,1,1,0,0,0, 0,0,0,1,1,1,0,0, 0,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0, 0,0,0,0,0,1,1,1, 1,1,1,0,0,0,0,0, 0,0,0,0,0,0,0,0 
 };
-		
-VirtualScreen::VirtualScreen(){
+	
+void VirtualScreen::init(){
 	clear();
 	load(circledata);
 }

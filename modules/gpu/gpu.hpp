@@ -29,11 +29,11 @@
 #define BG_SCREEN_SIZE_SHIFT    14
 
 #define DISP_MODE_0             0x0000      // BG Mode 0
-#define DISP_MODE_1             0x0001      // BG Mode 0
-#define DISP_MODE_2             0x0002      // BG Mode 0
-#define DISP_MODE_3             0x0003      // BG Mode 0
-#define DISP_MODE_4             0x0004      // BG Mode 0
-#define DISP_MODE_5             0x0005      // BG Mode 0
+#define DISP_MODE_1             0x0001      // BG Mode 1
+#define DISP_MODE_2             0x0002      // BG Mode 2
+#define DISP_MODE_3             0x0003      // BG Mode 3
+#define DISP_MODE_4             0x0004      // BG Mode 4
+#define DISP_MODE_5             0x0005      // BG Mode 5
 #define DISP_FORCE_HBLANK       0x0080      // Force HBLANK Flag
 #define DISP_BG0_ON             0x0100      // BG0 ON
 #define DISP_BG1_ON             0x0200      // BG1 ON
@@ -110,7 +110,7 @@ class VirtualScreen {
 		u16 *d; 
 		s16 i;
 		
-		VirtualScreen();		
+		void init();		
 		void load(const bool *dat);
 		void clear(void);
 		void set(u8 ox, u8 oy);
@@ -137,7 +137,7 @@ class GPU {
 		MAP_NONE 
 	};
 	
-	static VirtualScreen *vs;
+	static VirtualScreen vs;
 	
 	static bool isVblank();
 	static void start();	

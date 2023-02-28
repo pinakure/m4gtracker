@@ -1,11 +1,22 @@
+/* ----------------------------------------------------------------------------
+AUTHOR		 	Al P.Area ( Smiker )
+PURPOSE			Singleton. 
+				Provides easy interfacing with the interrupt registers 
+ORIGINAL DATE 	2016, October
+REVISION DATE 	2023-02-28
+ --------------------------------------------------------------------------- */
 #include "int.hpp"
 #include "../dma/dma.hpp"
+#include "../sys/sys.hpp"
 
-vu32 SYS_TIMER=0;
-u32 SYS_PROFILEDTIME=0;
-vu32 SYS_PROFILETIMER=0;
-vu32 SYS_FPS=0;
-vu32 SYS_FRAMES=0;
+#define DISABLE_INTERRUPTS()	R_IME = 0x0;
+#define ENABLE_INTERRUPTS()		R_IME = 0x1;
+	
+//vu32 SYS_TIMER=0;
+//u32 SYS_PROFILEDTIME=0;
+//vu32 SYS_PROFILETIMER=0;
+//vu32 SYS_FPS=0;
+//vu32 SYS_FRAMES=0;
 volatile bool SYS_SOUNDTIME=false;
 volatile bool SYS_QUERYKEY=false;
 
@@ -136,6 +147,8 @@ extern "C" void IntHandler(){
                           Interrupt Serve Routines 
 ------------------------------------------------------------------------------*/
 void INT::sigDummy(){		
+	DISABLE_INTERRUPTS();
+	ENABLE_INTERRUPTS();
 }
 
 void INT::sigVBlank(){	
@@ -144,72 +157,72 @@ We know AGB can do 60 VBlanks per second, so if we count 60 Interrupts,we
 also know a second has elapsed, so it's time to calculate the CPS rate
 (cycles of program per second), but call it SYS_FPS to be more convenient
 */
-    R_IME=0x0;
-	SYS_TIMER++;
-	if(SYS_TIMER==60){
-		SYS_FPS=SYS_FRAMES;
-		SYS_FRAMES = 0;
-		SYS_TIMER=0;		
+	DISABLE_INTERRUPTS();
+    SYS::timer++;
+	if( SYS::timer == 60 ){
+		SYS::fps 	= SYS::frames;
+		SYS::frames = 0;
+		SYS::timer  = 0;		
 	}	
-	SYS_SOUNDTIME=true;
-	REG_IFBIOS = VBLANK_IF; //Interrupt ACK!!
+	SYS_SOUNDTIME 	= true;
+	REG_IFBIOS 		= VBLANK_IF; //Interrupt ACK!!
 	/***************************************************************************/
 	SYS_QUERYKEY = true;	
 	/***************************************************************************/
-	R_IME=0x1;
+	ENABLE_INTERRUPTS();
 }
 
 void INT::sigHBlank(){	
-	R_IME=0x0;	
+	DISABLE_INTERRUPTS();
 	REG_IFBIOS = HBLANK_IF;	//Interrupt ACK!!	
-	R_IME=0x1;
+	ENABLE_INTERRUPTS();
 }
 
 void INT::sigVCount(){	
-	R_IME=0x0;	
+	DISABLE_INTERRUPTS();
 	REG_IFBIOS = VCOUNT_IF;	//Interrupt ACK!!
-	R_IME=0x1;
+	ENABLE_INTERRUPTS();
 }
 
 void INT::sigTimer0(){
-	R_IME=0x0;
-	SYS_PROFILETIMER+=1;
-	if(SYS_PROFILETIMER<10)SYS_PROFILEDTIME=0;
+	DISABLE_INTERRUPTS();
+	SYS::profile_timer += 1;
+	if( SYS::profile_timer < 10 ) SYS::profiled_time = 0;
 	REG_IFBIOS = TIMER0_IF;	//Interrupt ACK!!
-	R_IME=0x1;
+	ENABLE_INTERRUPTS();
 }
 
 void INT::sigTimer1(){
-	R_IME=0x0;
+	DISABLE_INTERRUPTS();
 	REG_IFBIOS = TIMER1_IF; //Interrupt ACK!!
-	R_IME=0x1;
+	ENABLE_INTERRUPTS();
 }
 
 void INT::sigTimer2(){
-	R_IME=0x0;
+	DISABLE_INTERRUPTS();
 	REG_IFBIOS = TIMER2_IF; //Interrupt ACK!!
-	R_IME=0x1;
+	ENABLE_INTERRUPTS();
 }
 	
 void INT::sigTimer3(){
-	R_IME=0x0;
+	DISABLE_INTERRUPTS();
 	REG_IFBIOS = TIMER3_IF; //Interrupt ACK!!
-	R_IME=0x1;
+	ENABLE_INTERRUPTS();
 }
 	
 void INT::sigKeyPad(){
-	R_IME=0x0;
+	DISABLE_INTERRUPTS();
 	//SYS_QUERYKEY = true;
 	
 	REG_IFBIOS = KEYPAD_IF;	//Interrupt ACK!!
-	R_IME=0x1;
+	ENABLE_INTERRUPTS();
 }
 
 void INT::sigAgbPak(){
-	R_IME=0;
+	DISABLE_INTERRUPTS();
 	/*should branch into AGBLoop, saving ret address for latter returning*/
 	REG_IFBIOS = AGBPAK_IF;	//Interrupt ACK!!
-	R_IME=1;
+	ENABLE_INTERRUPTS();
 }
 
 /*------------------------------------------------------------------------------
@@ -218,9 +231,9 @@ void INT::sigAgbPak(){
 void INT::init(){	
   //DmaClear(3,	0			, XWRAM			, XWRAM_SIZE			, 32); //Clear XWRAM
   //DmaClear(3,	0			, IWRAM			, IWRAM_SIZE - 0x200	, 32); //Clear IWRAM
-	DmaClear(3,	0			, VRAM			, VRAM_SIZE				, 32); //Clear VRAM
-	DmaClear(3, 160			, OAM			, OAM_SIZE				, 32); //Clear OAM
-	DmaClear(3,	0			, PALETTE		, PALETTE_SIZE			, 32); //Clear PALETTE	
+  //DmaClear(3,	0			, VRAM			, VRAM_SIZE				, 32); //Clear VRAM
+  //DmaClear(3, 160			, OAM			, OAM_SIZE				, 32); //Clear OAM
+  //DmaClear(3,	0			, PALETTE		, PALETTE_SIZE			, 32); //Clear PALETTE	
 	DmaCopy( 3, IntrTable 	, IntrTableBuf	, sizeof(IntrTableBuf)	, 32); //Set IntrTable
 	DmaCopy( 3, int_main  	, IntrMainBuf	, sizeof(IntrMainBuf)	, 32); //Set Intr_Main
 	*(vu32 *)INTR_VECTOR_BUF = (vu32 )IntrMainBuf;

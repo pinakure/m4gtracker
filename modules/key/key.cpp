@@ -1,14 +1,16 @@
+/* ----------------------------------------------------------------------------
+AUTHOR		 	Al P.Area ( Smiker )
+PURPOSE			Singleton. 
+				Provides user friendly interfacing with the input.
+				Internally holds a keyboard register copy, being updated once 
+				per keypad interrupt. 
+ORIGINAL DATE 	2016, October
+REVISION DATE 	2023-02-28
+EXAMPLES		TIM0.Setup(0x0004,1);  //Configure overflow reg on 0xFFFF-0x0004, freq 1
+				TIM0.Enable();         //Activate timer (start counting)
+ --------------------------------------------------------------------------- */
 #include "key.hpp"
 extern volatile bool SYS_QUERYKEY;
-
-/*------------------------------------------------------------------------------
-                               Key Control Class                                
---------------------------------------------------------------------------------
- This module should hold a copy of the keyboard register, which is updated every
- time the keypad generates an interrupt. It's faster than continuously reading 
- the register, as it's wait times are higher than for mem in WRAM. 
- So it has to return KeyDown, KeyUp and KeyRepeat status for all keys.Thats all.
-------------------------------------------------------------------------------*/
 
 vu16	KEY::keytrig;
 u16 	KEY::keyinput;
@@ -43,8 +45,7 @@ void KEY::update(){
 		cp = 0x0000,
 		cu = 0x0000;
 
-	while(i<10)
-	{
+	while(i<10){
 		u16 pos = 1<<i;
 		ct = (keytrig  & pos)>>i;
 		cd = (keydown  & pos)>>i;
@@ -52,13 +53,11 @@ void KEY::update(){
 		cu = (keyup    & pos)>>i;
 	
 	
-		if( cd)
-		{
+		if( cd){
 			if(!ct)cd=0;
 		}
 
-		if( ct)
-		{			
+		if( ct){			
 			if(!cu)if(!cd)if( cp){cp=1;		}
 			if( cd)if(!cu)if(!cp){cp=1;cd=0;}
 			if(!cp)if(!cd)if(!cu){cd=1;		}
@@ -66,8 +65,7 @@ void KEY::update(){
 		
 		if( cu)cu=0;
 		
-		if( cp)
-		{
+		if( cp){
 			if(!ct)if(!cu)if(!cd){cu=1; cp=0;}
 		}
 

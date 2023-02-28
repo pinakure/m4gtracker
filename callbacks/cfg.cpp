@@ -5,7 +5,6 @@ PURPOSE			Callback routines for the controls at CONFIG screen and
 ORIGINAL DATE 	2016, October
 REVISION DATE 	2023-02-28
  --------------------------------------------------------------------------- */
- 
 #include "callbacks.hpp"
 #include "../data/enum.h"
 #include "../data/regions.hpp"
@@ -18,42 +17,42 @@ REVISION DATE 	2023-02-28
 #include "../modules/sram/sram.hpp"
 
 #define CALLBACK(n, c, t, v, nx)			const Callback n = { c , t , v, nx}
-CALLBACK( cb_cfg_menuindex	, modify5Val		, EVENT_MODIFY_B			, &CFG::MENUSLOT				, NULL);
+CALLBACK( cb_cfg_menuindex	, modify5Val		, EVENT_MODIFY_B			, &CFG::MENUSLOT			, NULL);
 //-----------------------------------------------------------------------------
 CALLBACK( cb_cfg_interface	, modify1Bit		, EVENT_MODIFY_B			, &CFG::LOOKNFEEL.INTERFACE	, NULL);
 CALLBACK( cb_cfg_font		, modify2Bit		, EVENT_MODIFY_B			, &CFG::LOOKNFEEL.FONT		, NULL);
-CALLBACK( cb_cfg_border		, modify2Bit		, EVENT_MODIFY_B			, &CFG::LOOKNFEEL.BORDER		, NULL);
+CALLBACK( cb_cfg_border		, modify2Bit		, EVENT_MODIFY_B			, &CFG::LOOKNFEEL.BORDER	, NULL);
 CALLBACK( cb_cfg_showlogo	, modify1Bit		, EVENT_KEYDOWN_B			, &CFG::LOOKNFEEL.SHOWLOGO	, NULL);
-CALLBACK( cb_cfg_startupsfx	, modify1Bit		, EVENT_KEYDOWN_B			, &CFG::LOOKNFEEL.STARTUPSFX	, NULL);
-CALLBACK( cb_cfg_coloreditor, colorEditor		, EVENT_KEYUP_B				, NULL							, NULL);
+CALLBACK( cb_cfg_startupsfx	, modify1Bit		, EVENT_KEYDOWN_B			, &CFG::LOOKNFEEL.STARTUPSFX, NULL);
+CALLBACK( cb_cfg_coloreditor, colorEditor		, EVENT_KEYUP_B				, NULL						, NULL);
 //-----------------------------------------------------------------------------
 CALLBACK( cb_cfg_linkmode	, modify2Bit		, EVENT_MODIFY_B			, &CFG::LINKMODE.LINKMODE	, NULL);
-CALLBACK( cb_cfg_masterclock, modify1Bit		, EVENT_KEYDOWN_B			, &CFG::LINKMODE.MASTERCLOCK	, NULL);
+CALLBACK( cb_cfg_masterclock, modify1Bit		, EVENT_KEYDOWN_B			, &CFG::LINKMODE.MASTERCLOCK, NULL);
 CALLBACK( cb_cfg_midichan	, modify4Bit		, EVENT_MODIFY_B			, &CFG::LINKMODE.MIDICHAN	, NULL);
 CALLBACK( cb_cfg_clocktempo , modify8Bit		, EVENT_MODIFY_B			, &CFG::LINKMODE.CLOCKTEMPO	, NULL);
-CALLBACK( cb_cfg_receivesong, receiveSong		, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_sendsong	, sendSong			, EVENT_KEYUP_B				, NULL 							, NULL);
+CALLBACK( cb_cfg_receivesong, receiveSong		, EVENT_KEYUP_B				, NULL 						, NULL);
+CALLBACK( cb_cfg_sendsong	, sendSong			, EVENT_KEYUP_B				, NULL 						, NULL);
 //-----------------------------------------------------------------------------
 CALLBACK( cb_cfg_autoload	, modify1Bit		, EVENT_KEYDOWN_B			, &CFG::BEHAVIOR.AUTOLOAD	, NULL);
-CALLBACK( cb_cfg_keyrate	, modify4Bit		, EVENT_MODIFY_B			, &CFG::BEHAVIOR.KEYRATE		, NULL);
+CALLBACK( cb_cfg_keyrate	, modify4Bit		, EVENT_MODIFY_B			, &CFG::BEHAVIOR.KEYRATE	, NULL);
 CALLBACK( cb_cfg_buttonset	, modify2Bit		, EVENT_MODIFY_B			, &CFG::BEHAVIOR.BUTTONSET	, NULL);
-CALLBACK( cb_cfg_saveconfig	, saveConfig		, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_loadconfig	, loadConfig		, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_initconfig	, defaultConfig		, EVENT_KEYUP_B				, NULL 							, NULL);
+CALLBACK( cb_cfg_saveconfig	, saveConfig		, EVENT_KEYUP_B				, NULL 						, NULL);
+CALLBACK( cb_cfg_loadconfig	, loadConfig		, EVENT_KEYUP_B				, NULL 						, NULL);
+CALLBACK( cb_cfg_initconfig	, defaultConfig		, EVENT_KEYUP_B				, NULL 						, NULL);
 //-----------------------------------------------------------------------------
-CALLBACK( cb_cfg_finetune	, modify4Bit		, EVENT_MODIFY_B			, &CFG::TRACKER.FINETUNE		, NULL);
+CALLBACK( cb_cfg_finetune	, modify4Bit		, EVENT_MODIFY_B			, &CFG::TRACKER.FINETUNE	, NULL);
 CALLBACK( cb_cfg_prelisten	, modify1Bit		, EVENT_KEYDOWN_B			, &CFG::TRACKER.PRELISTEN	, NULL);
 CALLBACK( cb_cfg_transpose	, modify8Bit		, EVENT_MODIFY_B			, &CFG::TRACKER.TRANSPOSE	, NULL);
 CALLBACK( cb_cfg_inputmode	, modify1Bit		, EVENT_MODIFY_B			, &CFG::TRACKER.INPUTMODE	, NULL);
 CALLBACK( cb_cfg_soundbias	, modify8Bit		, EVENT_MODIFY_B			, &CFG::TRACKER.SOUNDBIAS	, NULL);
-CALLBACK( cb_cfg_mixer		, mixer				, EVENT_KEYUP_B				, NULL 							, NULL);
+CALLBACK( cb_cfg_mixer		, mixer				, EVENT_KEYUP_B				, NULL 						, NULL);
 //-----------------------------------------------------------------------------
 CALLBACK( cb_cfg_prefetch	, modify1Bit		, EVENT_KEYDOWN_B			, &CFG::MEMORY.PREF	 		, NULL);
-CALLBACK( cb_cfg_backup		, slotUsage			, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_revert		, purgeSongs		, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_memorytest	, memoryTest		, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_format		, formatMemory		, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_reset		, reset				, EVENT_KEYUP_B				, NULL 							, NULL);
+CALLBACK( cb_cfg_backup		, slotUsage			, EVENT_KEYUP_B				, NULL 						, NULL);
+CALLBACK( cb_cfg_revert		, purgeSongs		, EVENT_KEYUP_B				, NULL 						, NULL);
+CALLBACK( cb_cfg_memorytest	, memoryTest		, EVENT_KEYUP_B				, NULL 						, NULL);
+CALLBACK( cb_cfg_format		, formatMemory		, EVENT_KEYUP_B				, NULL 						, NULL);
+CALLBACK( cb_cfg_reset		, reset				, EVENT_KEYUP_B				, NULL 						, NULL);
 #undef CALLBACK
 
 void saveConfig(Control *c, bool bigstep, bool add, u32 *pointer){

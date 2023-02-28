@@ -1,3 +1,12 @@
+/* ----------------------------------------------------------------------------
+AUTHOR		 	Al P.Area ( Smiker )
+PURPOSE			Unused. Abandoned attempt to manage memory from software. 
+ORIGINAL DATE 	2016, October
+REVISION DATE 	2023-02-28
+EXAMPLES		TIM0.Setup(0x0004,1);  //Configure overflow reg on 0xFFFF-0x0004, freq 1
+				TIM0.Enable();         //Activate timer (start counting)
+ --------------------------------------------------------------------------- */
+
 #include "mem.hpp"
 
 typedef struct{
