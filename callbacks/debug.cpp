@@ -1,3 +1,11 @@
+/* ----------------------------------------------------------------------------
+AUTHOR		 	Al P.Area ( Smiker )
+PURPOSE			Debugging routines and helpers.
+ORIGINAL DATE 	2016, October
+REVISION DATE 	2023-02-28
+ --------------------------------------------------------------------------- */
+#include "callbacks.hpp"
+#include "../modules/regionhandler/regionhandler.hpp"
 
 // Stress test for GUI Display Functions
 void overloadTest(REGHND &regHnd){

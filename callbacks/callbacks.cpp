@@ -10,10 +10,6 @@
 #include "../data/tables.hpp"
 #include "../modules/regionhandler/regionhandler.hpp" 
 
-void modifyCHAR(Control *c, bool bigstep, bool add, u32 *pointer){}
-void modify1BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE^=0x1; }
-
-
 static u8 transient2BIT;
 static u8 transient3BIT;
 static u8 transient4BIT;
@@ -22,40 +18,37 @@ static u8 transient6BIT;
 static u8 transient7BIT;
 static u8 transient8BIT;
 
-static u8 transientNote;
-static u8 transientValue;
-static u8 transientVolume;
-static u8 transientInstrument;
-static u8 transientCommand;
+u8 transientNote;
+u8 transientValue;
+u8 transientVolume;
+u8 transientInstrument;
+u8 transientCommand;
+u8 transientChanged;
 
-static u8 transientChanged;
+void modifyChar(Control *c, bool bigstep, bool add, u32 *pointer){}
+void modify1Bit(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE^=0x1; }
+void modify2Bit(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? (add?0x3:0) : (VARIABLE + (add?1:-1)) ) & 0x3; 	transient2BIT = VARIABLE; transientChanged=true;}
+void modify3Bit(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? (add?0x7:0) : (VARIABLE + (add?1:-1)) ) & 0x7; 	transient3BIT = VARIABLE; transientChanged=true;}
+void modify4Bit(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? (add?0xF:0) : (VARIABLE + (add?1:-1)) ) & 0xF; 	transient4BIT = VARIABLE; transientChanged=true;}	
+void modify5Bit(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x4:0x1) * (add?1:-1))      ) & 0x1F;	transient5BIT = VARIABLE; transientChanged=true;}
+void modify6Bit(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x4:0x1) * (add?1:-1))      ) & 0x3F;	transient6BIT = VARIABLE; transientChanged=true;}
+void modify7Bit(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x4:0x1) * (add?1:-1))      ) & 0x7F;	transient7BIT = VARIABLE; transientChanged=true;}
+void modify8Bit(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x10:0x1)* (add?1:-1))      ) & 0xFF;	transient8BIT = VARIABLE; transientChanged=true;}
 
-void modify2BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? (add?0x3:0) : (VARIABLE + (add?1:-1)) ) & 0x3; 	transient2BIT = VARIABLE; transientChanged=true;}
-void modify3BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? (add?0x7:0) : (VARIABLE + (add?1:-1)) ) & 0x7; 	transient3BIT = VARIABLE; transientChanged=true;}
-void modify4BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? (add?0xF:0) : (VARIABLE + (add?1:-1)) ) & 0xF; 	transient4BIT = VARIABLE; transientChanged=true;}	
-void modify5BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x4:0x1) * (add?1:-1))      ) & 0x1F;	transient5BIT = VARIABLE; transientChanged=true;}
-void modify6BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x4:0x1) * (add?1:-1))      ) & 0x3F;	transient6BIT = VARIABLE; transientChanged=true;}
-void modify7BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x4:0x1) * (add?1:-1))      ) & 0x7F;	transient7BIT = VARIABLE; transientChanged=true;}
-void modify8BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x10:0x1)* (add?1:-1))      ) & 0xFF;	transient8BIT = VARIABLE; transientChanged=true;}
+void modifyTempo(Control *c, bool bigstep, bool add, u32 *pointer){	modify8Bit(c, bigstep, add, pointer); SPU::setTempo(VAR_SONG.BPM); }
 
-void modifyTempo(Control *c, bool bigstep, bool add, u32 *pointer){	modify8BIT(c, bigstep, add, pointer); SPU::setTempo(VAR_SONG.BPM); }
-
-void paste2BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient2BIT; return; } transient2BIT = VARIABLE; transientChanged=true; }
-void paste3BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient3BIT; return; } transient3BIT = VARIABLE; transientChanged=true; }
-void paste4BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient4BIT; return; } transient4BIT = VARIABLE; transientChanged=true; }
-void paste5BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient5BIT; return; } transient5BIT = VARIABLE; transientChanged=true; }
-void paste6BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient6BIT; return; } transient6BIT = VARIABLE; transientChanged=true; }
-void paste7BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient7BIT; return; } transient7BIT = VARIABLE; transientChanged=true; }
-void paste8BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient8BIT; return; } transient7BIT = VARIABLE; transientChanged=true; }
+void paste2Bit(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient2BIT; return; } transient2BIT = VARIABLE; transientChanged=true; }
+void paste3Bit(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient3BIT; return; } transient3BIT = VARIABLE; transientChanged=true; }
+void paste4Bit(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient4BIT; return; } transient4BIT = VARIABLE; transientChanged=true; }
+void paste5Bit(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient5BIT; return; } transient5BIT = VARIABLE; transientChanged=true; }
+void paste6Bit(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient6BIT; return; } transient6BIT = VARIABLE; transientChanged=true; }
+void paste7Bit(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient7BIT; return; } transient7BIT = VARIABLE; transientChanged=true; }
+void paste8Bit(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient8BIT; return; } transient7BIT = VARIABLE; transientChanged=true; }
 
 
-void modify3VAL(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + (add?1:-1)) % 3;VARIABLE=VARIABLE>2?2:VARIABLE; 	}
-void modify6VAL(Control *c, bool bigstep, bool add, u32 *pointer){  VARIABLE = (VARIABLE + (add?1:-1)) % 6;VARIABLE=VARIABLE>5?5:VARIABLE; 	}
-
-void modify5VAL(Control *c, bool bigstep, bool add, u32 *pointer){  
-	VARIABLE = (add ? (VARIABLE+1) : (VARIABLE-1)) % 5;	
-	if(VARIABLE > 4)VARIABLE = 4;
-}
+void modify3Val(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + (add?1:-1)) % 3;VARIABLE=VARIABLE>2?2:VARIABLE; 	}
+void modify6Val(Control *c, bool bigstep, bool add, u32 *pointer){  VARIABLE = (VARIABLE + (add?1:-1)) % 6;VARIABLE=VARIABLE>5?5:VARIABLE; 	}
+void modify5Val(Control *c, bool bigstep, bool add, u32 *pointer){  VARIABLE = (add ? (VARIABLE+1) : (VARIABLE-1)) % 5;	if(VARIABLE > 4)VARIABLE = 4; }
 
 void cellCopy(u8 channel);
 void modifyCommand(Control *c, bool bigstep, bool add, u32 *pointer){
@@ -407,17 +400,6 @@ void STATUS(u8 x, u8 y, u16 color, u16 value) {
 #define CALLBACK(n, c, t, v, nx)			const Callback n = { c , t , v, nx}
 
 CALLBACK( cb_no_callback	, NULL			, 0x0000 /* No key presses*/, NULL /* No var */		, NULL /* Last element */	);
-CALLBACK( cb_reset			, RESET			, EVENT_PANIC 				, NULL 					, NULL 						);
-
-#include "debug.cpp"
-#include "hlp.cpp"
-#include "ins.cpp"
-#include "pat.cpp"
-#include "trk.cpp"
-#include "cfg.cpp"
-#include "sng.cpp"
-#include "snk.cpp"
-#include "liv1.cpp"
-#include "liv2.cpp"
+CALLBACK( cb_reset			, reset			, EVENT_PANIC 				, NULL 					, NULL 						);
 
 #undef CALLBACK	

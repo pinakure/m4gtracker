@@ -24,6 +24,16 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 	data/layers.o \
 	data/tileset.o \
 	callbacks/callbacks.o \
+	callbacks/debug.o \
+	callbacks/hlp.o \
+	callbacks/ins.o \
+	callbacks/pat.o \
+	callbacks/trk.o \
+	callbacks/cfg.o \
+	callbacks/sng.o \
+	callbacks/snk.o \
+	callbacks/liv1.o \
+	callbacks/liv2.o \
 	m4g.o 
 
 HAM_VERSION_MAJOR = 2
@@ -107,5 +117,6 @@ clean:
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/key/*.o 
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/spu/*.o 
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/sys/*.o 
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f callbacks/*.o 
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/regionhandler/*.o 
 	

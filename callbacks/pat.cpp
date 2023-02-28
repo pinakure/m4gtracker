@@ -1,4 +1,34 @@
+/* ----------------------------------------------------------------------------
+AUTHOR		 	Al P.Area ( Smiker )
+PURPOSE			Callback routines for the controls at PATTERN screen and 
+				related update routines and helpers.
+ORIGINAL DATE 	2016, October
+REVISION DATE 	2023-02-28
+ --------------------------------------------------------------------------- */
+#include "callbacks.hpp"
+#include "../data/variables.hpp"
+#include "../data/enum.h"
+#include "../modules/gpu/gpu.hpp"
+#include "../modules/spu/spu.hpp"
+#include "../modules/key/key.hpp"
+#include "../modules/regionhandler/regionhandler.hpp"
+#include "../data/controls.hpp"
 
+const u8 pattern_arrow_position[6] = { 
+	3, 7, 11, 15, 19, 23 
+};
+const u16 pattern_channel_symbols[6] = { 
+	0x7035, 0x7035, 0x7036, 0x7037, 0x7038, 0x7039 
+};
+const u8 NUMBERS[16] = { 
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 
+};
+static u8 pattern_bookmarks[6] = {
+	0,0,0,0,0,0
+};	
+static u8 pattern_bookmark_row 	= 0;
+static bool pat_clean 			= false;
+static bool pat_solo_clean 		= false;
 
 // TBC on value change @ PATtern editor
 void patternCopy(u8 channel){
@@ -26,32 +56,28 @@ void patternSync(u8 position){
 	}
 }
 
-void patternCH0_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); patternCopy(0);}
-void patternCH1_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); patternCopy(1);}
-void patternCH2_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); patternCopy(2);}
-void patternCH3_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); patternCopy(3);}
-void patternCH4_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); patternCopy(4);}
-void patternCH5_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); patternCopy(5);}
+void patternCH0_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7Bit(c, bigstep, add, pointer); patternCopy(0);}
+void patternCH1_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7Bit(c, bigstep, add, pointer); patternCopy(1);}
+void patternCH2_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7Bit(c, bigstep, add, pointer); patternCopy(2);}
+void patternCH3_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7Bit(c, bigstep, add, pointer); patternCopy(3);}
+void patternCH4_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7Bit(c, bigstep, add, pointer); patternCopy(4);}
+void patternCH5_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7Bit(c, bigstep, add, pointer); patternCopy(5);}
 
-void patternCH0_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); patternCopy(0);}
-void patternCH1_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); patternCopy(1);}
-void patternCH2_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); patternCopy(2);}
-void patternCH3_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); patternCopy(3);}
-void patternCH4_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); patternCopy(4);}
-void patternCH5_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); patternCopy(5);}
-
-static u8 pattern_bookmark_row = 0;
+void patternCH0_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7Bit(c, bigstep, add, pointer); patternCopy(0);}
+void patternCH1_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7Bit(c, bigstep, add, pointer); patternCopy(1);}
+void patternCH2_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7Bit(c, bigstep, add, pointer); patternCopy(2);}
+void patternCH3_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7Bit(c, bigstep, add, pointer); patternCopy(3);}
+void patternCH4_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7Bit(c, bigstep, add, pointer); patternCopy(4);}
+void patternCH5_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7Bit(c, bigstep, add, pointer); patternCopy(5);}
 
 void patternCH0_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 0; pattern_bookmark_row = *(u8*)pointer;}
 void patternCH1_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 1; pattern_bookmark_row = *(u8*)pointer;}
-void patternCH2_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 2;	pattern_bookmark_row = *(u8*)pointer;}
-void patternCH3_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 3;	pattern_bookmark_row = *(u8*)pointer;}
-void patternCH4_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 4;	pattern_bookmark_row = *(u8*)pointer;}
-void patternCH5_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 5;	pattern_bookmark_row = *(u8*)pointer;}
+void patternCH2_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 2; pattern_bookmark_row = *(u8*)pointer;}
+void patternCH3_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 3; pattern_bookmark_row = *(u8*)pointer;}
+void patternCH4_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 4; pattern_bookmark_row = *(u8*)pointer;}
+void patternCH5_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 5; pattern_bookmark_row = *(u8*)pointer;}
 
-
-//PATTERNS
-const u8 NUMBERS[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+#define CALLBACK(n, c, t, v, nx)			const Callback n = { c , t , v, nx}
 #define CB_PATTERNS(c, a)	CALLBACK( cb_patterns_focus_##c##_0##a 	, patternCH##c##_focus	, EVENT_FOCUS 		, (u32*)&NUMBERS[0x0##a] 					, NULL							);\
 							CALLBACK( cb_patterns_paste_##c##_0##a 	, patternCH##c##_paste	, EVENT_KEYDOWN_B 	, &VAR_PATTERN[0x##c].ORDER[0x##a] 	, &cb_patterns_focus_##c##_0##a );\
 							CALLBACK( cb_patterns_##c##_0##a 		, patternCH##c##_alter	, EVENT_MODIFY_B 	, &VAR_PATTERN[0x##c].ORDER[0x##a] 	, &cb_patterns_paste_##c##_0##a );  
@@ -72,30 +98,20 @@ CB_PATTERNS(0, D);		CB_PATTERNS(1, D);		CB_PATTERNS(2, D);		CB_PATTERNS(3, D);		
 CB_PATTERNS(0, E);		CB_PATTERNS(1, E);		CB_PATTERNS(2, E);		CB_PATTERNS(3, E);		CB_PATTERNS(4, E);		CB_PATTERNS(5, E);
 CB_PATTERNS(0, F);		CB_PATTERNS(1, F);		CB_PATTERNS(2, F);		CB_PATTERNS(3, F);		CB_PATTERNS(4, F);		CB_PATTERNS(5, F);
 #undef CB_PATTERNS
-
-CALLBACK( cb_pat_solo_0	, SOLO0	, EVENT_KEYUP_B	, NULL 	, NULL 	);
-CALLBACK( cb_pat_solo_1	, SOLO1	, EVENT_KEYUP_B	, NULL 	, NULL 	);
-CALLBACK( cb_pat_solo_2	, SOLO2	, EVENT_KEYUP_B	, NULL 	, NULL 	);
-CALLBACK( cb_pat_solo_3	, SOLO3	, EVENT_KEYUP_B	, NULL 	, NULL 	);
-CALLBACK( cb_pat_solo_4	, SOLO4	, EVENT_KEYUP_B	, NULL 	, NULL 	);
-CALLBACK( cb_pat_solo_5	, SOLO5	, EVENT_KEYUP_B	, NULL 	, NULL 	);
-CALLBACK( cb_pat_mute_0	, MUTE0	, EVENT_KEYUP_B	, NULL 	, NULL 	);
-CALLBACK( cb_pat_mute_1	, MUTE1	, EVENT_KEYUP_B	, NULL 	, NULL 	);
-CALLBACK( cb_pat_mute_2	, MUTE2	, EVENT_KEYUP_B	, NULL 	, NULL 	);
-CALLBACK( cb_pat_mute_3	, MUTE3	, EVENT_KEYUP_B	, NULL 	, NULL 	);
-CALLBACK( cb_pat_mute_4	, MUTE4	, EVENT_KEYUP_B	, NULL 	, NULL 	);
-CALLBACK( cb_pat_mute_5	, MUTE5	, EVENT_KEYUP_B	, NULL 	, NULL 	);
+CALLBACK( cb_pat_solo_0	, solo0	, EVENT_KEYUP_B	, NULL 	, NULL 	);
+CALLBACK( cb_pat_solo_1	, solo1	, EVENT_KEYUP_B	, NULL 	, NULL 	);
+CALLBACK( cb_pat_solo_2	, solo2	, EVENT_KEYUP_B	, NULL 	, NULL 	);
+CALLBACK( cb_pat_solo_3	, solo3	, EVENT_KEYUP_B	, NULL 	, NULL 	);
+CALLBACK( cb_pat_solo_4	, solo4	, EVENT_KEYUP_B	, NULL 	, NULL 	);
+CALLBACK( cb_pat_solo_5	, solo5	, EVENT_KEYUP_B	, NULL 	, NULL 	);
+CALLBACK( cb_pat_mute_0	, mute0	, EVENT_KEYUP_B	, NULL 	, NULL 	);
+CALLBACK( cb_pat_mute_1	, mute1	, EVENT_KEYUP_B	, NULL 	, NULL 	);
+CALLBACK( cb_pat_mute_2	, mute2	, EVENT_KEYUP_B	, NULL 	, NULL 	);
+CALLBACK( cb_pat_mute_3	, mute3	, EVENT_KEYUP_B	, NULL 	, NULL 	);
+CALLBACK( cb_pat_mute_4	, mute4	, EVENT_KEYUP_B	, NULL 	, NULL 	);
+CALLBACK( cb_pat_mute_5	, mute5	, EVENT_KEYUP_B	, NULL 	, NULL 	);
+#undef CALLBACK
 	
-	
-const u8 pattern_arrow_position[6] = { 3, 7, 11, 15, 19, 23 };
-	
-bool pat_clean = false;
-bool pat_solo_clean = false;
-
-const u16 pattern_channel_symbols[6] = { 0x7035, 0x7035, 0x7036, 0x7037, 0x7038, 0x7039 };
-
-u8 pattern_bookmarks[6] = {0,0,0,0,0,0};
-
 void patGlobalUpdater(){
 	static int bookmark_timer = 0;
 		
@@ -111,7 +127,7 @@ void patGlobalUpdater(){
 	bookmark_timer = 0;
 }
 	
-void updatePAT(){
+void updatePat(){
 	static int last_position;
 
 	patGlobalUpdater();
@@ -123,14 +139,14 @@ void updatePAT(){
 			if(pattern_bookmarks[c]>0) {
 				y = pattern_bookmarks[c] - CFG::ORDERPOSITION;
 				if((y<=15)&&(y>=0)){
-					gpu.set(0, pattern_arrow_position[c]+1, 4+y, 0x8);
-					gpu.set(0, pattern_arrow_position[c]+2, 4+y, 0x8);
+					GPU::set(0, pattern_arrow_position[c]+1, 4+y, 0x8);
+					GPU::set(0, pattern_arrow_position[c]+2, 4+y, 0x8);
 				}
 			}
 			y = VAR_CHANNEL[c].POSITION - CFG::ORDERPOSITION;
 			x = VAR_CHANNEL[c].LASTPOSITION - CFG::ORDERPOSITION;
-			if((x<=15)&&(x>=0)) gpu.set(2, pattern_arrow_position[c], 4+x, 0x00FC);
-			if((y<=15)&&(y>=0)) gpu.set(2, pattern_arrow_position[c], 4+y, 0x408D);
+			if((x<=15)&&(x>=0)) GPU::set(2, pattern_arrow_position[c], 4+x, 0x00FC);
+			if((y<=15)&&(y>=0)) GPU::set(2, pattern_arrow_position[c], 4+y, 0x408D);
 		}
 		pat_solo_clean = false;
 	}
@@ -142,21 +158,21 @@ void updatePAT(){
 			/* ------------------------------------------------------------
 			If mute is enabled, draw MUTE on High Red color 			 */
 			if(VAR_CHANNEL[c].mute) { 
-				gpu.set(2, pattern_arrow_position[c]+1, 3, 0x3057);
-				gpu.set(2, pattern_arrow_position[c]+2, 3, 0x3058); 
+				GPU::set(2, pattern_arrow_position[c]+1, 3, 0x3057);
+				GPU::set(2, pattern_arrow_position[c]+2, 3, 0x3058); 
 				continue; 
 			}
 			/* ------------------------------------------------------------
 			If solo is enabled, draw SOLO on High green color	   		 */
 			if(VAR_CHANNEL[c].solo) { 
-				gpu.set(2, pattern_arrow_position[c]+1, 3, 0xF055);
-				gpu.set(2, pattern_arrow_position[c]+2, 3, 0xF056); 
+				GPU::set(2, pattern_arrow_position[c]+1, 3, 0xF055);
+				GPU::set(2, pattern_arrow_position[c]+2, 3, 0xF056); 
 				continue;
 			}
 			/* ------------------------------------------------------------
 			Else, draw channel icon		 								 */
-				gpu.set(2, pattern_arrow_position[c]+1, 3, pattern_channel_symbols[c]); 
-				gpu.set(2, pattern_arrow_position[c]+2, 3, 0x00FC); 
+				GPU::set(2, pattern_arrow_position[c]+1, 3, pattern_channel_symbols[c]); 
+				GPU::set(2, pattern_arrow_position[c]+2, 3, 0x00FC); 
 			// ------------------------------------------------------------
 		}
 		// ------------------------------------------------------------
@@ -184,18 +200,18 @@ void updatePAT(){
 //----------------------------------------------------------------------------------------
 // PAT SCREEN CALLBACKS
 //----------------------------------------------------------------------------------------
-void SOLO0(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(0);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_00 ]);*/ }
-void SOLO1(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(1);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_01 ]);*/ }
-void SOLO2(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(2);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_02 ]);*/ }
-void SOLO3(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(3);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_00]);*/ }
-void SOLO4(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(4);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_01]);*/ }
-void SOLO5(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(5);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_02]);*/ }
-void MUTE0(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(0);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_00]);*/ }
-void MUTE1(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(1);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_01]);*/ }
-void MUTE2(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(2);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_02]);*/ }
-void MUTE3(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(3);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_00]);*/ }
-void MUTE4(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(4);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_01]);*/ }
-void MUTE5(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(5);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_02]);*/ }
+void solo0(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(0);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_00 ]);*/ }
+void solo1(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(1);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_01 ]);*/ }
+void solo2(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(2);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_02 ]);*/ }
+void solo3(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(3);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_00]);*/ }
+void solo4(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(4);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_01]);*/ }
+void solo5(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(5);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_02]);*/ }
+void mute0(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(0);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_00]);*/ }
+void mute1(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(1);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_01]);*/ }
+void mute2(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(2);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_02]);*/ }
+void mute3(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(3);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_00]);*/ }
+void mute4(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(4);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_01]);*/ }
+void mute5(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(5);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_02]);*/ }
 
 // Reloads VAR_SONG.PATTERN[6][--16--] into visible VARIABLE lookup vars (VAR_PATTERN[6][16])
 void patSync(void){
@@ -227,7 +243,7 @@ void patDispatchMessage(u32 msg){
 				Clear Arrows when pattern scrolls down 						 */
 				for(int c=0, x=0; c<6;c++){
 					x = VAR_CHANNEL[c].POSITION - CFG::ORDERPOSITION;
-					if((x<=15)&&(x>=0))gpu.set(2, pattern_arrow_position[c], 4+x, 0x00FC);
+					if((x<=15)&&(x>=0))GPU::set(2, pattern_arrow_position[c], 4+x, 0x00FC);
 				}
 				// ------------------------------------------------------------
 				CFG::ORDERPOSITION--;
@@ -249,7 +265,7 @@ void patDispatchMessage(u32 msg){
 				Clear Arrows when pattern scrolls down 						 */
 				for(int c=0, x=0; c<6;c++){
 					x = VAR_CHANNEL[c].POSITION - CFG::ORDERPOSITION;
-					if((x<=15)&&(x>=0))gpu.set(2, pattern_arrow_position[c], 4+x, 0x00FC);
+					if((x<=15)&&(x>=0))GPU::set(2, pattern_arrow_position[c], 4+x, 0x00FC);
 				}
 				// ------------------------------------------------------------
 				CFG::ORDERPOSITION++;

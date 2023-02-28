@@ -1,3 +1,14 @@
+/* ----------------------------------------------------------------------------
+AUTHOR		 	Al P.Area ( Smiker )
+PURPOSE			Callback routines for the help viewer and related updaters.
+ORIGINAL DATE 	2016, October
+REVISION DATE 	2023-02-28
+ --------------------------------------------------------------------------- */
+#include "callbacks.hpp"
+#include "../data/help.hpp"
+#include "../modules/gpu/gpu.hpp"
+#include "../modules/key/key.hpp"
+#include "../modules/regionhandler/regionhandler.hpp"
 
 static void helpBlit(const u16 *help_data, int startx, int starty, int x, int y, int width, int height){
 	static int offsetSrc;
@@ -141,7 +152,7 @@ void helpUpdateButtons(void){
 	help_button_moved = false;
 }
 
-void updateHLP(){
+void updateHlp(){
 	
 	if(KEY::down(KEY_B)) { helpActivateBack(); }
 	if(KEY::down(KEY_A)) { helpActivateButton(); }

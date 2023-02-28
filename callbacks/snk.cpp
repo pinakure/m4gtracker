@@ -1,3 +1,15 @@
+/* ----------------------------------------------------------------------------
+AUTHOR		 	Al P.Area ( Smiker )
+PURPOSE			Snake minigame class and update routine
+ORIGINAL DATE 	2016, October
+REVISION DATE 	2023-02-28
+ --------------------------------------------------------------------------- */
+#include "callbacks.hpp"
+#include "../modules/gpu/gpu.hpp"
+#include "../modules/key/key.hpp"
+#include "../modules/sram/sram.hpp"
+#include "../modules/sys/sys.hpp"
+
 enum E_SnakeDirs {
 	SNAKE_UP,
 	SNAKE_RIGHT,
@@ -92,7 +104,7 @@ class SnakeGame{
 		}
 };
 
-void updateSNK(){
+void updateSnk(){
 	static SnakeGame snake;
 	 
 	if(KEYPRESS_LEFT  && (snake.direction !=SNAKE_RIGHT) ) snake.nextdirection = SNAKE_LEFT	; else

@@ -399,7 +399,7 @@ int main(void){
 
 		REGHND::load(&REGION_MAP_2_INS);
 		
-		LOADCONFIG(NULL, 0, 0, NULL);
+		loadConfig(NULL, 0, 0, NULL);
 		SRAM::dataRevert();
 		instrumentUnpack(&VAR_INSTRUMENT);	
 

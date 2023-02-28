@@ -1,17 +1,33 @@
-CALLBACK( cb_sng_load		, LOADSLOT		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
-CALLBACK( cb_sng_save		, SAVESLOT		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
-CALLBACK( cb_sng_purge		, PURGESLOT		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
-CALLBACK( cb_sng_copy		, COPYSLOT		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
-CALLBACK( cb_sng_erase		, ERASESLOT		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
-CALLBACK( cb_sng_slot		, modify6VAL	, EVENT_MODIFY_B			, &CFG::SLOT			, NULL	);
+/* ----------------------------------------------------------------------------
+AUTHOR		 	Al P.Area ( Smiker )
+PURPOSE			Callback routines for the controls at SONG screen and related
+				update routines and helpers.
+ORIGINAL DATE 	2016, October
+REVISION DATE 	2023-02-28
+ --------------------------------------------------------------------------- */
+#include "callbacks.hpp"
+#include "../data/enum.h"
+#include "../data/variables.hpp"
+#include "../data/controls.hpp"
+#include "../modules/spu/spu.hpp"
+#include "../modules/regionhandler/regionhandler.hpp"
+#include "../modules/sram/sram.hpp"
+
+#define CALLBACK(n, c, t, v, nx)			const Callback n = { c , t , v, nx}
+CALLBACK( cb_sng_load		, loadSlot		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
+CALLBACK( cb_sng_save		, saveSlot		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
+CALLBACK( cb_sng_purge		, purgeSlot		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
+CALLBACK( cb_sng_copy		, copySlot		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
+CALLBACK( cb_sng_erase		, eraseSlot		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
+CALLBACK( cb_sng_slot		, modify6Val	, EVENT_MODIFY_B			, &CFG::SLOT			, NULL	);
 CALLBACK( cb_sng_artist		, ALPHA14		, EVENT_KEYDOWN_B			, &VAR_SONG.ARTIST		, NULL	);
 CALLBACK( cb_sng_title		, ALPHA14		, EVENT_KEYDOWN_B			, &VAR_SONG.TITLE		, NULL	);
-CALLBACK( cb_sng_tempotap	, TEMPOTAP		, EVENT_KEYDOWN_B			, NULL					, NULL	);
-CALLBACK( cb_sng_patlength	, modify4BIT	, EVENT_MODIFY_B			, &VAR_SONG.PATTERNLENGTH,NULL	);
-CALLBACK( cb_sng_transpose	, modify8BIT	, EVENT_MODIFY_B			, &VAR_SONG.TRANSPOSE	, NULL	);
-CALLBACK( cb_sng_bpm		, modifyTempo	, EVENT_MODIFY_B			, &VAR_SONG.BPM			, NULL	);
-CALLBACK( cb_sng_groove		, modify1BIT	, EVENT_KEYDOWN_B			, &VAR_SONG.GROOVE.ENABLE, NULL	);
-#define CB_SNG_GROOVE(a)	CALLBACK(cb_sng_groove_0##a, modify4BIT	, EVENT_MODIFY_B			, &VAR_SONG.GROOVE.STEP[0x##a],	NULL)
+CALLBACK( cb_sng_tempotap	, tempoTap		, EVENT_KEYDOWN_B			, NULL					, NULL	);
+CALLBACK( cb_sng_patlength	, modify4Bit	, EVENT_MODIFY_B			, &VAR_SONG.PATTERNLENGTH,NULL	);
+CALLBACK( cb_sng_transpose	, modify8Bit	, EVENT_MODIFY_B			, &VAR_SONG.TRANSPOSE	, NULL	);
+CALLBACK( cb_sng_bpm		, modifyBPM		, EVENT_MODIFY_B			, &VAR_SONG.BPM			, NULL	);
+CALLBACK( cb_sng_groove		, modify1Bit	, EVENT_KEYDOWN_B			, &VAR_SONG.GROOVE.ENABLE, NULL	);
+#define CB_SNG_GROOVE(a)	CALLBACK(cb_sng_groove_0##a, modify4Bit	, EVENT_MODIFY_B			, &VAR_SONG.GROOVE.STEP[0x##a],	NULL)
 CB_SNG_GROOVE(0);
 CB_SNG_GROOVE(1);
 CB_SNG_GROOVE(2);
@@ -29,8 +45,7 @@ CB_SNG_GROOVE(D);
 CB_SNG_GROOVE(E);
 CB_SNG_GROOVE(F);
 #undef CG_SNG_GROOVE
-
-#define REDRAW(a)			REGHND::sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&REGHND::region->displays[a])&0x0fffffff);
+#undef CALLBACK 
 
 static void copystr(u8 *s, u8 *d, u8 len){
 	for(int i=0; i<len; i++) s[i] = d[i];	
@@ -41,7 +56,7 @@ static int compstr(u8 *a, u8*b, u8 len){
 	return 0;
 }
 
-void updateSNG(){
+void updateSng(){
 	const Control *ct = &SNG_CONTROLS[CONTROL_SNG_TITLE];
 	const Control *ca = &SNG_CONTROLS[CONTROL_SNG_ARTIST];
 	
@@ -54,26 +69,25 @@ void updateSNG(){
 	}
 	STRING(true, ct->x, ct->y, ct->var);
 }
-#undef REDRAW
 
-void LOADSLOT(Control *c, bool bigstep, bool add, u32 *pointer){
+void loadSlot(Control *c, bool bigstep, bool add, u32 *pointer){
 	// Set really confirm callback to FlashManager->save
 	// Set regionHander in modal really dialog mode
 	SRAM::songLoad();
 	REGHND::redraw = true;
 }
-void SAVESLOT(Control *c, bool bigstep, bool add, u32 *pointer){
+void saveSlot(Control *c, bool bigstep, bool add, u32 *pointer){
 	// Set really confirm callback to FlashManager->save
 	// Set regionHander in modal really dialog mode
 	SRAM::songSave();	
 }
-void PURGESLOT(Control *c, bool bigstep, bool add, u32 *pointer){
+void purgeSlot(Control *c, bool bigstep, bool add, u32 *pointer){
 	
 }
-void COPYSLOT(Control *c, bool bigstep, bool add, u32 *pointer){
+void copySlot(Control *c, bool bigstep, bool add, u32 *pointer){
 	
 }
-void ERASESLOT(Control *c, bool bigstep, bool add, u32 *pointer){
+void eraseSlot(Control *c, bool bigstep, bool add, u32 *pointer){
 	ReallyDialog r;
 	
 	r.enable();
@@ -90,14 +104,14 @@ void ERASESLOT(Control *c, bool bigstep, bool add, u32 *pointer){
 }
 
 /* Called each time BPM is changed by the control on SNG screen */
-void modifyTEMPO(Control *c, bool bigstep, bool add, u32 *pointer){	
+void modifyBPM(Control *c, bool bigstep, bool add, u32 *pointer){	
 	(*(u8*) c->var) = ((*(u8*) c->var) + ((bigstep?0x10:0x1)* (add?1:-1)) ) & 0xFF;
 	( (REGHND*)pointer )->sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)&SNG_CONTROLS[CONTROL_SNG_BPM]);
 	SPU::setTempo(*(c->var));
 }
 
 /* Calculates new a new BPM Values each 4th time user calls this function based on previous 3 calls */
-void TEMPOTAP(Control *c, bool bigstep, bool add, u32 *pointer){
+void tempoTap(Control *c, bool bigstep, bool add, u32 *pointer){
 	
 	SPU::jumpToPatternAsync(VAR_PATTERN[CFG::CURRENTCHANNEL].ORDER[VAR_CHANNEL[CFG::CURRENTCHANNEL].POSITION]);
 	return;
@@ -120,6 +134,5 @@ void TEMPOTAP(Control *c, bool bigstep, bool add, u32 *pointer){
 		calc = false;
 	}*/
 }
-
 
 

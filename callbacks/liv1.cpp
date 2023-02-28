@@ -1,8 +1,22 @@
+/* ----------------------------------------------------------------------------
+AUTHOR		 	Al P.Area ( Smiker )
+PURPOSE			Callback routines for the controls at LIVE1 screen and related 
+				update routines and helpers.
+ORIGINAL DATE 	2016, October
+REVISION DATE 	2023-02-28
+ --------------------------------------------------------------------------- */
+#include "callbacks.hpp"
 #include "../data/displays.hpp"
+#include "../data/enum.h"
+#include "../data/variables.hpp"
+#include "../modules/sys/sys.hpp"
+#include "../modules/key/key.hpp"
+#include "../modules/regionhandler/regionhandler.hpp"
 
-CALLBACK( cb_live_retrig	, modify1BIT		, EVENT_KEYDOWN_B 		, &VAR_LIVE.PERFORM.RETRIG		, NULL					);
-CALLBACK( cb_live_speed	 	, modify8BIT		, EVENT_MODIFY_B 		, &VAR_LIVE.PERFORM.SPEED		, NULL					);
-CALLBACK( cb_live_quantize1	, modify3BIT		, EVENT_MODIFY_B 		, &VAR_LIVE.PERFORM.QUANTIZE	, NULL					);
+#define CALLBACK(n, c, t, v, nx)			const Callback n = { c , t , v, nx}
+CALLBACK( cb_live_retrig	, modify1Bit		, EVENT_KEYDOWN_B 		, &VAR_LIVE.PERFORM.RETRIG		, NULL					);
+CALLBACK( cb_live_speed	 	, modify8Bit		, EVENT_MODIFY_B 		, &VAR_LIVE.PERFORM.SPEED		, NULL					);
+CALLBACK( cb_live_quantize1	, modify3Bit		, EVENT_MODIFY_B 		, &VAR_LIVE.PERFORM.QUANTIZE	, NULL					);
 #define CB_LIVE_LEFT(n, i, m)		CALLBACK( cb_live_left_##n##_0##i, 	m, EVENT_MODIFY_B, &VAR_LIVE.PERFORM.LEFT.n[i], NULL)
 #define CB_LIVE_RIGHT(n, i, m)		CALLBACK( cb_live_right_##n##_0##i, m, EVENT_MODIFY_B, &VAR_LIVE.PERFORM.RIGHT.n[i], NULL)
 CB_LIVE_LEFT(VAL, 0, modifyValue);
@@ -32,14 +46,14 @@ CB_LIVE_LEFT(INS, 5, modifyInst);
 CB_LIVE_LEFT(INS, 6, modifyInst);
 CB_LIVE_LEFT(INS, 7, modifyInst);
 
-CB_LIVE_LEFT(CHAN, 0, modify6VAL);
-CB_LIVE_LEFT(CHAN, 1, modify6VAL);
-CB_LIVE_LEFT(CHAN, 2, modify6VAL);
-CB_LIVE_LEFT(CHAN, 3, modify6VAL);
-CB_LIVE_LEFT(CHAN, 4, modify6VAL);
-CB_LIVE_LEFT(CHAN, 5, modify6VAL);
-CB_LIVE_LEFT(CHAN, 6, modify6VAL);
-CB_LIVE_LEFT(CHAN, 7, modify6VAL);
+CB_LIVE_LEFT(CHAN, 0, modify6Val);
+CB_LIVE_LEFT(CHAN, 1, modify6Val);
+CB_LIVE_LEFT(CHAN, 2, modify6Val);
+CB_LIVE_LEFT(CHAN, 3, modify6Val);
+CB_LIVE_LEFT(CHAN, 4, modify6Val);
+CB_LIVE_LEFT(CHAN, 5, modify6Val);
+CB_LIVE_LEFT(CHAN, 6, modify6Val);
+CB_LIVE_LEFT(CHAN, 7, modify6Val);
 
 CB_LIVE_LEFT(KEY, 0, modifyNote);
 CB_LIVE_LEFT(KEY, 1, modifyNote);
@@ -77,14 +91,14 @@ CB_LIVE_RIGHT(CMD, 5, modifyCommand);
 CB_LIVE_RIGHT(CMD, 6, modifyCommand);
 CB_LIVE_RIGHT(CMD, 7, modifyCommand);
 
-CB_LIVE_RIGHT(CHAN, 0, modify6VAL);
-CB_LIVE_RIGHT(CHAN, 1, modify6VAL);
-CB_LIVE_RIGHT(CHAN, 2, modify6VAL);
-CB_LIVE_RIGHT(CHAN, 3, modify6VAL);
-CB_LIVE_RIGHT(CHAN, 4, modify6VAL);
-CB_LIVE_RIGHT(CHAN, 5, modify6VAL);
-CB_LIVE_RIGHT(CHAN, 6, modify6VAL);
-CB_LIVE_RIGHT(CHAN, 7, modify6VAL);
+CB_LIVE_RIGHT(CHAN, 0, modify6Val);
+CB_LIVE_RIGHT(CHAN, 1, modify6Val);
+CB_LIVE_RIGHT(CHAN, 2, modify6Val);
+CB_LIVE_RIGHT(CHAN, 3, modify6Val);
+CB_LIVE_RIGHT(CHAN, 4, modify6Val);
+CB_LIVE_RIGHT(CHAN, 5, modify6Val);
+CB_LIVE_RIGHT(CHAN, 6, modify6Val);
+CB_LIVE_RIGHT(CHAN, 7, modify6Val);
 
 CB_LIVE_RIGHT(INS, 0, modifyInst);
 CB_LIVE_RIGHT(INS, 1, modifyInst);
@@ -115,7 +129,9 @@ CB_LIVE_RIGHT(KEY, 7, modifyNote);
 #undef CB_LIVE_LEFT
 #undef CB_LIVE_RIGHT
 
-void updateLIVE1(){
+#undef CALLBACK
+
+void updateLive1(){
 	if(KEYDOWN_START){
 		REGHND::sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&REGHND::region->displays[LIVE1_DISPLAY_STATUS_FREE])&0x0fffffff);
 		VAR_LIVE.PERFORM.LOCK ^= 1;
