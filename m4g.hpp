@@ -43,38 +43,6 @@ extern vu32 SYS_PROFILETIMER;				 //Profiling timer (Debug Only)
 extern vu32 SYS_FPS;						 //Frames(program cycles) / sec
 extern vu32 SYS_FRAMES;						 //Current framecount	
 
-enum E_StatusStrings {
-	STATUS_SAVING,
-	STATUS_LOADING,
-	STATUS_RECEIVING,
-	STATUS_SENDING,
-	STATUS_SYNCWITH,
-	STATUS_RESTORING,
-	STATUS_PURGING,
-	STATUS_TESTING,
-	STATUS_REINIT,
-	STATUS_CELLS,
-	STATUS_DEFAULTS,
-	STATUS_INSTDATA,
-	STATUS_MASTER,
-	STATUS_MEMORY,
-	STATUS_MIDIIN,
-	STATUS_MIDIOUT,
-	STATUS_PATTERNS,
-	STATUS_SETTINGS,
-	STATUS_SLAVE,
-	STATUS_SONG,
-	STATUS_CORRUPTED
-};
-
-enum E_InstrumentTypes {
-	INSTRUMENT_TYPE_PWM,
-	INSTRUMENT_TYPE_WAV,
-	INSTRUMENT_TYPE_FMW,
-	INSTRUMENT_TYPE_SMP,
-	INSTRUMENT_TYPE_COUNT
-};
-
 void PIXEL(u8 x, u8 y, u16 color, u16 value);
 void VISPOS2(u8 x, u8 y, u16 color, u16 value);
 void VISPOS1(u8 x, u8 y, u16 color, u16 value);
@@ -103,45 +71,44 @@ void DECIMAL_DOUBLE(u8 x, u8 y, u16 color, u16 value);
 void DECIMAL_TWOTILES(u8 x, u8 y, u16 color, u16 value);
 void DECIMAL_DOUBLE_TWOTILES(u8 x, u8 y, u16 color, u16 value);
 
-#define BUTTON_ALTER		KEY_A	
-#define BUTTON_NAVIGATE	KEY_SELECT
+#include "macros.hpp"
 
 #include "data/enum.h"
 #include "data/datatypes.h"
 
 /* Display update controller Callbacks (@ callbacks.c) */
-void updateLIVE2(RegionHandler* rh);
-void updateLIVE1(RegionHandler* rh);
-void updateHLP(RegionHandler* rh);
-void updateSNG(RegionHandler* rh);
-void updateINS_WAV(RegionHandler* rh);
-void updateINS_FMW(RegionHandler* rh);
-void updateINS_SMP(RegionHandler* rh);
-void updateINS_PWM(RegionHandler* rh);
-void updatePAT(RegionHandler* rh);
-void updateTABLE(RegionHandler* rh);
-void updateVIS(RegionHandler* rh);
-void updateHEADER1(RegionHandler* rh);
-void updateHEADER0(RegionHandler* rh);
-void updateCHANNEL0(RegionHandler* rh);
-void updateCHANNEL1(RegionHandler* rh);
-void updateCHANNEL2(RegionHandler* rh);
-void updateCHANNEL3(RegionHandler* rh);
-void updateCHANNEL4(RegionHandler* rh);
-void updateCHANNEL5(RegionHandler* rh);
-void updateSNK(RegionHandler* rh);
-void updateLOOKNFEEL(RegionHandler* rh);
-void updateLINKMODE(RegionHandler* rh);
-void updateBEHAVIOR(RegionHandler* rh);
-void updateTRACKER(RegionHandler* rh);
-void updateMEMORY(RegionHandler* rh);
-void updateCOLOREDITOR(RegionHandler* rh);
-void updateCHANNELMIXER(RegionHandler* rh);
-void updateMEMORYSONGMAP(RegionHandler* rh);
-void updateMEMORYTEST(RegionHandler* rh);
-void updateLINKSTATUS(RegionHandler* rh);
-void updateCREDITS(RegionHandler* rh);
-void updatePROGRESS(RegionHandler* rh);
+void updateLIVE2();
+void updateLIVE1();
+void updateHLP();
+void updateSNG();
+void updateINS_WAV();
+void updateINS_FMW();
+void updateINS_SMP();
+void updateINS_PWM();
+void updatePAT();
+void updateTABLE();
+void updateVIS();
+void updateHEADER1();
+void updateHEADER0();
+void updateCHANNEL0();
+void updateCHANNEL1();
+void updateCHANNEL2();
+void updateCHANNEL3();
+void updateCHANNEL4();
+void updateCHANNEL5();
+void updateSNK();
+void updateLOOKNFEEL();
+void updateLINKMODE();
+void updateBEHAVIOR();
+void updateTRACKER();
+void updateMEMORY();
+void updateCOLOREDITOR();
+void updateCHANNELMIXER();
+void updateMEMORYSONGMAP();
+void updateMEMORYTEST();
+void updateLINKSTATUS();
+void updateCREDITS();
+void updatePROGRESS();
 
 /* Button Callbacks (callbacks.c) */
 void SOLO0(Control *c, bool bigstep, bool add, u32 *pointer);
@@ -210,9 +177,9 @@ void modify6VAL(Control*, bool bigstep, bool add, u32 *pointer); // For variable
 void modify27VAL(Control*, bool bigstep, bool add, u32 *pointer); 
 
 
-void instLoad(void);
+void instLoad();
 void patternSync(u8 position);
-void cellSync(void);
+void cellSync();
 
 
 void instrument1BIT(Control *c, bool bigstep, bool add, u32 *pointer);
@@ -230,52 +197,24 @@ void instrument6VAL(Control *c, bool bigstep, bool add, u32 *pointer);
 void instrument5VAL(Control *c, bool bigstep, bool add, u32 *pointer);
 void instrument27VAL(Control *c,bool bigstep, bool add, u32 *pointer);
 
-#define EXTRACT(packed, position, mask)		((packed >> position) & mask)
-#define PORT(a)		*((u8*)a)
-#define M4G_VERSION			0x81
-#define M4GEEK_SIGNATURE	0xE5ACFECA
-
-#define EXPECT(a, up, down)			{VAR_CFG.loadCount = 0;regHnd.progress.set(0, a, STATUS_##up, STATUS_##down, &VAR_CFG.loadCount);}
-#define OK()						{VAR_CFG.loadCount++;regHnd.update(1);	DECIMAL_DOUBLE(28,1,9, SRAM.position-1);}
-
-
-#define PRINTPOINTER(x, y, c, a)	TEXT(x,y, 0x6, c-13); \
-						HEXADECIMAL_DOUBLE(x+1,y, 0x6, (((unsigned)a)&0xFF000000) >> 24); \
-						HEXADECIMAL_DOUBLE(x+2,y, 0x6, (((unsigned)a)&0x00FF0000) >> 16); \
-						HEXADECIMAL_DOUBLE(x+3,y, 0x6, (((unsigned)a)&0x0000FF00) >>  8); \
-						HEXADECIMAL_DOUBLE(x+4,y, 0x6, ((unsigned)a)&0x000000FF);
-
-#define PRINTVAR(x, y, c, a)		TEXT(x,y, 0x6, c-13); \
-						HEXADECIMAL_DOUBLE(x+1,y, 6, a);
-
-#include "data/variables.h"
+#include "data/variables.hpp"
 #include "callbacks/callbacks.h"
 
-
-
-//#include "data/tables.c"
-#include "data/caches.c"
-#include "data/controls.c"
-#include "data/displays.c"
-#include "data/regions.c"
-#include "data/viewports.c"
-#include "data/layers.c"
-#include "data/tileset.c"
-#include "data/palette.c"
-#include "data/help.c"
+#include "data/tables.hpp"
+//#include "data/controls.cpp"
+//#include "data/displays.c"
+//#include "data/regions.c"
+//#include "data/viewports.c"
+#include "data/layers.hpp"
+#include "data/tileset.hpp"
+#include "data/palette.hpp"
+//#include "data/help.c"
 
 // Global variables
 
-vu32 SYS_TIMER=0;
-u32 SYS_PROFILEDTIME=0;
-vu32 SYS_PROFILETIMER=0;
-vu32 SYS_FPS=0;
-vu32 SYS_FRAMES=0;
-volatile bool SYS_SOUNDTIME=false;
 u8 SYS_ACTIVESCREEN=0;
 u8 SYS_PARAM=0;
 bool SYS_SYNCTRACKER = false;
-volatile bool SYS_QUERYKEY=false;
 MEM_IN_EWRAM SONG			VAR_SONG;
 MEM_IN_EWRAM SONG			VAR_SONGS[6];
 MEM_IN_EWRAM INPUT 			VAR_INPUT; 

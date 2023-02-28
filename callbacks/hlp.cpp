@@ -31,8 +31,8 @@ void helpDrawButton(int x, int y, const char *t, bool active){
 	x+=1;
 	for(int i=0, tx=x, li=strlen(t); i<li; i++){
 		if(t[i] == ' '){tx++; continue;}
-		gpu.set(0,tx,y , active?0x17:0x0);
-		//gpu.set(0,tx,y , active?0x17:0x0);
+		GPU::set(0,tx,y , active?0x17:0x0);
+		//GPU::set(0,tx,y , active?0x17:0x0);
 		//TEXT(tx, y, , );
 		//TEXT(tx, y, active?8:4, 0x10);
 		tx++;
@@ -141,15 +141,15 @@ void helpUpdateButtons(void){
 	help_button_moved = false;
 }
 
-void updateHLP(RegionHandler* rh){
+void updateHLP(){
 	
-	if(KEY.down(KEY_B)) { helpActivateBack(); }
-	if(KEY.down(KEY_A)) { helpActivateButton(); }
-	if(KEY.down(KEY_UP	) ) helpScrollUp(); else if(KEY.down(KEY_DOWN) ) helpScrollDown();
-	if(KEY.down(KEY_LEFT)) helpPrevButton();else if(KEY.down(KEY_RIGHT)) helpNextButton();
+	if(KEY::down(KEY_B)) { helpActivateBack(); }
+	if(KEY::down(KEY_A)) { helpActivateButton(); }
+	if(KEY::down(KEY_UP	) ) helpScrollUp(); else if(KEY::down(KEY_DOWN) ) helpScrollDown();
+	if(KEY::down(KEY_LEFT)) helpPrevButton();else if(KEY::down(KEY_RIGHT)) helpNextButton();
 
 	// Propagate Region redraw flag
-	if(rh->redraw){
+	if(REGHND::redraw){
 		help_data_redraw = true;
 	}
 
@@ -157,9 +157,9 @@ void updateHLP(RegionHandler* rh){
 		helpBlit(help_topics[index_help_topic].map_data, 0, help_offset, 1, 3, 26, 16);
 		
 		// Erase old scrollbar knob
-		gpu.set(1, 28, 3+(old_help_offset>>2), 0x60);
+		GPU::set(1, 28, 3+(old_help_offset>>2), 0x60);
 		// Draw new scrollbar knob
-		gpu.set(1, 28, 3+(help_offset>>2), 0x6F);
+		GPU::set(1, 28, 3+(help_offset>>2), 0x6F);
 		
 		// Memorize current help_offset
 		old_help_offset = help_offset;

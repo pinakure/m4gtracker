@@ -1,3 +1,6 @@
+#include "../int/int.hpp" 
+#include "../tim/tim.hpp" 
+
 /*------------------------------------------------------------------------------
                              Timer Control Class                                
 --------------------------------------------------------------------------------
@@ -9,68 +12,72 @@
 		TIM0.Enable();         //Activate timer (start counting)
 Pretty much convenient huh? ;)
 ------------------------------------------------------------------------------*/
-cTIM TIM0(0);
-cTIM TIM1(1);
-cTIM TIM2(2);
-cTIM TIM3(3);
-
-
-
+TIM TIM0(0);
+TIM TIM1(1);
+TIM TIM2(2);
+TIM TIM3(3);
 
 #define GUARDC(a)
 #define UNGUARD()
 #define ASSERT(a,b)
 
-void cTIM::Init(u8 _index)
-{
-	GUARDC(cTIM::Init);
-	ASSERT(index<3, 03);
+TIM::TIM( u8 _index ){
+	init(_index);
+}		
+
+void TIM::init( u8 _index ){
+	GUARDC( TIM::init );
+	
+	address_cnt = NULL;
+	address_dst = NULL;
+			
+	ASSERT( index < 3, 03 );
 	
 	index = _index;	
-	address_dst = 0x4000100+(index<<2);
-	address_cnt = 0x4000102+(index<<2);
-	Reset();	
+	address_dst = 0x4000100 + ( index << 2 );
+	address_cnt = 0x4000102 + ( index << 2 );
+	reset();	
 	UNGUARD();
 }
 
-void cTIM::Reset(void)
-{
-	GUARDC(cTIM::Reset);
-	ASSERT(address_dst!=NULL, 01);ASSERT(address_cnt!=NULL, 02);
+void TIM::reset(){
+	GUARDC( TIM::reset );
+	ASSERT( address_dst != NULL, 01 );
+	ASSERT( address_cnt != NULL, 02 );
 	
-	TIM_DST=0;
-    TIM_CNT=0;
+	TIM_DST = 0;
+    TIM_CNT = 0;
 	
 	UNGUARD();
 }
 
-void cTIM::Enable(void)
-{
-	GUARDC(cTIM::Enable);
-	ASSERT(address_dst!=NULL, 01);ASSERT(address_cnt!=NULL, 02);
+void TIM::enable(){
+	GUARDC( TIM::enable );
+	ASSERT( address_dst != NULL, 01 );
+	ASSERT( address_cnt != NULL, 02 );
 	 
-	TIM_CNT |=TIM_ENABLE;
+	TIM_CNT |= TIM_ENABLE;
 
 	UNGUARD();
 }
 
-void cTIM::Disable(void)
-{
-	GUARDC(cTIM::Disable);
-	ASSERT(address_dst!=NULL, 01);ASSERT(address_cnt!=NULL, 02);
+void TIM::disable(){
+	GUARDC( TIM::disable );
+	ASSERT( address_dst != NULL, 01 );
+	ASSERT( address_cnt != NULL, 02 );
 	
-	TIM_CNT &=0x7f;
+	TIM_CNT &= 0x7f;
 	
 	UNGUARD();
 }
 
-void cTIM::Setup(u16 flags, u8 freq)
-{
-	GUARDC(cTIM::Setup);
-	ASSERT(address_dst!=NULL, 01);ASSERT(address_cnt!=NULL, 02);
+void TIM::setup( u16 flags, u8 freq ){
+	GUARDC( TIM::setup );
+	ASSERT( address_dst != NULL, 01 );
+	ASSERT( address_cnt != NULL, 02 );
 	
-	TIM_DST = (0xFFFF - flags);
+	TIM_DST = ( 0xFFFF - flags );
     TIM_CNT = freq;	
-	INT.Enable(3+index);
+	INT::enable( 3 + index );
 	UNGUARD();
 }

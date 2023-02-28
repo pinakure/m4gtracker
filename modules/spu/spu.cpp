@@ -1,4 +1,17 @@
-Spu SPU;
+#include "spu.hpp"
+#include "../../data/variables.hpp"
+
+int  SPU::timerTarget;
+int  SPU::currentPattern; //NOT USED! 
+int  SPU::currentTicks;
+int  SPU::targetTick[6];
+int  SPU::currentBeats;
+int  SPU::beatsPerBar;
+int  SPU::secPerBeat;
+bool SPU::retrig_note[6];
+bool SPU::enable_metronome;	
+bool SPU::playing;
+
 
 /* Since these are ASM instructions, we have to ensure CPP does not mangle them! */
 extern "C" {
@@ -6,23 +19,23 @@ extern "C" {
 };
 
 
-void Spu::jumpToPatternAsync(int p){
+void SPU::jumpToPatternAsync(int p){
 	currentTicks = 0;
 	currentBeats = 0;
 	currentPattern = p;
 }
 
-void Spu::setKey(	u8 channel, u8 key		){ VAR_CHANNEL[channel].key    = key; 	}
-void Spu::setInst(  u8 channel, u8 inst		){ VAR_CHANNEL[channel].inst   = inst; 	}
-void Spu::setCmd(	u8 channel, u8 cmd		){ VAR_CHANNEL[channel].cmd    = cmd;	}
-void Spu::setValue( u8 channel, u8 value	){ VAR_CHANNEL[channel].value  = value; }
-void Spu::setVolume(u8 channel, u8 volume	){ 
+void SPU::setKey(	u8 channel, u8 key		){ VAR_CHANNEL[channel].key    = key; 	}
+void SPU::setInst(  u8 channel, u8 inst		){ VAR_CHANNEL[channel].inst   = inst; 	}
+void SPU::setCmd(	u8 channel, u8 cmd		){ VAR_CHANNEL[channel].cmd    = cmd;	}
+void SPU::setValue( u8 channel, u8 value	){ VAR_CHANNEL[channel].value  = value; }
+void SPU::setVolume(u8 channel, u8 volume	){ 
 	VAR_CHANNEL[channel].volume = volume; 
 	VAR_CHANNEL[channel].lastpeak = VAR_CHANNEL[channel].peak; 
 	VAR_CHANNEL[channel].peak = volume;
 }
 
-void Spu::Init(int bpm){
+void SPU::init(int bpm){
 	
 	/* Set timer 2 prescaler to F/256 and reset it */
 	*((volatile u16*)0x0400010A) = 0x0;    //Disable (bit 7)
@@ -46,7 +59,6 @@ void Spu::Init(int bpm){
 	enable(3);
 }
 
-
 #define SOUND_PWM_MASTER_RIGHT(vol)		(vol&0x7)
 #define SOUND_PWM_MASTER_LEFT(vol)		((vol&0x7)<<4)
 #define SOUND_PWM_ENABLE_RIGHT(channel)	((1<<8)<<channel)
@@ -68,7 +80,7 @@ const u16 PWM_FREQ_TABLE[120]={ 0		,
 								2044	,2045	,2046	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,
 								2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	};
 
-void Spu::enable(int channel){
+void SPU::enable(int channel){
 	
 	
 	
@@ -80,10 +92,10 @@ void Spu::enable(int channel){
 	*((volatile u16*)0x04000082) |= 0xE;//PWM 100% DMA 100% (set volume)
 }
 
-void Spu::disable(void){
+void SPU::disable(void){
 }
 
-void Spu::setTempo(int bpm){
+void SPU::setTempo(int bpm){
 	timerTarget = (BPM_MAGIC / bpm)*10; 
 	VAR_SONG.BPM = bpm;
 	*((volatile u16*)0x0400010A) = 0x0; //Disable timer (bit 7)
@@ -92,11 +104,11 @@ void Spu::setTempo(int bpm){
 }
 
 
-void Spu::stop(void){
+void SPU::stop(void){
 	playing = false;
 }
 
-void Spu::play(bool from_start){
+void SPU::play(bool from_start){
 	if(playing) return;
 
 	currentBeats 	= 0;
@@ -158,13 +170,13 @@ bool updateChannel(u8 chan){
 		VAR_CHANNEL[chan].STEP = 0;
 		VAR_CHANNEL[chan].LASTPOSITION = VAR_CHANNEL[chan].POSITION;
 		VAR_CHANNEL[chan].POSITION++;
-		SPU.currentBeats=-1;
+		SPU::currentBeats=-1;
 		if(VAR_SONG.PATTERNS[chan].ORDER[VAR_CHANNEL[chan].POSITION] == 0x00) return updateChannel(chan);
 	}
 	return true;
 }
 
-void Spu::mute(int channel){
+void SPU::mute(int channel){
 	// ------------------------------------------------------------
 	VAR_CHANNEL[channel].mute ^= 1;
 	/* ------------------------------------------------------------
@@ -178,7 +190,7 @@ void Spu::mute(int channel){
 	}
 }
 
-void Spu::solo(int channel){
+void SPU::solo(int channel){
 	/* ------------------------------------------------------------
 	if channel has solo enabled unmute channels and disable solo */
 	if(VAR_CHANNEL[channel].solo){
@@ -201,23 +213,23 @@ void Spu::solo(int channel){
 	// Sync with audio registers
 }
 
-void Spu::noteOnWAV(void){
+void SPU::noteOnWAV(void){
 }
 
-void Spu::noteOnNZE(void){
+void SPU::noteOnNZE(void){
 }
 
-void Spu::noteOnPWM1(void){
+void SPU::noteOnPWM1(void){
 	*(u16*)(0x04000064) = 0x8000 | PWM_FREQ_TABLE[VAR_CHANNEL[0].key];
 	retrig_note[0] = false;			
 }
 
-void Spu::noteOnPWM2(void){
+void SPU::noteOnPWM2(void){
 	*(u16*)(0x0400006C) = 0x8000 | PWM_FREQ_TABLE[VAR_CHANNEL[1].key];	
 	retrig_note[1] = false;			
 }
 
-void Spu::triggerChannel(int channel_index){
+void SPU::triggerChannel(int channel_index){
 	
 	u8 vol = VAR_CHANNEL[channel_index].volume;
 	u8 ins = VAR_CHANNEL[channel_index].inst;
@@ -256,19 +268,20 @@ void Spu::triggerChannel(int channel_index){
 
 void cellSyncChannel(u8 c);
 
+extern void DECIMAL_DOUBLE(u8 x, u8 y, u16 color, u16 value);
 
-void Spu::update(void){
+void SPU::update(){
 	bool newBeat, newTick;
 
 	if(!playing){
 		return;
 	}
 	
-	if(CheckBPMClock(this->timerTarget)){
+	if(CheckBPMClock(timerTarget)){
 		/* --------------------------------------------------------------------
 		Restore timer, set it to exceeded time 								 */
 		*((volatile u16*)0x0400010A) = 0x0; //Disable timer (bit 7)
-		*((volatile u16*)0x04000108) = *((volatile u16*)0x04000108) - this->timerTarget; //'reset' timer counter
+		*((volatile u16*)0x04000108) = *((volatile u16*)0x04000108) - timerTarget; //'reset' timer counter
 		*((volatile u16*)0x0400010A) = 0x82; //Enable (bit 7)
 		// --------------------------------------------------------------------
 		newTick = true;
@@ -346,14 +359,14 @@ void Spu::update(void){
 	} 
 		
 	// Debug output
-	//gpu.set(1,0,0, ((SPU.currentTicks>>2)&1) == 0?0x6F : 0x60);
-	//gpu.set(1,0,1, 0x5);
+	//GPU::set(1,0,0, ((SPU::currentTicks>>2)&1) == 0?0x6F : 0x60);
+	//GPU::set(1,0,1, 0x5);
 
-	//DECIMAL_DOUBLE(0,0,9, SPU.currentTicks>>2);
-	DECIMAL_DOUBLE(2,2,1, SPU.currentBeats);
+	//DECIMAL_DOUBLE(0,0,9, SPU::currentTicks>>2);
+	DECIMAL_DOUBLE(2,2,1, SPU::currentBeats);
 	/*
-	DECIMAL_DOUBLE(3,2,2, SPU.currentPattern);
-	VUMETER_V1(0,0,4, (SPU.currentBeats % 4) < 1);				
-	WAVE_SINGLE(0,1,4, (SPU.currentBeats % 4));				*/
+	DECIMAL_DOUBLE(3,2,2, SPU::currentPattern);
+	VUMETER_V1(0,0,4, (SPU::currentBeats % 4) < 1);				
+	WAVE_SINGLE(0,1,4, (SPU::currentBeats % 4));				*/
 }
 

@@ -327,5 +327,37 @@ CALLBACKDEC(sng_groove, D);
 CALLBACKDEC(sng_groove, E);
 CALLBACKDEC(sng_groove, F);
 
+extern void updateLIVE1();
+extern void updateLIVE2();
+extern void updateHLP();
+extern void updatePAT();
+extern void updateVIS();
+extern void updateSNK();
+extern void updateINS_WAV();
+extern void updateINS_FMW();
+extern void updateINS_PWM();
+extern void updateINS_SMP();
+extern void updateTABLE();
+extern void updateSNG();
+extern void updateBEHAVIOR();
+extern void updateLOOKNFEEL();
+extern void updateLINKMODE();
+extern void updateTRACKER();
+extern void updateMEMORY();
+extern void updateCOLOREDITOR();
+extern void updateCHANNELMIXER();
+extern void updateMEMORYSONGMAP();
+extern void updateMEMORYTEST();
+extern void updateLINKSTATUS();
+extern void updateCREDITS();
+extern void updateCHANNEL0();
+extern void updateCHANNEL1();
+extern void updateCHANNEL2();
+extern void updateCHANNEL3();
+extern void updateCHANNEL4();
+extern void updateCHANNEL5();
+extern void updateHEADER0();
+extern void updateHEADER1();
+
 #undef CALLBACK
 #undef CALLBACKDEC

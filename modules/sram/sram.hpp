@@ -1,3 +1,8 @@
+#ifndef _MODULES_SRAM
+#define _MODULES_SRAM
+
+#include "../../agb.h"
+#include "../../data/variables.hpp"
 
 #define DEVICE_EEPROM		0x0000
 #define DEVICE_SST			0xD4BF
@@ -7,40 +12,38 @@
 #define DEVICE_SANYO_128	0x1362
 #define DEVICE_MACRONIX_128	0x09C2
 
-class Sram {
+class SRAM {
 	private:
-		u8 *sram;
+		static u8 *sram;
 		
 	public:
-		int position;
-		u16 waitstateBackup;
+		static int position;
+		static u16 waitstateBackup;
 	
-		Sram(){};
-		void Init();
-		void erase();
-		void seek(int p);
-		void forward(int p);
-		u8   read();
-		u16  read16();
-		u32  read32();
-		void write(u8);
-		void write16(u16);
-		void write32(u32);
+		static void init();
+		static void erase();
+		static void seek(int p);
+		static void forward(int p);
+		static u8   read();
+		static u16  read16();
+		static u32  read32();
+		static void write(u8);
+		static void write16(u16);
+		static void write32(u32);
 		
-		void songLoad();
-		void songSave();
-		void songDefaults();
-		void sharedDataLoad();
-		void sharedDataSave();
-		void dataRevert();
-		void dataBackup();
+		static void songLoad();
+		static void songSave();
+		static void songDefaults();
+		static void sharedDataLoad();
+		static void sharedDataSave();
+		static void dataRevert();
+		static void dataBackup();
 		
-		void drawPosition(u8 x, u8 y,u8 color);
+		static void drawPosition(u8 x, u8 y,u8 color);
 };
-
-extern Sram SRAM;
 
 void instrumentUnpack(INSTRUMENT *i);
 void instrumentPack(INSTRUMENT *i);
 void instcopy(INSTRUMENT *s, INSTRUMENT *d);
 
+#endif

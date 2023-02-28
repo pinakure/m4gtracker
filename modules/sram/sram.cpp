@@ -1,4 +1,16 @@
-Sram SRAM;
+#include "sram.hpp"
+
+#include "../spu/spu.hpp"
+#include "../../data/variables.hpp"
+#include "../../macros.hpp"
+
+extern void HEXADECIMAL_DOUBLE(u8 x, u8 y, u16 color, u16 value);
+extern void patternSync(u8 position);
+extern void cellSync();
+
+u8* SRAM::sram;
+int SRAM::position;
+u16 SRAM::waitstateBackup;
 
 void SRAM_WriteByte(u16 position, u8 byte){
 	return;
@@ -16,7 +28,7 @@ extern "C" {
 };
 */
 
-void Sram::Init(void){
+void SRAM::init(void){
 	// Set WAITCNT (Waitstate controller) to 8 wait cycle mode	
 	
 	waitstateBackup = PORT(0x4000204);
@@ -29,15 +41,15 @@ void Sram::Init(void){
 	// Restore old waitstate value
 }
 
-void Sram::seek(int p){ 
+void SRAM::seek(int p){ 
 	position = p;	
 }
 
-void Sram::forward(int p){ 
+void SRAM::forward(int p){ 
 	position += p;	
 }
 
-void Sram::erase(void){
+void SRAM::erase(void){
 	int i;
 	seek(0);
 	for(i=0; i<0x8000; i++){
@@ -45,40 +57,40 @@ void Sram::erase(void){
 	}	
 }
 
-void Sram::drawPosition(u8 x, u8 y, u8 color) { 
+void SRAM::drawPosition(u8 x, u8 y, u8 color) { 
 	HEXADECIMAL_DOUBLE(x+1,	y,	color, position&0xFF);
 	HEXADECIMAL_DOUBLE(x,	y,	color, position>>8);
 }
 
-void Sram::write(u8 a){ 
+void SRAM::write(u8 a){ 
 	SRAM_WriteByte(position++, a);
 }
 
-void Sram::write16(u16 a) { 
+void SRAM::write16(u16 a) { 
 	write(a&0x00FF); 
 	write((a&0xFF00) >> 8);
 }
 
-void Sram::write32(u32 a) {  
+void SRAM::write32(u32 a) {  
 	write( a & 0x000000FF); 
 	write((a & 0x0000FF00) >> 8); 
 	write((a & 0x00FF0000) >> 16); 
 	write((a & 0xFF000000) >> 24); 
 }
 
-u8 Sram::read(){
+u8 SRAM::read(){
 	u8 r = SRAM_ReadByte(position++);
 	return r;
 }
 
-u16 Sram::read16() { 
+u16 SRAM::read16() { 
 	u8 a, b;
 	a = read();
 	b = read();
 	return (b<<8) | a;
 }
 
-u32 Sram::read32() { 
+u32 SRAM::read32() { 
 	u8 a, b, c, d;
 	a = read();
 	b = read();
@@ -87,11 +99,11 @@ u32 Sram::read32() {
 	return (d<<24) | (c<<16) | (b<<8) | a;
 }
 
-void Sram::songSave(){
+void SRAM::songSave(){
 	int i;
 	
 	seek(0x80);
-	forward(32 * VAR_CFG.SLOT);
+	forward(32 * CFG::SLOT);
 
 	// Write Song details
 	write( VAR_SONG.TRANSPOSE);
@@ -109,7 +121,7 @@ void Sram::songSave(){
 	//0x140
 	
 	// Write Groove Steps
-	forward(16 * VAR_CFG.SLOT);
+	forward(16 * CFG::SLOT);
 	for(i=0; i<16; i++){
 		write(VAR_SONG.GROOVE.STEP[i]);
 	}
@@ -118,7 +130,7 @@ void Sram::songSave(){
 	drawPosition(27, 3, 2);	
 	seek(0x200);
 		
-	forward(1536 * VAR_CFG.SLOT);	
+	forward(1536 * CFG::SLOT);	
 	for(i=0; i<256; i++){
 		write(VAR_SONG.PATTERNS[0].ORDER[i]);
 		write(VAR_SONG.PATTERNS[1].ORDER[i]);
@@ -133,12 +145,12 @@ void Sram::songSave(){
 	sharedDataSave();
 }
 
-void Sram::songLoad(){
+void SRAM::songLoad(){
 	int i;
 	u8 h;
 	
 	seek(0x80);
-	forward(32 * VAR_CFG.SLOT);
+	forward(32 * CFG::SLOT);
 	
 	// Song details
 	VAR_SONG.TRANSPOSE = read();
@@ -160,7 +172,7 @@ void Sram::songLoad(){
 
 	drawPosition(27, 2, 6);	
 
-	forward(16 * VAR_CFG.SLOT);
+	forward(16 * CFG::SLOT);
 	for(i=0; i<16; i++){
 		VAR_SONG.GROOVE.STEP[i] = read();
 	}
@@ -170,7 +182,7 @@ void Sram::songLoad(){
 	seek(0x200);
 	
 	
-	forward(1536 * VAR_CFG.SLOT);
+	forward(1536 * CFG::SLOT);
 	for(i=0; i<256; i++){
 		VAR_SONG.PATTERNS[0].ORDER[i] = read();
 		VAR_SONG.PATTERNS[1].ORDER[i] = read();
@@ -180,7 +192,7 @@ void Sram::songLoad(){
 		VAR_SONG.PATTERNS[5].ORDER[i] = read();
 	}
 	
-	patternSync(VAR_CFG.ORDERPOSITION);
+	patternSync(CFG::ORDERPOSITION);
 	cellSync();
 	
 	drawPosition(27, 4, 6);	
@@ -188,14 +200,14 @@ void Sram::songLoad(){
 	sharedDataLoad();
 }
 
-void Sram::songDefaults(void){
+void SRAM::songDefaults(void){
 	int i,di;
 	
 	for(i=0; i<14; i++){
 		VAR_SONG.TITLE[i]  = 0xFF;
 		VAR_SONG.ARTIST[i] = 0xFF;
 	}
-	//SPU.setTempo(0x80);
+	//SPU::setTempo(0x80);
 	VAR_SONG.BPM = 0x80;
 	VAR_SONG.PATTERNLENGTH = 0xF;
 	
@@ -243,7 +255,7 @@ void Sram::songDefaults(void){
 
 
 
-void Sram::sharedDataSave(void){
+void SRAM::sharedDataSave(void){
 	int i, di;
 	// Dump pattern data
 	seek(0x2600);
@@ -262,7 +274,7 @@ void Sram::sharedDataSave(void){
 	seek(0x5000);
 	
 	//Dump instruments (these are shared along all songs)
-	instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT]);
+	instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[CFG::CURRENTINSTRUMENT]);
 
 	for(i=0; i<64; i++){
 		write(VAR_INSTRUMENTS[i].TYPE);
@@ -285,7 +297,7 @@ void Sram::sharedDataSave(void){
 	drawPosition(27, 5, 2);	
 }
 
-void Sram::sharedDataLoad(void){
+void SRAM::sharedDataLoad(void){
 	int i, di;
 
 	seek(0x2600);
@@ -325,14 +337,14 @@ void Sram::sharedDataLoad(void){
 		}
 	}
 
-	instcopy(&VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT], &VAR_INSTRUMENT);
+	instcopy(&VAR_INSTRUMENTS[CFG::CURRENTINSTRUMENT], &VAR_INSTRUMENT);
 	
-	SPU.setTempo(VAR_SONG.BPM);
+	SPU::setTempo(VAR_SONG.BPM);
 
 	drawPosition(27, 5, 6);
 }
 
-void Sram::dataBackup(void){
+void SRAM::dataBackup(void){
 	int i, di;
 	
 	// Dump 6 Song Headers (32 bytes each one, 192 total)
@@ -380,7 +392,7 @@ void Sram::dataBackup(void){
 	drawPosition(27, 1, 5);
 }
 
-void Sram::dataRevert(void){
+void SRAM::dataRevert(void){
 	int i, di;
 	u8  h;
 	

@@ -1,3 +1,5 @@
+#include "../data/displays.hpp"
+
 CALLBACK( cb_live_retrig	, modify1BIT		, EVENT_KEYDOWN_B 		, &VAR_LIVE.PERFORM.RETRIG		, NULL					);
 CALLBACK( cb_live_speed	 	, modify8BIT		, EVENT_MODIFY_B 		, &VAR_LIVE.PERFORM.SPEED		, NULL					);
 CALLBACK( cb_live_quantize1	, modify3BIT		, EVENT_MODIFY_B 		, &VAR_LIVE.PERFORM.QUANTIZE	, NULL					);
@@ -113,27 +115,27 @@ CB_LIVE_RIGHT(KEY, 7, modifyNote);
 #undef CB_LIVE_LEFT
 #undef CB_LIVE_RIGHT
 
-void updateLIVE1(RegionHandler* rh){
+void updateLIVE1(){
 	if(KEYDOWN_START){
-		rh->sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&rh->region->displays[LIVE1_DISPLAY_STATUS_FREE])&0x0fffffff);
+		REGHND::sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&REGHND::region->displays[LIVE1_DISPLAY_STATUS_FREE])&0x0fffffff);
 		VAR_LIVE.PERFORM.LOCK ^= 1;
-		rh->sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&rh->region->displays[LIVE1_DISPLAY_STATUS_LOCKED])&0x0fffffff);
+		REGHND::sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&REGHND::region->displays[LIVE1_DISPLAY_STATUS_LOCKED])&0x0fffffff);
 	}
 	
 	if(KEYDOWN_START || KEYUP_START){
 		VAR_INPUT.START = KEYDOWN_START ? 1 : 0;
-		rh->sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&rh->region->displays[LIVE1_DISPLAY_START])&0x0fffffff);
+		REGHND::sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&REGHND::region->displays[LIVE1_DISPLAY_START])&0x0fffffff);
 	}
 
 	if(KEYDOWN_SELECT || KEYUP_SELECT){
 		VAR_INPUT.SELECT = KEYDOWN_SELECT ? 1 : 0;
-		rh->sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&rh->region->displays[LIVE1_DISPLAY_SELECT])&0x0fffffff);
+		REGHND::sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&REGHND::region->displays[LIVE1_DISPLAY_SELECT])&0x0fffffff);
 	}
 	
 #define MONITOR(a)		if( KEYDOWN_##a || KEYUP_##a ) {	\
 						VAR_INPUT.a = KEYDOWN_##a ? 1 : 0;	\
-						rh->sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&rh->region->displays[LIVE1_DISPLAY_RIGHT_##a])&0x0fffffff); \
-						rh->sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&rh->region->displays[LIVE1_DISPLAY_LEFT_##a])&0x0fffffff) ; \
+						REGHND::sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&REGHND::region->displays[LIVE1_DISPLAY_RIGHT_##a])&0x0fffffff); \
+						REGHND::sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&REGHND::region->displays[LIVE1_DISPLAY_LEFT_##a])&0x0fffffff) ; \
 					}
 
 	MONITOR(A);

@@ -1,17 +1,17 @@
 // TBC on value change @ PATtern editor
 void patternCopy(u8 channel){
 	
-	VAR_CFG.CURRENTCHANNEL = channel;
+	CFG::CURRENTCHANNEL = channel;
 	// *REGION_MAP_3_TRK.viewport->var = channel;	
 	
 	for(int i=0; i<16;i++){		
-		VAR_SONG.PATTERNS[channel].ORDER[VAR_CFG.ORDERPOSITION + i] = VAR_PATTERN[channel].ORDER[i];
+		VAR_SONG.PATTERNS[channel].ORDER[CFG::ORDERPOSITION + i] = VAR_PATTERN[channel].ORDER[i];
 	}
 	
 	cellSync();
 }
 
-// TBC each time VAR_CFG.ORDERPOSITION CHANGES
+// TBC each time CFG::ORDERPOSITION CHANGES
 void patternSync(u8 position){
 	for(int i=0, p; i<16; i++){
 		p = i+position;
@@ -40,12 +40,12 @@ void patternCH5_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7B
 
 static u8 pattern_bookmark_row = 0;
 
-void patternCH0_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 0; pattern_bookmark_row = *(u8*)pointer;}
-void patternCH1_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 1; pattern_bookmark_row = *(u8*)pointer;}
-void patternCH2_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 2;	pattern_bookmark_row = *(u8*)pointer;}
-void patternCH3_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 3;	pattern_bookmark_row = *(u8*)pointer;}
-void patternCH4_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 4;	pattern_bookmark_row = *(u8*)pointer;}
-void patternCH5_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 5;	pattern_bookmark_row = *(u8*)pointer;}
+void patternCH0_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 0; pattern_bookmark_row = *(u8*)pointer;}
+void patternCH1_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 1; pattern_bookmark_row = *(u8*)pointer;}
+void patternCH2_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 2;	pattern_bookmark_row = *(u8*)pointer;}
+void patternCH3_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 3;	pattern_bookmark_row = *(u8*)pointer;}
+void patternCH4_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 4;	pattern_bookmark_row = *(u8*)pointer;}
+void patternCH5_focus(Control *c, bool bigstep, bool add, u32 *pointer){	CFG::CURRENTCHANNEL = 5;	pattern_bookmark_row = *(u8*)pointer;}
 
 
 //PATTERNS
@@ -94,13 +94,13 @@ const u16 pattern_channel_symbols[6] = { 0x7035, 0x7035, 0x7036, 0x7037, 0x7038,
 
 u8 pattern_bookmarks[6] = {0,0,0,0,0,0};
 
-void patGlobalUpdater(RegionHandler* rh){
+void patGlobalUpdater(){
 	static int bookmark_timer = 0;
 		
-	if(KEY.press(KEY_B)) {
+	if(KEY::press(KEY_B)) {
 		bookmark_timer++;
 		if(bookmark_timer > 2000) {			
-			pattern_bookmarks[VAR_CFG.CURRENTCHANNEL] = VAR_CFG.ORDERPOSITION + pattern_bookmark_row;
+			pattern_bookmarks[CFG::CURRENTCHANNEL] = CFG::ORDERPOSITION + pattern_bookmark_row;
 			pat_clean = false;
 			bookmark_timer = 0;
 		}
@@ -109,24 +109,24 @@ void patGlobalUpdater(RegionHandler* rh){
 	bookmark_timer = 0;
 }
 	
-void updatePAT(RegionHandler* rh){
+void updatePAT(){
 	static int last_position;
 
-	patGlobalUpdater(rh);
+	patGlobalUpdater();
 	
 	// Draw position arrows
 	for(int c=0, x=0, y=0; c < 6; c++) {
-		if((!pat_clean)|| (rh->redraw) || (VAR_CHANNEL[c].POSITION != VAR_CHANNEL[c].LASTPOSITION)){
+		if((!pat_clean)|| (REGHND::redraw) || (VAR_CHANNEL[c].POSITION != VAR_CHANNEL[c].LASTPOSITION)){
 			
 			if(pattern_bookmarks[c]>0) {
-				y = pattern_bookmarks[c] - VAR_CFG.ORDERPOSITION;
+				y = pattern_bookmarks[c] - CFG::ORDERPOSITION;
 				if((y<=15)&&(y>=0)){
 					gpu.set(0, pattern_arrow_position[c]+1, 4+y, 0x8);
 					gpu.set(0, pattern_arrow_position[c]+2, 4+y, 0x8);
 				}
 			}
-			y = VAR_CHANNEL[c].POSITION - VAR_CFG.ORDERPOSITION;
-			x = VAR_CHANNEL[c].LASTPOSITION - VAR_CFG.ORDERPOSITION;
+			y = VAR_CHANNEL[c].POSITION - CFG::ORDERPOSITION;
+			x = VAR_CHANNEL[c].LASTPOSITION - CFG::ORDERPOSITION;
 			if((x<=15)&&(x>=0)) gpu.set(2, pattern_arrow_position[c], 4+x, 0x00FC);
 			if((y<=15)&&(y>=0)) gpu.set(2, pattern_arrow_position[c], 4+y, 0x408D);
 		}
@@ -162,8 +162,8 @@ void updatePAT(RegionHandler* rh){
 	}
 	
 	// Draw position tags (Sides)
-	if((!pat_clean)||(last_position != VAR_CFG.ORDERPOSITION)||(rh->redraw)){		
-		for(int c=0, h=0, y=4, v=VAR_CFG.ORDERPOSITION; c < 16; c++) {
+	if((!pat_clean)||(last_position != CFG::ORDERPOSITION)||(REGHND::redraw)){		
+		for(int c=0, h=0, y=4, v=CFG::ORDERPOSITION; c < 16; c++) {
 			h = (c & 1) ? 0x3 : 0x5;
 			HEXADECIMAL( 1, y, h, v>>4);
 			HEXADECIMAL( 2, y, h, v&0xf);
@@ -173,7 +173,7 @@ void updatePAT(RegionHandler* rh){
 			v++;
 			y++;
 		}
-		last_position = VAR_CFG.ORDERPOSITION;
+		last_position = CFG::ORDERPOSITION;
 		pat_clean = true;
 		
 		
@@ -182,18 +182,18 @@ void updatePAT(RegionHandler* rh){
 //----------------------------------------------------------------------------------------
 // PAT SCREEN CALLBACKS
 //----------------------------------------------------------------------------------------
-void SOLO0(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.solo(0);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_00 ]);*/ }
-void SOLO1(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.solo(1);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_01 ]);*/ }
-void SOLO2(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.solo(2);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_02 ]);*/ }
-void SOLO3(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.solo(3);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_00]);*/ }
-void SOLO4(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.solo(4);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_01]);*/ }
-void SOLO5(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.solo(5);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_02]);*/ }
-void MUTE0(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.mute(0);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_00]);*/ }
-void MUTE1(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.mute(1);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_01]);*/ }
-void MUTE2(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.mute(2);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_02]);*/ }
-void MUTE3(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.mute(3);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_00]);*/ }
-void MUTE4(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.mute(4);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_01]);*/ }
-void MUTE5(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.mute(5);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_02]);*/ }
+void SOLO0(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(0);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_00 ]);*/ }
+void SOLO1(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(1);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_01 ]);*/ }
+void SOLO2(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(2);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_02 ]);*/ }
+void SOLO3(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(3);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_00]);*/ }
+void SOLO4(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(4);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_01]);*/ }
+void SOLO5(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::solo(5);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_02]);*/ }
+void MUTE0(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(0);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_00]);*/ }
+void MUTE1(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(1);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_01]);*/ }
+void MUTE2(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(2);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_02]);*/ }
+void MUTE3(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(3);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_00]);*/ }
+void MUTE4(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(4);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_01]);*/ }
+void MUTE5(Control *c, bool bigstep, bool add, u32 *pointer){	SPU::mute(5);	pat_solo_clean = false;/*REGHND::drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_02]);*/ }
 
 // Reloads VAR_SONG.PATTERN[6][--16--] into visible VARIABLE lookup vars (VAR_PATTERN[6][16])
 void patSync(void){
@@ -203,10 +203,10 @@ void patSync(void){
 		for(int i=0; i<16;i++){
 			/* ------------------------------------------------------------
 			Copy data from VISIBLE CONTROL VARS -> Song Data Order Memory*/
-			VAR_PATTERN[c].ORDER[i] = VAR_SONG.PATTERNS[c].ORDER[i+VAR_CFG.ORDERPOSITION];
+			VAR_PATTERN[c].ORDER[i] = VAR_SONG.PATTERNS[c].ORDER[i+CFG::ORDERPOSITION];
 			/* ------------------------------------------------------------
 			Manually draw the controls (good to avoid message overflow)  */
-			regHnd.drawControl(&PAT_CONTROLS[o]);
+			REGHND::drawControl(&PAT_CONTROLS[o]);
 			/* ------------------------------------------------------------
 			Ensure the pattern order tags at the sides get updated later */
 			pat_clean = false;
@@ -220,15 +220,15 @@ void patDispatchMessage(u32 msg){
 	switch(msg){
 		/* Scroll up */
 		case MESSAGE_OTHER_PREV:
-			if(VAR_CFG.ORDERPOSITION>0){
+			if(CFG::ORDERPOSITION>0){
 				/* ------------------------------------------------------------
 				Clear Arrows when pattern scrolls down 						 */
 				for(int c=0, x=0; c<6;c++){
-					x = VAR_CHANNEL[c].POSITION - VAR_CFG.ORDERPOSITION;
+					x = VAR_CHANNEL[c].POSITION - CFG::ORDERPOSITION;
 					if((x<=15)&&(x>=0))gpu.set(2, pattern_arrow_position[c], 4+x, 0x00FC);
 				}
 				// ------------------------------------------------------------
-				VAR_CFG.ORDERPOSITION--;
+				CFG::ORDERPOSITION--;
 				/* ------------------------------------------------------------
 				Copy cells from VAR_DATA(Memory)->VAR_PATTERN (Visible Vars) */
 				patSync();
@@ -242,15 +242,15 @@ void patDispatchMessage(u32 msg){
 		/* Scroll down */
 		case MESSAGE_OTHER_NEXT: 
 			/* about the 240 below, it is 256 patterns - 16 visible entries */
-			if(VAR_CFG.ORDERPOSITION < 240){ 
+			if(CFG::ORDERPOSITION < 240){ 
 				/* ------------------------------------------------------------
 				Clear Arrows when pattern scrolls down 						 */
 				for(int c=0, x=0; c<6;c++){
-					x = VAR_CHANNEL[c].POSITION - VAR_CFG.ORDERPOSITION;
+					x = VAR_CHANNEL[c].POSITION - CFG::ORDERPOSITION;
 					if((x<=15)&&(x>=0))gpu.set(2, pattern_arrow_position[c], 4+x, 0x00FC);
 				}
 				// ------------------------------------------------------------
-				VAR_CFG.ORDERPOSITION++;
+				CFG::ORDERPOSITION++;
 				/* ------------------------------------------------------------
 				Copy cells from VAR_DATA(Memory)->VAR_PATTERN (Visible Vars) */
 				patSync();

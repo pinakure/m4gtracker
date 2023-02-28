@@ -3,7 +3,7 @@ CALLBACK( cb_sng_save		, SAVESLOT		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
 CALLBACK( cb_sng_purge		, PURGESLOT		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
 CALLBACK( cb_sng_copy		, COPYSLOT		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
 CALLBACK( cb_sng_erase		, ERASESLOT		, EVENT_KEYUP_B 			, NULL 					, NULL 	);
-CALLBACK( cb_sng_slot		, modify6VAL	, EVENT_MODIFY_B			, &VAR_CFG.SLOT			, NULL	);
+CALLBACK( cb_sng_slot		, modify6VAL	, EVENT_MODIFY_B			, &CFG::SLOT			, NULL	);
 CALLBACK( cb_sng_artist		, ALPHA14		, EVENT_KEYDOWN_B			, &VAR_SONG.ARTIST		, NULL	);
 CALLBACK( cb_sng_title		, ALPHA14		, EVENT_KEYDOWN_B			, &VAR_SONG.TITLE		, NULL	);
 CALLBACK( cb_sng_tempotap	, TEMPOTAP		, EVENT_KEYDOWN_B			, NULL					, NULL	);
@@ -30,7 +30,7 @@ CB_SNG_GROOVE(E);
 CB_SNG_GROOVE(F);
 #undef CG_SNG_GROOVE
 
-#define REDRAW(a)			rh->sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&rh->region->displays[a])&0x0fffffff);
+#define REDRAW(a)			REGHND::sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&REGHND::region->displays[a])&0x0fffffff);
 
 static void copystr(u8 *s, u8 *d, u8 len){
 	for(int i=0; i<len; i++) s[i] = d[i];	
@@ -41,8 +41,7 @@ static int compstr(u8 *a, u8*b, u8 len){
 	return 0;
 }
 
-
-void updateSNG(RegionHandler* rh){
+void updateSNG(){
 	const Control *ct = &SNG_CONTROLS[CONTROL_SNG_TITLE];
 	const Control *ca = &SNG_CONTROLS[CONTROL_SNG_ARTIST];
 	
@@ -60,13 +59,13 @@ void updateSNG(RegionHandler* rh){
 void LOADSLOT(Control *c, bool bigstep, bool add, u32 *pointer){
 	// Set really confirm callback to FlashManager->save
 	// Set regionHander in modal really dialog mode
-	SRAM.songLoad();
-	regHnd.redraw = true;
+	SRAM::songLoad();
+	REGHND::redraw = true;
 }
 void SAVESLOT(Control *c, bool bigstep, bool add, u32 *pointer){
 	// Set really confirm callback to FlashManager->save
 	// Set regionHander in modal really dialog mode
-	SRAM.songSave();	
+	SRAM::songSave();	
 }
 void PURGESLOT(Control *c, bool bigstep, bool add, u32 *pointer){
 	
@@ -79,28 +78,28 @@ void ERASESLOT(Control *c, bool bigstep, bool add, u32 *pointer){
 	
 	r.enable();
 	if(r.result){
-		VAR_CFG.loadCount = 0;		
+		CFG::loadCount = 0;		
 		// Clear SongData
-		SRAM.songDefaults();		
+		SRAM::songDefaults();		
 		// Load shared data
-		SRAM.sharedDataLoad();		
+		SRAM::sharedDataLoad();		
 		// Save empty song
-		SRAM.songSave();
+		SRAM::songSave();
 	}
-	regHnd.redraw=true;
+	REGHND::redraw=true;
 }
 
 /* Called each time BPM is changed by the control on SNG screen */
 void modifyTEMPO(Control *c, bool bigstep, bool add, u32 *pointer){	
 	(*(u8*) c->var) = ((*(u8*) c->var) + ((bigstep?0x10:0x1)* (add?1:-1)) ) & 0xFF;
-	( (RegionHandler*)pointer )->sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)&SNG_CONTROLS[CONTROL_SNG_BPM]);
-	SPU.setTempo(*(c->var));
+	( (REGHND*)pointer )->sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)&SNG_CONTROLS[CONTROL_SNG_BPM]);
+	SPU::setTempo(*(c->var));
 }
 
 /* Calculates new a new BPM Values each 4th time user calls this function based on previous 3 calls */
 void TEMPOTAP(Control *c, bool bigstep, bool add, u32 *pointer){
 	
-	SPU.jumpToPatternAsync(VAR_PATTERN[VAR_CFG.CURRENTCHANNEL].ORDER[VAR_CHANNEL[VAR_CFG.CURRENTCHANNEL].POSITION]);
+	SPU::jumpToPatternAsync(VAR_PATTERN[CFG::CURRENTCHANNEL].ORDER[VAR_CHANNEL[CFG::CURRENTCHANNEL].POSITION]);
 	return;
 	
 	//TODO: WRITE PROPER TEMPO TAP FUNCTION WHICH DOES NOT TURN BPM CRAZY!
@@ -115,9 +114,9 @@ void TEMPOTAP(Control *c, bool bigstep, bool add, u32 *pointer){
 		calc = true;
 	} else {
 		int t = *((volatile u16*)0x0400010C);
-		SPU.setTempo(int(100 * ((float(t) * 100) / BPM_MAGIC) ));
+		SPU::setTempo(int(100 * ((float(t) * 100) / BPM_MAGIC) ));
 		// Send message to redraw BPM control too ;)
-		( (RegionHandler*)pointer )->sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)&SNG_CONTROLS[CONTROL_SNG_BPM]);
+		( (REGHND*)pointer )->sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)&SNG_CONTROLS[CONTROL_SNG_BPM]);
 		calc = false;
 	}*/
 }

@@ -1,4 +1,4 @@
-#include "dma/dma.h"
+#include "dma/dma.hpp"
 #include "int/int.hpp"
 #include "tim/tim.hpp"
 #include "spu/spu.hpp"
