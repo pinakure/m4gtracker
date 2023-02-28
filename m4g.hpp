@@ -110,105 +110,16 @@ void updateLINKSTATUS();
 void updateCREDITS();
 void updatePROGRESS();
 
-/* Button Callbacks (callbacks.c) */
-void SOLO0(Control *c, bool bigstep, bool add, u32 *pointer);
-void SOLO1(Control *c, bool bigstep, bool add, u32 *pointer);
-void SOLO2(Control *c, bool bigstep, bool add, u32 *pointer);
-void SOLO3(Control *c, bool bigstep, bool add, u32 *pointer);
-void SOLO4(Control *c, bool bigstep, bool add, u32 *pointer);
-void SOLO5(Control *c, bool bigstep, bool add, u32 *pointer);
-void MUTE0(Control *c, bool bigstep, bool add, u32 *pointer);
-void MUTE1(Control *c, bool bigstep, bool add, u32 *pointer);
-void MUTE2(Control *c, bool bigstep, bool add, u32 *pointer);
-void MUTE3(Control *c, bool bigstep, bool add, u32 *pointer);
-void MUTE4(Control *c, bool bigstep, bool add, u32 *pointer);
-void MUTE5(Control *c, bool bigstep, bool add, u32 *pointer);
-
-void LOADWAVPRESET0(Control *c, bool bigstep, bool add, u32 *pointer);
-void LOADWAVPRESET1(Control *c, bool bigstep, bool add, u32 *pointer);
-void LOADWAVPRESET2(Control *c, bool bigstep, bool add, u32 *pointer);
-void LOADWAVPRESET3(Control *c, bool bigstep, bool add, u32 *pointer);
-void LOADWAVPRESET4(Control *c, bool bigstep, bool add, u32 *pointer);
-void LOADWAVPRESET5(Control *c, bool bigstep, bool add, u32 *pointer);
-
-void COLOREDITOR(Control *c, bool bigstep, bool add, u32 *pointer);
-
-void RECEIVESONG(Control *c, bool bigstep, bool add, u32 *pointer);
-void SENDSONG(Control *c, bool bigstep, bool add, u32 *pointer);
-
-void MIXER(Control *c, bool bigstep, bool add, u32 *pointer);
-
-void SLOTUSAGE(Control *c, bool bigstep, bool add, u32 *pointer);
-void PURGESONGS(Control *c, bool bigstep, bool add, u32 *pointer);
-void MEMORYTEST(Control *c, bool bigstep, bool add, u32 *pointer);
-void REINITIALIZE(Control *c, bool bigstep, bool add, u32 *pointer);
-void FORMATMEMORY(Control *c, bool bigstep, bool add, u32 *pointer);
-void RESET(Control *c, bool bigstep, bool add, u32 *pointer);
-
-void LOADCONFIG(Control *c, bool bigstep, bool add, u32 *pointer);
-void SAVECONFIG(Control *c, bool bigstep, bool add, u32 *pointer);
-void DEFAULTCONFIG(Control *c, bool bigstep, bool add, u32 *pointer);
-
-void LOADSLOT(Control *c, bool bigstep, bool add, u32 *pointer);
-void SAVESLOT(Control *c, bool bigstep, bool add, u32 *pointer);
-void PURGESLOT(Control *c, bool bigstep, bool add, u32 *pointer);
-void COPYSLOT(Control *c, bool bigstep, bool add, u32 *pointer);
-void ERASESLOT(Control *c, bool bigstep, bool add, u32 *pointer);
-void TEMPOTAP(Control *c, bool bigstep, bool add, u32 *pointer);
-void ALPHA14(Control *c, bool bigstep, bool add, u32 *pointer);
-void ALPHA6(Control *c, bool bigstep, bool add, u32 *pointer);
-
-void BPMUPDATE(Control *c, bool bigstep, bool add, u32 *pointer);
-
-/* Variable Operator callbacks */
-void modify1BIT(Control*, bool bigstep, bool add, u32 *pointer);
-void modify2BIT(Control*, bool bigstep, bool add, u32 *pointer);
-void modify3BIT(Control*, bool bigstep, bool add, u32 *pointer);
-void modify4BIT(Control*, bool bigstep, bool add, u32 *pointer);
-void modify5BIT(Control*, bool bigstep, bool add, u32 *pointer);
-void modify6BIT(Control*, bool bigstep, bool add, u32 *pointer);
-void modify8BIT(Control*, bool bigstep, bool add, u32 *pointer);
-void modifyTEMPO(Control*, bool bigstep, bool add, u32 *pointer);
-void modifyCHAR(Control*, bool bigstep, bool add, u32 *pointer); // Append char received to the string, if room left
-void modifyNOTE(Control*, bool bigstep, bool add, u32 *pointer);
-void modify3VAL(Control*, bool bigstep, bool add, u32 *pointer); // For variables which can take up do 3 different values
-void modify5VAL(Control*, bool bigstep, bool add, u32 *pointer); // For variables which can take up do 5 different values
-void modify6VAL(Control*, bool bigstep, bool add, u32 *pointer); // For variables which can take up to 6 different values
-void modify27VAL(Control*, bool bigstep, bool add, u32 *pointer); 
-
-
-void instLoad();
-void patternSync(u8 position);
-void cellSync();
-
-
-void instrument1BIT(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument2BIT(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrumentType(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrumentIndex(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument3BIT(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument4BIT(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument5BIT(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument6BIT(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument7BIT(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument8BIT(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument3VAL(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument6VAL(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument5VAL(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument27VAL(Control *c,bool bigstep, bool add, u32 *pointer);
-
 #include "data/variables.hpp"
-#include "callbacks/callbacks.h"
+#include "callbacks/callbacks.hpp"
 
 #include "data/tables.hpp"
-//#include "data/controls.cpp"
-//#include "data/displays.c"
-//#include "data/regions.c"
-//#include "data/viewports.c"
+
 #include "data/layers.hpp"
 #include "data/tileset.hpp"
 #include "data/palette.hpp"
-//#include "data/help.c"
+
+#include "data/regions.hpp"
 
 // Global variables
 

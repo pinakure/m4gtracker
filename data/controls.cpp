@@ -1,6 +1,6 @@
 #include "controls.hpp"
 #include "variables.hpp"
-#include "../callbacks/callbacks.h"
+#include "../callbacks/callbacks.hpp"
 
 #define T(a) &SNG_CONTROLS[CONTROL_SNG_##a]
 #define TV(a) ((u8*)&(VAR_SONG.a))

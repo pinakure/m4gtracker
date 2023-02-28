@@ -1,4 +1,5 @@
 #include "../data/controls.hpp"
+#include "../macros.hpp"
 
 void instrumentUnpack(INSTRUMENT *i);
 void instcopy(INSTRUMENT *s, INSTRUMENT *d);

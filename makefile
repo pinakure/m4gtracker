@@ -23,6 +23,7 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 	data/tables.o \
 	data/layers.o \
 	data/tileset.o \
+	callbacks/callbacks.o \
 	m4g.o 
 
 HAM_VERSION_MAJOR = 2

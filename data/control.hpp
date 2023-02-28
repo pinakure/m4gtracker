@@ -3,7 +3,7 @@
 
 #include "../agb.h"
 #include "cache.hpp"
-#include "callback.hpp"
+#include "../callbacks/callback.hpp"
 
 //Controls are processed even when they are not reachable in navigation order!
 typedef struct _Control {

@@ -145,3 +145,5 @@ data/tileset.o
 data/palette.o
 data/layers.o
 data/caches.o
+callbacks.s
+callbacks/callbacks.o
