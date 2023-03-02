@@ -155,7 +155,7 @@ also know a second has elapsed, so it's time to calculate the CPS rate
 	if( SYS::timer == 60 ){
 		SYS::fps 	= SYS::frames;
 		SYS::frames = 0;
-		SYS::timer  = 0;		
+		SYS::timer  = 0;
 	}	
 	SYS::soundtime 	= true;
 	ACKNOWLEDGE( VBLANK );
@@ -179,8 +179,8 @@ void INT::sigVCount(){
 
 void INT::sigTimer0(){
 	DISABLE_INTERRUPTS();
-	SYS::profile_timer += 1;
-	if( SYS::profile_timer < 10 ) SYS::profiled_time = 0;
+	//SYS::profile_timer += 1;
+	// if( SYS::profile_timer < 10 ) SYS::profiled_time = 0;
 	ACKNOWLEDGE( TIMER0 );
 	ENABLE_INTERRUPTS();
 }

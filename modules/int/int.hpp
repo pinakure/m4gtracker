@@ -33,7 +33,6 @@
 #define STAT_VCOUNT_IE  		0x0020		// V Counter Corresponding 
 											
 class INT {	
-	private:
 	public:
 		static void init(void);
 		static void disable(u8 value);

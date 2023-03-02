@@ -228,10 +228,11 @@ void trkDispatchMessage(u32 msg){
 void trkGlobalUpdater(){
 	static bool tracker_clean = false;
 
-	GPU::set(2,0,1, SPU::playing ? 0xF08D  : 0x31FE );
-	GPU::set(1,0,0, SPU::playing?((SPU::currentBeats) == 0?0x32 : ((SPU::currentBeats&3) == 0?0x34 : 0x33)):0x33);
+	GPU::set( 2, 0, 1, SPU::playing ? 0xF08D  : 0x31FE );
+	GPU::set( 1, 0, 0, SPU::playing ? (( SPU::current_beats ) == 0?0x32 : ( ( SPU::current_beats & 3 ) == 0 ? 0x34 : 0x33) ) : 0x33 );
 		
-	if(transientChanged || REGHND::redraw) trkDrawTransientInfo();
+	if( transientChanged || REGHND::redraw ) trkDrawTransientInfo();
+	
 	if(REGHND::redraw){
 		for(int i=0; i<6;i++){
 			
