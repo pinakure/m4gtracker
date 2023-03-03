@@ -1,16 +1,72 @@
-#include "spu.hpp"
-#include "../../data/variables.hpp"
+Spu SPU;
 
-int  SPU::timer_target;
-int  SPU::current_pattern; //NOT USED! 
-int  SPU::current_ticks;
-int  SPU::target_tick[6];
-int  SPU::current_beats;
-int  SPU::beats_per_bar;
-int  SPU::sec_per_beat;
-bool SPU::retrig_note[6];
-bool SPU::enable_metronome;	
-bool SPU::playing;
+/* Since these are ASM instructions, we have to ensure CPP does not mangle them! */
+extern "C" {
+	int CheckBPMClock(int timerTarget);
+};
+
+
+u8 transpose[6] = { 0, 0, 0, 0, 0, 0 };
+bool reset_channel[6] = { false, false, false, false, false, false };
+u8	 tsp_position[2];/*16x4*//*126*/
+u8	 vol_position[2];/*16x4*//*190*/
+
+void Spu::jumpToPatternAsync(int p){
+	currentTicks = 0;
+	currentBeats = 0;
+	currentPattern = p;
+}
+
+bool Spu::setKey(	u8 channel, u8 key, u8 vol){ 
+	reset_channel[channel] = key>0;
+	VAR_CHANNEL[channel].key    = key; 	
+	VAR_CHANNEL[channel].volume = vol; 
+	VAR_CHANNEL[channel].lastpeak = VAR_CHANNEL[channel].peak; 
+	VAR_CHANNEL[channel].peak = vol;
+	return true;
+}
+void Spu::setInst(  u8 channel, u8 inst, u8 vol, bool retrig_note){ 
+	VAR_CHANNEL[channel].inst   = inst;
+	if(retrig_note) return; 	
+	VAR_CHANNEL[channel].volume = vol; 
+	VAR_CHANNEL[channel].lastpeak = VAR_CHANNEL[channel].peak; 
+	VAR_CHANNEL[channel].peak = vol;	
+}	
+void Spu::setCmd(	u8 channel, u8 cmd, u8 value ){ 
+	VAR_CHANNEL[channel].cmd    = cmd;	
+	VAR_CHANNEL[channel].value  = value; 
+}
+
+void Spu::Init(int bpm){
+	
+	/* Set timer 2 prescaler to F/256 and reset it */
+	*((volatile u16*)0x0400010A) = 0x0;    //Disable (bit 7)
+	*((volatile u16*)0x04000108) = 0x0000; //Set counter to 0
+	*((volatile u16*)0x0400010A) = 0x82;   //Enable (bit 7)
+	
+	/* Set timer 3 prescaler to F/256 and reset it */
+	*((volatile u16*)0x0400010E) = 0x0;    //Disable (bit 7)
+	*((volatile u16*)0x0400010C) = 0x0000; //Set counter to 0
+	*((volatile u16*)0x0400010E) = 0x82;   //Enable (bit 7)
+	
+	currentTicks 	= 0;
+	currentBeats 	= 0;
+	currentPattern 	= 0;
+	playing			= 0;
+	beatsPerBar 	= 4;
+	setTempo(bpm);
+	enable();
+}
+
+
+#define SOUND_PWM_MASTER_RIGHT(vol)		(vol&0x7)
+#define SOUND_PWM_MASTER_LEFT(vol)		((vol&0x7)<<4)
+#define SOUND_PWM_ENABLE_RIGHT(channel)	((1<<8)<<channel)
+#define SOUND_PWM_ENABLE_LEFT(channel)	((1<<12)<<channel)
+#define SOUND_PWM_ENABLE_PSG_FIFO		0x0080
+
+
+
 
 const u16 PWM_FREQ_TABLE[120]={ 0		,
 								44 		,157	,263	,363	,457	,547	,631	,710	,786	,857	,923	,986	,
@@ -24,102 +80,45 @@ const u16 PWM_FREQ_TABLE[120]={ 0		,
 								2044	,2045	,2046	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,
 								2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	,2047	};
 
-/* Since these are ASM instructions, we have to ensure CPP does not mangle them! */
-extern "C" {
-	int CheckBPMClock(int timer_target);
-};
+void Spu::enable(){
+	// Sound 1-4 ON Flag, PSG/FIFO Master enable
+	*((volatile u16*)0x04000084) = 0x0080;
+	
+	// Sound 1-4 Master Right 100%, Sound 1-4 Master Left 100%, Sound 1-4 Enable Right, Sound 1-4 Enable Left
+	*((volatile u16*)0x04000080) = 0xFF77;
 
-
-void SPU::jumpToPatternAsync(int p){
-	current_ticks 	= 0;
-	current_beats 	= 0;
-	current_pattern = p;
+	// Sound 1-4 Volume 100%, DMA A 100%, DMA B 100% 
+	// We wont enable DMA sound by the moment
+	*((volatile u16*)0x04000082) |= 0xff0E;//PWM 100% DMA 100% (set volume)
 }
 
-bool SPU::setKey( Channel *chan , u8 key , u8 vol ){ 
-	chan->key   	= key; 
-	chan->volume 	= vol; 
-	chan->last_peak	= chan->peak; 
-	chan->peak 		= vol;
-	return true; // enable retrig_note @ function return
-}
-void SPU::setIns( Channel *chan , u8 ins , u8 vol , bool retrig_note ){ 
-	chan->inst  	= ins; 
-	if( retrig_note ) return;
-	chan->volume 	= vol; 
-	chan->last_peak	= chan->peak; 
-	chan->peak 		= vol;
+void Spu::disable(void){
 }
 
-void SPU::setCmd( Channel *chan , u8 cmd , u8 val ){ 
-	chan->cmd   	= cmd; 
-	chan->value 	= val;
-}
-
-void SPU::init(int bpm){
-	
-	/* Set timer 2 prescaler to F/256 and reset it */
-	*((volatile u16*)0x0400010A) = 0x0;    //Disable (bit 7)
-	*((volatile u16*)0x04000108) = 0x0000; //Set counter to 0
-	*((volatile u16*)0x0400010A) = 0x82;   //Enable (bit 7)
-	
-	/* Set timer 3 prescaler to F/256 and reset it */
-	*((volatile u16*)0x0400010E) = 0x0;    //Disable (bit 7)
-	*((volatile u16*)0x0400010C) = 0x0000; //Set counter to 0
-	*((volatile u16*)0x0400010E) = 0x82;   //Enable (bit 7)
-	
-	current_ticks 	= 0;
-	current_beats 	= 0;
-	current_pattern = 0;
-	playing			= 0;
-	beats_per_bar 	= 4;
-	setTempo( bpm );
-	enable( 0 );
-	enable( 1 );
-	enable( 2 );
-	enable( 3 );
-}
-
-
-void SPU::enable(int index){
-	
-	
-	
-	// TODO: handle channel to enable arbitrary channels
-	
-	*((volatile u16*)0x04000084) |= SOUND_PWM_ENABLE_PSG_FIFO;
-	*((volatile u16*)0x04000080) |= SOUND_PWM_ENABLE_LEFT(index) | SOUND_PWM_ENABLE_RIGHT(index) | SOUND_PWM_MASTER_LEFT(7) | SOUND_PWM_MASTER_RIGHT(7);
-	//Enable SOUND 1 and 2
-	*((volatile u16*)0x04000082) |= 0xE;//PWM 100% DMA 100% (set volume)
-}
-
-void SPU::disable(void){
-}
-
-void SPU::setTempo(int bpm){
-	timer_target = ( BPM_MAGIC / bpm ) * 10; 
-	song.bpm = bpm;
+void Spu::setTempo(int bpm){
+	timerTarget = (BPM_MAGIC / bpm)*10; 
+	VAR_SONG.BPM = bpm;
 	*((volatile u16*)0x0400010A) = 0x0; //Disable timer (bit 7)
 	*((volatile u16*)0x04000108) = 0x0000; //'reset' timer counter
 	*((volatile u16*)0x0400010A) = 0x82; //Enable (bit 7)		
 }
 
 
-void SPU::stop(void){
+void Spu::stop(void){
 	playing = false;
 }
 
-void SPU::play(bool from_start){
+void Spu::play(bool from_start){
 	if(playing) return;
 
-	current_beats 	= 0;
-	current_ticks 	= -1;
+	currentBeats 	= 0;
+	currentTicks 	= -1;
 	
 	if(from_start){
-		current_pattern = 0;
-		for( int i=0; i < 6; i++ ){
-			channel[ i ].step		= 0;
-			channel[ i ].position	= 0;
+		currentPattern 	= 0;
+		for(int i=0; i<6;i++){
+			VAR_CHANNEL[i].STEP = 0;
+			VAR_CHANNEL[i].POSITION = 0;
 		}		
 		playing = true;
 
@@ -130,8 +129,8 @@ void SPU::play(bool from_start){
 		return;
 	}
 	
-	for( int i=0; i < 6; i++ ){
-		channel[ i ].step = 255;
+	for(int i=0; i<6;i++){
+		VAR_CHANNEL[i].STEP = 255;
 	}
 	
 	playing = true;
@@ -147,108 +146,158 @@ bool updateChannel(u8 chan){
 	
 	
 	// DONT UPDATE CHANNELS WHEN THEY ARE ON PATTERN 0 (this is empty)
-	if( song.patterns[ chan ].order[ channel[chan].position ] == 0x00 ){
+	if(VAR_SONG.PATTERNS[chan].ORDER[VAR_CHANNEL[chan].POSITION] == 0x00){			
 		// Rewind until a pattern break (0x00) is found, or the beginning of the chain is reach
-		while( channel[chan].position > 0 ){
+		while(VAR_CHANNEL[chan].POSITION > 0){
 		
-			channel[chan].position--;
+			VAR_CHANNEL[chan].POSITION--;
 			
-			if( song.patterns[ chan ].order[ channel[chan].position ] == 0x00 ) {
-				channel[chan].position++;
+			if(VAR_SONG.PATTERNS[chan].ORDER[VAR_CHANNEL[chan].POSITION] == 0x00) {
+				VAR_CHANNEL[chan].POSITION++;
 				return true;
 			}
 		}
 		// If after rewind, first pattern is still 0, stop this channel
-		if( song.patterns[ chan ].order[ 0 ] == 0x00 ) return channel[chan].playing = false;
+		if(VAR_SONG.PATTERNS[chan].ORDER[0] == 0x00) return VAR_CHANNEL[chan].PLAYING = false;
 		return true;
 	}
-	channel[chan].playing = true;
+	VAR_CHANNEL[chan].PLAYING = true;
 		
-	channel[chan].last_step =  channel[chan].step;
-	channel[chan].step++;
+	VAR_CHANNEL[chan].LASTSTEP =  VAR_CHANNEL[chan].STEP;
+	VAR_CHANNEL[chan].STEP++;
 	
-	if(channel[chan].step == 16 /*channel[chan].LENGTH*/){
-		channel[chan].step = 0;
-		channel[chan].last_position = channel[chan].position;
-		channel[chan].position++;
-		SPU::current_beats=-1;
-		if( song.patterns[ chan ].order[ channel[ chan ].position ] == 0x00 ) return updateChannel( chan );
+	if(VAR_CHANNEL[chan].STEP == 16 /*VAR_CHANNEL[chan].LENGTH*/){
+		VAR_CHANNEL[chan].STEP = 0;
+		VAR_CHANNEL[chan].LASTPOSITION = VAR_CHANNEL[chan].POSITION;
+		VAR_CHANNEL[chan].POSITION++;
+		SPU.currentBeats=-1;
+		if(VAR_SONG.PATTERNS[chan].ORDER[VAR_CHANNEL[chan].POSITION] == 0x00) return updateChannel(chan);
 	}
 	return true;
 }
 
-void SPU::mute(int index){
+void Spu::mute(int channel){
 	// ------------------------------------------------------------
-	channel[index].mute ^= 1;
+	VAR_CHANNEL[channel].mute ^= 1;
 	/* ------------------------------------------------------------
 	Since a channel was unmuted, disable solo on every channel   */
 	// Sync with audio registers
 	/* ------------------------------------------------------------
 	If a channel was unmuted, disable solo on every channel   	 */
-	if(channel[index].mute) return;
+	if(VAR_CHANNEL[channel].mute) return;
 	for(int i=0; i<6;i++){
-		channel[i].solo = false;
+		VAR_CHANNEL[i].solo = false;
 	}
 }
 
-void SPU::solo(int index){
+void Spu::solo(int channel){
 	/* ------------------------------------------------------------
 	if channel has solo enabled unmute channels and disable solo */
-	if(channel[index].solo){
+	if(VAR_CHANNEL[channel].solo){
 		for(int i=0; i<6;i++){
-			channel[ index ].solo = false;
-			channel[ i ].mute = false;
+			VAR_CHANNEL[channel].solo = false;
+			VAR_CHANNEL[i].mute = false;
 		}
 		return;
 	}
 	/* ------------------------------------------------------------
 	Mute all channels 											 */
 	for(int i=0; i<6;i++){
-		channel[i].mute = true;
+		VAR_CHANNEL[i].mute = true;
 	}
 	/* ------------------------------------------------------------
 	Unmute and enable solo on selected channel 				     */
-	channel[index].solo = true;
-	channel[index].mute = false;
+	VAR_CHANNEL[channel].solo = true;
+	VAR_CHANNEL[channel].mute = false;
 	
 	// Sync with audio registers
 }
 
-void SPU::noteOnWAV(void){
+void Spu::noteOnWAV(void){
 }
 
-void SPU::noteOnNZE(void){
+void Spu::noteOnNZE(void){
 }
 
-void SPU::noteOnPWM1(void){
-	*(u16*)(0x04000064) = 0x8000 | PWM_FREQ_TABLE[channel[0].key];
+void Spu::noteOnPWM1(void){
+	*(u16*)(0x04000064) = 0x8000 | PWM_FREQ_TABLE[VAR_CHANNEL[0].key + transpose[0] + (VAR_CFG.TRACKER.TRANSPOSE-0x80) + VAR_SONG.TRANSPOSE ]+(VAR_CFG.TRACKER.FINETUNE<<1);
 	retrig_note[0] = false;			
 }
 
-void SPU::noteOnPWM2(void){
-	*(u16*)(0x0400006C) = 0x8000 | PWM_FREQ_TABLE[channel[1].key];	
+void Spu::noteOnPWM2(void){
+	*(u16*)(0x0400006C) = 0x8000 | PWM_FREQ_TABLE[VAR_CHANNEL[1].key + transpose[1] + (VAR_CFG.TRACKER.TRANSPOSE-0x80) + VAR_SONG.TRANSPOSE ]+(VAR_CFG.TRACKER.FINETUNE<<1);
 	retrig_note[1] = false;			
 }
 
-void SPU::triggerChannel(Channel *chan, int channel_index ){
+extern SETTINGS_PWM unpackPWM(INSTRUMENT *i);
+
+void Spu::triggerChannel(int channel_index){
 	
-	u8 vol = chan->volume;
-	u8 ins = chan->inst;
+	u8 vol = VAR_CHANNEL[channel_index].volume;
+	u8 ins = VAR_CHANNEL[channel_index].inst;
 	
 	// Fill correspondant VAR_XXX setting temporal struct
-	Instrument *i = &VAR_INSTRUMENTS[ins];
+	INSTRUMENT *i = &VAR_INSTRUMENTS[ins];
 	
+	SETTINGS_PWM pwm;
 	switch(channel_index){
 		case 0:			
-			vol = ((i->SETTINGS[2] & 0xF) * vol) >> 4;
-			*(u16*)(0x04000062) = (vol<<12) | 0x0100 | 0x003F;				
-			if( retrig_note[ channel_index ] ) return noteOnPWM1();
+			pwm = unpackPWM( i );
+			if(reset_channel[0]) {
+				tsp_position[0]=0;				
+				vol_position[0]=0;
+				reset_channel[0] = false;				
+				transpose[0] = 0;
+			}
+			if(pwm.TSP_ENABLE){				
+				if(tsp_position[0] < pwm.TSP_ENVELOPE){
+					transpose[0] = pwm.TSP[ tsp_position[0] ];
+					tsp_position[0]++;
+					retrig_note[0] = true;
+				}
+			}
+			if(pwm.VOL_ENABLE){				
+				if( vol_position[0] < pwm.VOL_ENVELOPE){
+					vol = (vol + pwm.VOL[ vol_position[0] ]) >> 1;
+					vol_position[0]++;
+					retrig_note[0] = true;
+				}
+			}
+			if(retrig_note[0]){
+				//vol = ((i->SETTINGS[2] & 0xF) * vol) >> 4;
+				*(u16*)(0x04000060) = (pwm.SWEEPSTEPS << 4) | (pwm.SWEEPDIR << 3) | ( pwm.SWEEPSPEED );				
+				*(u16*)(0x04000062) = ((pwm.LEVEL*vol>>4) << 12) | (!pwm.ENVELOPEDIR << 11) | (pwm.VOLUMEFADE<<8) | ( pwm.DUTYCYCLE << 6 );				
+				return noteOnPWM1();
+			}
 			return;
 			
 		case 1: 
-			vol = ((i->SETTINGS[2] & 0xF) * vol) >> 4;
-			*(u16*)(0x04000068) = (vol<<12) | 0x0100 | 0x003F;				
-			if( retrig_note[ channel_index ] ) return noteOnPWM2();
+			pwm = unpackPWM( i );
+			if(reset_channel[1]) {
+				tsp_position[1]=0;				
+				vol_position[1]=0;
+				reset_channel[1] = false;				
+				transpose[1] = 0;
+			}
+			if(pwm.TSP_ENABLE){				
+				if(tsp_position[1] < pwm.TSP_ENVELOPE){
+					transpose[1] = pwm.TSP[ tsp_position[1] ];
+					tsp_position[1]++;
+					retrig_note[1] = true;
+				}
+			}
+			if(pwm.VOL_ENABLE){				
+				if( vol_position[1] < pwm.VOL_ENVELOPE){
+					vol = (vol + pwm.VOL[ vol_position[1] ]) >> 1;
+					vol_position[1]++;
+					retrig_note[1] = true;
+				}
+			}
+			if(retrig_note[1]){
+				//vol = ((i->SETTINGS[2] & 0xF) * vol) >> 4;
+				*(u16*)(0x04000068) = ((pwm.LEVEL*vol>>4) << 12) | (!pwm.ENVELOPEDIR << 11) | (pwm.VOLUMEFADE<<8) | ( pwm.DUTYCYCLE << 6 );				
+				return noteOnPWM2();
+			}
 			return;
 			
 		case 2: 
@@ -267,119 +316,95 @@ void SPU::triggerChannel(Channel *chan, int channel_index ){
 
 void cellSyncChannel(u8 c);
 
-extern void DECIMAL_DOUBLE(u8 x, u8 y, u16 color, u16 value);
 
-void SPU::update(){
-	bool new_beat, new_tick;
+void Spu::update(void){
+	bool newBeat, newTick;
 
-	if( !playing ) return;
-
-	new_tick = false;
-	if( CheckBPMClock(timer_target) ){
+	if(!playing){
+		return;
+	}
+	
+	if(CheckBPMClock(this->timerTarget)){
 		/* --------------------------------------------------------------------
 		Restore timer, set it to exceeded time 								 */
 		*((volatile u16*)0x0400010A) = 0x0; //Disable timer (bit 7)
-		*((volatile u16*)0x04000108) = *((volatile u16*)0x04000108) - timer_target; //'reset' timer counter
+		*((volatile u16*)0x04000108) = *((volatile u16*)0x04000108) - this->timerTarget; //'reset' timer counter
 		*((volatile u16*)0x0400010A) = 0x82; //Enable (bit 7)
 		// --------------------------------------------------------------------
-		new_tick = true;
-	}
+		newTick = true;
+	} else newTick = false;
 	
-	if( new_tick ){
+	if(newTick){
 		/* ----------------------------------------------------------------
 		Jump to next pattern, or find previous loop entry			     */
-		new_beat = false;
-		if(!( current_ticks % ( beats_per_bar * 4 ) )){
-			if( updateChannel( 0 ) ) cellSyncChannel( 0 ); 
-			if( updateChannel( 1 ) ) cellSyncChannel( 1 );
-			if( updateChannel( 2 ) ) cellSyncChannel( 2 );
-			if( updateChannel( 3 ) ) cellSyncChannel( 3 );
-			if( updateChannel( 4 ) ) cellSyncChannel( 4 );
-			if( updateChannel( 5 ) ) cellSyncChannel( 5 );			
+		if(!(currentTicks % (beatsPerBar*4) )){
+			if(updateChannel(0))cellSyncChannel(0); 
+			if(updateChannel(1))cellSyncChannel(1);
+			if(updateChannel(2))cellSyncChannel(2);
+			if(updateChannel(3))cellSyncChannel(3);
+			if(updateChannel(4))cellSyncChannel(4);
+			if(updateChannel(5))cellSyncChannel(5);			
 			//if(stop_it)return stop(); 
 			
-			current_ticks = 0;
-			new_beat 	  = true;
-		};				
+			currentTicks=0;
+			newBeat = true;
+		} else newBeat = false;		
 		
-		if(new_beat){			
+		
+		if(newBeat){			
 			/* --------------------------------------------------------------------
 			Do metronome noise 													 */			
-			if( enable_metronome ){
-				if( current_beats + 1 == 0){
+			/*
+			if(enable_metronome){
+				if(currentBeats+1 == 0){
 					*((volatile u16*)0x04000068) = 0x8181;
 					*((volatile u16*)0x0400006C) = 0xC7b7;				
 				} else 
-				if( !(( current_beats + 1 ) % beats_per_bar )){								
+				if(!((currentBeats+1) % beatsPerBar)){								
 					*((volatile u16*)0x04000068) = 0x8181;
 					*((volatile u16*)0x0400006C) = 0xC770;
 				}
 			}
-			current_beats++;		
+			*/
+			currentBeats++;		
 		}	
 		
 		/* ----------------------------------------------------------------
 		If current tick%4 == 0, time to trigger notes					 */
-		static Channel* 	p_channel;
-		static bool*		p_retrig_note;
-		static PatternCell*	p_cells;
-		static u8*			p_ins;
-		static u8* 			p_vol;
-		static u8*			p_key;
-		static u8*			p_cmd;
-		static u8*			p_val;
-		static int*			p_target_tick;
-		
-		p_channel 		= &channel[0];
-		p_retrig_note  	= &retrig_note[0];
-		p_cells 		= &VAR_CELLS[0];
-		p_target_tick 	= &target_tick[0];
-		
-		if( !( current_ticks & 0x3 ) ){
-			for( int i=0, s = 0; i < 6; i++, p_channel++, p_retrig_note++, p_cells++, p_target_tick++ ){
-				// Read current channel's step position
-				s = p_channel->step;
+		if(!(currentTicks&0x3)){
+			for(int i=0, s = 0; i<6; i++){
+				s = VAR_CHANNEL[i].STEP;
+				retrig_note[i] = false;
+				if(VAR_CELLS[i].KEY[s] > 0x0) retrig_note[i] = setKey(i, VAR_CELLS[i].KEY[s], VAR_CELLS[i].VOL[s]); 
+				if(VAR_CELLS[i].INS[s] > 0x0) setInst(i	, VAR_CELLS[i].INS[s], VAR_CELLS[i].VOL[s], retrig_note[i]); 
+				if(VAR_CELLS[i].CMD[s] > 0x0) setCmd( i , VAR_CELLS[i].CMD[s], VAR_CELLS[i].VAL[s]); 
 				
-				// Read values @ step position 
-				p_key = (u8*)(&p_cells->key[s]);
-				p_vol = &p_cells->vol[s];
-				p_cmd = &p_cells->cmd[s];
-				p_ins = &p_cells->ins[s];
-				p_val = &p_cells->val[s];
-				
-				// Clear retrig flag for this channel
-				*p_retrig_note = false;
-				
-				// Evaluate values read
-				if( *p_key > 0x0) *p_retrig_note = setKey( p_channel  , *p_key , *p_vol ); 
-				if( *p_ins > 0x0) setIns( p_channel , *p_ins , *p_vol , *p_retrig_note ); 
-				if( *p_cmd > 0x0) setCmd( p_channel , *p_cmd , *p_val );
 				
 				// Handle Command
 				// Handle Groove Table
-				*p_target_tick = 0;
+				targetTick[i] = 0;
 				
-				if( ( current_ticks & 0x3 ) == *p_target_tick ){
+				if((currentTicks&0x3) == targetTick[i]){
 					// trigger sound settings
-					triggerChannel( p_channel, i );
-					*p_target_tick = 0;
+					triggerChannel(i);
+					targetTick[i] = 0;
 				}
+		
 			}
 		}
 		
-		current_ticks++;		
+		currentTicks++;		
 	} 
 		
 	// Debug output
-	//GPU::set(1,0,0, ((SPU::current_ticks>>2)&1) == 0?0x6F : 0x60);
-	//GPU::set(1,0,1, 0x5);
+	//gpu.set(1,0,0, ((SPU.currentTicks>>2)&1) == 0?0x6F : 0x60);
+	//gpu.set(1,0,1, 0x5);
 
-	/*DECIMAL_DOUBLE( 1, 2, 7, SPU::current_ticks >> 2 );
-	DECIMAL_DOUBLE( 2, 2, 1, SPU::current_beats		);
-	DECIMAL_DOUBLE( 3, 2, 2, SPU::current_pattern	);
-	*/
+	//DECIMAL_DOUBLE(0,0,9, SPU.currentTicks>>2);
+	DECIMAL_DOUBLE(2,2,1, SPU.currentBeats);
 	/*
-	VUMETER_V1(0,0,4, (SPU::current_beats % 4) < 1);				
-	WAVE_SINGLE(0,1,4, (SPU::current_beats % 4));				*/
+	DECIMAL_DOUBLE(3,2,2, SPU.currentPattern);
+	VUMETER_V1(0,0,4, (SPU.currentBeats % 4) < 1);				
+	WAVE_SINGLE(0,1,4, (SPU.currentBeats % 4));				*/
 }
 

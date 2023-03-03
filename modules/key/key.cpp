@@ -1,35 +1,25 @@
-/* ----------------------------------------------------------------------------
-AUTHOR		 	Al P.Area ( Smiker )
-PURPOSE			Singleton. 
-				Provides user friendly interfacing with the input.
-				Internally holds a keyboard register copy, being updated once 
-				per keypad interrupt. 
-ORIGINAL DATE 	2016, October
-REVISION DATE 	2023-02-28
-EXAMPLES		TIM0.Setup(0x0004,1);  //Configure overflow reg on 0xFFFF-0x0004, freq 1
-				TIM0.Enable();         //Activate timer (start counting)
- --------------------------------------------------------------------------- */
-#include "key.hpp"
-#include "../sys/sys.hpp"
+/*------------------------------------------------------------------------------
+                               Key Control Class                                
+--------------------------------------------------------------------------------
+ This module should hold a copy of the keyboard register, which is updated every
+ time the keypad generates an interrupt. It's faster than continuously reading 
+ the register, as it's wait times are higher than for mem in WRAM. 
+ So it has to return KeyDown, KeyUp and KeyRepeat status for all keys.Thats all.
+------------------------------------------------------------------------------*/
 
-vu16	KEY::keytrig;
-u16 	KEY::keyinput;
-bool	KEY::retrig;
-u16		KEY::keyrate,
-		KEY::keytimer[10];
-u16		KEY::keydown,
-		KEY::keyup,				
-		KEY::keyrepeat,
-		KEY::keypress;
+cKEY KEY;
+
 
 // INPUT REGISTER = LRdulrsSBA (s=st)
-void KEY::init(){
+void cKEY::init(void)
+{
 	*(u16*)REG_KEYCNT = 0x43FF;//Set Key Interrupt on every button
 	keyrate = 40;
 	retrig  = false;
 }
 
-void KEY::update(){
+void cKEY::update(void)
+{
 	R_IME=0x0;
 	u8 i  = 0;
 	
@@ -45,7 +35,8 @@ void KEY::update(){
 		cp = 0x0000,
 		cu = 0x0000;
 
-	while(i<10){
+	while(i<10)
+	{
 		u16 pos = 1<<i;
 		ct = (keytrig  & pos)>>i;
 		cd = (keydown  & pos)>>i;
@@ -53,11 +44,13 @@ void KEY::update(){
 		cu = (keyup    & pos)>>i;
 	
 	
-		if( cd){
+		if( cd)
+		{
 			if(!ct)cd=0;
 		}
 
-		if( ct){			
+		if( ct)
+		{			
 			if(!cu)if(!cd)if( cp){cp=1;		}
 			if( cd)if(!cu)if(!cp){cp=1;cd=0;}
 			if(!cp)if(!cd)if(!cu){cd=1;		}
@@ -65,7 +58,8 @@ void KEY::update(){
 		
 		if( cu)cu=0;
 		
-		if( cp){
+		if( cp)
+		{
 			if(!ct)if(!cu)if(!cd){cu=1; cp=0;}
 		}
 
@@ -81,26 +75,30 @@ void KEY::update(){
 	keydown	= kd;
 	keypress= kp;
 	keyup	= ku;
-	if(((!keytrig)&&(!keyup))&&(!keypress)&&(!keydown)) SYS::query_key = false;
+	if(((!keytrig)&&(!keyup))&&(!keypress)&&(!keydown))SYS_QUERYKEY = false;
 	R_IME=0x1;	
 }
 
-bool KEY::down( u16 keyflag ){
+bool cKEY::down(u16 keyflag)
+{
 	if((keydown & keyflag)==keyflag)return(true);
 	return(false);
 }
 
-bool KEY::up( u16 keyflag ){
+bool cKEY::up(u16 keyflag)
+{
 	if((keyup & keyflag)==keyflag)return(true);
 	return(false);
 }
 
-bool KEY::press( u16 keyflag ){	
+bool cKEY::press(u16 keyflag)
+{	
 	if((keypress & keyflag)==keyflag)return(true);		
 	return(false);
 }
 
-bool KEY::repeat( u8 index ){
+bool cKEY::repeat(u8 index)
+{
 	u16 keyflag = (1 <<index);
 	if((keypress & keyflag)==keyflag)
 	{
@@ -114,3 +112,5 @@ bool KEY::repeat( u8 index ){
 	}
 	return(false);
 }
+
+

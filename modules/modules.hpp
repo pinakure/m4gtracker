@@ -1,4 +1,4 @@
-#include "dma/dma.hpp"
+#include "dma/dma.h"
 #include "int/int.hpp"
 #include "tim/tim.hpp"
 #include "spu/spu.hpp"
@@ -7,5 +7,3 @@
 #include "key/key.hpp"
 #include "sram/sram.hpp"
 #include "sys/sys.hpp"
-#include "regionhandler/regionhandler.hpp"
-#include "snk/snk.hpp"

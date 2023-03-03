@@ -1,24 +1,11 @@
-#include "sram.hpp"
+Sram SRAM;
 
-#include "../spu/spu.hpp"
-#include "../../data/variables.hpp"
-#include "../../macros.hpp"
-
-extern void HEXADECIMAL_DOUBLE(u8 x, u8 y, u16 color, u16 value);
-extern void patternSync(u8 position);
-extern void cellSync();
-
-u8* SRAM::sram;
-int SRAM::position;
-u16 SRAM::waitstateBackup;
-
-// This declares both functions defined @ asm/sram.s
 extern "C" {
+	u8 	 SRAM_ReadByte(u16 position);
 	void SRAM_WriteByte(u16 position, u8 byte);
-	u8 SRAM_ReadByte(u16 position);
-}
+};
 
-void SRAM::init(void){
+void Sram::Init(void){
 	// Set WAITCNT (Waitstate controller) to 8 wait cycle mode	
 	
 	waitstateBackup = PORT(0x4000204);
@@ -31,15 +18,15 @@ void SRAM::init(void){
 	// Restore old waitstate value
 }
 
-void SRAM::seek(int p){ 
+void Sram::seek(int p){ 
 	position = p;	
 }
 
-void SRAM::forward(int p){ 
+void Sram::forward(int p){ 
 	position += p;	
 }
 
-void SRAM::erase(void){
+void Sram::erase(void){
 	int i;
 	seek(0);
 	for(i=0; i<0x8000; i++){
@@ -47,40 +34,40 @@ void SRAM::erase(void){
 	}	
 }
 
-void SRAM::drawPosition(u8 x, u8 y, u8 color) { 
+void Sram::drawPosition(u8 x, u8 y, u8 color) { 
 	HEXADECIMAL_DOUBLE(x+1,	y,	color, position&0xFF);
 	HEXADECIMAL_DOUBLE(x,	y,	color, position>>8);
 }
 
-void SRAM::write(u8 a){ 
+void Sram::write(u8 a){ 
 	SRAM_WriteByte(position++, a);
 }
 
-void SRAM::write16(u16 a) { 
+void Sram::write16(u16 a) { 
 	write(a&0x00FF); 
 	write((a&0xFF00) >> 8);
 }
 
-void SRAM::write32(u32 a) {  
+void Sram::write32(u32 a) {  
 	write( a & 0x000000FF); 
 	write((a & 0x0000FF00) >> 8); 
 	write((a & 0x00FF0000) >> 16); 
 	write((a & 0xFF000000) >> 24); 
 }
 
-u8 SRAM::read(){
+u8 Sram::read(){
 	u8 r = SRAM_ReadByte(position++);
 	return r;
 }
 
-u16 SRAM::read16() { 
+u16 Sram::read16() { 
 	u8 a, b;
 	a = read();
 	b = read();
 	return (b<<8) | a;
 }
 
-u32 SRAM::read32() { 
+u32 Sram::read32() { 
 	u8 a, b, c, d;
 	a = read();
 	b = read();
@@ -89,45 +76,45 @@ u32 SRAM::read32() {
 	return (d<<24) | (c<<16) | (b<<8) | a;
 }
 
-void SRAM::songSave(){
+void Sram::songSave(){
 	int i;
 	
 	seek(0x80);
-	forward(32 * CFG::slot);
+	forward(32 * VAR_CFG.SLOT);
 
 	// Write Song details
-	write( song.transpose	);
-	write( song.bpm 		);
-	write( ( song.pattern_length << 4 ) | ( song.groove.length ) );
-	write( ( song.groove.enable  << 2 ) | song.not_empty );//6 bit left unused!!
+	write( VAR_SONG.TRANSPOSE);
+	write( VAR_SONG.BPM);
+	write( (VAR_SONG.PATTERNLENGTH <<4) | (VAR_SONG.GROOVE.LENGTH));
+	write( (VAR_SONG.GROOVE.ENABLE <<2) | VAR_SONG.NOTEMPTY);//6 bit left unused!!
 		
 	// Write Artist and title
 	for(i=0; i<14;i++){
-		write( song.title[ i ] );
-		write( song.artist[ i ] );
+		write(VAR_SONG.TITLE[i]);
+		write(VAR_SONG.ARTIST[i]);
 	} 
 
 	drawPosition(27, 2, 2);	
 	//0x140
 	
 	// Write Groove Steps
-	forward( 16 * CFG::slot );
-	for( i=0; i < 16; i++ ){
-		write( song.groove.step[ i ] );
+	forward(16 * VAR_CFG.SLOT);
+	for(i=0; i<16; i++){
+		write(VAR_SONG.GROOVE.STEP[i]);
 	}
 	
 	//0x1A0
-	drawPosition( 27, 3, 2 );	
-	seek( 0x200 );
+	drawPosition(27, 3, 2);	
+	seek(0x200);
 		
-	forward( 1536 * CFG::slot );	
-	for( i=0; i < 256; i++ ){
-		write( song.patterns[ 0 ].order[ i ] );
-		write( song.patterns[ 1 ].order[ i ] );
-		write( song.patterns[ 2 ].order[ i ] );
-		write( song.patterns[ 3 ].order[ i ] );
-		write( song.patterns[ 4 ].order[ i ] );
-		write( song.patterns[ 5 ].order[ i ] );
+	forward(1536 * VAR_CFG.SLOT);	
+	for(i=0; i<256; i++){
+		write(VAR_SONG.PATTERNS[0].ORDER[i]);
+		write(VAR_SONG.PATTERNS[1].ORDER[i]);
+		write(VAR_SONG.PATTERNS[2].ORDER[i]);
+		write(VAR_SONG.PATTERNS[3].ORDER[i]);
+		write(VAR_SONG.PATTERNS[4].ORDER[i]);
+		write(VAR_SONG.PATTERNS[5].ORDER[i]);
 	}
 	
 	drawPosition(27, 4, 2);	
@@ -135,125 +122,127 @@ void SRAM::songSave(){
 	sharedDataSave();
 }
 
-void SRAM::songLoad(){
+void Sram::songLoad(){
 	int i;
-	u8  h;
+	u8 h;
 	
-	seek( 0x80 );
-	forward( 32 * CFG::slot );
+	seek(0x80);
+	forward(32 * VAR_CFG.SLOT);
 	
 	// Song details
-	song.transpose 		= read();
-	song.bpm 			= read();
+	VAR_SONG.TRANSPOSE = read();
+	VAR_SONG.BPM = read();
 		
 	h = read();
-	song.pattern_length = EXTRACT( h, 4, 0xF);
-	song.groove.length	= h & 0xF;
+	VAR_SONG.PATTERNLENGTH = EXTRACT( h, 4, 0xF);
+	VAR_SONG.GROOVE.LENGTH = h & 0xF;
 		
 	h = read();
-	song.groove.enable	= EXTRACT( h, 2, 0x1);
-	song.not_empty		= h & 0x1;
+	VAR_SONG.GROOVE.ENABLE = EXTRACT( h, 2, 0x1);
+	VAR_SONG.NOTEMPTY = h & 0x1;
 		
 	// Artist and title
-	for( i=0; i < 14; i++ ){
-		song.title[ i ]  = read();
-		song.artist[ i ] = read();
+	for(i=0; i<14;i++){
+		VAR_SONG.TITLE[i]  = read();
+		VAR_SONG.ARTIST[i] = read();
 	} 
 
-	drawPosition( 27, 2, 6 );	
+	drawPosition(27, 2, 6);	
 
-	forward( 16 * CFG::slot );
-	for( i=0; i < 16; i++ ){
-		song.groove.step[ i ] = read();
+	forward(16 * VAR_CFG.SLOT);
+	for(i=0; i<16; i++){
+		VAR_SONG.GROOVE.STEP[i] = read();
 	}
 		
 	//1A0
-	drawPosition( 27, 3, 6 );	
-	seek( 0x200 );
+	drawPosition(27, 3, 6);	
+	seek(0x200);
 	
-	forward( 1536 * CFG::slot );
-	for( i=0; i < 256; i++ ){
-		song.patterns[ 0 ].order[ i ] = read();
-		song.patterns[ 1 ].order[ i ] = read();
-		song.patterns[ 2 ].order[ i ] = read();
-		song.patterns[ 3 ].order[ i ] = read();
-		song.patterns[ 4 ].order[ i ] = read();
-		song.patterns[ 5 ].order[ i ] = read();
+	
+	forward(1536 * VAR_CFG.SLOT);
+	for(i=0; i<256; i++){
+		VAR_SONG.PATTERNS[0].ORDER[i] = read();
+		VAR_SONG.PATTERNS[1].ORDER[i] = read();
+		VAR_SONG.PATTERNS[2].ORDER[i] = read();
+		VAR_SONG.PATTERNS[3].ORDER[i] = read();
+		VAR_SONG.PATTERNS[4].ORDER[i] = read();
+		VAR_SONG.PATTERNS[5].ORDER[i] = read();
 	}
 	
-	patternSync( CFG::order_position );
+	patternSync(VAR_CFG.ORDERPOSITION);
 	cellSync();
 	
-	drawPosition( 27, 4, 6 );
+	drawPosition(27, 4, 6);	
 	
 	sharedDataLoad();
 }
 
-void SRAM::songDefaults(){
+void Sram::songDefaults(void){
 	int i,di;
 	
-	for( i=0; i < 14; i++ ){
-		song.title[i]  	= 0xFF;
-		song.artist[i] 	= 0xFF;
+	for(i=0; i<14; i++){
+		VAR_SONG.TITLE[i]  = 0xFF;
+		VAR_SONG.ARTIST[i] = 0xFF;
 	}
-	//SPU::setTempo(0x80);
-	song.bpm 			= 0x80;
-	song.pattern_length = 0xF;
+	//SPU.setTempo(0x80);
+	VAR_SONG.BPM = 0x80;
+	VAR_SONG.PATTERNLENGTH = 0xF;
 	
-	for( i=0; i < 6; i++ ){
+	for(i=0; i<6; i++){
 		VAR_INSTRUMENT.NAME[i] = 0xFF;
 	}
 	
 	// Pattern data clear
 	for(i=0; i<128; i++){
 		for(di=0; di<16; di++){
-			VAR_DATA[i].key[di] = 0;
-			VAR_DATA[i].ins[di] = 0;
-			VAR_DATA[i].vol[di] = 0;
-			VAR_DATA[i].cmd[di] = 0;
-			VAR_DATA[i].val[di] = 0;
+			VAR_DATA[i].KEY[di] = 0;
+			VAR_DATA[i].INS[di] = 0;
+			VAR_DATA[i].VOL[di] = 0;
+			VAR_DATA[i].CMD[di] = 0;
+			VAR_DATA[i].VAL[di] = 0;
 		}
 	}
 
 	// Live Perform table clear
 	for(i=0; i<8; i++){
-		live.perform.left.key[i] = 0;
-		live.perform.left.ins[i] = 0;
-		live.perform.left.chan[i] = 0;
-		live.perform.left.vol[i] = 0;
-		live.perform.left.cmd[i] = 0;
-		live.perform.left.val[i] = 0;
-		live.perform.right.key[i] = 0;
-		live.perform.right.ins[i] = 0;
-		live.perform.right.chan[i] = 0;
-		live.perform.right.vol[i] = 0;
-		live.perform.right.cmd[i] = 0;
-		live.perform.right.val[i] = 0;
+		VAR_LIVE.PERFORM.LEFT.KEY[i] = 0;
+		VAR_LIVE.PERFORM.LEFT.INS[i] = 0;
+		VAR_LIVE.PERFORM.LEFT.CHAN[i] = 0;
+		VAR_LIVE.PERFORM.LEFT.VOL[i] = 0;
+		VAR_LIVE.PERFORM.LEFT.CMD[i] = 0;
+		VAR_LIVE.PERFORM.LEFT.VAL[i] = 0;
+		VAR_LIVE.PERFORM.RIGHT.KEY[i] = 0;
+		VAR_LIVE.PERFORM.RIGHT.INS[i] = 0;
+		VAR_LIVE.PERFORM.RIGHT.CHAN[i] = 0;
+		VAR_LIVE.PERFORM.RIGHT.VOL[i] = 0;
+		VAR_LIVE.PERFORM.RIGHT.CMD[i] = 0;
+		VAR_LIVE.PERFORM.RIGHT.VAL[i] = 0;
 	}
 
 	// Empty Order chains
-	for( i=0; i < 6; i++ ){
-		for( di=0; di < 256; di++ ){
-			song.patterns[ i ].order[ di ] = 0;
+	for(i=0; i<6; i++){
+		for(di=0; di<256; di++){
+			VAR_SONG.PATTERNS[i].ORDER[di] = 0;
 		}
-		song.patterns[ i ].position = 0;
+		VAR_SONG.PATTERNS[i].POSITION = 0;
 	}	
 }
 
 
 
 
-void SRAM::sharedDataSave(void){
+
+void Sram::sharedDataSave(void){
 	int i, di;
 	// Dump pattern data
 	seek(0x2600);
 	for(i=0;i<128;i++){
 		for(di=0;di<16;di++){
-			write(VAR_DATA[i].key[di]);
-			write(VAR_DATA[i].ins[di]);
-			write(VAR_DATA[i].vol[di]);
-			write(VAR_DATA[i].cmd[di]);
-			write(VAR_DATA[i].val[di]);
+			write(VAR_DATA[i].KEY[di]);
+			write(VAR_DATA[i].INS[di]);
+			write(VAR_DATA[i].VOL[di]);
+			write(VAR_DATA[i].CMD[di]);
+			write(VAR_DATA[i].VAL[di]);
 		}
 	}	
 	
@@ -262,7 +251,7 @@ void SRAM::sharedDataSave(void){
 	seek(0x5000);
 	
 	//Dump instruments (these are shared along all songs)
-	instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[ CFG::current_instrument ]);
+	instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT]);
 
 	for(i=0; i<64; i++){
 		write(VAR_INSTRUMENTS[i].TYPE);
@@ -285,7 +274,7 @@ void SRAM::sharedDataSave(void){
 	drawPosition(27, 5, 2);	
 }
 
-void SRAM::sharedDataLoad(void){
+void Sram::sharedDataLoad(void){
 	int i, di;
 
 	seek(0x2600);
@@ -293,11 +282,11 @@ void SRAM::sharedDataLoad(void){
 	// Pattern data
 	for(i=0;i<128;i++){
 		for(di=0;di<16;di++){
-			VAR_DATA[i].key[di] = read();
-			VAR_DATA[i].ins[di] = read();
-			VAR_DATA[i].vol[di] = read();
-			VAR_DATA[i].cmd[di] = read();
-			VAR_DATA[i].val[di] = read();
+			VAR_DATA[i].KEY[di] = read();
+			VAR_DATA[i].INS[di] = read();
+			VAR_DATA[i].VOL[di] = read();
+			VAR_DATA[i].CMD[di] = read();
+			VAR_DATA[i].VAL[di] = read();
 		}
 	}	
 	
@@ -325,109 +314,109 @@ void SRAM::sharedDataLoad(void){
 		}
 	}
 
-	instcopy(&VAR_INSTRUMENTS[CFG::current_instrument], &VAR_INSTRUMENT);
+	instcopy(&VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT], &VAR_INSTRUMENT);
 	
-	SPU::setTempo( song.bpm );
+	SPU.setTempo(VAR_SONG.BPM);
 
-	drawPosition( 27, 5, 6 );
+	drawPosition(27, 5, 6);
 }
 
-void SRAM::dataBackup(void){
+void Sram::dataBackup(void){
 	int i, di;
 	
 	// Dump 6 Song Headers (32 bytes each one, 192 total)
 	seek(0x80);
-	for( i=0; i < 6; i++ ){
+	for(i=0; i<6; i++){
 		// Song details
-		write( songs[ i ].transpose		);
-		write( songs[ i ].bpm			);
-		write( ( songs[ i ].pattern_length  << 4 ) | ( songs[ i ].groove.length ) );
-		write( ( songs[ i ].groove.enable	<< 2 ) |   songs[ i ].not_empty );//6 bit left unused!!
+		write( VAR_SONGS[i].TRANSPOSE);
+		write( VAR_SONGS[i].BPM);
+		write( (VAR_SONGS[i].PATTERNLENGTH <<4) | (VAR_SONGS[i].GROOVE.LENGTH));
+		write( (VAR_SONGS[i].GROOVE.ENABLE <<2) | VAR_SONGS[i].NOTEMPTY);//6 bit left unused!!
 		
 		// Artist and title
-		for( di=0; di < 14; di++ ){
-			write( songs[ i ].title[ di ] );
-			write( songs[ i ].artist[ di ] );
+		for(di=0; di<14;di++){
+			write(VAR_SONGS[i].TITLE[di]);
+			write(VAR_SONGS[i].ARTIST[di]);
 		} 
 	} 
 
 	//0x140
 	
 	// Groove Steps
-	for( i=0; i < 6; i++ ){
-		for( di=0; di < 16; di++ ){
-			write( songs[ i ].groove.step[ di ] );
+	for(i=0; i<6; i++){
+		for(di=0; di<16; di++){
+			write(VAR_SONGS[i].GROOVE.STEP[di]);
 		}
 	} 
 	
 	//0x1A0
 	
 	// Dump pattern orders (256 * 6)
-	seek( 0x200 );
-	for( i=0; i < 6; i++ ){
-		for( di=0; di < 256; di++ ){
-			write( songs[ i ].patterns[ 0 ].order[ di ] );
-			write( songs[ i ].patterns[ 1 ].order[ di ] );
-			write( songs[ i ].patterns[ 2 ].order[ di ] );
-			write( songs[ i ].patterns[ 3 ].order[ di ] );
-			write( songs[ i ].patterns[ 4 ].order[ di ] );
-			write( songs[ i ].patterns[ 5 ].order[ di ] );
+	seek(0x200);
+	for(i=0; i<6; i++){
+		for(di=0; di<256; di++){
+			write(VAR_SONGS[i].PATTERNS[0].ORDER[di]);
+			write(VAR_SONGS[i].PATTERNS[1].ORDER[di]);
+			write(VAR_SONGS[i].PATTERNS[2].ORDER[di]);
+			write(VAR_SONGS[i].PATTERNS[3].ORDER[di]);
+			write(VAR_SONGS[i].PATTERNS[4].ORDER[di]);
+			write(VAR_SONGS[i].PATTERNS[5].ORDER[di]);
 		}
 	}
 	
 	sharedDataSave();
 	
-	drawPosition( 27, 1, 5 );
+	drawPosition(27, 1, 5);
 }
 
-void SRAM::dataRevert(void){
+void Sram::dataRevert(void){
 	int i, di;
 	u8  h;
 	
 	// Load 6 Song Headers (32 bytes each one, 192 total)
-	seek( 0x80 );
+	seek(0x80);
 	for(i=0; i<6; i++){
 		// Song details
-		songs[ i ].transpose	 	= read();
-		songs[ i ].bpm 				= read();
+		VAR_SONGS[i].TRANSPOSE = read();
+		VAR_SONGS[i].BPM = read();
 		
 		h = read();
-		songs[ i ].pattern_length	= EXTRACT( h, 4, 0xF );
-		songs[ i ].groove.length	= h & 0xF;
+		VAR_SONGS[i].PATTERNLENGTH = EXTRACT( h, 4, 0xF);
+		VAR_SONGS[i].GROOVE.LENGTH = h & 0xF;
 		
 		h = read();
-		songs[ i ].groove.enable	= EXTRACT( h, 2, 0x1 );
-		songs[ i ].not_empty		= h & 0x1;
+		VAR_SONGS[i].GROOVE.ENABLE = EXTRACT( h, 2, 0x1);
+		VAR_SONGS[i].NOTEMPTY = h & 0x1;
 		
 		// Artist and title
-		for( di=0; di < 14;di++ ){
-			songs[ i ].title[ di ] 	= read();
-			songs[ i ].artist[ di ] = read();
+		for(di=0; di<14;di++){
+			VAR_SONGS[i].TITLE[di] = read();
+			VAR_SONGS[i].ARTIST[di] = read();
 		} 
 	} 
 
 	// Groove Steps (96 bytes)
-	for( i=0; i < 6; i++ ){
-		for( di=0; di < 16; di++ ){
-			songs[ i ].groove.step[ di ] = read();
+	for(i=0; i<6; i++){
+		for(di=0; di<16; di++){
+			VAR_SONGS[i].GROOVE.STEP[di] = read();
 		}
 	} 
 	
 	
 	// Dump pattern orders (256 * 6)
-	seek( 0x200 );
-	for( i=0; i < 6; i++ ){
-		for( di=0; di < 256; di++ ){
-			songs[ i ].patterns[ 0 ].order[ di ] = read();
-			songs[ i ].patterns[ 1 ].order[ di ] = read();
-			songs[ i ].patterns[ 2 ].order[ di ] = read();
-			songs[ i ].patterns[ 3 ].order[ di ] = read();
-			songs[ i ].patterns[ 4 ].order[ di ] = read();
-			songs[ i ].patterns[ 5 ].order[ di ] = read();
+	seek(0x200);
+	for(i=0; i<6; i++){
+		for(di=0; di<256; di++){
+			VAR_SONGS[i].PATTERNS[0].ORDER[di] = read();
+			VAR_SONGS[i].PATTERNS[1].ORDER[di] = read();
+			VAR_SONGS[i].PATTERNS[2].ORDER[di] = read();
+			VAR_SONGS[i].PATTERNS[3].ORDER[di] = read();
+			VAR_SONGS[i].PATTERNS[4].ORDER[di] = read();
+			VAR_SONGS[i].PATTERNS[5].ORDER[di] = read();
 		}
 	}
 	
 	sharedDataLoad();
 	
-	drawPosition( 27, 1, 7 );
+	drawPosition(27, 1, 7);
 }

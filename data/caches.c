@@ -1,38 +1,3 @@
-#include "cache.hpp" 
-#include "control.hpp"
-
-extern void STRING(bool big, u8 x, u8 y, u8 *data);
-extern void ALPHA14(Control *c, bool bigstep, bool add, u32 *pointer);
-extern void ALPHA6(Control *c, bool bigstep, bool add, u32 *pointer);
-extern void HEXADECIMAL(u8 x, u8 y, u16 color, u16 value);
-extern void HEXADECIMAL_DOUBLE(u8 x, u8 y, u16 color, u16 value);
-extern void HEXADECIMAL_INSTRUMENT(u8 x, u8 y, u16 color, u16 value);
-extern void HEXADECIMAL_TWOTILES(u8 x, u8 y, u16 color, u16 value);
-extern void DECIMAL(u8 x, u8 y, u16 color, u16 value);
-extern void DECIMAL_DOUBLE(u8 x, u8 y, u16 color, u16 value);
-extern void DECIMAL_TWOTILES(u8 x, u8 y, u16 color, u16 value);
-extern void DECIMAL_DOUBLE_TWOTILES(u8 x, u8 y, u16 color, u16 value);
-extern void NIBBLE(u8 x, u8 y, u16 color, u16 value);
-extern void PROGRESS(u8 x, u8 y, u16 color, u16 value);
-extern void WAVE_DOUBLE(u8 x, u8 y, u16 color, u16 value);
-extern void WAVE_SINGLE(u8 x, u8 y, u16 color, u16 value);
-extern void PIXEL(u8 x, u8 y, u16 color, u16 value);
-extern void BIGHEX(u8 x, u8 y, u16 color, u16 value);
-extern void BIGDEC(u8 x, u8 y, u16 color, u16 value);
-extern void BIGTEXT(u8 x, u8 y, u16 color, u16 value);
-extern void TEXT(u8 x, u8 y, u16 color, u16 value);
-extern void VUMETER_V3(u8 x, u8 y, u16 color, u16 value);
-extern void VUMETER_H3(u8 x, u8 y, u16 color, u16 value);
-extern void VUMETER_H1(u8 x, u8 y, u16 color, u16 value);
-extern void VUMETER_V1(u8 x, u8 y, u16 color, u16 value);
-extern void COMMAND(u8 x, u8 y, u16 color, u16 value);
-extern void NOTE(u8 x, u8 y, u16 color, u16 value);
-extern void TABLEPOS(u8 x, u8 y, u16 color, u16 value);
-extern void VISPOS1(u8 x, u8 y, u16 color, u16 value);
-extern void VISPOS2(u8 x, u8 y, u16 color, u16 value);
-extern void STATUS(u8 x, u8 y, u16 color, u16 value);
-
-
 const Cache CACHE_DIRTY_MAP_1 = { 			/*e*/ NULL, 						/*m*/ 0x00, /*x*/ 0x19, /*y*/ 0x32, /*w*/ 0x0E, /*h*/ 0x0E, /*iw*/ 0x0E, /*ih*/ 0x0E, /*pa*/ 0x02, /*pi*/ 0x06, false };
 const Cache CACHE_BUFFER = { 				/*e*/ NULL, 						/*m*/ 0x00, /*x*/ 0x27, /*y*/ 0x14, /*w*/ 0x19, /*h*/ 0x2C, /*iw*/ 0x18, /*ih*/ 0x2C, /*pa*/ 0x02, /*pi*/ 0x06, true };
 const Cache CACHE_BUFFERCLS = { 			/*e*/ NULL, 						/*m*/ 0x00, /*x*/ 0x00, /*y*/ 0x30, /*w*/ 0x19, /*h*/ 0x10, /*iw*/ 0x18, /*ih*/ 0x10, /*pa*/ 0x02, /*pi*/ 0x06, false };

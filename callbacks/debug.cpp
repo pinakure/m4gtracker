@@ -1,14 +1,6 @@
-/* ----------------------------------------------------------------------------
-AUTHOR		 	Al P.Area ( Smiker )
-PURPOSE			Debugging routines and helpers.
-ORIGINAL DATE 	2016, October
-REVISION DATE 	2023-02-28
- --------------------------------------------------------------------------- */
-#include "callbacks.hpp"
-#include "../modules/regionhandler/regionhandler.hpp"
 
 // Stress test for GUI Display Functions
-void overloadTest(REGHND &regHnd){
+void overloadTest(RegionHandler &regHnd){
 	static u16 i, o;
 	// M4G0 code offers a great collection of macros which you
 	// can use to display a value in a bunch of different formats:

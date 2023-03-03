@@ -1,24 +1,16 @@
-/* ----------------------------------------------------------------------------
-AUTHOR		 	Al P.Area ( Smiker )
-PURPOSE			Unused. Abandoned attempt to manage memory from software. 
-ORIGINAL DATE 	2016, October
-REVISION DATE 	2023-02-28
-EXAMPLES		TIM0.Setup(0x0004,1);  //Configure overflow reg on 0xFFFF-0x0004, freq 1
-				TIM0.Enable();         //Activate timer (start counting)
- --------------------------------------------------------------------------- */
-
-#include "mem.hpp"
-
-typedef struct{
+typedef struct
+{
 
 }t_chunk;
 
 
-void MEM::init(){
+void cMEM::Init(void)
+{
 	
 }
 
-void MEM::test(){
+void cMEM::Test(void)
+{
 	u8* test8=(u8*)malloc(sizeof(u8)*256);
 	u16* test16=(u16*)malloc(sizeof(u16)*256);
 	u32* test32=(u32*)malloc(sizeof(u32)*256);
@@ -40,4 +32,6 @@ void MEM::test(){
 	free(test16);
 	free(test32);
 }
+
+cMEM MEM;
 

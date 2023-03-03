@@ -1,14 +1,3 @@
-/* ----------------------------------------------------------------------------
-AUTHOR		 	Al P.Area ( Smiker )
-PURPOSE			Callback routines for the help viewer and related updaters.
-ORIGINAL DATE 	2016, October
-REVISION DATE 	2023-02-28
- --------------------------------------------------------------------------- */
-#include "callbacks.hpp"
-#include "../data/help.hpp"
-#include "../modules/gpu/gpu.hpp"
-#include "../modules/key/key.hpp"
-#include "../modules/regionhandler/regionhandler.hpp"
 
 static void helpBlit(const u16 *help_data, int startx, int starty, int x, int y, int width, int height){
 	static int offsetSrc;
@@ -42,8 +31,8 @@ void helpDrawButton(int x, int y, const char *t, bool active){
 	x+=1;
 	for(int i=0, tx=x, li=strlen(t); i<li; i++){
 		if(t[i] == ' '){tx++; continue;}
-		GPU::set(0,tx,y , active?0x17:0x0);
-		//GPU::set(0,tx,y , active?0x17:0x0);
+		gpu.set(0,tx,y , active?0x17:0x0);
+		//gpu.set(0,tx,y , active?0x17:0x0);
 		//TEXT(tx, y, , );
 		//TEXT(tx, y, active?8:4, 0x10);
 		tx++;
@@ -152,15 +141,15 @@ void helpUpdateButtons(void){
 	help_button_moved = false;
 }
 
-void updateHlp(){
+void updateHLP(RegionHandler* rh){
 	
-	if(KEY::down(KEY_B)) { helpActivateBack(); }
-	if(KEY::down(KEY_A)) { helpActivateButton(); }
-	if(KEY::down(KEY_UP	) ) helpScrollUp(); else if(KEY::down(KEY_DOWN) ) helpScrollDown();
-	if(KEY::down(KEY_LEFT)) helpPrevButton();else if(KEY::down(KEY_RIGHT)) helpNextButton();
+	if(KEY.down(KEY_B)) { helpActivateBack(); }
+	if(KEY.down(KEY_A)) { helpActivateButton(); }
+	if(KEY.down(KEY_UP	) ) helpScrollUp(); else if(KEY.down(KEY_DOWN) ) helpScrollDown();
+	if(KEY.down(KEY_LEFT)) helpPrevButton();else if(KEY.down(KEY_RIGHT)) helpNextButton();
 
 	// Propagate Region redraw flag
-	if(REGHND::redraw){
+	if(rh->redraw){
 		help_data_redraw = true;
 	}
 
@@ -168,9 +157,9 @@ void updateHlp(){
 		helpBlit(help_topics[index_help_topic].map_data, 0, help_offset, 1, 3, 26, 16);
 		
 		// Erase old scrollbar knob
-		GPU::set(1, 28, 3+(old_help_offset>>2), 0x60);
+		gpu.set(1, 28, 3+(old_help_offset>>2), 0x60);
 		// Draw new scrollbar knob
-		GPU::set(1, 28, 3+(help_offset>>2), 0x6F);
+		gpu.set(1, 28, 3+(help_offset>>2), 0x6F);
 		
 		// Memorize current help_offset
 		old_help_offset = help_offset;
