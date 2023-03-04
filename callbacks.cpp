@@ -25,6 +25,13 @@ static u8 transientCommand;
 
 static u8 transientChanged;
 
+void Net::alterMode(Control *c, bool bigstep, bool add, u32 *pointer){	
+	VARIABLE 	 	 = ( bigstep ? (add?0x3:0) : (VARIABLE + (add?1:-1)) ) & 0x3; 	
+	transient2BIT 	 = VARIABLE; 
+	transientChanged = true;
+	setMode( (eNetMode) VARIABLE );
+}
+
 void modify2BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? (add?0x3:0) : (VARIABLE + (add?1:-1)) ) & 0x3; 	transient2BIT = VARIABLE; transientChanged=true;}
 void modify3BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? (add?0x7:0) : (VARIABLE + (add?1:-1)) ) & 0x7; 	transient3BIT = VARIABLE; transientChanged=true;}
 void modify4BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? (add?0xF:0) : (VARIABLE + (add?1:-1)) ) & 0xF; 	transient4BIT = VARIABLE; transientChanged=true;}	
@@ -43,7 +50,7 @@ void paste7BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE ==
 void paste8BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient8BIT; return; } transient7BIT = VARIABLE; transientChanged=true; }
 
 
-void modify3VAL(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? (add?0x2:0) : (VARIABLE + (add?1:-1)) ) % 3; 	}
+void modify3VAL(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? (add?0x2:0) : (VARIABLE + (add?1:-1)) ) % 3; if(VARIABLE>2) VARIABLE = 2; 	}
 void modify6VAL(Control *c, bool bigstep, bool add, u32 *pointer){  VARIABLE = ( bigstep ? (add?0x5:0) : (VARIABLE + (add?1:-1)) ) % 6;		}
 
 void modify5VAL(Control *c, bool bigstep, bool add, u32 *pointer){  

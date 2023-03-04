@@ -67,6 +67,13 @@ enum E_StatusStrings {
 	STATUS_CORRUPTED
 };
 
+enum eLinkModes {
+	LINKMODE_GBA,
+	LINKMODE_IBM,
+	LINKMODE_SYNC_SLAVE,
+	LINKMODE_SYNC_MASTER,
+};
+
 enum E_InstrumentTypes {
 	INSTRUMENT_TYPE_PWM,
 	INSTRUMENT_TYPE_WAV,

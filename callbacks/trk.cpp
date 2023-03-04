@@ -114,12 +114,14 @@ void cellCopy(u8 channel){
 
 void modifyNote(Control *c, bool bigstep, bool add, u32 *pointer){
 	if(CURRENT_PATTERN == 0x00)return;
-	
 	#define VARIABLE	(*(u8*) c->var)
-	VARIABLE += (bigstep?0xC:0x1) * (add?1:-1);
-	if(VARIABLE > 159) VARIABLE = 0;
-	else if(VARIABLE > 119) VARIABLE = 119;
-	if(VARIABLE == 0)VARIABLE = 1;
+	if(KEY.press( KEY_R )) VARIABLE = 0;
+	else {
+		VARIABLE += (bigstep?0xC:0x1) * (add?1:-1);
+		if(VARIABLE > 159) VARIABLE = 0;
+		else if(VARIABLE > 119) VARIABLE = 119;
+		if(VARIABLE == 0)VARIABLE = 1;
+	}
 	transientNote = VARIABLE;
 	transientChanged = true;
 	cellCopy(VAR_CFG.CURRENTCHANNEL);

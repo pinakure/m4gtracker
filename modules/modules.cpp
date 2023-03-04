@@ -2,6 +2,7 @@
 
 #include "int/int.cpp"
 #include "tim/tim.cpp"
+#include "net/net.cpp"
 #include "spu/spu.cpp"
 #include "gpu/gpu.cpp"
 #include "mem/mem.cpp"

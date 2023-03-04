@@ -10,6 +10,7 @@ void Sys::reset(){
 void Sys::init(){
 	KEY.init();
 	SPU.Init(VAR_SONG.BPM);		
+	Net::init();
 	var_reset = false;
 	
 	//keyrate  = 40;
@@ -135,16 +136,39 @@ void Sys::updateInput(){
 	
 }
 
+void adsr_view(){
+	if(regHnd.region != &REGION_MAP_2_INS)return;
+	if(VAR_INSTRUMENT.TYPE != INSTRUMENT_TYPE_WAV) return;
+	gpu.vs->clear();
+	
+	for(int x=0;x<0x40; x+=2){
+		//gpu.vs->set(x>>1, 15 - ( SPU.adsr_table[ 0 ][ x ] ) );
+		
+		gpu.vs->set(x>>1,  7 - ( SPU.adsr_table[ 0 ][ x ] >> 1 ) );
+		gpu.vs->set(x>>1, 15 - ( SPU.adsr_table[ 1 ][ x ] >> 1 ) );
+		gpu.vs->set(x>>1, 23 - ( SPU.adsr_table[ 2 ][ x ] >> 1 ) );
+		gpu.vs->set(x>>1, 31 - ( SPU.adsr_table[ 3 ][ x ] >> 1 ) );
+		
+	}
+	DECIMAL_DOUBLE(14,2, 7, SPU.adsr_position);
+
+	if(SPU.adsr_position<0x3F){
+		VISPOS1(14, 1,	0xFF, SPU.adsr_position>>2);
+		VISPOS2(14, 18, 0xFF, SPU.adsr_position>>2);
+	}
+	gpu.vs->draw(14,6);
+}
+void overloadTest(RegionHandler &regHnd);
+
 
 void Sys::update(){
 	
 	SPU.update();	
-	
 	KEY.update();
 	updateInput();
 	
 	
-	// if(KEY.Press(KEY_L))overloadTest(regHnd);
+	if(KEY.press(KEY_L)) adsr_view();//overloadTest(regHnd);
 	// if(KEY.Press(KEY_R))gpu.vs->draw(14,2);
 }
 

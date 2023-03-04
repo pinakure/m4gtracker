@@ -173,5 +173,62 @@
 	#define KEY_INDEX_DOWN			0x7
 	#define KEY_INDEX_R				0x8
 	#define KEY_INDEX_L				0x9
+
+
+
+#define SOUND3BANK32		0x0000	// Use two banks of 32 steps each
+#define SOUND3BANK64		0x0020	// Use one bank of 64 steps
+#define SOUND3SETBANK0		0x0000	// Bank to play 0 or 1 (non set bank is written to)
+#define SOUND3SETBANK1		0x0040
+#define SOUND3PLAY			0x0080	// Output sound
+
+#define SOUND3OUTPUT0		0x0000	// Mute output
+#define SOUND3OUTPUT1		0x2000	// Output unmodified
+#define SOUND3OUTPUT12		0x4000	// Output 1/2 
+#define SOUND3OUTPUT14		0x6000	// Output 1/4 
+#define SOUND3OUTPUT34		0x8000  // Output 3/4
+
+#define SOUND3PLAYONCE		0x4000	// Play sound once
+#define SOUND3PLAYLOOP		0x0000	// Play sound looped
+#define SOUND3INIT			0x8000	// Makes the sound restart
+
+#define REG_SG30       *(vu32*)0x4000070		//???
+#define REG_SOUND3CNT  *(vu32*)0x4000070		//???
+#define REG_SG30_L     *(vu16*)0x4000070		//???
+#define REG_SOUND3CNT_L *(vu16*)0x4000070	//???
+#define REG_SG30_H     *(vu16*)0x4000072		//???
+#define REG_SOUND3CNT_H *(vu16*)0x4000072	//???
+#define REG_SG31       *(vu16*)0x4000074		//???
+#define REG_SOUND3CNT_X *(vu16*)0x4000074	//???
+
+#define REG_WAVE_RAM0  *(vu32*)0x4000090		//???
+#define REG_SGWR0_L    *(vu16*)0x4000090		//???
+#define REG_SGWR0_H    *(vu16*)0x4000092		//???
+#define REG_WAVE_RAM1  *(vu32*)0x4000094		//???
+#define REG_SGWR1_L    *(vu16*)0x4000094		//???
+#define REG_SGWR1_H    *(vu16*)0x4000096		//???
+#define REG_WAVE_RAM2  *(vu32*)0x4000098		//???
+#define REG_SGWR2_L    *(vu16*)0x4000098		//???
+#define REG_SGWR2_H    *(vu16*)0x400009A		//???
+#define REG_WAVE_RAM3  *(vu32*)0x400009C		//???
+#define REG_SGWR3_L    *(vu16*)0x400009C		//???
+#define REG_SGWR3_H    *(vu16*)0x400009E		//???
+
+
+#define REG_SGCNT0     *(vu32*)0x4000080		
+#define REG_SGCNT0_L   *(vu16*)0x4000080		
+#define REG_SOUNDCNT   *(vu32*)0x4000080
+#define REG_SOUNDCNT_L *(vu16*)0x4000080		//DMG sound control
+
+#define REG_SGCNT0_H   *(vu16*)0x4000082		
+#define REG_SOUNDCNT_H *(vu16*)0x4000082		//Direct sound control
+
+#define REG_SGCNT1     *(vu16*)0x4000084		
+#define REG_SOUNDCNT_X *(vu16*)0x4000084	    //Extended sound control
+
+#define REG_SGBIAS     *(vu16*)0x4000088		
+#define REG_SOUNDBIAS  *(vu16*)0x4000088		//bit rate+sound bias
+	
+	
 #endif
 

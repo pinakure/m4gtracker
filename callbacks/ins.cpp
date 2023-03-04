@@ -1,3 +1,13 @@
+void modifyFmOp1ADSR(Control *c, bool bigstep, bool add, u32 *pointer); 
+void modifyFmOp2ADSR(Control *c, bool bigstep, bool add, u32 *pointer); 
+void modifyFmOp3ADSR(Control *c, bool bigstep, bool add, u32 *pointer); 
+void modifyFmOp4ADSR(Control *c, bool bigstep, bool add, u32 *pointer);
+void modifyWavOp1ADSR(Control *c, bool bigstep, bool add, u32 *pointer); 
+void modifyWavOp2ADSR(Control *c, bool bigstep, bool add, u32 *pointer); 
+void modifyWavOp3ADSR(Control *c, bool bigstep, bool add, u32 *pointer); 
+void modifyWavOp4ADSR(Control *c, bool bigstep, bool add, u32 *pointer);
+void modifySmpADSR(Control *c, bool bigstep, bool add, u32 *pointer);
+
 // General Callbacks
 CALLBACK( cb_ins_index		, instrumentIndex	, EVENT_MODIFY_B 	, &VAR_CFG.CURRENTINSTRUMENT	, NULL);
 CALLBACK( cb_ins_name		, ALPHA6			, EVENT_KEYDOWN_B 	, &VAR_INSTRUMENT.NAME			, NULL);
@@ -42,10 +52,10 @@ CALLBACK( cb_ins_wav_op2type, instrument3BIT	, EVENT_MODIFY_B 	, &VAR_WAV.OP2_TY
 CALLBACK( cb_ins_wav_op3type, instrument3BIT	, EVENT_MODIFY_B 	, &VAR_WAV.OP3_TYPE				, NULL);
 CALLBACK( cb_ins_wav_op4type, instrument3BIT	, EVENT_MODIFY_B 	, &VAR_WAV.OP4_TYPE				, NULL);
 
-#define CB_INS_WAV_OP1ADSR(a)		CALLBACK( cb_ins_wav_op1adsr_##a , instrument4BIT , EVENT_MODIFY_B , &VAR_WAV.OP1_ADSR[a], NULL)
-#define CB_INS_WAV_OP2ADSR(a)		CALLBACK( cb_ins_wav_op2adsr_##a , instrument4BIT , EVENT_MODIFY_B , &VAR_WAV.OP2_ADSR[a], NULL)
-#define CB_INS_WAV_OP3ADSR(a)		CALLBACK( cb_ins_wav_op3adsr_##a , instrument4BIT , EVENT_MODIFY_B , &VAR_WAV.OP3_ADSR[a], NULL)
-#define CB_INS_WAV_OP4ADSR(a)		CALLBACK( cb_ins_wav_op4adsr_##a , instrument4BIT , EVENT_MODIFY_B , &VAR_WAV.OP4_ADSR[a], NULL)
+#define CB_INS_WAV_OP1ADSR(a)		CALLBACK( cb_ins_wav_op1adsr_##a , modifyWavOp1ADSR , EVENT_MODIFY_B , &VAR_WAV.OP1_ADSR[a], NULL)
+#define CB_INS_WAV_OP2ADSR(a)		CALLBACK( cb_ins_wav_op2adsr_##a , modifyWavOp2ADSR , EVENT_MODIFY_B , &VAR_WAV.OP2_ADSR[a], NULL)
+#define CB_INS_WAV_OP3ADSR(a)		CALLBACK( cb_ins_wav_op3adsr_##a , modifyWavOp3ADSR , EVENT_MODIFY_B , &VAR_WAV.OP3_ADSR[a], NULL)
+#define CB_INS_WAV_OP4ADSR(a)		CALLBACK( cb_ins_wav_op4adsr_##a , modifyWavOp4ADSR , EVENT_MODIFY_B , &VAR_WAV.OP4_ADSR[a], NULL)
 CB_INS_WAV_OP1ADSR(0);	CB_INS_WAV_OP2ADSR(0);	CB_INS_WAV_OP3ADSR(0);	CB_INS_WAV_OP4ADSR(0);
 CB_INS_WAV_OP1ADSR(1);	CB_INS_WAV_OP2ADSR(1);	CB_INS_WAV_OP3ADSR(1);	CB_INS_WAV_OP4ADSR(1);
 CB_INS_WAV_OP1ADSR(2);	CB_INS_WAV_OP2ADSR(2);	CB_INS_WAV_OP3ADSR(2);	CB_INS_WAV_OP4ADSR(2);
@@ -72,10 +82,10 @@ CALLBACK( cb_ins_fm_op2type	, instrument3BIT	, EVENT_MODIFY_B 	, &VAR_FMW.OP2_TY
 CALLBACK( cb_ins_fm_op3type	, instrument3BIT	, EVENT_MODIFY_B 	, &VAR_FMW.OP3_TYPE				, NULL);
 CALLBACK( cb_ins_fm_op4type	, instrument3BIT	, EVENT_MODIFY_B 	, &VAR_FMW.OP4_TYPE				, NULL);
 
-#define CB_INS_FM_OP1ADSR(a)		CALLBACK( cb_ins_fm_op1adsr_##a , instrument4BIT , EVENT_MODIFY_B , &VAR_FMW.OP1_ADSR[a], NULL)
-#define CB_INS_FM_OP2ADSR(a)		CALLBACK( cb_ins_fm_op2adsr_##a , instrument4BIT , EVENT_MODIFY_B , &VAR_FMW.OP2_ADSR[a], NULL)
-#define CB_INS_FM_OP3ADSR(a)		CALLBACK( cb_ins_fm_op3adsr_##a , instrument4BIT , EVENT_MODIFY_B , &VAR_FMW.OP3_ADSR[a], NULL)
-#define CB_INS_FM_OP4ADSR(a)		CALLBACK( cb_ins_fm_op4adsr_##a , instrument4BIT , EVENT_MODIFY_B , &VAR_FMW.OP4_ADSR[a], NULL)
+#define CB_INS_FM_OP1ADSR(a)		CALLBACK( cb_ins_fm_op1adsr_##a , modifyFmOp1ADSR , EVENT_MODIFY_B , &VAR_FMW.OP1_ADSR[a], NULL)
+#define CB_INS_FM_OP2ADSR(a)		CALLBACK( cb_ins_fm_op2adsr_##a , modifyFmOp2ADSR , EVENT_MODIFY_B , &VAR_FMW.OP2_ADSR[a], NULL)
+#define CB_INS_FM_OP3ADSR(a)		CALLBACK( cb_ins_fm_op3adsr_##a , modifyFmOp3ADSR , EVENT_MODIFY_B , &VAR_FMW.OP3_ADSR[a], NULL)
+#define CB_INS_FM_OP4ADSR(a)		CALLBACK( cb_ins_fm_op4adsr_##a , modifyFmOp4ADSR , EVENT_MODIFY_B , &VAR_FMW.OP4_ADSR[a], NULL)
 CB_INS_FM_OP1ADSR(0);	CB_INS_FM_OP2ADSR(0);	CB_INS_FM_OP3ADSR(0);	CB_INS_FM_OP4ADSR(0);
 CB_INS_FM_OP1ADSR(1);	CB_INS_FM_OP2ADSR(1);	CB_INS_FM_OP3ADSR(1);	CB_INS_FM_OP4ADSR(1);
 CB_INS_FM_OP1ADSR(2);	CB_INS_FM_OP2ADSR(2);	CB_INS_FM_OP3ADSR(2);	CB_INS_FM_OP4ADSR(2);
@@ -102,7 +112,7 @@ CB_INS_SMPKIT(4);		CB_INS_SMPKIT(5);		CB_INS_SMPKIT(6);		CB_INS_SMPKIT(7);
 CB_INS_SMPKIT(8);		CB_INS_SMPKIT(9);		CB_INS_SMPKIT(A);		CB_INS_SMPKIT(B);
 #undef CB_INS_SMPKIT
 
-#define CB_INS_SMP_ADSR(a)			CALLBACK( cb_ins_smp_adsr_##a , instrument4BIT , EVENT_MODIFY_B , &VAR_SMP.ADSR[a], NULL)
+#define CB_INS_SMP_ADSR(a)			CALLBACK( cb_ins_smp_adsr_##a , modifySmpADSR , EVENT_MODIFY_B , &VAR_SMP.ADSR[a], NULL)
 CB_INS_SMP_ADSR(0);		CB_INS_SMP_ADSR(1);		CB_INS_SMP_ADSR(2);		CB_INS_SMP_ADSR(3);
 #undef CB_INS_SMP_ADSR
 
@@ -245,10 +255,75 @@ void instrument1BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify1BI
 void instrument2BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify2BIT(c,bigstep, add, pointer); instSync(); }
 void instrumentType(Control *c, bool bigstep, bool add, u32 *pointer){	modify2BIT(c,bigstep, add, pointer); instType(); }
 void instrument3BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify3BIT(c,bigstep, add, pointer); instSync(); }
+
+void modifyWavOp1ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
+	modify4BIT(c,bigstep, add, pointer); 
+	instSync(); 
+	SETTINGS_WAV wav = unpackWAV( &VAR_INSTRUMENT ); 
+	SPU.updateADSR( &wav ); 
+}
+void modifyWavOp2ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
+	modify4BIT(c,bigstep, add, pointer); 
+	instSync(); 
+	SETTINGS_WAV wav = unpackWAV( &VAR_INSTRUMENT ); 
+	SPU.updateADSR( &wav ); 
+}
+void modifyWavOp3ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
+	modify4BIT(c,bigstep, add, pointer); 
+	instSync(); 
+	SETTINGS_WAV wav = unpackWAV( &VAR_INSTRUMENT ); 
+	SPU.updateADSR( &wav ); 
+}
+void modifyWavOp4ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
+	modify4BIT(c,bigstep, add, pointer); 
+	instSync(); 
+	SETTINGS_WAV wav = unpackWAV( &VAR_INSTRUMENT ); 
+	SPU.updateADSR( &wav ); 
+}
+void modifyFmOp1ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
+	modify4BIT(c,bigstep, add, pointer); 
+	instSync(); 
+	//SETTINGS_FMW fmw = unpackFMW( &VAR_INSTRUMENT ); 
+	//SPU.updateFMADSR( &fmw );
+}
+void modifyFmOp2ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
+	modify4BIT(c,bigstep, add, pointer); 
+	instSync(); 
+	//SETTINGS_FMW fmw = unpackFMW( &VAR_INSTRUMENT ); 
+	//SPU.updateFMADSR( &fmw ); 
+}
+void modifyFmOp3ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
+	modify4BIT(c,bigstep, add, pointer); 
+	instSync(); 
+	//SETTINGS_FMW fmw = unpackFMW( &VAR_INSTRUMENT ); 
+	//SPU.updateFMADSR( &fmw );
+}
+void modifyFmOp4ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
+	modify4BIT(c,bigstep, add, pointer); 
+	instSync(); 
+	//SETTINGS_FMW fmw = unpackFMW( &VAR_INSTRUMENT ); 
+	//SPU.updateFMADSR( &fmw ); 
+}
+void modifySmpADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
+	modify4BIT(c,bigstep, add, pointer); 
+	instSync(); 
+	//SETTINGS_SMP smp = unpackSMP( &VAR_INSTRUMENT ); 
+	//SPU.updateFMADSR( &smp ); 
+}
+
 void instrument4BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify4BIT(c,bigstep, add, pointer); instSync(); }
 void instrument5BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify5BIT(c,bigstep, add, pointer); instSync(); }
 void instrument6BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify6BIT(c,bigstep, add, pointer); instSync(); }
-void instrumentIndex(Control *c, bool bigstep, bool add, u32 *pointer){	instSync(); modify6BIT(c,bigstep, add, pointer); instLoad(); }
+void instrumentIndex(Control *c, bool bigstep, bool add, u32 *pointer){	
+	instSync(); 
+	VAR_CFG.CURRENTINSTRUMENT = (VAR_CFG.CURRENTINSTRUMENT + ((bigstep?0x4:0x1) * (add?1:-1)));
+	if((VAR_CFG.CURRENTINSTRUMENT > 0x3F) && (VAR_CFG.CURRENTINSTRUMENT < 0x44)) VAR_CFG.CURRENTINSTRUMENT = 0x1;
+	else if(VAR_CFG.CURRENTINSTRUMENT > 0x3F) VAR_CFG.CURRENTINSTRUMENT = 0x3F;
+	transient6BIT 	 = VAR_CFG.CURRENTINSTRUMENT; 
+	transientChanged = true;
+	if(VAR_CFG.CURRENTINSTRUMENT == 0x0 ) VAR_CFG.CURRENTINSTRUMENT= 0x1;
+	instLoad(); 
+}
 void instrument7BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c,bigstep, add, pointer); instSync(); }
 void instrument8BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify8BIT(c,bigstep, add, pointer); instSync(); }
 void instrument3VAL(Control *c, bool bigstep, bool add, u32 *pointer){	modify3VAL(c,bigstep, add, pointer); instSync(); }
@@ -321,6 +396,31 @@ void instrumentPack(INSTRUMENT *i){
 }
 
 /* SYNCRONIZES Abstract Instrument data to current type specific data */
+
+SETTINGS_WAV unpackWAV(INSTRUMENT *i){
+	SETTINGS_WAV ret;
+	int c, di;
+	ret.PHASE			= EXTRACT(i->SETTINGS[0], 6, 0x1);	// 1
+	ret.AM				= EXTRACT(i->SETTINGS[0], 5, 0x1);	// 1
+	ret.MIXPERCENT		= i->SETTINGS[0] & 0xF;				// 4
+	ret.OP1_TYPE		= EXTRACT(i->SETTINGS[1], 3, 0x7);	// 3
+	ret.OP2_TYPE		= i->SETTINGS[1] & 0x7;				// 3
+	ret.OP3_TYPE		= EXTRACT(i->SETTINGS[2], 3, 0x7);	// 3
+	ret.OP4_TYPE		= i->SETTINGS[2] & 0x7;				// 3			
+	for(c=0; c<4; c++){
+		di = c<<1;
+		ret.OP1_ADSR[c] = EXTRACT(i->SETTINGS[3+di], 4, 0xF);	// 4
+		ret.OP2_ADSR[c] = i->SETTINGS[3+di] & 0xF;				// 4
+		ret.OP3_ADSR[c] = EXTRACT(i->SETTINGS[4+di], 4, 0xF);	// 4
+		ret.OP4_ADSR[c] = i->SETTINGS[4+di] & 0xF;				// 4
+	}			
+	for(c=0; c<8; c++){
+		di = c<<1;
+		ret.WAVEDATA[ di ] = EXTRACT(i->SETTINGS[11 + c], 4, 0xF);	// 4x8
+		ret.WAVEDATA[di+1] = i->SETTINGS[11 + c] & 0xF;				// 4x8
+	}
+	return ret;
+}
 
 SETTINGS_PWM unpackPWM(INSTRUMENT *i){
 	SETTINGS_PWM ret;
@@ -485,12 +585,14 @@ void insDispatchMessage(u32 msg) {
 		case MESSAGE_OTHER_PREV:
 			VAR_CFG.CURRENTINSTRUMENT--;
 			VAR_CFG.CURRENTINSTRUMENT &= 0x3f;
+			if(VAR_CFG.CURRENTINSTRUMENT == 0) VAR_CFG.CURRENTINSTRUMENT=1;
 			instLoad();
 			return;
 		
 		case MESSAGE_OTHER_NEXT:			
 			VAR_CFG.CURRENTINSTRUMENT++;
 			VAR_CFG.CURRENTINSTRUMENT &= 0x3f;
+			if(VAR_CFG.CURRENTINSTRUMENT == 0) VAR_CFG.CURRENTINSTRUMENT=1;
 			instLoad();
 			return;
 	}	
@@ -500,7 +602,6 @@ void insDispatchMessage(u32 msg) {
 void updateINS_WAV(RegionHandler* rh){
 	const Control *cname = &INS_WAV_CONTROLS[CONTROL_INS_WAV_NAME];
 	STRING(false, cname->x, cname->y, cname->var);
-	
 	instrumentSync();
 }
 void updateINS_FMW(RegionHandler* rh){

@@ -7,7 +7,7 @@ CALLBACK( cb_cfg_showlogo	, modify1BIT		, EVENT_KEYDOWN_B			, &VAR_CFG.LOOKNFEEL
 CALLBACK( cb_cfg_startupsfx	, modify1BIT		, EVENT_KEYDOWN_B			, &VAR_CFG.LOOKNFEEL.STARTUPSFX	, NULL);
 CALLBACK( cb_cfg_coloreditor, COLOREDITOR		, EVENT_KEYUP_B				, NULL							, NULL);
 
-CALLBACK( cb_cfg_linkmode	, modify2BIT		, EVENT_MODIFY_B			, &VAR_CFG.LINKMODE.LINKMODE	, NULL);
+CALLBACK( cb_cfg_linkmode	, Net::alterMode	, EVENT_MODIFY_B			, &VAR_CFG.LINKMODE.LINKMODE	, NULL);
 CALLBACK( cb_cfg_masterclock, modify1BIT		, EVENT_KEYDOWN_B			, &VAR_CFG.LINKMODE.MASTERCLOCK	, NULL);
 CALLBACK( cb_cfg_midichan	, modify4BIT		, EVENT_MODIFY_B			, &VAR_CFG.LINKMODE.MIDICHAN	, NULL);
 CALLBACK( cb_cfg_clocktempo , modify8BIT		, EVENT_MODIFY_B			, &VAR_CFG.LINKMODE.CLOCKTEMPO	, NULL);
@@ -282,7 +282,7 @@ void DEFAULTCONFIG(Control *c, bool bigstep, bool add, u32 *pointer){
 	
 	// really of these?
 	SETTING(CURRENTCHANNEL, 0);
-	SETTING(CURRENTINSTRUMENT, 0);
+	SETTING(CURRENTINSTRUMENT, 1);
 	SETTING(ORDERPOSITION, 0);
 	//193
 	

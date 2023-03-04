@@ -1,5 +1,5 @@
-:build
-C:/HAM/gcc-arm/bin/arm-thumb-elf-gcc  -I C:/HAM/gcc-arm/include -I C:/HAM/gcc-arm/arm-thumb-elf/include -I C:/HAM/include -I C:/HAM/system  -c  -mthumb-interwork -mlong-calls -Wall -save-temps -fverbose-asm -nostartfiles -O2 -g -mthumb m4g.cpp data/tables.cpp modules/gpu/virtualscreen.cpp modules/gpu/gpu.cpp
-C:/HAM/gcc-arm/bin/arm-thumb-elf-ld -L C:/HAM/gcc-arm/lib/gcc-lib/arm-thumb-elf/3.3.2/interwork -L C:/HAM/gcc-arm/lib/gcc-lib/arm-thumb-elf/3.3.2 -L C:/HAM/gcc-arm/arm-thumb-elf/lib/interwork -L C:/HAM/gcc-arm/arm-thumb-elf/lib -L C:/HAM/gcc-arm/lib  -T link.ld -Map m4g.Map -o m4g.elf asm/crt0.o asm/sram.o asm/clock.o asm/sys.o data/tables.o modules/gpu/virtualscreen.o modules/gpu/gpu.o m4g.o  -lm -lstdc++ -lsupc++ -lgcc -lc -lgcc
-C:/HAM/gcc-arm/bin/arm-thumb-elf-objcopy -v -O binary m4g.elf m4g.gba
-if errorlevel 1 goto build
+@echo off
+cls
+make clean
+make 
+echo  
