@@ -182,18 +182,18 @@ void updatePAT(RegionHandler* rh){
 //----------------------------------------------------------------------------------------
 // PAT SCREEN CALLBACKS
 //----------------------------------------------------------------------------------------
-void SOLO0(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.solo(0);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_00 ]);*/ }
-void SOLO1(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.solo(1);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_01 ]);*/ }
-void SOLO2(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.solo(2);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_02 ]);*/ }
-void SOLO3(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.solo(3);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_00]);*/ }
-void SOLO4(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.solo(4);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_01]);*/ }
-void SOLO5(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.solo(5);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_02]);*/ }
-void MUTE0(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.mute(0);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_00]);*/ }
-void MUTE1(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.mute(1);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_01]);*/ }
-void MUTE2(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.mute(2);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_02]);*/ }
-void MUTE3(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.mute(3);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_00]);*/ }
-void MUTE4(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.mute(4);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_01]);*/ }
-void MUTE5(Control *c, bool bigstep, bool add, u32 *pointer){	SPU.mute(5);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_02]);*/ }
+void SOLO0(Control *c, bool bigstep, bool add, u32 *pointer){	Mixer::solo(0);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_00 ]);*/ }
+void SOLO1(Control *c, bool bigstep, bool add, u32 *pointer){	Mixer::solo(1);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_01 ]);*/ }
+void SOLO2(Control *c, bool bigstep, bool add, u32 *pointer){	Mixer::solo(2);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_LEFT_02 ]);*/ }
+void SOLO3(Control *c, bool bigstep, bool add, u32 *pointer){	Mixer::solo(3);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_00]);*/ }
+void SOLO4(Control *c, bool bigstep, bool add, u32 *pointer){	Mixer::solo(4);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_01]);*/ }
+void SOLO5(Control *c, bool bigstep, bool add, u32 *pointer){	Mixer::solo(5);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_SOLO_RIGHT_02]);*/ }
+void MUTE0(Control *c, bool bigstep, bool add, u32 *pointer){	Mixer::mute(0);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_00]);*/ }
+void MUTE1(Control *c, bool bigstep, bool add, u32 *pointer){	Mixer::mute(1);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_01]);*/ }
+void MUTE2(Control *c, bool bigstep, bool add, u32 *pointer){	Mixer::mute(2);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_LEFT_02]);*/ }
+void MUTE3(Control *c, bool bigstep, bool add, u32 *pointer){	Mixer::mute(3);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_00]);*/ }
+void MUTE4(Control *c, bool bigstep, bool add, u32 *pointer){	Mixer::mute(4);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_01]);*/ }
+void MUTE5(Control *c, bool bigstep, bool add, u32 *pointer){	Mixer::mute(5);	pat_solo_clean = false;/*regHnd.drawControl(&PAT_CONTROLS[CONTROL_PAT_MUTE_RIGHT_02]);*/ }
 
 // Reloads VAR_SONG.PATTERN[6][--16--] into visible VARIABLE lookup vars (VAR_PATTERN[6][16])
 void patSync(void){

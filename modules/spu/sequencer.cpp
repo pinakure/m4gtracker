@@ -189,14 +189,14 @@ void Sequencer::update(){
 	currentTicks++;		
 
 	/* Debug output
-		gpu.set(1,0,0, ((SPU.currentTicks>>2)&1) == 0?0x6F : 0x60);
+		gpu.set(1,0,0, ((Sequencer::currentTicks>>2)&1) == 0?0x6F : 0x60);
 		gpu.set(1,0,1, 0x5);
 
-		DECIMAL_DOUBLE(0,0,9, SPU.currentTicks>>2);
-		DECIMAL_DOUBLE(2,2,1, SPU.currentBeats);
-		DECIMAL_DOUBLE(3,2,2, SPU.currentPattern);
-		VUMETER_V1(0,0,4, (SPU.currentBeats % 4) < 1);				
-		WAVE_SINGLE(0,1,4, (SPU.currentBeats % 4));				
+		DECIMAL_DOUBLE(0,0,9, Sequencer::currentTicks>>2);
+		DECIMAL_DOUBLE(2,2,1, Sequencer::currentBeats);
+		DECIMAL_DOUBLE(3,2,2, Sequencer::currentPattern);
+		VUMETER_V1(0,0,4, (Sequencer::currentBeats % 4) < 1);				
+		WAVE_SINGLE(0,1,4, (SequencercurrentBeats % 4));				
 	*/
 }
 

@@ -392,6 +392,7 @@ El archivo int.s es un archivo compilado.
 */
 
 #include "m4g.hpp"
+#include "data/helpers.hpp"
 #include "modules/modules.cpp"
 
 GPU gpu;
@@ -417,23 +418,35 @@ int main(void){
 		TIM0.Enable();
 
 		sys.init();
-		
-		
+				
 		bool lock = false;
 		
 		// Create and bind virtual screen to the GPU
 		VirtualScreen VS;
 		gpu.vs = &VS;
 
-		regHnd.load(&REGION_MAP_2_INS);
-		
 		LOADCONFIG(NULL, 0, 0, NULL);
 		SRAM.dataRevert();
 		instrumentUnpack(&VAR_INSTRUMENT);	
 
-		// PROGRAM START
-/*
-		*/
+		if( VAR_CFG.LOOKNFEEL.SHOWLOGO ){
+			u16 froze=0;
+			while( froze < 2048 ){
+				regHnd.drawVerticalCache(8,7,&CACHE_LOGOTYPE,0,0);
+				sys.update();
+				if( KEY.down( KEY_A ))break;
+				if( KEY.down( KEY_B ))break;
+				if( KEY.down( KEY_START ))break;
+				if( KEY.down( KEY_SELECT ))break;
+				if( KEY.down( KEY_L ))break;
+				if( KEY.down( KEY_R ))break;
+				froze++;
+			}
+		}
+		
+		// Start at Tracker screen
+		regHnd.load(&REGION_MAP_3_TRK);
+		
 		while(!sys.var_reset){
 			if(!gpu.isVblank()) {lock= false; continue;}
 			if(!lock) { lock = true; continue; }							

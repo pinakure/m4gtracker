@@ -1,4 +1,5 @@
 #include "mixer.hpp"
+#include "../../data/channel.hpp"
 
 static const u16 DSOUND_FREQ_TABLE[] =
 {
@@ -259,5 +260,37 @@ void Mixer::updateMetronome( u8 time, u8 beats_per_bar ) {
 }	
 
 /*###########################################################################*/
+void Mixer::mute( int channel ){
+	VAR_CHANNEL[channel].mute ^= 1;
+	// Since a channel was unmuted, disable solo on every channel 
+	// Sync with audio registers
+	// If a channel was unmuted, disable solo on every channel 
+	if(VAR_CHANNEL[channel].mute) return;
+	for(int i=0; i<6;i++){
+		VAR_CHANNEL[i].solo = false;
+	}
+}
+
+void Mixer::solo(int channel){
+	// If channel has solo enabled unmute channels and disable solo 
+	if(VAR_CHANNEL[channel].solo){
+		for(int i=0; i<6;i++){
+			VAR_CHANNEL[channel].solo = false;
+			VAR_CHANNEL[i].mute = false;
+		}
+		return;
+	}
+	
+	// Mute all channels 
+	for(int i=0; i<6;i++){
+		VAR_CHANNEL[i].mute = true;
+	}
+	
+	// Unmute and enable solo on selected channel 
+	VAR_CHANNEL[channel].solo = true;
+	VAR_CHANNEL[channel].mute = false;
+	
+	// Sync with audio registers
+}
 
 

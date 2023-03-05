@@ -1,18 +1,8 @@
+#ifndef SPU_HPP
+#define SPU_HPP
 
-class Spu{
-	private:
-	
-	public:
-		void mute(int channel);// move to mixer
-		void solo(int channel);// move to mixer
-	
-		void Init(int bpm);
-		
-		static bool initialized;
-		
-		void update();		// Called each program cycle		
-		
-	};
+#include "mixer.hpp"
+#include "synth.hpp"
+#include "sequencer.hpp"
 
-extern Spu SPU;
-
+#endif

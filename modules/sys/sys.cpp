@@ -1,3 +1,4 @@
+
 Sys sys;
 
 void Sys::reset(){
@@ -7,7 +8,17 @@ void Sys::reset(){
 
 void Sys::init(){
 	KEY.init();
-	SPU.Init( VAR_SONG.BPM );		
+	
+	Sequencer::init( VAR_SONG.BPM );
+	Synth::init();
+	Mixer::init();
+	
+	/*-----------------------------------------------------------*/
+	/* WORKAROUND TBF											 */
+	/* ----------------------------------------------------------*/
+	VAR_CFG.CURRENTINSTRUMENT = 0x1; // 0x0 is not accesible / usable
+	/*----------------------------------------------------------*/
+	
 	Net::init();
 	var_reset = false;
 	
