@@ -260,55 +260,55 @@ void modifyWavOp1ADSR(Control *c, bool bigstep, bool add, u32 *pointer){
 	modify4BIT(c,bigstep, add, pointer); 
 	instSync(); 
 	SETTINGS_WAV wav = unpackWAV( &VAR_INSTRUMENT ); 
-	SPU.updateADSR( &wav ); 
+	SPU.updateWavADSR( &wav ); 
 }
 void modifyWavOp2ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
 	modify4BIT(c,bigstep, add, pointer); 
 	instSync(); 
 	SETTINGS_WAV wav = unpackWAV( &VAR_INSTRUMENT ); 
-	SPU.updateADSR( &wav ); 
+	SPU.updateWavADSR( &wav ); 
 }
 void modifyWavOp3ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
 	modify4BIT(c,bigstep, add, pointer); 
 	instSync(); 
 	SETTINGS_WAV wav = unpackWAV( &VAR_INSTRUMENT ); 
-	SPU.updateADSR( &wav ); 
+	SPU.updateWavADSR( &wav ); 
 }
 void modifyWavOp4ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
 	modify4BIT(c,bigstep, add, pointer); 
 	instSync(); 
 	SETTINGS_WAV wav = unpackWAV( &VAR_INSTRUMENT ); 
-	SPU.updateADSR( &wav ); 
+	SPU.updateWavADSR( &wav ); 
 }
 void modifyFmOp1ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
 	modify4BIT(c,bigstep, add, pointer); 
 	instSync(); 
-	//SETTINGS_FMW fmw = unpackFMW( &VAR_INSTRUMENT ); 
-	//SPU.updateFMADSR( &fmw );
+	SETTINGS_FMW fmw = unpackFMW( &VAR_INSTRUMENT ); 
+	SPU.updateFmwADSR( &fmw );
 }
 void modifyFmOp2ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
 	modify4BIT(c,bigstep, add, pointer); 
 	instSync(); 
-	//SETTINGS_FMW fmw = unpackFMW( &VAR_INSTRUMENT ); 
-	//SPU.updateFMADSR( &fmw ); 
+	SETTINGS_FMW fmw = unpackFMW( &VAR_INSTRUMENT ); 
+	SPU.updateFmwADSR( &fmw ); 
 }
 void modifyFmOp3ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
 	modify4BIT(c,bigstep, add, pointer); 
 	instSync(); 
-	//SETTINGS_FMW fmw = unpackFMW( &VAR_INSTRUMENT ); 
-	//SPU.updateFMADSR( &fmw );
+	SETTINGS_FMW fmw = unpackFMW( &VAR_INSTRUMENT ); 
+	SPU.updateFmwADSR( &fmw );
 }
 void modifyFmOp4ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
 	modify4BIT(c,bigstep, add, pointer); 
 	instSync(); 
-	//SETTINGS_FMW fmw = unpackFMW( &VAR_INSTRUMENT ); 
-	//SPU.updateFMADSR( &fmw ); 
+	SETTINGS_FMW fmw = unpackFMW( &VAR_INSTRUMENT ); 
+	SPU.updateFmwADSR( &fmw ); 
 }
 void modifySmpADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
 	modify4BIT(c,bigstep, add, pointer); 
 	instSync(); 
-	//SETTINGS_SMP smp = unpackSMP( &VAR_INSTRUMENT ); 
-	//SPU.updateFMADSR( &smp ); 
+	SETTINGS_SMP smp = unpackSMP( &VAR_INSTRUMENT ); 
+	SPU.updateSmpADSR( &smp ); 
 }
 
 void instrument4BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify4BIT(c,bigstep, add, pointer); instSync(); }
@@ -397,7 +397,52 @@ void instrumentPack(INSTRUMENT *i){
 
 /* SYNCRONIZES Abstract Instrument data to current type specific data */
 
-SETTINGS_WAV unpackWAV(INSTRUMENT *i){
+inline SETTINGS_FMW unpackFMW(INSTRUMENT *i){
+	SETTINGS_FMW ret;
+	int c, di;
+	ret.MULT 			= EXTRACT(i->SETTINGS[0], 3, 0xF);	// 4
+	ret.ALGORITHM 		= i->SETTINGS[0] & 0x7;				// 3
+	ret.OP1_TYPE 		= EXTRACT(i->SETTINGS[1], 3, 0x7);	// 3
+	ret.OP2_TYPE 		= i->SETTINGS[1] & 0x7;				// 3
+	ret.OP3_TYPE 		= EXTRACT(i->SETTINGS[2], 3, 0x7);	// 3
+	ret.OP4_TYPE 		= i->SETTINGS[2] & 0x7;				// 3
+	for(c=0; c<4; c++){
+		di = c<<1;
+		ret.OP1_ADSR[c] = EXTRACT(i->SETTINGS[3+di], 4, 0xF);	// 4
+		ret.OP2_ADSR[c] = i->SETTINGS[3+di] & 0xF;				// 4
+		ret.OP3_ADSR[c] = EXTRACT(i->SETTINGS[4+di], 4, 0xF);	// 4
+		ret.OP4_ADSR[c] = i->SETTINGS[4+di] & 0xF;				// 4
+	}
+	for(c=0; c<8; c++){
+		di = c<<1;
+		ret.WAVEDATA[ di ] = EXTRACT(i->SETTINGS[11 + c], 4, 0xF);	// 4x8
+		ret.WAVEDATA[di+1] = i->SETTINGS[11 + c] & 0xF;				// 4x8
+	}
+	return ret;
+}
+
+inline SETTINGS_SMP unpackSMP( INSTRUMENT *i ){
+	SETTINGS_SMP ret;
+	ret.START 	  = EXTRACT(i->SETTINGS[0], 4, 0xF);	// 8
+	ret.END 	  = i->SETTINGS[0] & 0xF;				// 8
+	ret.KIT 	  = EXTRACT(i->SETTINGS[1], 3, 0x1F);	// 5
+	ret.LOOP 	  = EXTRACT(i->SETTINGS[1], 1, 0x3);	// 2
+	ret.SYNTHMODE = i->SETTINGS[1] & 0x1;				// 1
+	ret.FREQUENCY = i->SETTINGS[2];						// 8
+	ret.ADSR[0]   = EXTRACT(i->SETTINGS[3], 4, 0xF);	// 4
+	ret.ADSR[1]   = i->SETTINGS[3] & 0xF;				// 4
+	ret.ADSR[2]   = EXTRACT(i->SETTINGS[4], 4, 0xF);	// 4
+	ret.ADSR[3]   = i->SETTINGS[4] & 0xF;				// 4
+	ret.KITINDEX  = EXTRACT(i->SETTINGS[5], 4, 0xF);	// 4
+	ret.B 		  = i->SETTINGS[5];						// 4
+	ret.S 		  = EXTRACT(i->SETTINGS[6], 4, 0xF);	// 4
+	ret.R 		  = i->SETTINGS[6];						// 4
+	// TODO: Reload SMPKIT pointers (12)
+	
+	return ret;
+}
+
+inline SETTINGS_WAV unpackWAV( INSTRUMENT *i ){
 	SETTINGS_WAV ret;
 	int c, di;
 	ret.PHASE			= EXTRACT(i->SETTINGS[0], 6, 0x1);	// 1
@@ -422,7 +467,7 @@ SETTINGS_WAV unpackWAV(INSTRUMENT *i){
 	return ret;
 }
 
-SETTINGS_PWM unpackPWM(INSTRUMENT *i){
+inline SETTINGS_PWM unpackPWM(INSTRUMENT *i){
 	SETTINGS_PWM ret;
 	ret.SWEEPDIR 		= EXTRACT(i->SETTINGS[0], 7, 0x1);
 	ret.ENVELOPEDIR		= EXTRACT(i->SETTINGS[0], 6, 0x1);
@@ -450,92 +495,103 @@ SETTINGS_PWM unpackPWM(INSTRUMENT *i){
 }	
 
 void instrumentUnpack(INSTRUMENT *i){
-	int c, di;
 	switch(i->TYPE){
 		case INSTRUMENT_TYPE_PWM:
-			VAR_PWM.SWEEPDIR 		= EXTRACT(i->SETTINGS[0], 7, 0x1);
-			VAR_PWM.ENVELOPEDIR		= EXTRACT(i->SETTINGS[0], 6, 0x1);
-			VAR_PWM.TSP_ENABLE		= EXTRACT(i->SETTINGS[0], 5, 0x1);
-			VAR_PWM.VOL_ENABLE		= EXTRACT(i->SETTINGS[0], 4, 0x1);
-			VAR_PWM.DUTYCYCLE 		= EXTRACT(i->SETTINGS[0], 2, 0x3);
-			VAR_PWM.TSP_LOOP		= i->SETTINGS[0] & 0x3;
-			VAR_PWM.VOL_LOOP		= i->SETTINGS[1] & 0x3;
-			VAR_PWM.LENGTH 			= EXTRACT(i->SETTINGS[2], 4, 0xF);
-			VAR_PWM.LEVEL			= i->SETTINGS[2] & 0xF;
-			VAR_PWM.TSP_LENGTH		= EXTRACT(i->SETTINGS[3], 4, 0xF);
-			VAR_PWM.SWEEPSPEED 		= i->SETTINGS[3] & 0xF;
-			VAR_PWM.SWEEPSTEPS 		= EXTRACT(i->SETTINGS[4], 4, 0xF);
-			VAR_PWM.VOLUMEFADE		= i->SETTINGS[4] & 0xF;
-			VAR_PWM.TSP_POSITION	= EXTRACT(i->SETTINGS[5], 4, 0xF);
-			VAR_PWM.VOL_POSITION	= i->SETTINGS[5] & 0xF;
-			VAR_PWM.VOL_LENGTH		= EXTRACT(i->SETTINGS[6], 4, 0xF);
-			VAR_PWM.VOL_ENVELOPE	= i->SETTINGS[7];
-			VAR_PWM.TSP_ENVELOPE	= i->SETTINGS[8];
-			for(c=0; c<16; c++){
-				VAR_PWM.TSP[c]		= EXTRACT(i->SETTINGS[9+c], 4, 0xF);
-				VAR_PWM.VOL[c]		= i->SETTINGS[9+c] & 0xF;
-			}
+			VAR_PWM = unpackPWM(i);
+			/*
+				VAR_PWM.SWEEPDIR 		= EXTRACT(i->SETTINGS[0], 7, 0x1);
+				VAR_PWM.ENVELOPEDIR		= EXTRACT(i->SETTINGS[0], 6, 0x1);
+				VAR_PWM.TSP_ENABLE		= EXTRACT(i->SETTINGS[0], 5, 0x1);
+				VAR_PWM.VOL_ENABLE		= EXTRACT(i->SETTINGS[0], 4, 0x1);
+				VAR_PWM.DUTYCYCLE 		= EXTRACT(i->SETTINGS[0], 2, 0x3);
+				VAR_PWM.TSP_LOOP		= i->SETTINGS[0] & 0x3;
+				VAR_PWM.VOL_LOOP		= i->SETTINGS[1] & 0x3;
+				VAR_PWM.LENGTH 			= EXTRACT(i->SETTINGS[2], 4, 0xF);
+				VAR_PWM.LEVEL			= i->SETTINGS[2] & 0xF;
+				VAR_PWM.TSP_LENGTH		= EXTRACT(i->SETTINGS[3], 4, 0xF);
+				VAR_PWM.SWEEPSPEED 		= i->SETTINGS[3] & 0xF;
+				VAR_PWM.SWEEPSTEPS 		= EXTRACT(i->SETTINGS[4], 4, 0xF);
+				VAR_PWM.VOLUMEFADE		= i->SETTINGS[4] & 0xF;
+				VAR_PWM.TSP_POSITION	= EXTRACT(i->SETTINGS[5], 4, 0xF);
+				VAR_PWM.VOL_POSITION	= i->SETTINGS[5] & 0xF;
+				VAR_PWM.VOL_LENGTH		= EXTRACT(i->SETTINGS[6], 4, 0xF);
+				VAR_PWM.VOL_ENVELOPE	= i->SETTINGS[7];
+				VAR_PWM.TSP_ENVELOPE	= i->SETTINGS[8];
+				for(c=0; c<16; c++){
+					VAR_PWM.TSP[c]		= EXTRACT(i->SETTINGS[9+c], 4, 0xF);
+					VAR_PWM.VOL[c]		= i->SETTINGS[9+c] & 0xF;
+				}
+			*/
 			return;
 
 		case INSTRUMENT_TYPE_WAV:
-			VAR_WAV.PHASE			= EXTRACT(i->SETTINGS[0], 6, 0x1);	// 1
-			VAR_WAV.AM				= EXTRACT(i->SETTINGS[0], 5, 0x1);	// 1
-			VAR_WAV.MIXPERCENT		= i->SETTINGS[0] & 0xF;				// 4
-			VAR_WAV.OP1_TYPE		= EXTRACT(i->SETTINGS[1], 3, 0x7);	// 3
-			VAR_WAV.OP2_TYPE		= i->SETTINGS[1] & 0x7;				// 3
-			VAR_WAV.OP3_TYPE		= EXTRACT(i->SETTINGS[2], 3, 0x7);	// 3
-			VAR_WAV.OP4_TYPE		= i->SETTINGS[2] & 0x7;				// 3			
-			for(c=0; c<4; c++){
-				di = c<<1;
-				VAR_WAV.OP1_ADSR[c] = EXTRACT(i->SETTINGS[3+di], 4, 0xF);	// 4
-				VAR_WAV.OP2_ADSR[c] = i->SETTINGS[3+di] & 0xF;				// 4
-				VAR_WAV.OP3_ADSR[c] = EXTRACT(i->SETTINGS[4+di], 4, 0xF);	// 4
-				VAR_WAV.OP4_ADSR[c] = i->SETTINGS[4+di] & 0xF;				// 4
-			}			
-			for(c=0; c<8; c++){
-				di = c<<1;
-				VAR_WAV.WAVEDATA[ di ] = EXTRACT(i->SETTINGS[11 + c], 4, 0xF);	// 4x8
-				VAR_WAV.WAVEDATA[di+1] = i->SETTINGS[11 + c] & 0xF;				// 4x8
-			}
+			VAR_WAV = unpackWAV(i);
+			/*
+				VAR_WAV.PHASE			= EXTRACT(i->SETTINGS[0], 6, 0x1);	// 1
+				VAR_WAV.AM				= EXTRACT(i->SETTINGS[0], 5, 0x1);	// 1
+				VAR_WAV.MIXPERCENT		= i->SETTINGS[0] & 0xF;				// 4
+				VAR_WAV.OP1_TYPE		= EXTRACT(i->SETTINGS[1], 3, 0x7);	// 3
+				VAR_WAV.OP2_TYPE		= i->SETTINGS[1] & 0x7;				// 3
+				VAR_WAV.OP3_TYPE		= EXTRACT(i->SETTINGS[2], 3, 0x7);	// 3
+				VAR_WAV.OP4_TYPE		= i->SETTINGS[2] & 0x7;				// 3			
+				for(c=0; c<4; c++){
+					di = c<<1;
+					VAR_WAV.OP1_ADSR[c] = EXTRACT(i->SETTINGS[3+di], 4, 0xF);	// 4
+					VAR_WAV.OP2_ADSR[c] = i->SETTINGS[3+di] & 0xF;				// 4
+					VAR_WAV.OP3_ADSR[c] = EXTRACT(i->SETTINGS[4+di], 4, 0xF);	// 4
+					VAR_WAV.OP4_ADSR[c] = i->SETTINGS[4+di] & 0xF;				// 4
+				}			
+				for(c=0; c<8; c++){
+					di = c<<1;
+					VAR_WAV.WAVEDATA[ di ] = EXTRACT(i->SETTINGS[11 + c], 4, 0xF);	// 4x8
+					VAR_WAV.WAVEDATA[di+1] = i->SETTINGS[11 + c] & 0xF;				// 4x8
+				}
+			*/
 			return;
 
 		case INSTRUMENT_TYPE_FMW:
-			VAR_FMW.MULT 			= EXTRACT(i->SETTINGS[0], 3, 0xF);	// 4
-			VAR_FMW.ALGORITHM 		= i->SETTINGS[0] & 0x7;				// 3
-			VAR_FMW.OP1_TYPE 		= EXTRACT(i->SETTINGS[1], 3, 0x7);	// 3
-			VAR_FMW.OP2_TYPE 		= i->SETTINGS[1] & 0x7;				// 3
-			VAR_FMW.OP3_TYPE 		= EXTRACT(i->SETTINGS[2], 3, 0x7);	// 3
-			VAR_FMW.OP4_TYPE 		= i->SETTINGS[2] & 0x7;				// 3
-			for(c=0; c<4; c++){
-				di = c<<1;
-				VAR_FMW.OP1_ADSR[c] = EXTRACT(i->SETTINGS[3+di], 4, 0xF);	// 4
-				VAR_FMW.OP2_ADSR[c] = i->SETTINGS[3+di] & 0xF;				// 4
-				VAR_FMW.OP3_ADSR[c] = EXTRACT(i->SETTINGS[4+di], 4, 0xF);	// 4
-				VAR_FMW.OP4_ADSR[c] = i->SETTINGS[4+di] & 0xF;				// 4
-			}
-			for(c=0; c<8; c++){
-				di = c<<1;
-				VAR_FMW.WAVEDATA[ di ] = EXTRACT(i->SETTINGS[11 + c], 4, 0xF);	// 4x8
-				VAR_FMW.WAVEDATA[di+1] = i->SETTINGS[11 + c] & 0xF;				// 4x8
-			}
+			VAR_FMW = unpackFMW(i);
+			/*
+				VAR_FMW.MULT 			= EXTRACT(i->SETTINGS[0], 3, 0xF);	// 4
+				VAR_FMW.ALGORITHM 		= i->SETTINGS[0] & 0x7;				// 3
+				VAR_FMW.OP1_TYPE 		= EXTRACT(i->SETTINGS[1], 3, 0x7);	// 3
+				VAR_FMW.OP2_TYPE 		= i->SETTINGS[1] & 0x7;				// 3
+				VAR_FMW.OP3_TYPE 		= EXTRACT(i->SETTINGS[2], 3, 0x7);	// 3
+				VAR_FMW.OP4_TYPE 		= i->SETTINGS[2] & 0x7;				// 3
+				for(c=0; c<4; c++){
+					di = c<<1;
+					VAR_FMW.OP1_ADSR[c] = EXTRACT(i->SETTINGS[3+di], 4, 0xF);	// 4
+					VAR_FMW.OP2_ADSR[c] = i->SETTINGS[3+di] & 0xF;				// 4
+					VAR_FMW.OP3_ADSR[c] = EXTRACT(i->SETTINGS[4+di], 4, 0xF);	// 4
+					VAR_FMW.OP4_ADSR[c] = i->SETTINGS[4+di] & 0xF;				// 4
+				}
+				for(c=0; c<8; c++){
+					di = c<<1;
+					VAR_FMW.WAVEDATA[ di ] = EXTRACT(i->SETTINGS[11 + c], 4, 0xF);	// 4x8
+					VAR_FMW.WAVEDATA[di+1] = i->SETTINGS[11 + c] & 0xF;				// 4x8
+				}
+			*/
 			return;
 
 		case INSTRUMENT_TYPE_SMP:
-			VAR_SMP.START 			= EXTRACT(i->SETTINGS[0], 4, 0xF);	// 8
-			VAR_SMP.END 			= i->SETTINGS[0] & 0xF;				// 8
-			VAR_SMP.KIT 			= EXTRACT(i->SETTINGS[1], 3, 0x1F);	// 5
-			VAR_SMP.LOOP 			= EXTRACT(i->SETTINGS[1], 1, 0x3);	// 2
-			VAR_SMP.SYNTHMODE		= i->SETTINGS[1] & 0x1;				// 1
-			VAR_SMP.FREQUENCY 		= i->SETTINGS[2];					// 8
-			VAR_SMP.ADSR[0] 		= EXTRACT(i->SETTINGS[3], 4, 0xF);	// 4
-			VAR_SMP.ADSR[1] 		= i->SETTINGS[3] & 0xF;				// 4
-			VAR_SMP.ADSR[2] 		= EXTRACT(i->SETTINGS[4], 4, 0xF);	// 4
-			VAR_SMP.ADSR[3] 		= i->SETTINGS[4] & 0xF;				// 4
-			VAR_SMP.KITINDEX 		= EXTRACT(i->SETTINGS[5], 4, 0xF);	// 4
-			VAR_SMP.B 				= i->SETTINGS[5];					// 4
-			VAR_SMP.S 				= EXTRACT(i->SETTINGS[6], 4, 0xF);	// 4
-			VAR_SMP.R 				= i->SETTINGS[6];					// 4
-			// TODO: Reload SMPKIT pointers (12)
+			VAR_SMP = unpackSMP( i );
+			/*
+				VAR_SMP.START 			= EXTRACT(i->SETTINGS[0], 4, 0xF);	// 8
+				VAR_SMP.END 			= i->SETTINGS[0] & 0xF;				// 8
+				VAR_SMP.KIT 			= EXTRACT(i->SETTINGS[1], 3, 0x1F);	// 5
+				VAR_SMP.LOOP 			= EXTRACT(i->SETTINGS[1], 1, 0x3);	// 2
+				VAR_SMP.SYNTHMODE		= i->SETTINGS[1] & 0x1;				// 1
+				VAR_SMP.FREQUENCY 		= i->SETTINGS[2];					// 8
+				VAR_SMP.ADSR[0] 		= EXTRACT(i->SETTINGS[3], 4, 0xF);	// 4
+				VAR_SMP.ADSR[1] 		= i->SETTINGS[3] & 0xF;				// 4
+				VAR_SMP.ADSR[2] 		= EXTRACT(i->SETTINGS[4], 4, 0xF);	// 4
+				VAR_SMP.ADSR[3] 		= i->SETTINGS[4] & 0xF;				// 4
+				VAR_SMP.KITINDEX 		= EXTRACT(i->SETTINGS[5], 4, 0xF);	// 4
+				VAR_SMP.B 				= i->SETTINGS[5];					// 4
+				VAR_SMP.S 				= EXTRACT(i->SETTINGS[6], 4, 0xF);	// 4
+				VAR_SMP.R 				= i->SETTINGS[6];					// 4
+				// TODO: Reload SMPKIT pointers (12)
+			*/
 			return;
 	}
 }

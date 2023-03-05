@@ -1,7 +1,7 @@
 PROGNAME=m4g
 #rm C:/agb/BATTERY/*.SAV
 # NOTE: REMOVE DEBUG.O FROM OFILES WHEN RELEASING TO STRIP 5 KB OF USELESS DATA
-OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o m4g.o 
+OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o modules/spu/mixer.o modules/spu/sequencer.o modules/spu/synth.o m4g.o 
 
 HAM_VERSION_MAJOR = 2
 HAM_VERSION_MINOR = 8

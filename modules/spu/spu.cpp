@@ -1,3 +1,7 @@
+#include "mixer.hpp"
+#include "synth.hpp"
+#include "sequencer.hpp"
+
 Spu SPU;
 
 /* Since these are ASM instructions, we have to ensure CPP does not mangle them! */
@@ -33,22 +37,26 @@ const u8 operators[8][16] = {
 bool 	Spu::retrig_note[6]		= { 0, 0, 0, 0, 0, 0 };
 int 	Spu::targetTick[6] 		= { 0, 0, 0, 0, 0, 0 };
 u8 		Spu::transpose[6] 		= { 0, 0, 0, 0, 0, 0 };
+bool 	Spu::initialized 		= false;
 bool 	Spu::reset_channel[6] 	= { false, false, false, false, false, false };
 u8	 	Spu::tsp_position[6]	= { 0, 0, 0, 0, 0, 0 };/*16x4*//*126*/
 u8	 	Spu::vol_position[6]	= { 0, 0, 0, 0, 0, 0 };/*16x4*//*190*/
-u8 		Spu::adsr_position 		= 0; // WAVE CHANNEL ADSR TABLES COMMON INDEX
-u8 		Spu::adsr_table[4][0x40];
-		
+u8 		Spu::wav_adsr_position 	= 0; // WAVE CHANNEL ADSR TABLES COMMON INDEX
+u8 		Spu::fmw_adsr_position 	= 0; // FMW CHANNEL ADSR TABLES COMMON INDEX
+u8 		Spu::smp_adsr_position 	= 0; // SMP CHANNEL ADSR TABLES COMMON INDEX
+u8 		Spu::wav_adsr_table[4][0x40];
+u8 		Spu::fmw_adsr_table[4][0x40];
+u8 		Spu::smp_adsr_table[0x40];
 
-static u16 wave_volumes[ 5 ] = {
-	SOUND3_VOL_00,
-	SOUND3_VOL_25,
-	SOUND3_VOL_50,
-	SOUND3_VOL_75,
-	SOUND3_VOL_100
-};
+bool swap_bank=0;
 
-void cellSyncChannel(u8 c);
+extern void cellSyncChannel(u8 c);
+extern void adsr_view();
+
+extern inline SETTINGS_PWM unpackPWM(INSTRUMENT *i);
+extern inline SETTINGS_WAV unpackWAV(INSTRUMENT *i);
+extern inline SETTINGS_SMP unpackSMP(INSTRUMENT *i);
+extern inline SETTINGS_FMW unpackFMW(INSTRUMENT *i);
 
 void Spu::jumpToPatternAsync(int p){
 	currentTicks = 0;
@@ -94,13 +102,9 @@ void Spu::Init(int bpm){
 	playing			= 0;
 	beatsPerBar 	= 4;
 	setTempo(bpm);
-	enable();
-	
-	VAR_CFG.CURRENTINSTRUMENT = 0x1; // 0x0 is not accesible / usable
-	
-}
-
-void Spu::enable(){
+	/* ----------------------------------------------------------*/
+	/* INITIALIZE SOUND CHIP 									 */
+	/* ----------------------------------------------------------*/
 	// Sound 1-4 ON Flag, PSG/FIFO Master enable
 	*((volatile u16*)0x04000084) = 0x0080;
 	
@@ -109,12 +113,22 @@ void Spu::enable(){
 
 	// Sound 1-4 Volume 100%, DMA A 100%, DMA B 100% 
 	// We wont enable DMA sound by the moment
-	*((volatile u16*)0x04000082) |= 0xff0E;//PWM 100% DMA 100% (set volume)
-}
+	*((volatile u16*)0x04000082) |= 0x0B0E;//PWM 100% DMA 100% (set volume)
 
-void Spu::disable(void){
+	REG_SOUND3CNT_H = SOUND3OUTPUT1;
+	
+	/*-----------------------------------------------------------*/
+	/* WORKAROUND TBF											 */
+	/* ----------------------------------------------------------*/
+	VAR_CFG.CURRENTINSTRUMENT = 0x1; // 0x0 is not accesible / usable
+	/*----------------------------------------------------------*/
+	
+	/* ----------------------------------------------------------*/
+	/* INITIALIZE DIRECTSOUND MIXER								 */
+	/* ----------------------------------------------------------*/
+	Mixer::init();
 }
-
+/*-------------------------------------------------------------------------*/
 void Spu::setTempo(int bpm){
 	timerTarget = (BPM_MAGIC / bpm)*10; 
 	VAR_SONG.BPM = bpm;
@@ -122,15 +136,58 @@ void Spu::setTempo(int bpm){
 	*((volatile u16*)0x04000108) = 0x0000; //'reset' timer counter
 	*((volatile u16*)0x0400010A) = 0x82; //Enable (bit 7)		
 }
+/*-------------------------------------------------------------------------*/
+void Spu::enablePWM1(void){ (*(vu16*)0x4000080)|= 0x1177; }
+void Spu::enablePWM2(void){	(*(vu16*)0x4000080)|= 0x2277; }
+void Spu::enableWAV( void){	(*(vu16*)0x4000080)|= 0x4477; }
+void Spu::enableNZE( void){	(*(vu16*)0x4000080)|= 0x8877; }
+void Spu::enableFMW(void){  }
+void Spu::enableSMP(void){  }
+void Spu::enable(){
+	enablePWM1();
+	enablePWM2();
+	enableNZE();
+	enableWAV();
+	enableFMW();
+	enableSMP();
+}
+/*-------------------------------------------------------------------------*/
+void Spu::disablePWM1(){ (*(vu16*)0x4000080) &= ~0x1100; }
+void Spu::disablePWM2(){ (*(vu16*)0x4000080) &= ~0x2200; }
+void Spu::disableWAV() { (*(vu16*)0x4000080) &= ~0x4400; }
+void Spu::disableNZE() { (*(vu16*)0x4000080) &= ~0x8800; }
+void Spu::disableFMW(){
+	#ifdef SMP_DMA
+		*(u16*)0x4000102 /*REG_TM0CNT_H*/ =0; //disable timer 0
+		*(u16*)0x40000C6 /*REG_DMA1CNT_H*/=0; //stop DMA1
+		*(u16*)0x4000106 /*REG_TM1CNT_H*/ =0; //disable timer 1
+		*(u16*)0x4000104 = 0;	//Reset Timer 2 count value (sample count)
+		(*(vu16*)0x4000082)=0x0002; //disable dsound 1
+	#endif
+}
+void Spu::disableSMP(void){
 
-
+}
+void Spu::disable(){
+	disablePWM1();
+	disablePWM2();
+	disableNZE();
+	disableWAV();
+	disableFMW();
+	disableSMP();
+}
+/*-------------------------------------------------------------------------*/
 void Spu::stop(void){
 	playing = false;
+	disable();
+	//if( VAR_CFG.BEHAVIOR.AUTOSAVE) SRAM.songSave();
 }
 
 void Spu::play(bool from_start){
 	if(playing) return;
-
+	
+	enable();
+	
 	currentBeats 	= 0;
 	currentTicks 	= -1;
 	
@@ -161,9 +218,8 @@ void Spu::play(bool from_start){
 	*((volatile u16*)0x0400010A) = 0x82; //Enable (bit 7)
 }
 
-
+/*-------------------------------------------------------------------------*/
 bool updateChannel(u8 chan){
-	
 	
 	// DONT UPDATE CHANNELS WHEN THEY ARE ON PATTERN 0 (this is empty)
 	if(VAR_SONG.PATTERNS[chan].ORDER[VAR_CHANNEL[chan].POSITION] == 0x00){			
@@ -196,8 +252,7 @@ bool updateChannel(u8 chan){
 	return true;
 }
 
-static bool wave_switch = false;
-
+/*-------------------------------------------------------------------------*/
 void Spu::mute(int channel){
 	// ------------------------------------------------------------
 	VAR_CHANNEL[channel].mute ^= 1;
@@ -235,6 +290,8 @@ void Spu::solo(int channel){
 	// Sync with audio registers
 }
 
+/*-------------------------------------------------------------------------*/
+
 void Spu::noteOnPWM1(){
 	u16 freq 	= PWM_FREQ_TABLE[ VAR_CHANNEL[ 0 ].key 
 				+ transpose[ 0 ] 
@@ -271,14 +328,33 @@ void Spu::noteOnWAV(){
 				+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
 				+ VAR_SONG.TRANSPOSE ] 
 				+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
-
-	REG_SOUND3CNT_X = SOUND3INIT | SOUND3PLAYLOOP |freq; //play a C-4 in loop mode
+	REG_SOUND3CNT_X = SOUND3INIT | SOUND3PLAYLOOP | freq; 
+	//REG_SOUNDCNT_L = 0xFFff;			
 	retrig_note[ 3 ] = false;
 }
 
-extern SETTINGS_PWM unpackPWM(INSTRUMENT *i);
-extern SETTINGS_WAV unpackWAV(INSTRUMENT *i);
+void Spu::noteOnFMW(){
+	u16 freq 	= PWM_FREQ_TABLE[ VAR_CHANNEL[ 4 ].key 
+				+ transpose[ 4 ] 
+				+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
+				+ VAR_SONG.TRANSPOSE ] 
+				+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
+	DECIMAL_DOUBLE_TWOTILES(0,2,0xFF,freq);
+	Mixer::noteOn1( freq );
+	retrig_note[ 4 ] = false;
+}
 
+void Spu::noteOnSMP(){
+	u16 freq 	= PWM_FREQ_TABLE[ VAR_CHANNEL[ 5 ].key 
+				+ transpose[ 5 ] 
+				+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
+				+ VAR_SONG.TRANSPOSE ] 
+				+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
+	Mixer::noteOn2( freq );
+	retrig_note[ 5 ] = false;
+}
+
+/*-------------------------------------------------------------------------*/
 
 void Spu::triggerChannel(int channel_index){
 	
@@ -290,6 +366,8 @@ void Spu::triggerChannel(int channel_index){
 	
 	SETTINGS_PWM pwm;
 	SETTINGS_WAV wav;
+	SETTINGS_FMW fmw;
+	SETTINGS_SMP smp;
 	
 	switch(channel_index){
 		
@@ -387,55 +465,90 @@ void Spu::triggerChannel(int channel_index){
 				transpose[ 3 ] 		= 0;
 			}
 			
-			renderWAVE( &wav , vol );
-			
-			loadWAVEData(wav.WAVEDATA);
-			// Copy wavedata to WAVE RAM
 			if( retrig_note[ 3 ] ){
-				Spu::updateWAVE( wav.WAVEDATA );
-				vol = wave_volumes[ (( vol) >> 4)+1 ];
-				REG_SOUND3CNT_H = SOUND3OUTPUT1;
-				//REG_SOUND3CNT_H = vol;
-				updateADSR( &wav );
-				adsr_position = 0;
-				return noteOnWAV();
-			}		
-			return;
+				// Regenerate WAV ADSR Tables
+				wav_adsr_position = 0;
+				updateWavADSR( &wav );
+			} 
+			// Regenerate WAVE shape (scaled to channel volume)
+			renderWavWAVE( &wav , vol );
+			return noteOnWAV();
 			
-		case 4: 
-			return;
+		case 4: // FM Wave CHANNEL
+			fmw = unpackFMW( i );
+			if( reset_channel[4] ){
+				tsp_position[ 4 ]	= 0;
+				vol_position[ 4 ] 	= 0;
+				reset_channel[ 4 ]  = false;
+				transpose[ 4 ]		= 0;
+			}
 			
-		case 5: 
-			return;
+			if( retrig_note[ 4 ] ){
+				// Regenerate FM ADSR Tables
+				fmw_adsr_position = 0;
+				updateFmwADSR( &fmw );
+			}
+			// Regenerate FMW shape (scaled to channel volume)
+			renderFmwWAVE( &fmw, vol );
+			return noteOnFMW();
+			
+		case 5: // SMP Channel
+			smp = unpackSMP( i );
+			if( reset_channel[5] ){
+				tsp_position[ 5 ]	= 0;
+				vol_position[ 5 ] 	= 0;
+				reset_channel[ 5 ]  = false;
+				transpose[ 5 ]		= 0;
+			}
+			
+			if( retrig_note[ 5 ] ){
+				// Regenerate SMP ADSR Table
+				smp_adsr_position = 0;
+				updateSmpADSR( &smp );
+			}
+			// Regenerate FMW shape (scaled to channel volume)
+			renderSmpWAVE( &smp, vol );
+			return noteOnSMP();
 	}
 }
 
-extern void adsr_view();
+/*-------------------------------------------------------------------------*/
 
-void Spu::updateADSR( SETTINGS_WAV *wav ){
-	//SETTINGS_WAV *wav = unpackWAV( VAR_INSTRUMENTS[ VAR_CHANNEL[3].INSTRUMENT ] )
-	renderADSR( wav->OP1_ADSR, 0 );
-	renderADSR( wav->OP2_ADSR, 1 );
-	renderADSR( wav->OP3_ADSR, 2 );
-	renderADSR( wav->OP4_ADSR, 3 );
+void Spu::updateWavADSR( SETTINGS_WAV *wav ){
+	renderADSR( wav->OP1_ADSR, wav_adsr_table[0] );
+	renderADSR( wav->OP2_ADSR, wav_adsr_table[1] );
+	renderADSR( wav->OP3_ADSR, wav_adsr_table[2] );
+	renderADSR( wav->OP4_ADSR, wav_adsr_table[3] );
 	adsr_view();
 }
 
-void Spu::renderADSR( u8 adsr[ 4 ], u8 operator_index ){
+void Spu::updateFmwADSR( SETTINGS_FMW *fmw ){
+	renderADSR( fmw->OP1_ADSR, fmw_adsr_table[0] );
+	renderADSR( fmw->OP2_ADSR, fmw_adsr_table[1] );
+	renderADSR( fmw->OP3_ADSR, fmw_adsr_table[2] );
+	renderADSR( fmw->OP4_ADSR, fmw_adsr_table[3] );
+	adsr_view();
+}
+
+void Spu::updateSmpADSR( SETTINGS_SMP *smp ){
+	renderADSR( smp->ADSR, smp_adsr_table );
+	adsr_view();
+}
+
+void Spu::renderADSR( u8 adsr[ 4 ], u8 adsr_table[0x40] ){
 	#define ATTACK 			adsr[0]
 	#define DECAY  			adsr[1]
 	#define SUSTAIN 		adsr[2]
 	#define RELEASE 		adsr[3]
-	#define TABLE			adsr_table[ operator_index ][ position ]
+	#define TABLE			adsr_table[ position ]
 	for( int position=0; position<0x40; position++){
 		TABLE = 0;
 	}
 	
 	u8 len = ATTACK + DECAY + SUSTAIN + RELEASE;;
 		
-	u8 min_val, max_val, quantum;
+	u8 quantum;
 	u8 level = ATTACK > 0 ? 0 : 0xF;
-	u8 rlevel = ATTACK > 0 ? 0 : 0xF;
 	
 	for( int position = 0, index = 0; position < len ; position++ ){
 			
@@ -469,49 +582,121 @@ void Spu::renderADSR( u8 adsr[ 4 ], u8 operator_index ){
 	#undef TABLE
 }
 
-void Spu::renderWAVE( SETTINGS_WAV *wav, u8 vol){
-	// temporary fill wave ram with saw data
+/*-------------------------------------------------------------------------*/
+
+void Spu::renderFmwWAVE( SETTINGS_FMW *fmw, u8 vol){
 	static u8 operator_volume[4];
 	
 	// Get volume level for each of the 4 ADSR envelopes
-	operator_volume[ 0 ] = (adsr_table[ 0 ][ adsr_position ] * vol)>>4;
-	operator_volume[ 1 ] = (adsr_table[ 1 ][ adsr_position ] * vol)>>4;
-	operator_volume[ 2 ] = (adsr_table[ 2 ][ adsr_position ] * vol)>>4;
-	operator_volume[ 3 ] = (adsr_table[ 3 ][ adsr_position ] * vol)>>4;
+	operator_volume[ 0 ] = (fmw_adsr_table[ 0 ][ fmw_adsr_position ] * vol)>>4;
+	operator_volume[ 1 ] = (fmw_adsr_table[ 1 ][ fmw_adsr_position ] * vol)>>4;
+	operator_volume[ 2 ] = (fmw_adsr_table[ 2 ][ fmw_adsr_position ] * vol)>>4;
+	operator_volume[ 3 ] = (fmw_adsr_table[ 3 ][ fmw_adsr_position ] * vol)>>4;
 
 	// Advance adsr table common index
-	adsr_position = (adsr_position < 0x3F) ? adsr_position+1 : 0x3F;
+	fmw_adsr_position = ( fmw_adsr_position < 0x3F) ? fmw_adsr_position+1 : 0x3F;
 	
-	#define OPERATOR1( a )	(( operators[ wav->OP1_TYPE ][ a ] * operator_volume[0] ) >> 4)
-	#define OPERATOR2( a )	(( operators[ wav->OP2_TYPE ][ a ] * operator_volume[1] ) >> 4)
-	#define OPERATOR3( a )	(( operators[ wav->OP3_TYPE ][ a ] * operator_volume[2] ) >> 4)
-	#define OPERATOR4( a )	(( operators[ wav->OP4_TYPE ][ a ] * operator_volume[3] ) >> 4)
+	#define OPERATOR1( a )	((u8)((u32)( operators[ fmw->OP1_TYPE ][ a ] * operator_volume[0] ) >> 4))
+	#define OPERATOR2( a )	((u8)((u32)( operators[ fmw->OP2_TYPE ][ a ] * operator_volume[1] ) >> 4))
+	#define OPERATOR3( a )	((u8)((u32)( operators[ fmw->OP3_TYPE ][ a ] * operator_volume[2] ) >> 4))
+	#define OPERATOR4( a )	((u8)((u32)( operators[ fmw->OP4_TYPE ][ a ] * operator_volume[3] ) >> 4))
 	
 	// Mix shapes
-	wav->WAVEDATA[ 0] = ( OPERATOR1( 0x0 ) + OPERATOR2( 0x0 ) + OPERATOR3( 0x0 ) + OPERATOR4( 0x0 ) ) >> 2;
-	wav->WAVEDATA[ 1] = ( OPERATOR1( 0x1 ) + OPERATOR2( 0x1 ) + OPERATOR3( 0x1 ) + OPERATOR4( 0x1 ) ) >> 2;
-	wav->WAVEDATA[ 2] = ( OPERATOR1( 0x2 ) + OPERATOR2( 0x2 ) + OPERATOR3( 0x2 ) + OPERATOR4( 0x2 ) ) >> 2;
-	wav->WAVEDATA[ 3] = ( OPERATOR1( 0x3 ) + OPERATOR2( 0x3 ) + OPERATOR3( 0x3 ) + OPERATOR4( 0x3 ) ) >> 2;
-	wav->WAVEDATA[ 4] = ( OPERATOR1( 0x4 ) + OPERATOR2( 0x4 ) + OPERATOR3( 0x4 ) + OPERATOR4( 0x4 ) ) >> 2;
-	wav->WAVEDATA[ 5] = ( OPERATOR1( 0x5 ) + OPERATOR2( 0x5 ) + OPERATOR3( 0x5 ) + OPERATOR4( 0x5 ) ) >> 2;
-	wav->WAVEDATA[ 6] = ( OPERATOR1( 0x6 ) + OPERATOR2( 0x6 ) + OPERATOR3( 0x6 ) + OPERATOR4( 0x6 ) ) >> 2;
-	wav->WAVEDATA[ 7] = ( OPERATOR1( 0x7 ) + OPERATOR2( 0x7 ) + OPERATOR3( 0x7 ) + OPERATOR4( 0x7 ) ) >> 2;				
-	wav->WAVEDATA[ 8] = ( OPERATOR1( 0x8 ) + OPERATOR2( 0x8 ) + OPERATOR3( 0x8 ) + OPERATOR4( 0x8 ) ) >> 2;
-	wav->WAVEDATA[ 9] = ( OPERATOR1( 0x9 ) + OPERATOR2( 0x9 ) + OPERATOR3( 0x9 ) + OPERATOR4( 0x9 ) ) >> 2;
-	wav->WAVEDATA[10] = ( OPERATOR1( 0xA ) + OPERATOR2( 0xA ) + OPERATOR3( 0xA ) + OPERATOR4( 0xA ) ) >> 2;
-	wav->WAVEDATA[11] = ( OPERATOR1( 0xB ) + OPERATOR2( 0xB ) + OPERATOR3( 0xB ) + OPERATOR4( 0xB ) ) >> 2;
-	wav->WAVEDATA[12] = ( OPERATOR1( 0xC ) + OPERATOR2( 0xC ) + OPERATOR3( 0xC ) + OPERATOR4( 0xC ) ) >> 2;
-	wav->WAVEDATA[13] = ( OPERATOR1( 0xD ) + OPERATOR2( 0xD ) + OPERATOR3( 0xD ) + OPERATOR4( 0xD ) ) >> 2;
-	wav->WAVEDATA[14] = ( OPERATOR1( 0xE ) + OPERATOR2( 0xE ) + OPERATOR3( 0xE ) + OPERATOR4( 0xE ) ) >> 2;
-	wav->WAVEDATA[15] = ( OPERATOR1( 0xF ) + OPERATOR2( 0xF ) + OPERATOR3( 0xF ) + OPERATOR4( 0xF ) ) >> 2;
+	fmw->WAVEDATA[ 0] = (u8)((u32)( OPERATOR1( 0x0 ) + OPERATOR2( 0x0 ) + OPERATOR3( 0x0 ) + OPERATOR4( 0x0 ) ) >> 2);
+	fmw->WAVEDATA[ 1] = (u8)((u32)( OPERATOR1( 0x1 ) + OPERATOR2( 0x1 ) + OPERATOR3( 0x1 ) + OPERATOR4( 0x1 ) ) >> 2);
+	fmw->WAVEDATA[ 2] = (u8)((u32)( OPERATOR1( 0x2 ) + OPERATOR2( 0x2 ) + OPERATOR3( 0x2 ) + OPERATOR4( 0x2 ) ) >> 2);
+	fmw->WAVEDATA[ 3] = (u8)((u32)( OPERATOR1( 0x3 ) + OPERATOR2( 0x3 ) + OPERATOR3( 0x3 ) + OPERATOR4( 0x3 ) ) >> 2);
+	fmw->WAVEDATA[ 4] = (u8)((u32)( OPERATOR1( 0x4 ) + OPERATOR2( 0x4 ) + OPERATOR3( 0x4 ) + OPERATOR4( 0x4 ) ) >> 2);
+	fmw->WAVEDATA[ 5] = (u8)((u32)( OPERATOR1( 0x5 ) + OPERATOR2( 0x5 ) + OPERATOR3( 0x5 ) + OPERATOR4( 0x5 ) ) >> 2);
+	fmw->WAVEDATA[ 6] = (u8)((u32)( OPERATOR1( 0x6 ) + OPERATOR2( 0x6 ) + OPERATOR3( 0x6 ) + OPERATOR4( 0x6 ) ) >> 2);
+	fmw->WAVEDATA[ 7] = (u8)((u32)( OPERATOR1( 0x7 ) + OPERATOR2( 0x7 ) + OPERATOR3( 0x7 ) + OPERATOR4( 0x7 ) ) >> 2);				
+	fmw->WAVEDATA[ 8] = (u8)((u32)( OPERATOR1( 0x8 ) + OPERATOR2( 0x8 ) + OPERATOR3( 0x8 ) + OPERATOR4( 0x8 ) ) >> 2);
+	fmw->WAVEDATA[ 9] = (u8)((u32)( OPERATOR1( 0x9 ) + OPERATOR2( 0x9 ) + OPERATOR3( 0x9 ) + OPERATOR4( 0x9 ) ) >> 2);
+	fmw->WAVEDATA[10] = (u8)((u32)( OPERATOR1( 0xA ) + OPERATOR2( 0xA ) + OPERATOR3( 0xA ) + OPERATOR4( 0xA ) ) >> 2);
+	fmw->WAVEDATA[11] = (u8)((u32)( OPERATOR1( 0xB ) + OPERATOR2( 0xB ) + OPERATOR3( 0xB ) + OPERATOR4( 0xB ) ) >> 2);
+	fmw->WAVEDATA[12] = (u8)((u32)( OPERATOR1( 0xC ) + OPERATOR2( 0xC ) + OPERATOR3( 0xC ) + OPERATOR4( 0xC ) ) >> 2);
+	fmw->WAVEDATA[13] = (u8)((u32)( OPERATOR1( 0xD ) + OPERATOR2( 0xD ) + OPERATOR3( 0xD ) + OPERATOR4( 0xD ) ) >> 2);
+	fmw->WAVEDATA[14] = (u8)((u32)( OPERATOR1( 0xE ) + OPERATOR2( 0xE ) + OPERATOR3( 0xE ) + OPERATOR4( 0xE ) ) >> 2);
+	fmw->WAVEDATA[15] = (u8)((u32)( OPERATOR1( 0xF ) + OPERATOR2( 0xF ) + OPERATOR3( 0xF ) + OPERATOR4( 0xF ) ) >> 2);
 	
 	#undef OPERATOR4
 	#undef OPERATOR3
 	#undef OPERATOR2
 	#undef OPERATOR1
+	
+	loadFmwWAVEData( fmw->WAVEDATA );
 }
 
-void Spu::loadWAVEData(u8 data[16] ){
+void Spu::renderSmpWAVE( SETTINGS_SMP *smp, u8 vol){
+	static u8 operator_volume;
+	
+	// Get volume level for each of the 4 ADSR envelopes
+	operator_volume = ( smp_adsr_table[ smp_adsr_position ] * vol)>>4;
+
+	// Advance adsr table common index
+	smp_adsr_position = ( smp_adsr_position < 0x3F) ? smp_adsr_position+1 : 0x3F;
+	
+	#define OPERATOR( a )	((u8)((u32)( operators[ smp->OP1_TYPE ][ a ] * operator_volume ) >> 4))
+	#undef OPERATOR
+}
+
+void Spu::renderWavWAVE( SETTINGS_WAV *wav, u8 vol){
+	static u8 operator_volume[4];
+	
+	// Get volume level for each of the 4 ADSR envelopes
+	operator_volume[ 0 ] = (wav_adsr_table[ 0 ][ wav_adsr_position ] * vol)>>4;
+	operator_volume[ 1 ] = (wav_adsr_table[ 1 ][ wav_adsr_position ] * vol)>>4;
+	operator_volume[ 2 ] = (wav_adsr_table[ 2 ][ wav_adsr_position ] * vol)>>4;
+	operator_volume[ 3 ] = (wav_adsr_table[ 3 ][ wav_adsr_position ] * vol)>>4;
+
+	// Advance adsr table common index
+	wav_adsr_position = ( wav_adsr_position < 0x3F) ? wav_adsr_position+1 : 0x3F;
+	
+	#define OPERATOR1( a )	((u8)((u32)( operators[ wav->OP1_TYPE ][ a ] * operator_volume[0] ) >> 4))
+	#define OPERATOR2( a )	((u8)((u32)( operators[ wav->OP2_TYPE ][ a ] * operator_volume[1] ) >> 4))
+	#define OPERATOR3( a )	((u8)((u32)( operators[ wav->OP3_TYPE ][ a ] * operator_volume[2] ) >> 4))
+	#define OPERATOR4( a )	((u8)((u32)( operators[ wav->OP4_TYPE ][ a ] * operator_volume[3] ) >> 4))
+	
+	// Mix shapes
+	wav->WAVEDATA[ 0] = (u8)((u32)( OPERATOR1( 0x0 ) + OPERATOR2( 0x0 ) + OPERATOR3( 0x0 ) + OPERATOR4( 0x0 ) ) >> 2);
+	wav->WAVEDATA[ 1] = (u8)((u32)( OPERATOR1( 0x1 ) + OPERATOR2( 0x1 ) + OPERATOR3( 0x1 ) + OPERATOR4( 0x1 ) ) >> 2);
+	wav->WAVEDATA[ 2] = (u8)((u32)( OPERATOR1( 0x2 ) + OPERATOR2( 0x2 ) + OPERATOR3( 0x2 ) + OPERATOR4( 0x2 ) ) >> 2);
+	wav->WAVEDATA[ 3] = (u8)((u32)( OPERATOR1( 0x3 ) + OPERATOR2( 0x3 ) + OPERATOR3( 0x3 ) + OPERATOR4( 0x3 ) ) >> 2);
+	wav->WAVEDATA[ 4] = (u8)((u32)( OPERATOR1( 0x4 ) + OPERATOR2( 0x4 ) + OPERATOR3( 0x4 ) + OPERATOR4( 0x4 ) ) >> 2);
+	wav->WAVEDATA[ 5] = (u8)((u32)( OPERATOR1( 0x5 ) + OPERATOR2( 0x5 ) + OPERATOR3( 0x5 ) + OPERATOR4( 0x5 ) ) >> 2);
+	wav->WAVEDATA[ 6] = (u8)((u32)( OPERATOR1( 0x6 ) + OPERATOR2( 0x6 ) + OPERATOR3( 0x6 ) + OPERATOR4( 0x6 ) ) >> 2);
+	wav->WAVEDATA[ 7] = (u8)((u32)( OPERATOR1( 0x7 ) + OPERATOR2( 0x7 ) + OPERATOR3( 0x7 ) + OPERATOR4( 0x7 ) ) >> 2);				
+	wav->WAVEDATA[ 8] = (u8)((u32)( OPERATOR1( 0x8 ) + OPERATOR2( 0x8 ) + OPERATOR3( 0x8 ) + OPERATOR4( 0x8 ) ) >> 2);
+	wav->WAVEDATA[ 9] = (u8)((u32)( OPERATOR1( 0x9 ) + OPERATOR2( 0x9 ) + OPERATOR3( 0x9 ) + OPERATOR4( 0x9 ) ) >> 2);
+	wav->WAVEDATA[10] = (u8)((u32)( OPERATOR1( 0xA ) + OPERATOR2( 0xA ) + OPERATOR3( 0xA ) + OPERATOR4( 0xA ) ) >> 2);
+	wav->WAVEDATA[11] = (u8)((u32)( OPERATOR1( 0xB ) + OPERATOR2( 0xB ) + OPERATOR3( 0xB ) + OPERATOR4( 0xB ) ) >> 2);
+	wav->WAVEDATA[12] = (u8)((u32)( OPERATOR1( 0xC ) + OPERATOR2( 0xC ) + OPERATOR3( 0xC ) + OPERATOR4( 0xC ) ) >> 2);
+	wav->WAVEDATA[13] = (u8)((u32)( OPERATOR1( 0xD ) + OPERATOR2( 0xD ) + OPERATOR3( 0xD ) + OPERATOR4( 0xD ) ) >> 2);
+	wav->WAVEDATA[14] = (u8)((u32)( OPERATOR1( 0xE ) + OPERATOR2( 0xE ) + OPERATOR3( 0xE ) + OPERATOR4( 0xE ) ) >> 2);
+	wav->WAVEDATA[15] = (u8)((u32)( OPERATOR1( 0xF ) + OPERATOR2( 0xF ) + OPERATOR3( 0xF ) + OPERATOR4( 0xF ) ) >> 2);
+	
+	#undef OPERATOR4
+	#undef OPERATOR3
+	#undef OPERATOR2
+	#undef OPERATOR1
+	
+	loadWavWAVEData( wav->WAVEDATA );
+}
+
+/*-------------------------------------------------------------------------*/
+
+void Spu::loadFmwWAVEData(u8 data[16] ){
+}
+
+void Spu::loadSmpWAVEData(u8 data[16] ){
+}
+
+void Spu::loadWavWAVEData(u8 data[16] ){
+	//select bank 0 for writing (bank 1 playing)
+	
+	swap_bank ^=1; 
+	REG_SOUND3CNT_L = SOUND3PLAY | SOUND3BANK32 | (swap_bank ? SOUND3SETBANK0 : SOUND3SETBANK1);
+	
 	//load the wave ram bank 0
 	WAVE_RAM0_H = ( (data[0x1] ) << 12) 
 				| ( (data[0x0] ) <<  8) 
@@ -529,7 +714,6 @@ void Spu::loadWAVEData(u8 data[16] ){
 				| ( (data[0xc] ) <<  8) 
 				| ( (data[0xf] ) <<  4) 
 				| ( (data[0xe] ) <<  0); 
-	// Backup Wave
 	WAVE_RAM2_H = ( (data[0x1] ) << 12) 
 				| ( (data[0x0] ) <<  8) 
 				| ( (data[0x3] ) <<  4) 
@@ -546,26 +730,12 @@ void Spu::loadWAVEData(u8 data[16] ){
 				| ( (data[0xc] ) <<  8) 
 				| ( (data[0xf] ) <<  4) 
 				| ( (data[0xe] ) <<  0); 	
-}
-
-void Spu::updateWAVE( u8 data[ 16 ] ){
-	//full volume, enable sound 3 to left and right
-	REG_SOUNDCNT_L=0x4477;
-	// Overall output ratio - Full
-	REG_SOUNDCNT_H = SOUND3OUTPUT1;
-
-	//select bank 0 for writing (bank 1 playing)
-	REG_SOUND3CNT_L = SOUND3BANK32 | SOUND3SETBANK1;
-
-	// (re)Load waveform
-	loadWAVEData(data);
-	
+				
 	//select bank 0 for playing
-	REG_SOUND3CNT_L = SOUND3BANK32 | SOUND3SETBANK0;
-
-	REG_SOUND3CNT_L |= SOUND3PLAY;
-	return;
+	REG_SOUND3CNT_L = SOUND3PLAY | SOUND3BANK32 | (swap_bank ? SOUND3SETBANK1 : SOUND3SETBANK0);
 }
+
+/*-------------------------------------------------------------------------*/
 
 void Spu::update(void){
 	bool newBeat, newTick;
@@ -604,7 +774,7 @@ void Spu::update(void){
 		if(newBeat){			
 			/* --------------------------------------------------------------------
 			Do metronome noise 													 */			
-			/*
+			
 			if(enable_metronome){
 				if(currentBeats+1 == 0){
 					*((volatile u16*)0x04000068) = 0x8181;
@@ -615,7 +785,7 @@ void Spu::update(void){
 					*((volatile u16*)0x0400006C) = 0xC770;
 				}
 			}
-			*/
+			
 			currentBeats++;		
 		}	
 		

@@ -148,7 +148,6 @@
 	written to previously).
 */
 
-
 #define BPM_MAGIC 6271			//100BPM = 6271Hz per beat	
 class Spu{
 	private:
@@ -161,9 +160,13 @@ class Spu{
 		static bool	reset_channel[6];
 		static u8	tsp_position[6];
 		static u8	vol_position[6];
-		static u8 	adsr_position;
-
-		static u8 	adsr_table[4][0x40];
+		static u8 	wav_adsr_position;
+		static u8 	smp_adsr_position;
+		static u8 	fmw_adsr_position;
+		
+		static u8 	wav_adsr_table[4][0x40];
+		static u8 	fmw_adsr_table[4][0x40];
+		static u8 	smp_adsr_table[0x40];
 		
 
 		int	 timerTarget;
@@ -184,28 +187,57 @@ class Spu{
 		void play(bool fromStart);	
 		void stop(void);	
 		
-		void noteOnPWM1(void);
-		void noteOnPWM2(void);
-		void noteOnWAV(void);
-		void noteOnNZE(void);
+		void noteOnPWM1();
+		void noteOnPWM2();
+		void noteOnWAV();
+		void noteOnNZE();
+		void noteOnFMW();
+		void noteOnSMP();
+
+		void enablePWM1();
+		void enablePWM2();
+		void enableWAV();
+		void enableNZE();
+		void enableFMW();
+		void enableSMP();
+		
+		void disablePWM1();
+		void disablePWM2();
+		void disableWAV();
+		void disableNZE();
+		void disableFMW();
+		void disableSMP();
+		
+		static bool initialized;
 		
 		bool setKey(	u8 channel, u8 key, u8 vol );
 		void setCmd(	u8 channel, u8 cmd, u8 value );
 		void setInst(  u8 channel, u8 inst, u8 vol, bool retrig_note );
 		void triggerChannel( int channelIndex );
 
-		void renderADSR( u8 adsr[4], u8 operator_index ); // ADSR Table Regeneration
-		void updateADSR( SETTINGS_WAV *wav ); // Callback to be used @ ADSR modification / instrument change (WAVE CHANNEL)
 		
-		void loadWAVEData( u8 data[ 16 ] );
-		void renderWAVE( SETTINGS_WAV *settings, u8 vol );
-		void updateWAVE( u8 data[ 16 ] );
 		void update();		// Called each program cycle		
 		void enable();		//Enable given sound channel
 		void disable();		//Disable general sound system
 		
 		void jumpToPatternAsync(int p);	//jumps asyncronously to pattern p
-};
+
+		// AM / FM / SMP
+		void renderADSR( u8 adsr[4], u8 adsr_table[0x40] ); // ADSR Table Regeneration
+		
+		void updateWavADSR( SETTINGS_WAV *wav ); // Callback to be used @ ADSR modification / instrument change (WAVE CHANNEL)
+		void updateFmwADSR( SETTINGS_FMW *fmw ); // Callback to be used @ ADSR modification / instrument change (WAVE CHANNEL)
+		void updateSmpADSR( SETTINGS_SMP *smp ); // Callback to be used @ ADSR modification / instrument change (WAVE CHANNEL)
+		
+		void loadWavWAVEData( u8 data[ 16 ] );
+		void loadFmwWAVEData( u8 data[ 16 ] );
+		void loadSmpWAVEData( u8 data[ 16 ] );
+		
+		void renderWavWAVE( SETTINGS_WAV *settings, u8 vol );
+		void renderFmwWAVE( SETTINGS_FMW *settings, u8 vol );
+		void renderSmpWAVE( SETTINGS_SMP *settings, u8 vol );
+		
+	};
 
 extern Spu SPU;
 

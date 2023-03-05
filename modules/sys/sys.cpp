@@ -144,17 +144,17 @@ void adsr_view(){
 	for(int x=0;x<0x40; x+=2){
 		//gpu.vs->set(x>>1, 15 - ( SPU.adsr_table[ 0 ][ x ] ) );
 		
-		gpu.vs->set(x>>1,  7 - ( SPU.adsr_table[ 0 ][ x ] >> 1 ) );
-		gpu.vs->set(x>>1, 15 - ( SPU.adsr_table[ 1 ][ x ] >> 1 ) );
-		gpu.vs->set(x>>1, 23 - ( SPU.adsr_table[ 2 ][ x ] >> 1 ) );
-		gpu.vs->set(x>>1, 31 - ( SPU.adsr_table[ 3 ][ x ] >> 1 ) );
+		gpu.vs->set(x>>1,  7 - ( SPU.wav_adsr_table[ 0 ][ x ] >> 1 ) );
+		gpu.vs->set(x>>1, 15 - ( SPU.wav_adsr_table[ 1 ][ x ] >> 1 ) );
+		gpu.vs->set(x>>1, 23 - ( SPU.wav_adsr_table[ 2 ][ x ] >> 1 ) );
+		gpu.vs->set(x>>1, 31 - ( SPU.wav_adsr_table[ 3 ][ x ] >> 1 ) );
 		
 	}
-	DECIMAL_DOUBLE(14,2, 7, SPU.adsr_position);
+	DECIMAL_DOUBLE(14,2, 7, SPU.wav_adsr_position);
 
-	if(SPU.adsr_position<0x3F){
-		VISPOS1(14, 1,	0xFF, SPU.adsr_position>>2);
-		VISPOS2(14, 18, 0xFF, SPU.adsr_position>>2);
+	if(SPU.wav_adsr_position<0x3F){
+		VISPOS1(14, 1,	0xFF, SPU.wav_adsr_position>>2);
+		VISPOS2(14, 18, 0xFF, SPU.wav_adsr_position>>2);
 	}
 	gpu.vs->draw(14,6);
 }

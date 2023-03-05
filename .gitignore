@@ -171,3 +171,9 @@ snk.s
 trk.s
 m4g_monolith.hpp
 m4g_new.gba
+mixer.s
+modules/spu/mixer.o
+modules/spu/sequencer.o
+modules/spu/synth.o
+synth.s
+sequencer.s

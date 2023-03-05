@@ -136,6 +136,8 @@ extern "C" void IntHandler(){
 static void INT_Dummy(){		
 }
 
+#include "../spu/mixer.hpp"
+
 static void INT_VBlank(){	
 /*
 We know AGB can do 60 VBlanks per second, so if we count 60 Interrupts,we
@@ -149,13 +151,38 @@ also know a second has elapsed, so it's time to calculate the CPS rate
 		SYS_FPS=SYS_FRAMES;
 		SYS_FRAMES = 0;
 		SYS_TIMER=0;		
-	}	
+	}
+	
+	// From M0-K1
+	if(sound_buffer.activeBuffer == 1)	// buffer 1 just got over
+	{
+	   // Start playing buffer 0
+	  DMA1_CHI = 0;
+	  DMA1_SRC = (u32)sound_buffer.mixBufferBase;
+	  DMA1_CHI = 0xB640;
+
+	   // Set the current buffer pointer to the start of buffer 1
+	  sound_buffer.curMixBuffer = sound_buffer.mixBufferBase + sound_buffer.mixBufferSize;
+
+	  sound_buffer.activeBuffer = 0;
+	}
+	else	// buffer 0 just got over
+	{
+	   // DMA points to buffer 1 already, so don't bother stopping and resetting it
+
+	   // Set the current buffer pointer to the start of buffer 0
+	  sound_buffer.curMixBuffer = sound_buffer.mixBufferBase;
+	  sound_buffer.activeBuffer = 1;
+	}
+	
 	SYS_SOUNDTIME=true;
 	REG_IFBIOS = VBLANK_IF; //Interrupt ACK!!
 	/***************************************************************************/
 	SYS_QUERYKEY = true;	
 	/***************************************************************************/
 	R_IME=0x1;
+	
+	return Mixer::mix();
 }
 
 static void INT_HBlank(){	
@@ -170,6 +197,8 @@ static void INT_VCount(){
 	R_IME=0x1;
 }
 
+extern void fmwRenderInterrupt();
+
 static void INT_Timer0(){
 	R_IME=0x0;
 	SYS_PROFILETIMER+=1;
@@ -180,6 +209,7 @@ static void INT_Timer0(){
 
 static void INT_Timer1(){
 	R_IME=0x0;
+	//fmwRenderInterrupt();
 	REG_IFBIOS = TIMER1_IF; //Interrupt ACK!!
 	R_IME=0x1;
 }
