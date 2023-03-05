@@ -1,3 +1,7 @@
+
+typedef struct _Control Control;
+
+
 typedef enum eNetMode {
 	NET_GBA,
 	NET_IBM,

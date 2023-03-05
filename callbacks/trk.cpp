@@ -199,8 +199,8 @@ void trkDispatchMessage(u32 msg){
 void trkGlobalUpdater(RegionHandler* rh){
 	static bool tracker_clean = false;
 
-	gpu.set(2,0,1, SPU.playing ? 0xF08D  : 0x31FE );
-	gpu.set(1,0,0, SPU.playing?((SPU.currentBeats) == 0?0x32 : ((SPU.currentBeats&3) == 0?0x34 : 0x33)):0x33);
+	gpu.set(2,0,1, Sequencer::playing ? 0xF08D  : 0x31FE );
+	gpu.set(1,0,0, Sequencer::playing ? ((Sequencer::currentBeats) == 0?0x32 : ((Sequencer::currentBeats&3) == 0?0x34 : 0x33)):0x33);
 		
 	if(transientChanged || rh->redraw) trkDrawTransientInfo();
 	if(rh->redraw){
@@ -211,22 +211,22 @@ void trkGlobalUpdater(RegionHandler* rh){
 		}
 	}
 	
-	if(SPU.playing){
+	if( Sequencer::playing ){
 		for(int i=0; i<6;i++){
-			
+			Channel *channel = &VAR_CHANNEL[i];
 			// Update vumeters
-			u8 last_peak = VAR_CHANNEL[i].lastpeak;
-			u8 peak = VAR_CHANNEL[i].peak;
-			if(last_peak!=peak) VUMETER_V3(8+i, 0, 0x0, peak>12?12:peak);			
+			u8 last_peak = channel->lastpeak;
+			u8 peak = channel->peak;
+			if( last_peak != peak ) VUMETER_V3(8+i, 0, 0x0, peak>12?12:peak);			
 			
 			// Update next step (cell) reactive elements
-			if(VAR_CHANNEL[i].LASTSTEP != VAR_CHANNEL[i].STEP) trkDrawLine(i);
+			if(channel->LASTSTEP != channel->STEP) trkDrawLine(i);
 			
 			// Update next pattern reactive elements
-			if((VAR_CHANNEL[i].LASTPOSITION != VAR_CHANNEL[i].POSITION) || rh->redraw) {
+			if((channel->LASTPOSITION != channel->POSITION) || rh->redraw) {
 				trkDrawPosition(i, i==VAR_CFG.CURRENTCHANNEL);
 				cellSyncChannel(i);
-				VAR_CHANNEL[i].LASTPOSITION =  VAR_CHANNEL[i].POSITION;
+				channel->LASTPOSITION =  channel->POSITION;
 			}
 		}
 		tracker_clean = false;

@@ -39,7 +39,24 @@ typedef struct _soundChannel {
 extern SoundChannel channel[2];
 
 class Mixer {
+	private:
+		static void enablePwm1();
+		static void enablePwm2();
+		static void enableWav();
+		static void enableNze();
+		static void enableFmw();
+		static void enableSmp();
+		
+		static void disablePwm1();
+		static void disablePwm2();
+		static void disableWav();
+		static void disableNze();
+		static void disableFmw();
+		static void disableSmp();
+
 	public:
+		static bool enable_metronome;
+	
 		static int last_level[6];
 		static int level;
 		static int key_note[6];
@@ -48,8 +65,15 @@ class Mixer {
 		static void init();
 		static void mix();
 		static void load(size_t index, int chan);
-		static void noteOn1(u16 freq);
-		static void noteOn2(u16 freq);
+		
+		static void start();
+		
+		static void updateMetronome( u8 time, u8 beats_per_bar );
+		
+		static void stop();
+		
+		static void noteOn1(u16 freq);// move to seq or synth
+		static void noteOn2(u16 freq);// move to seq or synth
 
 };
 

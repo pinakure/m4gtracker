@@ -1,15 +1,13 @@
 Sys sys;
 
 void Sys::reset(){
-	//SPU.stop();
+	Sequencer::stop();
 	var_reset = true;
 }
 
-
-
 void Sys::init(){
 	KEY.init();
-	SPU.Init(VAR_SONG.BPM);		
+	SPU.Init( VAR_SONG.BPM );		
 	Net::init();
 	var_reset = false;
 	
@@ -68,20 +66,19 @@ void Sys::updateInput(){
 		return;		
 	}
 	
-	if(KEY.down(KEY_START)) {
-		if(SPU.playing) {
-			SPU.stop();
+	if( KEY.down( KEY_START ) ) {
+		if( Sequencer::playing ) {
+			Sequencer::stop();
 			return;
 		}
 		
-		if(KEY.press(KEY_SELECT)) {
-			SPU.play(true);
+		if( KEY.press( KEY_SELECT ) ) {
+			Sequencer::play(true);
 			return;
 		}		
-		if(!SPU.playing) SPU.play(false);
+		if( !Sequencer::playing ) Sequencer::play( false );
 		return;
 	}
-	
 	
 	// Handle Copy Command (B+A)
 	if(KEY.press(KEY_B) && regHnd.control) {
@@ -142,19 +139,19 @@ void adsr_view(){
 	gpu.vs->clear();
 	
 	for(int x=0;x<0x40; x+=2){
-		//gpu.vs->set(x>>1, 15 - ( SPU.adsr_table[ 0 ][ x ] ) );
+		//gpu.vs->set(x>>1, 15 - ( Synth::adsr_table[ 0 ][ x ] ) );
 		
-		gpu.vs->set(x>>1,  7 - ( SPU.wav_adsr_table[ 0 ][ x ] >> 1 ) );
-		gpu.vs->set(x>>1, 15 - ( SPU.wav_adsr_table[ 1 ][ x ] >> 1 ) );
-		gpu.vs->set(x>>1, 23 - ( SPU.wav_adsr_table[ 2 ][ x ] >> 1 ) );
-		gpu.vs->set(x>>1, 31 - ( SPU.wav_adsr_table[ 3 ][ x ] >> 1 ) );
+		gpu.vs->set( x>>1,  7 - ( Synth::wav_adsr_table[ 0 ][ x ] >> 1 ) );
+		gpu.vs->set( x>>1, 15 - ( Synth::wav_adsr_table[ 1 ][ x ] >> 1 ) );
+		gpu.vs->set( x>>1, 23 - ( Synth::wav_adsr_table[ 2 ][ x ] >> 1 ) );
+		gpu.vs->set( x>>1, 31 - ( Synth::wav_adsr_table[ 3 ][ x ] >> 1 ) );
 		
 	}
-	DECIMAL_DOUBLE(14,2, 7, SPU.wav_adsr_position);
+	DECIMAL_DOUBLE( 14,2, 7, Synth::wav_adsr_position );
 
-	if(SPU.wav_adsr_position<0x3F){
-		VISPOS1(14, 1,	0xFF, SPU.wav_adsr_position>>2);
-		VISPOS2(14, 18, 0xFF, SPU.wav_adsr_position>>2);
+	if( Synth::wav_adsr_position < 0x3F ){
+		VISPOS1(14, 1,	0xFF, Synth::wav_adsr_position>>2);
+		VISPOS2(14, 18, 0xFF, Synth::wav_adsr_position>>2);
 	}
 	gpu.vs->draw(14,6);
 }
@@ -163,7 +160,7 @@ void overloadTest(RegionHandler &regHnd);
 
 void Sys::update(){
 	
-	SPU.update();	
+	Sequencer::update();	
 	KEY.update();
 	updateInput();
 	

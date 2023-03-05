@@ -184,7 +184,7 @@ void Sram::songDefaults(void){
 		VAR_SONG.TITLE[i]  = 0xFF;
 		VAR_SONG.ARTIST[i] = 0xFF;
 	}
-	//SPU.setTempo(0x80);
+	//Sequencer::setTempo(0x80);
 	VAR_SONG.BPM = 0x80;
 	VAR_SONG.PATTERNLENGTH = 0xF;
 	
@@ -316,7 +316,7 @@ void Sram::sharedDataLoad(void){
 
 	instcopy(&VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT], &VAR_INSTRUMENT);
 	
-	SPU.setTempo(VAR_SONG.BPM);
+	Sequencer::setTempo( VAR_SONG.BPM );
 
 	drawPosition(27, 5, 6);
 }

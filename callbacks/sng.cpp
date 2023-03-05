@@ -94,13 +94,13 @@ void ERASESLOT(Control *c, bool bigstep, bool add, u32 *pointer){
 void modifyTEMPO(Control *c, bool bigstep, bool add, u32 *pointer){	
 	(*(u8*) c->var) = ((*(u8*) c->var) + ((bigstep?0x10:0x1)* (add?1:-1)) ) & 0xFF;
 	( (RegionHandler*)pointer )->sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)&SNG_CONTROLS[CONTROL_SNG_BPM]);
-	SPU.setTempo(*(c->var));
+	Sequencer::setTempo(*(c->var));
 }
 
 /* Calculates new a new BPM Values each 4th time user calls this function based on previous 3 calls */
 void TEMPOTAP(Control *c, bool bigstep, bool add, u32 *pointer){
 	
-	SPU.jumpToPatternAsync(VAR_PATTERN[VAR_CFG.CURRENTCHANNEL].ORDER[VAR_CHANNEL[VAR_CFG.CURRENTCHANNEL].POSITION]);
+	Sequencer::jumpToPatternAsync(VAR_PATTERN[VAR_CFG.CURRENTCHANNEL].ORDER[VAR_CHANNEL[VAR_CFG.CURRENTCHANNEL].POSITION]);
 	return;
 	
 	//TODO: WRITE PROPER TEMPO TAP FUNCTION WHICH DOES NOT TURN BPM CRAZY!
@@ -115,7 +115,7 @@ void TEMPOTAP(Control *c, bool bigstep, bool add, u32 *pointer){
 		calc = true;
 	} else {
 		int t = *((volatile u16*)0x0400010C);
-		SPU.setTempo(int(100 * ((float(t) * 100) / BPM_MAGIC) ));
+		Sequencer::setTempo(int(100 * ((float(t) * 100) / BPM_MAGIC) ));
 		// Send message to redraw BPM control too ;)
 		( (RegionHandler*)pointer )->sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)&SNG_CONTROLS[CONTROL_SNG_BPM]);
 		calc = false;

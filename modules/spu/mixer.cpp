@@ -112,6 +112,8 @@ int 			Mixer::last_level[6];
 int 			Mixer::level;
 int 			Mixer::key_note[6];
 int 			Mixer::new_note[6];
+bool 			Mixer::enable_metronome = false;
+
 
 void Mixer::init(){
 	sound_buffer.mixBufferBase = sound_mix_buffer;
@@ -200,3 +202,62 @@ void Mixer::load(size_t index, int chan){
 	drawSampleData();
 	*/
 }
+
+void Mixer::enablePwm1(){ (*(vu16*)0x4000080)|= 0x1177; }
+void Mixer::enablePwm2(){ (*(vu16*)0x4000080)|= 0x2277; }
+void Mixer::enableWav (){ (*(vu16*)0x4000080)|= 0x4477; }
+void Mixer::enableNze (){ (*(vu16*)0x4000080)|= 0x8877; }
+void Mixer::enableFmw (){ }
+void Mixer::enableSmp (){ }
+
+void Mixer::start(){
+	enablePwm1();
+	enablePwm2();
+	enableNze();
+	enableWav();
+	enableFmw();
+	enableSmp();
+}
+
+void Mixer::disablePwm1(){ (*(vu16*)0x4000080) &= ~0x1100; }
+void Mixer::disablePwm2(){ (*(vu16*)0x4000080) &= ~0x2200; }
+void Mixer::disableWav (){ (*(vu16*)0x4000080) &= ~0x4400; }
+void Mixer::disableNze (){ (*(vu16*)0x4000080) &= ~0x8800; }
+void Mixer::disableSmp (){ }
+void Mixer::disableFmw (){
+	#ifdef SMP_DMA
+	*(u16*)0x4000102 = 0; /*REG_TM0CNT_H  */ // disable timer 0
+	*(u16*)0x40000C6 = 0; /*REG_DMA1CNT_H */ // stop DMA1
+	*(u16*)0x4000106 = 0; /*REG_TM1CNT_H  */ // disable timer 1
+	*(u16*)0x4000104 = 0; //Reset Timer 2 count value (sample count)
+	// Disable DSOUND 1
+	(*(vu16*)0x4000082) = 0x0002; 
+	#endif
+}
+
+
+void Mixer::stop(){
+	disablePwm1();
+	disablePwm2();
+	disableNze();
+	disableWav();
+	disableFmw();
+	disableSmp();
+}
+
+/*###########################################################################*/
+
+void Mixer::updateMetronome( u8 time, u8 beats_per_bar ) {
+	if( time + 1 == 0 ){
+		*((volatile u16*)0x04000068) = 0x8181;
+		*((volatile u16*)0x0400006C) = 0xC7b7;				
+	} else 
+	if(!(( time + 1 ) % beats_per_bar)){								
+		*((volatile u16*)0x04000068) = 0x8181;
+		*((volatile u16*)0x0400006C) = 0xC770;
+	}
+}	
+
+/*###########################################################################*/
+
+

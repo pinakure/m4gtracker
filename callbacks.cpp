@@ -6,7 +6,7 @@
 #define VARIABLE	(*(u8*) c->var)
 void modifyCHAR(Control *c, bool bigstep, bool add, u32 *pointer){}
 void modify1BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE^=0x1; }
-void modifyTempo(Control *c, bool bigstep, bool add, u32 *pointer){	modify8BIT(c, bigstep, add, pointer); SPU.setTempo(VAR_SONG.BPM); }
+void modifyTempo(Control *c, bool bigstep, bool add, u32 *pointer){	modify8BIT(c, bigstep, add, pointer); Sequencer::setTempo( VAR_SONG.BPM ); }
 
 
 static u8 transient2BIT;

@@ -40,7 +40,7 @@ class Sram {
 
 extern Sram SRAM;
 
-void instrumentUnpack(INSTRUMENT *i);
-void instrumentPack(INSTRUMENT *i);
-void instcopy(INSTRUMENT *s, INSTRUMENT *d);
+extern void instrumentUnpack	(Instrument *i);
+extern void instrumentPack		(Instrument *i);
+extern void instcopy			(Instrument *s, Instrument *d);
 
