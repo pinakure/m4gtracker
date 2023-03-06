@@ -72,11 +72,13 @@ class Mixer {
 		
 		static void stop();
 		
-		static void noteOn1(u16 freq);// move to seq or synth
-		static void noteOn2(u16 freq);// move to seq or synth
+		static void noteOn1	(u16 freq);// move to seq or synth
+		static void noteOn2	(u16 freq);// move to seq or synth
 
-		static void mute(int channel);// move to mixer
-		static void solo(int channel);// move to mixer
+		static void enable	(u8 channel);// move to mixer
+		static void disable	(u8 channel);// move to mixer
+		static void mute	(int channel);// move to mixer
+		static void solo	(int channel);// move to mixer
 };
 
 #endif

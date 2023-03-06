@@ -4,6 +4,7 @@
 #include "../../data/channel.hpp"
 #include "../../data/song.hpp"
 #include "../../data/helpers.hpp"
+#include "../../callbacks/trk.hpp"
 
 extern "C" { int CheckBPMClock(int timerTarget); }; /* Since these are ASM instructions, we have to ensure CPP does not mangle them! */
 
@@ -16,7 +17,6 @@ int 	Sequencer::secPerBeat		= 0;
 bool	Sequencer::playing 			= false;
 	
 extern Song VAR_SONG;	
-extern void cellSyncChannel(u8 c);
 
 void Sequencer::init( int bpm ){
 	
@@ -138,12 +138,12 @@ void Sequencer::update(){
 	
 	//Jump to next pattern, or find previous loop entry			     
 	if( !( currentTicks % ( beatsPerBar << 2 ) ) ){
-		if( updateChannel( 0 ) ) cellSyncChannel( 0 ); 
-		if( updateChannel( 1 ) ) cellSyncChannel( 1 );
-		if( updateChannel( 2 ) ) cellSyncChannel( 2 );
-		if( updateChannel( 3 ) ) cellSyncChannel( 3 );
-		if( updateChannel( 4 ) ) cellSyncChannel( 4 );
-		if( updateChannel( 5 ) ) cellSyncChannel( 5 );			
+		if( updateChannel( 0 ) ) Tracker::syncChannel( 0 ); 
+		if( updateChannel( 1 ) ) Tracker::syncChannel( 1 );
+		if( updateChannel( 2 ) ) Tracker::syncChannel( 2 );
+		if( updateChannel( 3 ) ) Tracker::syncChannel( 3 );
+		if( updateChannel( 4 ) ) Tracker::syncChannel( 4 );
+		if( updateChannel( 5 ) ) Tracker::syncChannel( 5 );			
 		
 		currentTicks=0;
 		

@@ -16,7 +16,7 @@ static void INT_Timer0();
 static void INT_Timer1();
 static void INT_Timer2();
 static void INT_Timer3();
-static void INT_KeyPad();
+//static void INT_KeyPad();
 static void INT_AGBPak();
 /*------------------------------------------------------------------------------
                                Interrupt Handler
@@ -226,6 +226,7 @@ static void INT_Timer3(){
 	R_IME=0x1;
 }
 	
+/*
 static void INT_KeyPad(){
 	R_IME=0x0;
 	//SYS_QUERYKEY = true;
@@ -233,6 +234,7 @@ static void INT_KeyPad(){
 	REG_IFBIOS = KEYPAD_IF;	//Interrupt ACK!!
 	R_IME=0x1;
 }
+*/
 
 static void INT_AGBPak(){
 	R_IME=0;

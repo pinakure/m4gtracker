@@ -6,6 +6,7 @@
 #include "../../data/helpers.hpp"
 #include "../../data/settings.hpp"
 #include "../../data/instrument.hpp"
+#include "../../callbacks/ins.hpp"
 
 extern void adsr_view();
 
@@ -399,15 +400,10 @@ void Synth::renderADSR( u8 adsr[ 4 ], u8 adsr_table[0x40] ){
 	#undef TABLE
 }
 
-extern inline SETTINGS_PWM unpackPWM(Instrument *i);
-extern inline SETTINGS_WAV unpackWAV(Instrument *i);
-extern inline SETTINGS_SMP unpackSMP(Instrument *i);
-extern inline SETTINGS_FMW unpackFMW(Instrument *i);
-
 void Synth::triggerPwm1( Channel *channel ){
 	u8 vol 			 = channel->volume;
 	Instrument *i 	 = &VAR_INSTRUMENTS[ channel->inst ];
-	SETTINGS_PWM pwm = unpackPWM( i );
+	SETTINGS_PWM pwm = InstEdit::unpackPwm( i );
 	
 	if( channel->reset ) {
 		channel->tsp_position 	= 0;				
@@ -439,7 +435,7 @@ void Synth::triggerPwm1( Channel *channel ){
 void Synth::triggerPwm2( Channel *channel ){
 	u8 vol 			 = channel->volume;
 	Instrument *i 	 = &VAR_INSTRUMENTS[ channel->inst ];
-	SETTINGS_PWM pwm = unpackPWM( i );
+	SETTINGS_PWM pwm = InstEdit::unpackPwm( i );
 	
 	if( channel->reset ) {
 		channel->tsp_position 	= 0;				
@@ -470,7 +466,7 @@ void Synth::triggerPwm2( Channel *channel ){
 void Synth::triggerNze( Channel *channel ){
 	u8 vol 		 	 = channel->volume;
 	Instrument *i 	 = &VAR_INSTRUMENTS[ channel->inst ];
-	SETTINGS_PWM pwm = unpackPWM( i );
+	SETTINGS_PWM pwm = InstEdit::unpackPwm( i );
 	
 	if( channel->reset ) {
 		channel->tsp_position 	= 0;				
@@ -501,7 +497,7 @@ void Synth::triggerNze( Channel *channel ){
 void Synth::triggerWav( Channel* channel ){
 	u8 vol 			 = channel->volume;
 	Instrument *i 	 = &VAR_INSTRUMENTS[ channel->inst ];
-	SETTINGS_WAV wav = unpackWAV( i );
+	SETTINGS_WAV wav = InstEdit::unpackWav( i );
 	
 	if( channel->reset ) {
 		channel->tsp_position 	= 0;				
@@ -523,7 +519,7 @@ void Synth::triggerWav( Channel* channel ){
 void Synth::triggerFmw( Channel* channel ){
 	u8 vol 			 = channel->volume;
 	Instrument *i 	 = &VAR_INSTRUMENTS[ channel->inst ];
-	SETTINGS_FMW fmw = unpackFMW( i );
+	SETTINGS_FMW fmw = InstEdit::unpackFmw( i );
 	
 	if( channel->reset ){
 		channel->tsp_position	= 0;
@@ -545,7 +541,7 @@ void Synth::triggerFmw( Channel* channel ){
 void Synth::triggerSmp( Channel* channel ){
 	u8 vol 			 = channel->volume;
 	Instrument *i 	 = &VAR_INSTRUMENTS[ channel->inst ];
-	SETTINGS_SMP smp = unpackSMP( i );
+	SETTINGS_SMP smp = InstEdit::unpackSmp( i );
 	
 	if( channel->reset ){
 		channel->tsp_position	= 0;
@@ -565,3 +561,85 @@ void Synth::triggerSmp( Channel* channel ){
 }
 /*###########################################################################*/
 
+void Synth::polysynth( u16 input ){
+	static u8 wavedata[16];
+	static u16 lfo = 0;
+	lfo++;
+	//input+=lfo;
+	u8 len  = 0;//input & 0x1F; // 5 bit : 0 
+	u8 duty = (lfo>>6) & 0x03; // 2 bit : 6
+	u8 step = 0x3; //input & 0x07; // 3 bit : 8
+	u8 edir = 0x0800;		// 1 bit : 11
+	u8 vol[6]   = {
+		0xFF - (input>>5),
+		(input>>8)*4,
+		input>>5,
+		0xF - (lfo>>6),
+		input>>5,
+		input>>5,
+	};
+	u16 freq[6] = {
+		PWM_FREQ_TABLE[ input>>(input%8) ],
+		PWM_FREQ_TABLE[ input + (lfo>>8) ],
+		PWM_FREQ_TABLE[ input + (lfo>>8) ],
+		PWM_FREQ_TABLE[ input>>(input%8) ],
+		PWM_FREQ_TABLE[ input>>(input%8) ],
+		PWM_FREQ_TABLE[ input>>(input%8) ],
+	};
+	static bool init = false;
+	
+	// Pulse 1
+	*((volatile u16*)0x04000064) = 0x0000 | freq[0]; // Retrigger PU1
+	*((volatile u16*)0x0400006C) = 0x0000 | freq[1]; // Retrigger PU2
+	loadWav( wavedata );
+	//*((volatile u16*)0x04000074) = 0x0000 | freq[2]; // Retrigger WAV
+	REG_SOUND3CNT_X = SOUND3INIT | SOUND3PLAYLOOP | freq[2]; 
+	
+	*((volatile u16*)0x0400007C) = 0x0000 | freq[3]; // Retrigger NZE
+	*((volatile u16*)0x04000060) = 0x0079;// PU1 Sweep 
+	*((volatile u16*)0x04000062) = (vol[0] << 12) | edir | (step << 8) | (duty << 6); // PU1 Envelope 
+	*((volatile u16*)0x04000068) = (vol[1] << 12) | edir | (step << 8) | ((0x3 - duty) << 6); // PU2 Envelope
+	*((volatile u16*)0x04000072) = (vol[2] << 12) | (step << 8); // WAV Envelope
+	*((volatile u16*)0x04000078) = (vol[3] << 12) | (step << 8); // NZE Envelope
+	// Trigger channels just once
+	if(!init) {
+		*((volatile u16*)0x04000064) = 0x8000 | freq[0];
+		*((volatile u16*)0x0400006C) = 0x8000 | freq[1];
+		*((volatile u16*)0x04000074) = 0x8000 | freq[2];
+		*((volatile u16*)0x0400007C) = 0x8000 | freq[3];
+
+		#define OPERATOR1( a )	((u8)((u32)( operators[0] )))
+		#define OPERATOR2( a )	((u8)((u32)( operators[1] )))
+		#define OPERATOR3( a )	((u8)((u32)( operators[2] )))
+		#define OPERATOR4( a )	((u8)((u32)( operators[3] )))
+		
+		// Mix shapes
+		
+		wavedata[ 0] = (u8)((u32)( OPERATOR1( 0x0 ) + OPERATOR2( 0x0 ) + OPERATOR3( 0x0 ) + OPERATOR4( 0x0 ) ) >> 2);
+		wavedata[ 1] = (u8)((u32)( OPERATOR1( 0x1 ) + OPERATOR2( 0x1 ) + OPERATOR3( 0x1 ) + OPERATOR4( 0x1 ) ) >> 2);
+		wavedata[ 2] = (u8)((u32)( OPERATOR1( 0x2 ) + OPERATOR2( 0x2 ) + OPERATOR3( 0x2 ) + OPERATOR4( 0x2 ) ) >> 2);
+		wavedata[ 3] = (u8)((u32)( OPERATOR1( 0x3 ) + OPERATOR2( 0x3 ) + OPERATOR3( 0x3 ) + OPERATOR4( 0x3 ) ) >> 2);
+		wavedata[ 4] = (u8)((u32)( OPERATOR1( 0x4 ) + OPERATOR2( 0x4 ) + OPERATOR3( 0x4 ) + OPERATOR4( 0x4 ) ) >> 2);
+		wavedata[ 5] = (u8)((u32)( OPERATOR1( 0x5 ) + OPERATOR2( 0x5 ) + OPERATOR3( 0x5 ) + OPERATOR4( 0x5 ) ) >> 2);
+		wavedata[ 6] = (u8)((u32)( OPERATOR1( 0x6 ) + OPERATOR2( 0x6 ) + OPERATOR3( 0x6 ) + OPERATOR4( 0x6 ) ) >> 2);
+		wavedata[ 7] = (u8)((u32)( OPERATOR1( 0x7 ) + OPERATOR2( 0x7 ) + OPERATOR3( 0x7 ) + OPERATOR4( 0x7 ) ) >> 2);				
+		wavedata[ 8] = (u8)((u32)( OPERATOR1( 0x8 ) + OPERATOR2( 0x8 ) + OPERATOR3( 0x8 ) + OPERATOR4( 0x8 ) ) >> 2);
+		wavedata[ 9] = (u8)((u32)( OPERATOR1( 0x9 ) + OPERATOR2( 0x9 ) + OPERATOR3( 0x9 ) + OPERATOR4( 0x9 ) ) >> 2);
+		wavedata[10] = (u8)((u32)( OPERATOR1( 0xA ) + OPERATOR2( 0xA ) + OPERATOR3( 0xA ) + OPERATOR4( 0xA ) ) >> 2);
+		wavedata[11] = (u8)((u32)( OPERATOR1( 0xB ) + OPERATOR2( 0xB ) + OPERATOR3( 0xB ) + OPERATOR4( 0xB ) ) >> 2);
+		wavedata[12] = (u8)((u32)( OPERATOR1( 0xC ) + OPERATOR2( 0xC ) + OPERATOR3( 0xC ) + OPERATOR4( 0xC ) ) >> 2);
+		wavedata[13] = (u8)((u32)( OPERATOR1( 0xD ) + OPERATOR2( 0xD ) + OPERATOR3( 0xD ) + OPERATOR4( 0xD ) ) >> 2);
+		wavedata[14] = (u8)((u32)( OPERATOR1( 0xE ) + OPERATOR2( 0xE ) + OPERATOR3( 0xE ) + OPERATOR4( 0xE ) ) >> 2);
+		wavedata[15] = (u8)((u32)( OPERATOR1( 0xF ) + OPERATOR2( 0xF ) + OPERATOR3( 0xF ) + OPERATOR4( 0xF ) ) >> 2);
+		
+		#undef OPERATOR4
+		#undef OPERATOR3
+		#undef OPERATOR2
+		#undef OPERATOR1
+		
+		loadWav( wavedata );
+		init = true;
+	}
+	return;
+	
+}

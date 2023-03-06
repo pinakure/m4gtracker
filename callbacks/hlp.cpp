@@ -1,5 +1,20 @@
+#include "hlp.hpp"
+#include "../data/help.c"
 
-static void helpBlit(const u16 *help_data, int startx, int starty, int x, int y, int width, int height){
+u16 	Help::index_button 		= 0;
+u16 	Help::index_topic  		= 0;
+u16 	Help::index_last_topic  = 0;
+bool	Help::button_redraw		= false;
+bool 	Help::data_redraw 		= false;
+u16 	Help::old_offset 		= 1;
+u16 	Help::offset			= 0;
+int 	Help::button_last_x		= -1;
+int 	Help::button_last_y		= -1;
+int 	Help::button_last_index	= -1;
+int 	Help::last_offset		= -1;
+int 	Help::button_moved		= -1;
+
+void Help::blit( const u16 *help_data, int startx, int starty, int x, int y, int width, int height ){
 	static int offsetSrc;
 	static int offsetDst;
 	
@@ -12,21 +27,13 @@ static void helpBlit(const u16 *help_data, int startx, int starty, int x, int y,
 		offsetSrc = (sy*26)+startx;
 		offsetDst = (y<<6)+x;
 		
-		DmaCopy(3, help_data+offsetSrc, (SCREEN_BASE2_ADDR)+offsetDst, width, 16);
+		DmaCopy(3, help_data + offsetSrc, (SCREEN_BASE2_ADDR) + offsetDst, width, 16);
 		y++;
 	}
 	//R_DISPCNT = (DISP_BG0_ON | DISP_BG1_ON |  DISP_BG2_ON) &0x0f00;
 }
 
-static u16 index_help_button = 0;
-static u16 index_help_topic  = 0;
-static u16 index_help_last_topic  = 0;
-static bool help_button_redraw= false;
-static bool help_data_redraw 	= false;
-static u16 old_help_offset 	= 1;
-static u16 help_offset		= 0;
-
-void helpDrawButton(int x, int y, const char *t, bool active){
+void Help::drawButton(int x, int y, const char *t, bool active){
 	y+=3;
 	x+=1;
 	for(int i=0, tx=x, li=strlen(t); i<li; i++){
@@ -38,142 +45,134 @@ void helpDrawButton(int x, int y, const char *t, bool active){
 		tx++;
 	}
 }
-
-static int help_button_last_x;
-static int help_button_last_y;
-static int help_button_last_index;
-static int help_last_offset;
-static int help_button_moved;
 	
-void eraseButton(){
-	int o = help_button_last_y - help_offset;
+void Help::eraseButton(){
+	int o = Help::button_last_y - Help::offset;
 	if(o >= 0){
 		if(o <= 15){
-			helpDrawButton(	help_button_last_x, o, "-------------------------", 0);	
+			Help::drawButton( Help::button_last_x, o, "-------------------------", 0);	
 		}
 	}
 
-	help_button_last_index = index_help_button;
-	help_button_last_x = help_buttons[help_topics[index_help_topic].button_list[help_button_last_index]].x;
-	help_button_last_y = help_buttons[help_topics[index_help_topic].button_list[help_button_last_index]].y;
+	Help::button_last_index 	= Help::index_button;
+	Help::button_last_x 		= Help::buttons[ Help::topics[ Help::index_topic ].button_list[ Help::button_last_index ] ].x;
+	Help::button_last_y 		= Help::buttons[ Help::topics[ Help::index_topic ].button_list[ Help::button_last_index ] ].y;
 }
 	
-
-void helpScrollDown(void){
+void Help::scrollDown(){
 	eraseButton();
-	if(help_offset < 48) help_offset++;
-	help_data_redraw = true;
+	if( offset < 48 ) offset++;
+	data_redraw = true;
 }
 
-void helpScrollUp(void){
+void Help::scrollUp(){
 	eraseButton();
-	if(help_offset > 0) help_offset--;
-	help_data_redraw = true;
+	if( offset > 0) offset--;
+	data_redraw = true;
 }
 
-void helpPrevButton(void){
-	if(index_help_button > 0){
-		index_help_button--;
+void Help::prevButton(){
+	if(index_button > 0){
+		index_button--;
 	}
 	eraseButton();
-	help_button_moved = true;
-	help_button_redraw = true;
+	button_moved = true;
+	button_redraw = true;
 	// TODO: If current button if out of sight, scroll viewport until it is visible
 }
 
-void helpNextButton(void){
-	if(index_help_button < help_topics[index_help_topic].button_count-1){
-		index_help_button++;
+void Help::nextButton(){
+	if( index_button < Help::topics[ Help::index_topic ].button_count - 1 ){
+		index_button++;
 	}
 	eraseButton();
-	help_button_moved = true;
-	help_button_redraw = true;
+	button_moved  = true;
+	button_redraw = true;
 	// TODO: If current button if out of sight, scroll viewport until it is visible
 }
 
-void helpActivateBack(void){
+void Help::activateBack(){
 	eraseButton();
-	index_help_topic = index_help_last_topic;	
-	index_help_last_topic = 0;
-	index_help_button = 0;
-	help_offset = help_last_offset;
-	help_data_redraw = true;
-	help_button_redraw = true;
+	index_topic 		= index_last_topic;	
+	index_last_topic 	= 0;
+	index_button 		= 0;
+	offset 				= last_offset;
+	data_redraw 		= true;
+	button_redraw 		= true;
 }
 
-void helpActivateButton(void){
+void Help::activateButton(){
 	eraseButton();
-	index_help_last_topic = index_help_topic;
-	index_help_topic = help_buttons[help_topics[index_help_topic].button_list[index_help_button]].destination_index;
-	index_help_button = 0;
-	help_last_offset = help_offset;
-	help_offset = 0;
-	help_data_redraw = true;
-	help_button_redraw = true;
+	index_last_topic 	= index_topic;
+	index_topic 	 	= Help::buttons[ Help::topics[ index_topic ].button_list[ index_button ] ].destination_index;
+	index_button 	 	= 0;
+	last_offset 		= offset;
+	offset 				= 0;
+	data_redraw 		= true;
+	button_redraw 		= true;
 }
 
-void helpUpdateButtons(void){
+void Help::updateButtons(){
 	int x,y;
 	const char *t;
 	int p =0;
 	
 	
-	for(int i=0, o=0, il= help_topics[index_help_topic].button_count; i<il; i++){
-		p = help_topics[index_help_topic].button_list[i];
-		y = help_buttons[p].y;
-		x = help_buttons[p].x;
-		t = help_buttons[p].text;
-		o = y - help_offset;
+	for(int i=0, o=0, il = Help::topics[ index_topic ].button_count; i<il; i++){
+		p = Help::topics[ index_topic ].button_list[i];
+		y = buttons[p].y;
+		x = buttons[p].x;
+		t = buttons[p].text;
+		o = y - offset;
 		if(o >= 0){
 			if(o <= 15){
-				helpDrawButton(x, o, t, i==index_help_button);
+				Help::drawButton(x, o, t, i==index_button);
 				continue;
 			} 
 		} 
 		
-		if(help_button_moved){
-			if(i==index_help_button){
-				help_offset = (y>48?48:y)-10;
-				help_data_redraw = true;
+		if( button_moved ){
+			if( i == index_button ){
+				offset 		= ( y > 48 ? 48 : y ) - 10;
+				data_redraw = true;
 			}
 		}
 	}
-	help_button_moved = false;
+	button_moved = false;
 }
 
-void updateHLP(RegionHandler* rh){
+void Help::update(RegionHandler* rh){
 	
-	if(KEY.down(KEY_B)) { helpActivateBack(); }
-	if(KEY.down(KEY_A)) { helpActivateButton(); }
-	if(KEY.down(KEY_UP	) ) helpScrollUp(); else if(KEY.down(KEY_DOWN) ) helpScrollDown();
-	if(KEY.down(KEY_LEFT)) helpPrevButton();else if(KEY.down(KEY_RIGHT)) helpNextButton();
+	if(KEY.down(KEY_B	)) { Help::activateBack(); }
+	if(KEY.down(KEY_A	)) { Help::activateButton(); }
+	if(KEY.down(KEY_UP	)) Help::scrollUp(); else if(KEY.down(KEY_DOWN) ) Help::scrollDown();
+	if(KEY.down(KEY_LEFT)) Help::prevButton();else if(KEY.down(KEY_RIGHT)) Help::nextButton();
 
 	// Propagate Region redraw flag
-	if(rh->redraw){
-		help_data_redraw = true;
+	if( rh->redraw ){
+		data_redraw = true;
 	}
 
-	if(help_data_redraw){
-		helpBlit(help_topics[index_help_topic].map_data, 0, help_offset, 1, 3, 26, 16);
+	if( data_redraw ){
+		Help::blit( Help::topics[ index_topic ].map_data, 0, offset, 1, 3, 26, 16 );
 		
 		// Erase old scrollbar knob
-		gpu.set(1, 28, 3+(old_help_offset>>2), 0x60);
+		gpu.set( 1, 28, 3+( old_offset >> 2 ), 0x60);
 		// Draw new scrollbar knob
-		gpu.set(1, 28, 3+(help_offset>>2), 0x6F);
+		gpu.set( 1, 28, 3+( offset >> 2 ), 0x6F);
 		
 		// Memorize current help_offset
-		old_help_offset = help_offset;
+		old_offset = offset;
 		
-		help_data_redraw = false;
-		help_button_redraw = true;
+		data_redraw = false;
+		button_redraw = true;
 	}
 	
-	if(help_button_redraw){
+	if( button_redraw ){
 		
-		helpUpdateButtons();
-	//	HEXADECIMAL_DOUBLE(13,1, 7, sizeof(*help_topics[index_help_topic].button_list[0]));
-	//	HEXADECIMAL_DOUBLE(15,1, 7, index_help_button);
-		help_button_redraw = false;
+		Help::updateButtons();
+	//	HEXADECIMAL_DOUBLE(13,1, 7, sizeof(*Help::topics[index_topic].button_list[0]));
+	//	HEXADECIMAL_DOUBLE(15,1, 7, index_button);
+		button_redraw = false;
 	}
 }
-

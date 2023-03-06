@@ -1,5 +1,9 @@
 Sram SRAM;
 
+#include "../../callbacks/ins.hpp"
+#include "../../callbacks/pat.hpp"
+#include "../../callbacks/trk.hpp"
+
 extern "C" {
 	u8 	 SRAM_ReadByte(u16 position);
 	void SRAM_WriteByte(u16 position, u8 byte);
@@ -76,7 +80,7 @@ u32 Sram::read32() {
 	return (d<<24) | (c<<16) | (b<<8) | a;
 }
 
-void Sram::songSave(){
+void Sram::songSave( bool verbose ){
 	int i;
 	
 	seek(0x80);
@@ -94,7 +98,7 @@ void Sram::songSave(){
 		write(VAR_SONG.ARTIST[i]);
 	} 
 
-	drawPosition(27, 2, 2);	
+	if( verbose ) drawPosition(27, 2, 2);	
 	//0x140
 	
 	// Write Groove Steps
@@ -104,7 +108,7 @@ void Sram::songSave(){
 	}
 	
 	//0x1A0
-	drawPosition(27, 3, 2);	
+	if( verbose ) drawPosition(27, 3, 2);	
 	seek(0x200);
 		
 	forward(1536 * VAR_CFG.SLOT);	
@@ -117,12 +121,12 @@ void Sram::songSave(){
 		write(VAR_SONG.PATTERNS[5].ORDER[i]);
 	}
 	
-	drawPosition(27, 4, 2);	
+	if( verbose ) drawPosition(27, 4, 2);	
 	
-	sharedDataSave();
+	sharedDataSave( verbose );
 }
 
-void Sram::songLoad(){
+void Sram::songLoad( bool verbose ){
 	int i;
 	u8 h;
 	
@@ -147,7 +151,7 @@ void Sram::songLoad(){
 		VAR_SONG.ARTIST[i] = read();
 	} 
 
-	drawPosition(27, 2, 6);	
+	if( verbose ) drawPosition(27, 2, 6);	
 
 	forward(16 * VAR_CFG.SLOT);
 	for(i=0; i<16; i++){
@@ -155,7 +159,7 @@ void Sram::songLoad(){
 	}
 		
 	//1A0
-	drawPosition(27, 3, 6);	
+	if( verbose ) drawPosition(27, 3, 6);	
 	seek(0x200);
 	
 	
@@ -169,15 +173,15 @@ void Sram::songLoad(){
 		VAR_SONG.PATTERNS[5].ORDER[i] = read();
 	}
 	
-	patternSync(VAR_CFG.ORDERPOSITION);
-	cellSync();
+	PatEdit::syncPosition( VAR_CFG.ORDERPOSITION );
+	Tracker::syncPattern();
 	
-	drawPosition(27, 4, 6);	
+	if( verbose ) drawPosition(27, 4, 6);	
 	
-	sharedDataLoad();
+	sharedDataLoad( verbose );
 }
 
-void Sram::songDefaults(void){
+void Sram::songDefaults( bool verbose ){
 	int i,di;
 	
 	for(i=0; i<14; i++){
@@ -228,11 +232,7 @@ void Sram::songDefaults(void){
 	}	
 }
 
-
-
-
-
-void Sram::sharedDataSave(void){
+void Sram::sharedDataSave( bool verbose ){
 	int i, di;
 	// Dump pattern data
 	seek(0x2600);
@@ -247,11 +247,11 @@ void Sram::sharedDataSave(void){
 	}	
 	
 	//0x4E00
-	drawPosition(27, 5, 2);	
+	if( verbose ) drawPosition(27, 5, 2);	
 	seek(0x5000);
 	
 	//Dump instruments (these are shared along all songs)
-	instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT]);
+	InstEdit::copy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT]);
 
 	for(i=0; i<64; i++){
 		write(VAR_INSTRUMENTS[i].TYPE);
@@ -271,10 +271,10 @@ void Sram::sharedDataSave(void){
 		}
 	}
 
-	drawPosition(27, 5, 2);	
+	if( verbose ) drawPosition(27, 5, 2);	
 }
 
-void Sram::sharedDataLoad(void){
+void Sram::sharedDataLoad( bool verbose ){
 	int i, di;
 
 	seek(0x2600);
@@ -291,7 +291,7 @@ void Sram::sharedDataLoad(void){
 	}	
 	
 	//0x4E00
-	drawPosition(27, 5, 6);	
+	if( verbose ) drawPosition(27, 5, 6);	
 	seek(0x5000);
 	
 	//Load instruments (these are shared along all songs)
@@ -314,14 +314,14 @@ void Sram::sharedDataLoad(void){
 		}
 	}
 
-	instcopy(&VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT], &VAR_INSTRUMENT);
+	InstEdit::copy(&VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT], &VAR_INSTRUMENT);
 	
 	Sequencer::setTempo( VAR_SONG.BPM );
 
-	drawPosition(27, 5, 6);
+	if( verbose ) drawPosition(27, 5, 6);
 }
 
-void Sram::dataBackup(void){
+void Sram::dataBackup( bool verbose ){
 	int i, di;
 	
 	// Dump 6 Song Headers (32 bytes each one, 192 total)
@@ -364,12 +364,12 @@ void Sram::dataBackup(void){
 		}
 	}
 	
-	sharedDataSave();
+	sharedDataSave( verbose );
 	
-	drawPosition(27, 1, 5);
+	if( verbose ) drawPosition(27, 1, 5);
 }
 
-void Sram::dataRevert(void){
+void Sram::dataRevert( bool verbose ){
 	int i, di;
 	u8  h;
 	
@@ -416,7 +416,7 @@ void Sram::dataRevert(void){
 		}
 	}
 	
-	sharedDataLoad();
+	sharedDataLoad( verbose );
 	
-	drawPosition(27, 1, 7);
+	if( verbose ) drawPosition(27, 1, 7);
 }

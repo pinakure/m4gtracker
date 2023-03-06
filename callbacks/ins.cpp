@@ -1,42 +1,34 @@
-void modifyFmOp1ADSR(Control *c, bool bigstep, bool add, u32 *pointer); 
-void modifyFmOp2ADSR(Control *c, bool bigstep, bool add, u32 *pointer); 
-void modifyFmOp3ADSR(Control *c, bool bigstep, bool add, u32 *pointer); 
-void modifyFmOp4ADSR(Control *c, bool bigstep, bool add, u32 *pointer);
-void modifyWavOp1ADSR(Control *c, bool bigstep, bool add, u32 *pointer); 
-void modifyWavOp2ADSR(Control *c, bool bigstep, bool add, u32 *pointer); 
-void modifyWavOp3ADSR(Control *c, bool bigstep, bool add, u32 *pointer); 
-void modifyWavOp4ADSR(Control *c, bool bigstep, bool add, u32 *pointer);
-void modifySmpADSR(Control *c, bool bigstep, bool add, u32 *pointer);
+#include "ins.hpp"
 
 // General Callbacks
-CALLBACK( cb_ins_index		, instrumentIndex	, EVENT_MODIFY_B 	, &VAR_CFG.CURRENTINSTRUMENT	, NULL);
-CALLBACK( cb_ins_name		, ALPHA6			, EVENT_KEYDOWN_B 	, &VAR_INSTRUMENT.NAME			, NULL);
-CALLBACK( cb_ins_type		, instrumentType	, EVENT_MODIFY_B 	, &VAR_INSTRUMENT.TYPE			, NULL);
+CALLBACK( cb_ins_index		, InstEdit::index		, EVENT_MODIFY_B 	, &VAR_CFG.CURRENTINSTRUMENT	, NULL);
+CALLBACK( cb_ins_name		, ALPHA6				, EVENT_KEYDOWN_B 	, &VAR_INSTRUMENT.NAME			, NULL);
+CALLBACK( cb_ins_type		, InstEdit::type		, EVENT_MODIFY_B 	, &VAR_INSTRUMENT.TYPE			, NULL);
 // PWM Controls
-CALLBACK( cb_ins_volumefade	, instrument4BIT	, EVENT_MODIFY_B 	, &VAR_PWM.VOLUMEFADE			, NULL);
-CALLBACK( cb_ins_tspenvelope, instrument8BIT	, EVENT_MODIFY_B 	, &VAR_PWM.TSP_ENVELOPE			, NULL);
-CALLBACK( cb_ins_tspmode	, instrument2BIT	, EVENT_MODIFY_B 	, &VAR_PWM.TSP_LOOP 		 	, NULL);
-CALLBACK( cb_ins_tspenable	, instrument1BIT	, EVENT_KEYDOWN_B 	, &VAR_PWM.TSP_ENABLE	 		, NULL);
-CALLBACK( cb_ins_volenable	, instrument1BIT	, EVENT_KEYDOWN_B 	, &VAR_PWM.VOL_ENABLE	 		, NULL);
-CALLBACK( cb_ins_volmode	, instrument2BIT	, EVENT_MODIFY_B 	, &VAR_PWM.VOL_LOOP 		 	, NULL);
-CALLBACK( cb_ins_volenvelope, instrument8BIT	, EVENT_MODIFY_B 	, &VAR_PWM.VOL_ENVELOPE			, NULL);
-CALLBACK( cb_ins_dutycycle	, instrument2BIT	, EVENT_MODIFY_B 	, &VAR_PWM.DUTYCYCLE		 	, NULL);
-CALLBACK( cb_ins_length		, instrument4BIT	, EVENT_MODIFY_B 	, &VAR_PWM.LENGTH		 		, NULL);
-CALLBACK( cb_ins_sweepdir	, instrument1BIT	, EVENT_KEYDOWN_B	, &VAR_PWM.SWEEPDIR		 		, NULL);
-CALLBACK( cb_ins_sweepspeed	, instrument4BIT	, EVENT_MODIFY_B	, &VAR_PWM.SWEEPSPEED	 		, NULL);
-CALLBACK( cb_ins_sweepsteps , instrument4BIT	, EVENT_MODIFY_B	, &VAR_PWM.SWEEPSTEPS	 		, NULL);
-CALLBACK( cb_ins_pwm_level	, instrument4BIT	, EVENT_MODIFY_B	, &VAR_PWM.LEVEL				, NULL);
-CALLBACK( cb_ins_envelopedir, instrument1BIT	, EVENT_KEYDOWN_B	, &VAR_PWM.ENVELOPEDIR	 		, NULL);
+CALLBACK( cb_ins_volumefade	, InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_PWM.VOLUMEFADE			, NULL);
+CALLBACK( cb_ins_tspenvelope, InstEdit::modByte		, EVENT_MODIFY_B 	, &VAR_PWM.TSP_ENVELOPE			, NULL);
+CALLBACK( cb_ins_tspmode	, InstEdit::mod2b		, EVENT_MODIFY_B 	, &VAR_PWM.TSP_LOOP 		 	, NULL);
+CALLBACK( cb_ins_tspenable	, InstEdit::modBit		, EVENT_KEYDOWN_B 	, &VAR_PWM.TSP_ENABLE	 		, NULL);
+CALLBACK( cb_ins_volenable	, InstEdit::modBit		, EVENT_KEYDOWN_B 	, &VAR_PWM.VOL_ENABLE	 		, NULL);
+CALLBACK( cb_ins_volmode	, InstEdit::mod2b		, EVENT_MODIFY_B 	, &VAR_PWM.VOL_LOOP 		 	, NULL);
+CALLBACK( cb_ins_volenvelope, InstEdit::modByte		, EVENT_MODIFY_B 	, &VAR_PWM.VOL_ENVELOPE			, NULL);
+CALLBACK( cb_ins_dutycycle	, InstEdit::mod2b		, EVENT_MODIFY_B 	, &VAR_PWM.DUTYCYCLE		 	, NULL);
+CALLBACK( cb_ins_length		, InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_PWM.LENGTH		 		, NULL);
+CALLBACK( cb_ins_sweepdir	, InstEdit::modBit		, EVENT_KEYDOWN_B	, &VAR_PWM.SWEEPDIR		 		, NULL);
+CALLBACK( cb_ins_sweepspeed	, InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.SWEEPSPEED	 		, NULL);
+CALLBACK( cb_ins_sweepsteps , InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.SWEEPSTEPS	 		, NULL);
+CALLBACK( cb_ins_pwm_level	, InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.LEVEL				, NULL);
+CALLBACK( cb_ins_envelopedir, InstEdit::modBit		, EVENT_KEYDOWN_B	, &VAR_PWM.ENVELOPEDIR	 		, NULL);
 // PWM Tables
 // Repeat 16 times
-#define CB_INS_TSP(a)		CALLBACK( cb_ins_tsp_0##a , instrument4BIT, EVENT_MODIFY_B, &VAR_PWM.TSP[0x##a], NULL) 
+#define CB_INS_TSP(a)		CALLBACK( cb_ins_tsp_0##a , InstEdit::modNibble, EVENT_MODIFY_B, &VAR_PWM.TSP[0x##a], NULL) 
 CB_INS_TSP(0);			CB_INS_TSP(1);			CB_INS_TSP(2);			CB_INS_TSP(3);
 CB_INS_TSP(4);			CB_INS_TSP(5);			CB_INS_TSP(6);			CB_INS_TSP(7);
 CB_INS_TSP(8);			CB_INS_TSP(9);			CB_INS_TSP(A);			CB_INS_TSP(B);
 CB_INS_TSP(C);			CB_INS_TSP(D);			CB_INS_TSP(E);			CB_INS_TSP(F);
 #undef CB_INS_TSP
 
-#define CB_INS_VOL(a)		CALLBACK( cb_ins_vol_0##a , instrument4BIT, EVENT_MODIFY_B, &VAR_PWM.VOL[0x##a], NULL) 
+#define CB_INS_VOL(a)		CALLBACK( cb_ins_vol_0##a , InstEdit::modNibble, EVENT_MODIFY_B, &VAR_PWM.VOL[0x##a], NULL) 
 CB_INS_VOL(0);			CB_INS_VOL(1);			CB_INS_VOL(2);			CB_INS_VOL(3);
 CB_INS_VOL(4);			CB_INS_VOL(5);			CB_INS_VOL(6);			CB_INS_VOL(7);
 CB_INS_VOL(8);			CB_INS_VOL(9);			CB_INS_VOL(A);			CB_INS_VOL(B);
@@ -44,18 +36,18 @@ CB_INS_VOL(C);			CB_INS_VOL(D);			CB_INS_VOL(E);			CB_INS_VOL(F);
 #undef CB_INS_VOL
 
 // VAR WAV
-CALLBACK( cb_ins_phase		, instrument1BIT	, EVENT_KEYDOWN_B 	, &VAR_WAV.PHASE	 			, NULL);
-CALLBACK( cb_ins_am			, instrument1BIT	, EVENT_KEYDOWN_B 	, &VAR_WAV.AM		 			, NULL);
-CALLBACK( cb_ins_mixpercent	, instrument3BIT	, EVENT_MODIFY_B 	, &VAR_WAV.MIXPERCENT 			, NULL);
-CALLBACK( cb_ins_wav_op1type, instrument3BIT	, EVENT_MODIFY_B 	, &VAR_WAV.OP1_TYPE				, NULL);
-CALLBACK( cb_ins_wav_op2type, instrument3BIT	, EVENT_MODIFY_B 	, &VAR_WAV.OP2_TYPE				, NULL);
-CALLBACK( cb_ins_wav_op3type, instrument3BIT	, EVENT_MODIFY_B 	, &VAR_WAV.OP3_TYPE				, NULL);
-CALLBACK( cb_ins_wav_op4type, instrument3BIT	, EVENT_MODIFY_B 	, &VAR_WAV.OP4_TYPE				, NULL);
+CALLBACK( cb_ins_phase		, InstEdit::modBit	, EVENT_KEYDOWN_B 	, &VAR_WAV.PHASE	 			, NULL);
+CALLBACK( cb_ins_am			, InstEdit::modBit	, EVENT_KEYDOWN_B 	, &VAR_WAV.AM		 			, NULL);
+CALLBACK( cb_ins_mixpercent	, InstEdit::mod3b	, EVENT_MODIFY_B 	, &VAR_WAV.MIXPERCENT 			, NULL);
+CALLBACK( cb_ins_wav_op1type, InstEdit::mod3b	, EVENT_MODIFY_B 	, &VAR_WAV.OP1_TYPE				, NULL);
+CALLBACK( cb_ins_wav_op2type, InstEdit::mod3b	, EVENT_MODIFY_B 	, &VAR_WAV.OP2_TYPE				, NULL);
+CALLBACK( cb_ins_wav_op3type, InstEdit::mod3b	, EVENT_MODIFY_B 	, &VAR_WAV.OP3_TYPE				, NULL);
+CALLBACK( cb_ins_wav_op4type, InstEdit::mod3b	, EVENT_MODIFY_B 	, &VAR_WAV.OP4_TYPE				, NULL);
 
-#define CB_INS_WAV_OP1ADSR(a)		CALLBACK( cb_ins_wav_op1adsr_##a , modifyWavOp1ADSR , EVENT_MODIFY_B , &VAR_WAV.OP1_ADSR[a], NULL)
-#define CB_INS_WAV_OP2ADSR(a)		CALLBACK( cb_ins_wav_op2adsr_##a , modifyWavOp2ADSR , EVENT_MODIFY_B , &VAR_WAV.OP2_ADSR[a], NULL)
-#define CB_INS_WAV_OP3ADSR(a)		CALLBACK( cb_ins_wav_op3adsr_##a , modifyWavOp3ADSR , EVENT_MODIFY_B , &VAR_WAV.OP3_ADSR[a], NULL)
-#define CB_INS_WAV_OP4ADSR(a)		CALLBACK( cb_ins_wav_op4adsr_##a , modifyWavOp4ADSR , EVENT_MODIFY_B , &VAR_WAV.OP4_ADSR[a], NULL)
+#define CB_INS_WAV_OP1ADSR(a)		CALLBACK( cb_ins_wav_op1adsr_##a , InstEdit::modAdsrWav, EVENT_MODIFY_B , &VAR_WAV.OP1_ADSR[a], NULL)
+#define CB_INS_WAV_OP2ADSR(a)		CALLBACK( cb_ins_wav_op2adsr_##a , InstEdit::modAdsrWav, EVENT_MODIFY_B , &VAR_WAV.OP2_ADSR[a], NULL)
+#define CB_INS_WAV_OP3ADSR(a)		CALLBACK( cb_ins_wav_op3adsr_##a , InstEdit::modAdsrWav, EVENT_MODIFY_B , &VAR_WAV.OP3_ADSR[a], NULL)
+#define CB_INS_WAV_OP4ADSR(a)		CALLBACK( cb_ins_wav_op4adsr_##a , InstEdit::modAdsrWav, EVENT_MODIFY_B , &VAR_WAV.OP4_ADSR[a], NULL)
 CB_INS_WAV_OP1ADSR(0);	CB_INS_WAV_OP2ADSR(0);	CB_INS_WAV_OP3ADSR(0);	CB_INS_WAV_OP4ADSR(0);
 CB_INS_WAV_OP1ADSR(1);	CB_INS_WAV_OP2ADSR(1);	CB_INS_WAV_OP3ADSR(1);	CB_INS_WAV_OP4ADSR(1);
 CB_INS_WAV_OP1ADSR(2);	CB_INS_WAV_OP2ADSR(2);	CB_INS_WAV_OP3ADSR(2);	CB_INS_WAV_OP4ADSR(2);
@@ -65,7 +57,7 @@ CB_INS_WAV_OP1ADSR(3);	CB_INS_WAV_OP2ADSR(3);	CB_INS_WAV_OP3ADSR(3);	CB_INS_WAV_
 #undef CB_INS_WAV_OP3ADSR
 #undef CB_INS_WAV_OP4ADSR
 
-#define CB_INS_WAV_PRESET(a)		CALLBACK( cb_ins_wav_preset##a , LOADWAVPRESET0 , EVENT_KEYUP_B, &VAR_WAV.WAVPRESET[a] , NULL)
+#define CB_INS_WAV_PRESET(a)		CALLBACK( cb_ins_wav_preset##a , InstEdit::wavPreset, EVENT_KEYUP_B, &VAR_WAV.WAVPRESET[a] , NULL)
 CB_INS_WAV_PRESET(0);
 CB_INS_WAV_PRESET(1);
 CB_INS_WAV_PRESET(2);
@@ -75,17 +67,17 @@ CB_INS_WAV_PRESET(5);
 #undef CB_INS_WAV_PRESET
 
 //VAR_FMW
-CALLBACK( cb_ins_algorithm	, instrument6VAL	, EVENT_MODIFY_B 	, &VAR_FMW.ALGORITHM			, NULL);
-CALLBACK( cb_ins_fm_mult	, instrument4BIT	, EVENT_MODIFY_B 	, &VAR_FMW.MULT					, NULL);
-CALLBACK( cb_ins_fm_op1type	, instrument3BIT	, EVENT_MODIFY_B 	, &VAR_FMW.OP1_TYPE				, NULL);
-CALLBACK( cb_ins_fm_op2type	, instrument3BIT	, EVENT_MODIFY_B 	, &VAR_FMW.OP2_TYPE				, NULL);
-CALLBACK( cb_ins_fm_op3type	, instrument3BIT	, EVENT_MODIFY_B 	, &VAR_FMW.OP3_TYPE				, NULL);
-CALLBACK( cb_ins_fm_op4type	, instrument3BIT	, EVENT_MODIFY_B 	, &VAR_FMW.OP4_TYPE				, NULL);
+CALLBACK( cb_ins_algorithm	, InstEdit::modAlgorithm, EVENT_MODIFY_B 	, &VAR_FMW.ALGORITHM			, NULL);
+CALLBACK( cb_ins_fm_mult	, InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_FMW.MULT					, NULL);
+CALLBACK( cb_ins_fm_op1type	, InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_FMW.OP1_TYPE				, NULL);
+CALLBACK( cb_ins_fm_op2type	, InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_FMW.OP2_TYPE				, NULL);
+CALLBACK( cb_ins_fm_op3type	, InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_FMW.OP3_TYPE				, NULL);
+CALLBACK( cb_ins_fm_op4type	, InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_FMW.OP4_TYPE				, NULL);
 
-#define CB_INS_FM_OP1ADSR(a)		CALLBACK( cb_ins_fm_op1adsr_##a , modifyFmOp1ADSR , EVENT_MODIFY_B , &VAR_FMW.OP1_ADSR[a], NULL)
-#define CB_INS_FM_OP2ADSR(a)		CALLBACK( cb_ins_fm_op2adsr_##a , modifyFmOp2ADSR , EVENT_MODIFY_B , &VAR_FMW.OP2_ADSR[a], NULL)
-#define CB_INS_FM_OP3ADSR(a)		CALLBACK( cb_ins_fm_op3adsr_##a , modifyFmOp3ADSR , EVENT_MODIFY_B , &VAR_FMW.OP3_ADSR[a], NULL)
-#define CB_INS_FM_OP4ADSR(a)		CALLBACK( cb_ins_fm_op4adsr_##a , modifyFmOp4ADSR , EVENT_MODIFY_B , &VAR_FMW.OP4_ADSR[a], NULL)
+#define CB_INS_FM_OP1ADSR(a)		CALLBACK( cb_ins_fm_op1adsr_##a , InstEdit::modAdsrFmw , EVENT_MODIFY_B , &VAR_FMW.OP1_ADSR[a], NULL)
+#define CB_INS_FM_OP2ADSR(a)		CALLBACK( cb_ins_fm_op2adsr_##a , InstEdit::modAdsrFmw , EVENT_MODIFY_B , &VAR_FMW.OP2_ADSR[a], NULL)
+#define CB_INS_FM_OP3ADSR(a)		CALLBACK( cb_ins_fm_op3adsr_##a , InstEdit::modAdsrFmw , EVENT_MODIFY_B , &VAR_FMW.OP3_ADSR[a], NULL)
+#define CB_INS_FM_OP4ADSR(a)		CALLBACK( cb_ins_fm_op4adsr_##a , InstEdit::modAdsrFmw , EVENT_MODIFY_B , &VAR_FMW.OP4_ADSR[a], NULL)
 CB_INS_FM_OP1ADSR(0);	CB_INS_FM_OP2ADSR(0);	CB_INS_FM_OP3ADSR(0);	CB_INS_FM_OP4ADSR(0);
 CB_INS_FM_OP1ADSR(1);	CB_INS_FM_OP2ADSR(1);	CB_INS_FM_OP3ADSR(1);	CB_INS_FM_OP4ADSR(1);
 CB_INS_FM_OP1ADSR(2);	CB_INS_FM_OP2ADSR(2);	CB_INS_FM_OP3ADSR(2);	CB_INS_FM_OP4ADSR(2);
@@ -96,28 +88,28 @@ CB_INS_FM_OP1ADSR(3);	CB_INS_FM_OP2ADSR(3);	CB_INS_FM_OP3ADSR(3);	CB_INS_FM_OP4A
 #undef CB_INS_FM_OP4ADSR
 
 //VAR_SMP
-CALLBACK( cb_ins_smp_start		, instrument8BIT	, EVENT_MODIFY_B 	, &VAR_SMP.START				, NULL);
-CALLBACK( cb_ins_smp_end		, instrument8BIT	, EVENT_MODIFY_B 	, &VAR_SMP.END					, NULL);
-CALLBACK( cb_ins_smp_frequency	, instrument8BIT	, EVENT_MODIFY_B 	, &VAR_SMP.FREQUENCY			, NULL);
-CALLBACK( cb_ins_smp_b			, instrument4BIT	, EVENT_MODIFY_B 	, &VAR_SMP.B					, NULL);
-CALLBACK( cb_ins_smp_s			, instrument4BIT	, EVENT_MODIFY_B 	, &VAR_SMP.S					, NULL);
-CALLBACK( cb_ins_smp_r			, instrument4BIT	, EVENT_MODIFY_B 	, &VAR_SMP.R					, NULL);
-CALLBACK( cb_ins_smp_synthmode	, instrument1BIT	, EVENT_KEYDOWN_B 	, &VAR_SMP.SYNTHMODE			, NULL);
-CALLBACK( cb_ins_smp_loop		, instrument2BIT	, EVENT_MODIFY_B 	, &VAR_SMP.LOOP					, NULL);
-CALLBACK( cb_ins_smp_kit		, instrument5BIT	, EVENT_MODIFY_B 	, &VAR_SMP.KIT					, NULL);
+CALLBACK( cb_ins_smp_start		, InstEdit::modByte		, EVENT_MODIFY_B 	, &VAR_SMP.START				, NULL);
+CALLBACK( cb_ins_smp_end		, InstEdit::modByte		, EVENT_MODIFY_B 	, &VAR_SMP.END					, NULL);
+CALLBACK( cb_ins_smp_frequency	, InstEdit::modByte		, EVENT_MODIFY_B 	, &VAR_SMP.FREQUENCY			, NULL);
+CALLBACK( cb_ins_smp_b			, InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_SMP.B					, NULL);
+CALLBACK( cb_ins_smp_s			, InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_SMP.S					, NULL);
+CALLBACK( cb_ins_smp_r			, InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_SMP.R					, NULL);
+CALLBACK( cb_ins_smp_synthmode	, InstEdit::modBit		, EVENT_KEYDOWN_B 	, &VAR_SMP.SYNTHMODE			, NULL);
+CALLBACK( cb_ins_smp_loop		, InstEdit::mod2b		, EVENT_MODIFY_B 	, &VAR_SMP.LOOP					, NULL);
+CALLBACK( cb_ins_smp_kit		, InstEdit::modSmpKit	, EVENT_MODIFY_B 	, &VAR_SMP.KIT					, NULL);
 
-#define CB_INS_SMPKIT(a)			CALLBACK( cb_ins_smpkit_0##a , NULL, EVENT_KEYUP_B, &VAR_SMP.SMPKIT[0x##a], NULL)
+#define CB_INS_SMPKIT(a)			CALLBACK( cb_ins_smpkit_0##a , InstEdit::smpPreset, EVENT_KEYUP_B, &VAR_SMP.SMPKIT[0x##a], NULL)
 CB_INS_SMPKIT(0);		CB_INS_SMPKIT(1);		CB_INS_SMPKIT(2);		CB_INS_SMPKIT(3);
 CB_INS_SMPKIT(4);		CB_INS_SMPKIT(5);		CB_INS_SMPKIT(6);		CB_INS_SMPKIT(7);
 CB_INS_SMPKIT(8);		CB_INS_SMPKIT(9);		CB_INS_SMPKIT(A);		CB_INS_SMPKIT(B);
 #undef CB_INS_SMPKIT
 
-#define CB_INS_SMP_ADSR(a)			CALLBACK( cb_ins_smp_adsr_##a , modifySmpADSR , EVENT_MODIFY_B , &VAR_SMP.ADSR[a], NULL)
+#define CB_INS_SMP_ADSR(a)			CALLBACK( cb_ins_smp_adsr_##a , InstEdit::modAdsrSmp , EVENT_MODIFY_B , &VAR_SMP.ADSR[a], NULL)
 CB_INS_SMP_ADSR(0);		CB_INS_SMP_ADSR(1);		CB_INS_SMP_ADSR(2);		CB_INS_SMP_ADSR(3);
 #undef CB_INS_SMP_ADSR
 
 //TABLE 
-#define CB_INS_TABLE_TRANSPOSE(a)	CALLBACK( cb_ins_table_transpose_0##a 	, instrument8BIT , EVENT_MODIFY_B, &VAR_INSTRUMENT.TABLE.TRANSPOSE[0x##a], NULL) 
+#define CB_INS_TABLE_TRANSPOSE(a)	CALLBACK( cb_ins_table_transpose_0##a 	, InstEdit::modByte , EVENT_MODIFY_B, &VAR_INSTRUMENT.TABLE.TRANSPOSE[0x##a], NULL) 
 CB_INS_TABLE_TRANSPOSE(0);
 CB_INS_TABLE_TRANSPOSE(1);
 CB_INS_TABLE_TRANSPOSE(2);
@@ -136,7 +128,7 @@ CB_INS_TABLE_TRANSPOSE(E);
 CB_INS_TABLE_TRANSPOSE(F);
 #undef CB_INS_TABLE_TRANSPOSE
 
-#define CB_INS_TABLE_VOLUME(a)		CALLBACK( cb_ins_table_volume_0##a 		, instrument4BIT , EVENT_MODIFY_B, &VAR_INSTRUMENT.TABLE.VOLUME[0x##a], NULL) 
+#define CB_INS_TABLE_VOLUME(a)		CALLBACK( cb_ins_table_volume_0##a 		, InstEdit::modNibble , EVENT_MODIFY_B, &VAR_INSTRUMENT.TABLE.VOLUME[0x##a], NULL) 
 CB_INS_TABLE_VOLUME(0);
 CB_INS_TABLE_VOLUME(1);
 CB_INS_TABLE_VOLUME(2);
@@ -156,7 +148,7 @@ CB_INS_TABLE_VOLUME(F);
 #undef CB_INS_TABLE_VOLUME
 
 
-#define CB_INS_TABLE_VALUE1(a)		CALLBACK( cb_ins_table_value1_0##a 		, instrument8BIT , EVENT_MODIFY_B, &VAR_INSTRUMENT.TABLE.VALUE[0][0x##a], NULL) 
+#define CB_INS_TABLE_VALUE1(a)		CALLBACK( cb_ins_table_value1_0##a 		, InstEdit::modByte , EVENT_MODIFY_B, &VAR_INSTRUMENT.TABLE.VALUE[0][0x##a], NULL) 
 CB_INS_TABLE_VALUE1(0);
 CB_INS_TABLE_VALUE1(1);
 CB_INS_TABLE_VALUE1(2);
@@ -175,7 +167,7 @@ CB_INS_TABLE_VALUE1(E);
 CB_INS_TABLE_VALUE1(F);
 #undef CB_INS_TABLE_VALUE1
 
-#define CB_INS_TABLE_COMMAND1(a)	CALLBACK( cb_ins_table_command1_0##a	, instrument27VAL , EVENT_MODIFY_B, &VAR_INSTRUMENT.TABLE.COMMAND[0][0x##a], NULL) 
+#define CB_INS_TABLE_COMMAND1(a)	CALLBACK( cb_ins_table_command1_0##a	, InstEdit::modVal27 , EVENT_MODIFY_B, &VAR_INSTRUMENT.TABLE.COMMAND[0][0x##a], NULL) 
 CB_INS_TABLE_COMMAND1(0);
 CB_INS_TABLE_COMMAND1(1);
 CB_INS_TABLE_COMMAND1(2);
@@ -194,7 +186,7 @@ CB_INS_TABLE_COMMAND1(E);
 CB_INS_TABLE_COMMAND1(F);
 #undef CB_INS_TABLE_COMMAND1
 
-#define CB_INS_TABLE_VALUE2(a)		CALLBACK( cb_ins_table_value2_0##a 		, instrument8BIT , EVENT_MODIFY_B, &VAR_INSTRUMENT.TABLE.VALUE[1][0x##a], NULL) 
+#define CB_INS_TABLE_VALUE2(a)		CALLBACK( cb_ins_table_value2_0##a 		, InstEdit::modByte , EVENT_MODIFY_B, &VAR_INSTRUMENT.TABLE.VALUE[1][0x##a], NULL) 
 CB_INS_TABLE_VALUE2(0);
 CB_INS_TABLE_VALUE2(1);
 CB_INS_TABLE_VALUE2(2);
@@ -213,7 +205,7 @@ CB_INS_TABLE_VALUE2(E);
 CB_INS_TABLE_VALUE2(F);
 #undef CB_INS_TABLE_VALUE2
 
-#define CB_INS_TABLE_COMMAND2(a)	CALLBACK( cb_ins_table_command2_0##a	, instrument27VAL , EVENT_MODIFY_B, &VAR_INSTRUMENT.TABLE.COMMAND[1][0x##a], NULL) 
+#define CB_INS_TABLE_COMMAND2(a)	CALLBACK( cb_ins_table_command2_0##a	, InstEdit::modVal27 , EVENT_MODIFY_B, &VAR_INSTRUMENT.TABLE.COMMAND[1][0x##a], NULL) 
 CB_INS_TABLE_COMMAND2(0);
 CB_INS_TABLE_COMMAND2(1);
 CB_INS_TABLE_COMMAND2(2);
@@ -233,107 +225,111 @@ CB_INS_TABLE_COMMAND2(F);
 #undef CB_INS_TABLE_COMMAND2
 
 
-// Called on type change
-void instType(void){
-	instrumentUnpack(&VAR_INSTRUMENT);	
-}
 
 // Called on index change
-void instLoad(void){	
-	instcopy(&VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT], &VAR_INSTRUMENT);	
-	instrumentUnpack(&VAR_INSTRUMENT);
+void InstEdit::load(){	
+	InstEdit::copy( &VAR_INSTRUMENTS[ VAR_CFG.CURRENTINSTRUMENT ], &VAR_INSTRUMENT );	
+	InstEdit::unpack( &VAR_INSTRUMENT );
 	regHnd.redraw = true;	
 }
 
 // Called on value change (against index and type)
-void instSync(void){	
-	instrumentPack(&VAR_INSTRUMENT);
-	instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT]);	
+void InstEdit::repack(){	
+	InstEdit::pack(&VAR_INSTRUMENT);
+	InstEdit::copy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT]);	
 }
 
-void instrument1BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify1BIT(c,bigstep, add, pointer); instSync(); }
-void instrument2BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify2BIT(c,bigstep, add, pointer); instSync(); }
-void instrumentType(Control *c, bool bigstep, bool add, u32 *pointer){	modify2BIT(c,bigstep, add, pointer); instType(); }
-void instrument3BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify3BIT(c,bigstep, add, pointer); instSync(); }
-
-void modifyWavOp1ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
-	modify4BIT(c,bigstep, add, pointer); 
-	instSync(); 
-	SETTINGS_WAV wav = unpackWAV( &VAR_INSTRUMENT ); 
-	Synth::updateADSRWav( &wav ); 
-}
-void modifyWavOp2ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
-	modify4BIT(c,bigstep, add, pointer); 
-	instSync(); 
-	SETTINGS_WAV wav = unpackWAV( &VAR_INSTRUMENT ); 
-	Synth::updateADSRWav( &wav ); 
-}
-void modifyWavOp3ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
-	modify4BIT(c,bigstep, add, pointer); 
-	instSync(); 
-	SETTINGS_WAV wav = unpackWAV( &VAR_INSTRUMENT ); 
-	Synth::updateADSRWav( &wav ); 
-}
-void modifyWavOp4ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
-	modify4BIT(c,bigstep, add, pointer); 
-	instSync(); 
-	SETTINGS_WAV wav = unpackWAV( &VAR_INSTRUMENT ); 
-	Synth::updateADSRWav( &wav ); 
-}
-void modifyFmOp1ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
-	modify4BIT(c,bigstep, add, pointer); 
-	instSync(); 
-	SETTINGS_FMW fmw = unpackFMW( &VAR_INSTRUMENT ); 
-	Synth::updateADSRFmw( &fmw );
-}
-void modifyFmOp2ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
-	modify4BIT(c,bigstep, add, pointer); 
-	instSync(); 
-	SETTINGS_FMW fmw = unpackFMW( &VAR_INSTRUMENT ); 
-	Synth::updateADSRFmw( &fmw ); 
-}
-void modifyFmOp3ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
-	modify4BIT(c,bigstep, add, pointer); 
-	instSync(); 
-	SETTINGS_FMW fmw = unpackFMW( &VAR_INSTRUMENT ); 
-	Synth::updateADSRFmw( &fmw );
-}
-void modifyFmOp4ADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
-	modify4BIT(c,bigstep, add, pointer); 
-	instSync(); 
-	SETTINGS_FMW fmw = unpackFMW( &VAR_INSTRUMENT ); 
-	Synth::updateADSRFmw( &fmw ); 
-}
-void modifySmpADSR(Control *c, bool bigstep, bool add, u32 *pointer){ 
-	modify4BIT(c,bigstep, add, pointer); 
-	instSync(); 
-	SETTINGS_SMP smp = unpackSMP( &VAR_INSTRUMENT ); 
-	Synth::updateADSRSmp( &smp ); 
+void InstEdit::type( Control *c, bool bigstep, bool add, u32 *pointer ){	
+	modify2BIT( c, bigstep, add, pointer); 
+	InstEdit::unpack( &VAR_INSTRUMENT );
 }
 
-void instrument4BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify4BIT(c,bigstep, add, pointer); instSync(); }
-void instrument5BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify5BIT(c,bigstep, add, pointer); instSync(); }
-void instrument6BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify6BIT(c,bigstep, add, pointer); instSync(); }
-void instrumentIndex(Control *c, bool bigstep, bool add, u32 *pointer){	
-	instSync(); 
+void InstEdit::modBit( Control *c, bool bigstep, bool add, u32 *pointer ){
+	modify1BIT( c, bigstep, add, pointer); 
+	InstEdit::repack(); 
+}
+
+void InstEdit::mod2b( Control *c, bool bigstep, bool add, u32 *pointer ){
+	modify2BIT( c, bigstep, add, pointer ); 
+	InstEdit::repack();
+}
+
+void InstEdit::mod3b( Control *c, bool bigstep, bool add, u32 *pointer ){	
+	modify3BIT( c,bigstep, add, pointer); 
+	InstEdit::repack(); 
+}
+
+void InstEdit::modNibble( Control *c, bool bigstep, bool add, u32 *pointer ){	
+	modify4BIT( c,bigstep, add, pointer ); 
+	InstEdit::repack(); 
+}
+
+void InstEdit::mod5b( Control *c, bool bigstep, bool add, u32 *pointer ){	
+	modify5BIT(c,bigstep, add, pointer); 
+	InstEdit::repack(); 
+}
+
+void InstEdit::mod6b( Control *c, bool bigstep, bool add, u32 *pointer ){	
+	modify6BIT(c,bigstep, add, pointer); 
+	InstEdit::repack(); 
+}
+
+void InstEdit::mod7b( Control *c, bool bigstep, bool add, u32 *pointer ){
+	modify7BIT(c,bigstep, add, pointer); 
+	InstEdit::repack(); 
+}
+
+void InstEdit::modByte( Control *c, bool bigstep, bool add, u32 *pointer ){	
+	modify8BIT(c,bigstep, add, pointer); 
+	InstEdit::repack(); 
+}
+
+void InstEdit::modSmpKit( Control *c, bool bigstep, bool add, u32 *pointer ){
+	modify5BIT(c,bigstep, add, pointer); 
+	InstEdit::repack();
+	// update kit name
+	// reload kit sample names
+}
+
+void InstEdit::index( Control *c, bool bigstep, bool add, u32 *pointer ){
+	InstEdit::repack(); 
 	VAR_CFG.CURRENTINSTRUMENT = (VAR_CFG.CURRENTINSTRUMENT + ((bigstep?0x4:0x1) * (add?1:-1)));
 	if((VAR_CFG.CURRENTINSTRUMENT > 0x3F) && (VAR_CFG.CURRENTINSTRUMENT < 0x44)) VAR_CFG.CURRENTINSTRUMENT = 0x1;
 	else if(VAR_CFG.CURRENTINSTRUMENT > 0x3F) VAR_CFG.CURRENTINSTRUMENT = 0x3F;
 	transient6BIT 	 = VAR_CFG.CURRENTINSTRUMENT; 
 	transientChanged = true;
 	if(VAR_CFG.CURRENTINSTRUMENT == 0x0 ) VAR_CFG.CURRENTINSTRUMENT= 0x1;
-	instLoad(); 
+	InstEdit::load(); 
 }
-void instrument7BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c,bigstep, add, pointer); instSync(); }
-void instrument8BIT(Control *c, bool bigstep, bool add, u32 *pointer){	modify8BIT(c,bigstep, add, pointer); instSync(); }
-void instrument3VAL(Control *c, bool bigstep, bool add, u32 *pointer){	modify3VAL(c,bigstep, add, pointer); instSync(); }
-void instrument6VAL(Control *c, bool bigstep, bool add, u32 *pointer){  modify6VAL(c,bigstep, add, pointer); instSync(); }
-void instrument5VAL(Control *c, bool bigstep, bool add, u32 *pointer){	modify5VAL(c,bigstep, add, pointer); instSync(); }
-void instrument27VAL(Control *c, bool bigstep, bool add, u32 *pointer){	modifyCommand(c,bigstep,add, pointer); instSync(); }
 
+void InstEdit::modAlgorithm( Control *c, bool bigstep, bool add, u32 *pointer ){ 
+	modify6VAL( c, bigstep, add, pointer ); 
+	DECIMAL(6, 15, 0xAA, InstEdit::unpackFmw( &VAR_INSTRUMENT ).ALGORITHM );
+	InstEdit::repack(); 
+}
+
+void InstEdit::modVal3( Control *c, bool bigstep, bool add, u32 *pointer ){	
+	modifyValue( c, bigstep, add, pointer, 3);
+	InstEdit::repack(); 
+}
+
+void InstEdit::modVal6( Control *c, bool bigstep, bool add, u32 *pointer ){ 
+	modifyValue( c, bigstep, add, pointer, 6 ); 
+	InstEdit::repack(); 
+}
+
+void InstEdit::modVal5( Control *c, bool bigstep, bool add, u32 *pointer ){	
+	modifyValue( c, bigstep, add, pointer, 5); 
+	InstEdit::repack(); 
+}
+
+void InstEdit::modVal27( Control *c, bool bigstep, bool add, u32 *pointer ){	
+	modifyCommand( c, bigstep, add, pointer ); 
+	InstEdit::repack(); 
+}
 
 /* SYNCRONIZES Specific instrument data with Generic Abstract Instrument byte array */
-void instrumentPack(Instrument *i){
+void InstEdit::pack( Instrument* i ){
 	int c, di;
 	
 	switch(i->TYPE){
@@ -397,7 +393,7 @@ void instrumentPack(Instrument *i){
 
 /* SYNCRONIZES Abstract Instrument data to current type specific data */
 
-inline SETTINGS_FMW unpackFMW(Instrument *i){
+SETTINGS_FMW InstEdit::unpackFmw( Instrument *i ){
 	SETTINGS_FMW ret;
 	int c, di;
 	ret.MULT 			= EXTRACT(i->SETTINGS[0], 3, 0xF);	// 4
@@ -421,7 +417,7 @@ inline SETTINGS_FMW unpackFMW(Instrument *i){
 	return ret;
 }
 
-inline SETTINGS_SMP unpackSMP( Instrument *i ){
+SETTINGS_SMP InstEdit::unpackSmp( Instrument *i ){
 	SETTINGS_SMP ret;
 	ret.START 	  = EXTRACT(i->SETTINGS[0], 4, 0xF);	// 8
 	ret.END 	  = i->SETTINGS[0] & 0xF;				// 8
@@ -442,7 +438,7 @@ inline SETTINGS_SMP unpackSMP( Instrument *i ){
 	return ret;
 }
 
-inline SETTINGS_WAV unpackWAV( Instrument *i ){
+SETTINGS_WAV InstEdit::unpackWav( Instrument *i ){
 	SETTINGS_WAV ret;
 	int c, di;
 	ret.PHASE			= EXTRACT(i->SETTINGS[0], 6, 0x1);	// 1
@@ -467,7 +463,7 @@ inline SETTINGS_WAV unpackWAV( Instrument *i ){
 	return ret;
 }
 
-inline SETTINGS_PWM unpackPWM( Instrument *i){
+SETTINGS_PWM InstEdit::unpackPwm( Instrument *i ){
 	SETTINGS_PWM ret;
 	ret.SWEEPDIR 		= EXTRACT(i->SETTINGS[0], 7, 0x1);
 	ret.ENVELOPEDIR		= EXTRACT(i->SETTINGS[0], 6, 0x1);
@@ -494,16 +490,16 @@ inline SETTINGS_PWM unpackPWM( Instrument *i){
 	return ret;
 }	
 
-void instrumentUnpack( Instrument *i){
+void InstEdit::unpack( Instrument *i ){
 	switch(i->TYPE){
-		case INSTRUMENT_TYPE_PWM:	VAR_PWM = unpackPWM(i); return;
-		case INSTRUMENT_TYPE_WAV:	VAR_WAV = unpackWAV(i); return;
-		case INSTRUMENT_TYPE_FMW:	VAR_FMW = unpackFMW(i); return;
-		case INSTRUMENT_TYPE_SMP:	VAR_SMP = unpackSMP( i ); return;
+		case INSTRUMENT_TYPE_PWM:	VAR_PWM = unpackPwm( i ); return;
+		case INSTRUMENT_TYPE_WAV:	VAR_WAV = unpackWav( i ); return;
+		case INSTRUMENT_TYPE_FMW:	VAR_FMW = unpackFmw( i ); return;
+		case INSTRUMENT_TYPE_SMP:	VAR_SMP = unpackSmp( i ); return;
 	}
 }
 
-void instcopy(Instrument *s, Instrument *d){
+void InstEdit::copy(Instrument *s, Instrument *d){
 	int i;
 	
 	d->TYPE = s->TYPE;
@@ -529,76 +525,120 @@ void instcopy(Instrument *s, Instrument *d){
 }
 
 // Keeps instrument copy updated
-static void instrumentSync(){
+void InstEdit::synchronize(){
 	static u8 LASTINSTRUMENT = 63;
 	
 	if(LASTINSTRUMENT != VAR_CFG.CURRENTINSTRUMENT){
-		instcopy(&VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT], &VAR_INSTRUMENT);
-		instrumentUnpack( &VAR_INSTRUMENT );
+		InstEdit::copy(&VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT], &VAR_INSTRUMENT);
+		InstEdit::unpack( &VAR_INSTRUMENT );
 		LASTINSTRUMENT = VAR_CFG.CURRENTINSTRUMENT;
 		regHnd.redraw = true;
 	} /*else {
-		instcopy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT]);
-		instrumentPack( &VAR_INSTRUMENT );
+		InstEdit::copy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT]);
+		InstEdit::pack( &VAR_INSTRUMENT );
 	}*/
 }
 
-void insDispatchMessage(u32 msg) {
+void InstEdit::dispatchMessage(u32 msg) {
 	switch(msg) {
 		case MESSAGE_OTHER_PREV:
 			VAR_CFG.CURRENTINSTRUMENT--;
 			VAR_CFG.CURRENTINSTRUMENT &= 0x3f;
 			if(VAR_CFG.CURRENTINSTRUMENT == 0) VAR_CFG.CURRENTINSTRUMENT=1;
-			instLoad();
+			InstEdit::load();
 			return;
 		
 		case MESSAGE_OTHER_NEXT:			
 			VAR_CFG.CURRENTINSTRUMENT++;
 			VAR_CFG.CURRENTINSTRUMENT &= 0x3f;
 			if(VAR_CFG.CURRENTINSTRUMENT == 0) VAR_CFG.CURRENTINSTRUMENT=1;
-			instLoad();
+			InstEdit::load();
 			return;
 	}	
 }
 
-
-void updateINS_WAV(RegionHandler* rh){
+void InstEdit::updateWav( RegionHandler* rh ){
 	const Control *cname = &INS_WAV_CONTROLS[CONTROL_INS_WAV_NAME];
 	STRING(false, cname->x, cname->y, cname->var);
-	instrumentSync();
+	InstEdit::synchronize();
 }
-void updateINS_FMW(RegionHandler* rh){
+
+void InstEdit::updateFmw( RegionHandler* rh ){
 	const Control *cname = &INS_FMW_CONTROLS[CONTROL_INS_FMW_NAME];
 	STRING(false, cname->x, cname->y, cname->var);
-	instrumentSync();
+	DECIMAL(6, 15, 0xAA, InstEdit::unpackFmw( &VAR_INSTRUMENT ).ALGORITHM );
+	static int recall = 0;
+	recall++;
+	HEXADECIMAL_DOUBLE(0,0,0xFF,recall);
+	InstEdit::synchronize();
 }
-void updateINS_SMP(RegionHandler* rh){
+
+void InstEdit::updateSmp( RegionHandler* rh ){
 	const Control *cname = &INS_SMP_CONTROLS[CONTROL_INS_SMP_NAME];
 	STRING(false, cname->x, cname->y, cname->var);
-	instrumentSync();
+	InstEdit::synchronize();
 }
-void updateINS_PWM(RegionHandler* rh){
+
+void InstEdit::updatePwm( RegionHandler* rh ){
 	const Control *cname = &INS_PWM_CONTROLS[CONTROL_INS_PWM_NAME];
 	STRING(false, cname->x, cname->y, cname->var);
-	instrumentSync();
-}
-//----------------------------------------------------------------------------------------
-void LOADWAVPRESET0(Control *c, bool bigstep, bool add, u32 *pointer){
-
-}
-void LOADWAVPRESET1(Control *c, bool bigstep, bool add, u32 *pointer){
-
-}
-void LOADWAVPRESET2(Control *c, bool bigstep, bool add, u32 *pointer){
-
-}
-void LOADWAVPRESET3(Control *c, bool bigstep, bool add, u32 *pointer){
-
-}
-void LOADWAVPRESET4(Control *c, bool bigstep, bool add, u32 *pointer){
-
-}
-void LOADWAVPRESET5(Control *c, bool bigstep, bool add, u32 *pointer){
-
+	InstEdit::synchronize();
 }
 
+//------------------------------------------------------------------------------------------------------------
+// MULTI-PARAMETER TRIGGER CALLBACKS (called after a button push or a value is modified in some special cases)
+//------------------------------------------------------------------------------------------------------------
+
+void InstEdit::modAdsrWav( Control *c, bool bigstep, bool add, u32 *pointer ){ 
+	modify4BIT( c, bigstep, add, pointer ); 
+	InstEdit::repack(); 
+	SETTINGS_WAV wav = unpackWav( &VAR_INSTRUMENT ); 
+	Synth::updateADSRWav( &wav ); 
+}
+
+void InstEdit::modAdsrFmw( Control *c, bool bigstep, bool add, u32 *pointer ){ 
+	modify4BIT(c,bigstep, add, pointer); 
+	InstEdit::repack(); 
+	SETTINGS_FMW fmw = unpackFmw( &VAR_INSTRUMENT ); 
+	Synth::updateADSRFmw( &fmw );
+}
+
+void InstEdit::modAdsrSmp( Control *c, bool bigstep, bool add, u32 *pointer ){ 
+	modify4BIT(c,bigstep, add, pointer); 
+	InstEdit::repack(); 
+	SETTINGS_SMP smp = unpackSmp( &VAR_INSTRUMENT ); 
+	Synth::updateADSRSmp( &smp ); 
+}
+
+void InstEdit::wavPreset(Control *c, bool bigstep, bool add, u32 *pointer){
+	#define MATCH( match ) 	( c == &INS_WAV_CONTROLS[ CONTROL_INS_WAV_##match ] ) 
+	int index 	= MATCH( WAVPRESET_00 ) ? 0x0 
+				: MATCH( WAVPRESET_01 ) ? 0x1 
+				: MATCH( WAVPRESET_02 ) ? 0x2 
+				: MATCH( WAVPRESET_03 ) ? 0x3 
+				: MATCH( WAVPRESET_04 ) ? 0x4 
+				: 0x05;
+	#undef MATCH
+	DECIMAL_TWOTILES( 0, 0, 0xff, index );
+	BREAK
+}
+
+void InstEdit::smpPreset(Control *c, bool bigstep, bool add, u32 *pointer){
+	#define MATCH( match ) 	( c == &INS_SMP_CONTROLS[ CONTROL_INS_SMP_##match ] ) 
+	int offset  = unpackSmp( &VAR_INSTRUMENT ).KIT * 0xB;
+	int index 	= MATCH( SMPKIT_00 ) ? 0x0 
+				: MATCH( SMPKIT_01 ) ? 0x1 
+				: MATCH( SMPKIT_02 ) ? 0x2 
+				: MATCH( SMPKIT_03 ) ? 0x3 
+				: MATCH( SMPKIT_04 ) ? 0x4 
+				: MATCH( SMPKIT_05 ) ? 0x5 
+				: MATCH( SMPKIT_06 ) ? 0x6 
+				: MATCH( SMPKIT_07 ) ? 0x7 
+				: MATCH( SMPKIT_08 ) ? 0x8 
+				: MATCH( SMPKIT_09 ) ? 0x9 
+				: MATCH( SMPKIT_0A ) ? 0xA 
+				: 0x0B;
+	#undef MATCH
+	DECIMAL_DOUBLE( 1, 2, 0x33, index + offset);
+	//BREAK
+}

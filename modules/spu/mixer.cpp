@@ -246,6 +246,28 @@ void Mixer::stop(){
 	disableSmp();
 }
 
+void Mixer::disable( u8 channel ){
+	switch(channel){
+		case 0: return disablePwm1();
+		case 1: return disablePwm2();
+		case 2: return disableNze();
+		case 3: return disableWav();
+		case 4: return disableFmw();
+		case 5: return disableSmp();
+	}
+}
+
+void Mixer::enable( u8 channel ){
+	switch(channel){
+		case 0: return enablePwm1();
+		case 1: return enablePwm2();
+		case 2: return enableNze();
+		case 3: return enableWav();
+		case 4: return enableFmw();
+		case 5: return enableSmp();
+	}
+}
+
 /*###########################################################################*/
 
 void Mixer::updateMetronome( u8 time, u8 beats_per_bar ) {
@@ -264,8 +286,11 @@ void Mixer::mute( int channel ){
 	VAR_CHANNEL[channel].mute ^= 1;
 	// Since a channel was unmuted, disable solo on every channel 
 	// Sync with audio registers
-	// If a channel was unmuted, disable solo on every channel 
+	if( VAR_CHANNEL[channel].mute ) Mixer::disable( channel );
+	else Mixer::enable( channel );
+	
 	if(VAR_CHANNEL[channel].mute) return;
+	// If a channel was unmuted, disable solo on every channel 
 	for(int i=0; i<6;i++){
 		VAR_CHANNEL[i].solo = false;
 	}
@@ -277,20 +302,24 @@ void Mixer::solo(int channel){
 		for(int i=0; i<6;i++){
 			VAR_CHANNEL[channel].solo = false;
 			VAR_CHANNEL[i].mute = false;
+			if( channel == i ) continue;
+			enable( i );
 		}
 		return;
 	}
-	
-	// Mute all channels 
-	for(int i=0; i<6;i++){
-		VAR_CHANNEL[i].mute = true;
-	}
-	
-	// Unmute and enable solo on selected channel 
+		
+	if( VAR_CHANNEL[channel].mute ) enable( channel );
 	VAR_CHANNEL[channel].solo = true;
 	VAR_CHANNEL[channel].mute = false;
 	
-	// Sync with audio registers
+	// Mute all channels 
+	for(int i=0; i<6;i++){
+		if( channel == i ) continue;
+		VAR_CHANNEL[i].mute = true;
+		disable( i );
+	}
+	
+	// Unmute and enable solo on selected channel 
 }
 
 

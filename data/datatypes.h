@@ -83,19 +83,3 @@ typedef struct _Viewport {
 	const Region *const *regions;// Region array pointer
 	u8 count;					// Region array item count
 } Viewport;
-
-
-//Help structs declaration
-typedef struct s_Help_Topic helptopic;
-typedef struct s_Help_Button {
-	int					destination_index;
-	const char			text[32];
-	u16					x;
-	u16					y;
-} helpbutton;
-
-typedef struct s_Help_Topic {
-	const u32			button_count;
-	const u16			*map_data;
-	const int 		 	*button_list;
-} helptopic;

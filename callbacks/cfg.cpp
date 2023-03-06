@@ -1,3 +1,5 @@
+#include "cfg.hpp"
+
 CALLBACK( cb_cfg_menuindex	, modify5VAL		, EVENT_MODIFY_B			, &VAR_CFG.MENUSLOT				, NULL);
 
 CALLBACK( cb_cfg_interface	, modify1BIT		, EVENT_MODIFY_B			, &VAR_CFG.LOOKNFEEL.INTERFACE	, NULL);
@@ -5,7 +7,7 @@ CALLBACK( cb_cfg_font		, modify2BIT		, EVENT_MODIFY_B			, &VAR_CFG.LOOKNFEEL.FON
 CALLBACK( cb_cfg_border		, modify2BIT		, EVENT_MODIFY_B			, &VAR_CFG.LOOKNFEEL.BORDER		, NULL);
 CALLBACK( cb_cfg_showlogo	, modify1BIT		, EVENT_KEYDOWN_B			, &VAR_CFG.LOOKNFEEL.SHOWLOGO	, NULL);
 CALLBACK( cb_cfg_startupsfx	, modify1BIT		, EVENT_KEYDOWN_B			, &VAR_CFG.LOOKNFEEL.STARTUPSFX	, NULL);
-CALLBACK( cb_cfg_coloreditor, COLOREDITOR		, EVENT_KEYUP_B				, NULL							, NULL);
+CALLBACK( cb_cfg_coloreditor, ColorEditor::run 	, EVENT_KEYUP_B				, NULL							, NULL);
 
 CALLBACK( cb_cfg_linkmode	, Net::alterMode	, EVENT_MODIFY_B			, &VAR_CFG.LINKMODE.LINKMODE	, NULL);
 CALLBACK( cb_cfg_masterclock, modify1BIT		, EVENT_KEYDOWN_B			, &VAR_CFG.LINKMODE.MASTERCLOCK	, NULL);
@@ -17,9 +19,9 @@ CALLBACK( cb_cfg_sendsong	, SENDSONG			, EVENT_KEYUP_B				, NULL 							, NULL);
 CALLBACK( cb_cfg_autoload	, modify1BIT		, EVENT_KEYDOWN_B			, &VAR_CFG.BEHAVIOR.AUTOLOAD	, NULL);
 CALLBACK( cb_cfg_keyrate	, modify4BIT		, EVENT_MODIFY_B			, &VAR_CFG.BEHAVIOR.KEYRATE		, NULL);
 CALLBACK( cb_cfg_buttonset	, modify2BIT		, EVENT_MODIFY_B			, &VAR_CFG.BEHAVIOR.BUTTONSET	, NULL);
-CALLBACK( cb_cfg_saveconfig	, SAVECONFIG		, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_loadconfig	, LOADCONFIG		, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_initconfig	, DEFAULTCONFIG		, EVENT_KEYUP_B				, NULL 							, NULL);
+CALLBACK( cb_cfg_saveconfig	, Config::save		, EVENT_KEYUP_B				, NULL 							, NULL);
+CALLBACK( cb_cfg_loadconfig	, Config::load		, EVENT_KEYUP_B				, NULL 							, NULL);
+CALLBACK( cb_cfg_initconfig	, Config::defaults	, EVENT_KEYUP_B				, NULL 							, NULL);
 
 CALLBACK( cb_cfg_finetune	, modify4BIT		, EVENT_MODIFY_B			, &VAR_CFG.TRACKER.FINETUNE		, NULL);
 CALLBACK( cb_cfg_prelisten	, modify1BIT		, EVENT_KEYDOWN_B			, &VAR_CFG.TRACKER.PRELISTEN	, NULL);
@@ -29,88 +31,24 @@ CALLBACK( cb_cfg_soundbias	, modify8BIT		, EVENT_MODIFY_B			, &VAR_CFG.TRACKER.S
 CALLBACK( cb_cfg_mixer		, MIXER				, EVENT_KEYUP_B				, NULL 							, NULL);
 
 CALLBACK( cb_cfg_prefetch	, modify1BIT		, EVENT_KEYDOWN_B			, &VAR_CFG.MEMORY.PREF	 		, NULL);
-CALLBACK( cb_cfg_backup		, SLOTUSAGE			, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_revert		, PURGESONGS		, EVENT_KEYUP_B				, NULL 							, NULL);
+CALLBACK( cb_cfg_backup		, Config::backup	, EVENT_KEYUP_B				, NULL 							, NULL);
+CALLBACK( cb_cfg_revert		, Config::revert	, EVENT_KEYUP_B				, NULL 							, NULL);
 CALLBACK( cb_cfg_memorytest	, MEMORYTEST		, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_format		, FORMATMEMORY		, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_reset		, RESET				, EVENT_KEYUP_B				, NULL 							, NULL);
+CALLBACK( cb_cfg_format		, Config::format 	, EVENT_KEYUP_B				, NULL 							, NULL);
+CALLBACK( cb_cfg_reset		, Config::reset		, EVENT_KEYUP_B				, NULL 							, NULL);
 
-void SAVECONFIG(Control *c, bool bigstep, bool add, u32 *pointer){
-	int i, di;
-	SRAM.seek(0);
-	EXPECT(10, SAVING, SETTINGS);
-	
-	// Signature and version
-	SRAM.write32(M4GEEK_SIGNATURE); //signature (cafe aces)
-	SRAM.write(M4G_VERSION);		//version
-	
-	// Palette colors
-	for(i=0;i<8; i++){
-		di = i<<1;
-		SRAM.write(VAR_CFG.PAL[ di ].R << 4 | VAR_CFG.PAL[ di ].G);  
-		SRAM.write(VAR_CFG.PAL[ di ].B << 4 | VAR_CFG.PAL[di+1].R);			
-		SRAM.write(VAR_CFG.PAL[di+1].G << 4 | VAR_CFG.PAL[di+1].B);
-	}
-		
-		
-	// Look And Feel
-	SRAM.write( (VAR_CFG.BEHAVIOR.AUTOLOAD<<7) | (VAR_CFG.LOOKNFEEL.STARTUPSFX<<6) | (VAR_CFG.LOOKNFEEL.SHOWLOGO << 5) | (VAR_CFG.LOOKNFEEL.INTERFACE<<0x4) | (VAR_CFG.LOOKNFEEL.FONT << 2) | VAR_CFG.LOOKNFEEL.BORDER);
-	
-	// Link mode
-	SRAM.write(VAR_CFG.LINKMODE.LINKMODE);
-	SRAM.write(VAR_CFG.LINKMODE.MASTERCLOCK);
-	SRAM.write(VAR_CFG.LINKMODE.MIDICHAN);
-	SRAM.write(VAR_CFG.LINKMODE.CLOCKTEMPO);
-	
-	// Behavior
-	SRAM.write(VAR_CFG.BEHAVIOR.KEYRATE);
-	SRAM.write(  (VAR_LIVE.PERFORM.RETRIG<<6) | (VAR_CFG.MEMORY.PREF<<5)  | (VAR_CFG.TRACKER.HEADERTYPE<<4) | (VAR_CFG.TRACKER.INPUTMODE<<3) | (VAR_CFG.TRACKER.PRELISTEN<<2) | VAR_CFG.BEHAVIOR.BUTTONSET);
-	
-	// Tracker
-	SRAM.write(VAR_CFG.TRACKER.TRANSPOSE);
-	SRAM.write(VAR_CFG.TRACKER.SOUNDBIAS);
-	SRAM.write( (VAR_LIVE.PERFORM.SPEED<<4) |(VAR_CFG.TRACKER.FINETUNE & 0x0F));
-	SRAM.write((VAR_LIVE.PERFORM.QUANTIZE<<4) | VAR_LIVE.PIANO.QUANTIZE);
-	//40 bytes
-	
-	SRAM.write((VAR_LIVE.PIANO.OCTAVE<<4) | VAR_LIVE.PIANO.MODE);
-	SRAM.write(VAR_LIVE.PIANO.TRANSPOSE);
-	for(i=0; i<2; i++){
-		SRAM.write(VAR_LIVE.PIANO.CHANNEL[i]);
-		SRAM.write(VAR_LIVE.PIANO.MIDICHAN[i]);
-	}
+/*---------------------------------------------------------------------------*/
 
-	//46dec
-	
-	// Dump Live Settings and tables
-	SRAM.seek(47);
-	for(i=0;i<8;i++){		
-		SRAM.write16(((VAR_LIVE.PERFORM.LEFT.KEY[i]&0x7f)<<9) | ((VAR_LIVE.PERFORM.LEFT.INS[i]&0x3f)<<5) | (VAR_LIVE.PERFORM.LEFT.CMD[i]&0x1f));
-		SRAM.write16(((VAR_LIVE.PERFORM.RIGHT.KEY[i]&0x7f)<<9) | ((VAR_LIVE.PERFORM.RIGHT.INS[i]&0x3f)<<5) | (VAR_LIVE.PERFORM.RIGHT.CMD[i]&0x1f));
-		SRAM.write(((VAR_LIVE.PERFORM.LEFT.CHAN[i]&0x0f)<<4) | (VAR_LIVE.PERFORM.LEFT.VOL[i]&0x0f));
-		SRAM.write(((VAR_LIVE.PERFORM.RIGHT.CHAN[i]&0x0f)<<4) | (VAR_LIVE.PERFORM.RIGHT.VOL[i]&0x0f));
-		SRAM.write(VAR_LIVE.PERFORM.LEFT.VAL[i]);
-		SRAM.write(VAR_LIVE.PERFORM.RIGHT.VAL[i]);
-	}
-	
-	SRAM.drawPosition(27, 1, 7);
-	//0x6F
-
-	regHnd.progress.enabled = false;
-	//regHnd.redraw = true;
-}
-
-void LOADCONFIG(Control *c, bool bigstep, bool add, u32 *pointer){
+void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 	int i, di;
 	u16 w;
 	u8 h;
 	EXPECT(10, SAVING, SETTINGS);
 	
-	
 	// Check Signature and version
 	SRAM.seek(0);
-	if(SRAM.read32() != M4GEEK_SIGNATURE) return DEFAULTCONFIG(c, 0, 0, pointer);
-	if(SRAM.read() != M4G_VERSION) return DEFAULTCONFIG(c, 0, 0, pointer);
+	if(SRAM.read32() != M4GEEK_SIGNATURE) return Config::defaults(c, 0, 0, pointer);
+	if(SRAM.read() != M4G_VERSION) return Config::defaults(c, 0, 0, pointer);
 	
 	// Palette colors
 	for(i=0;i<8; i++){
@@ -205,21 +143,105 @@ void LOADCONFIG(Control *c, bool bigstep, bool add, u32 *pointer){
 	}
 	
 	//0x6F
-	SRAM.drawPosition(27, 1, 7);
+	//SRAM.drawPosition(27, 1, 7);
 	
 	// Load default song values (overriden if autoload was true on load)
-	SRAM.songDefaults();
+	SRAM.songDefaults( false );
 	
 	// Force skins and fonts to be reloaded
 	VAR_CFG.RELOADSKIN = true;
-	updateLOOKNFEEL(&regHnd);
 	
-	
+	LookNFeel::update( &regHnd );
+		
 	regHnd.progress.enabled = false;
 	//regHnd.redraw = true;
 }
 
-void DEFAULTCONFIG(Control *c, bool bigstep, bool add, u32 *pointer){
+void Config::backup	(Control *c, bool bigstep, bool add, u32 *pointer){
+	SRAM.dataBackup( true );	
+}
+
+void Config::revert (Control *c, bool bigstep, bool add, u32 *pointer){
+	SRAM.dataRevert( true );
+}
+
+void Config::save (Control *c, bool bigstep, bool add, u32 *pointer){
+	int i, di;
+	SRAM.seek(0);
+	EXPECT(10, SAVING, SETTINGS);
+	
+	// Signature and version
+	SRAM.write32(M4GEEK_SIGNATURE); //signature (cafe aces)
+	SRAM.write(M4G_VERSION);		//version
+	
+	// Palette colors
+	for(i=0;i<8; i++){
+		di = i<<1;
+		SRAM.write(VAR_CFG.PAL[ di ].R << 4 | VAR_CFG.PAL[ di ].G);  
+		SRAM.write(VAR_CFG.PAL[ di ].B << 4 | VAR_CFG.PAL[di+1].R);			
+		SRAM.write(VAR_CFG.PAL[di+1].G << 4 | VAR_CFG.PAL[di+1].B);
+	}
+		
+		
+	// Look And Feel
+	SRAM.write( (VAR_CFG.BEHAVIOR.AUTOLOAD<<7) | (VAR_CFG.LOOKNFEEL.STARTUPSFX<<6) | (VAR_CFG.LOOKNFEEL.SHOWLOGO << 5) | (VAR_CFG.LOOKNFEEL.INTERFACE<<0x4) | (VAR_CFG.LOOKNFEEL.FONT << 2) | VAR_CFG.LOOKNFEEL.BORDER);
+	
+	// Link mode
+	SRAM.write(VAR_CFG.LINKMODE.LINKMODE);
+	SRAM.write(VAR_CFG.LINKMODE.MASTERCLOCK);
+	SRAM.write(VAR_CFG.LINKMODE.MIDICHAN);
+	SRAM.write(VAR_CFG.LINKMODE.CLOCKTEMPO);
+	
+	// Behavior
+	SRAM.write(VAR_CFG.BEHAVIOR.KEYRATE);
+	SRAM.write(  (VAR_LIVE.PERFORM.RETRIG<<6) | (VAR_CFG.MEMORY.PREF<<5)  | (VAR_CFG.TRACKER.HEADERTYPE<<4) | (VAR_CFG.TRACKER.INPUTMODE<<3) | (VAR_CFG.TRACKER.PRELISTEN<<2) | VAR_CFG.BEHAVIOR.BUTTONSET);
+	
+	// Tracker
+	SRAM.write(VAR_CFG.TRACKER.TRANSPOSE);
+	SRAM.write(VAR_CFG.TRACKER.SOUNDBIAS);
+	SRAM.write( (VAR_LIVE.PERFORM.SPEED<<4) |(VAR_CFG.TRACKER.FINETUNE & 0x0F));
+	SRAM.write((VAR_LIVE.PERFORM.QUANTIZE<<4) | VAR_LIVE.PIANO.QUANTIZE);
+	//40 bytes
+	
+	SRAM.write((VAR_LIVE.PIANO.OCTAVE<<4) | VAR_LIVE.PIANO.MODE);
+	SRAM.write(VAR_LIVE.PIANO.TRANSPOSE);
+	for(i=0; i<2; i++){
+		SRAM.write(VAR_LIVE.PIANO.CHANNEL[i]);
+		SRAM.write(VAR_LIVE.PIANO.MIDICHAN[i]);
+	}
+
+	//46dec
+	
+	// Dump Live Settings and tables
+	SRAM.seek(47);
+	for(i=0;i<8;i++){		
+		SRAM.write16(((VAR_LIVE.PERFORM.LEFT.KEY[i]&0x7f)<<9) | ((VAR_LIVE.PERFORM.LEFT.INS[i]&0x3f)<<5) | (VAR_LIVE.PERFORM.LEFT.CMD[i]&0x1f));
+		SRAM.write16(((VAR_LIVE.PERFORM.RIGHT.KEY[i]&0x7f)<<9) | ((VAR_LIVE.PERFORM.RIGHT.INS[i]&0x3f)<<5) | (VAR_LIVE.PERFORM.RIGHT.CMD[i]&0x1f));
+		SRAM.write(((VAR_LIVE.PERFORM.LEFT.CHAN[i]&0x0f)<<4) | (VAR_LIVE.PERFORM.LEFT.VOL[i]&0x0f));
+		SRAM.write(((VAR_LIVE.PERFORM.RIGHT.CHAN[i]&0x0f)<<4) | (VAR_LIVE.PERFORM.RIGHT.VOL[i]&0x0f));
+		SRAM.write(VAR_LIVE.PERFORM.LEFT.VAL[i]);
+		SRAM.write(VAR_LIVE.PERFORM.RIGHT.VAL[i]);
+	}
+	
+	//SRAM.drawPosition(27, 1, 7);
+	//0x6F
+
+	regHnd.progress.enabled = false;
+	//regHnd.redraw = true;
+}
+
+void Config::format (Control *c, bool bigstep, bool add, u32 *pointer){
+	if(c){
+		ReallyDialog r;	
+		r.enable();
+		if(!r.result)return;
+	}
+	SRAM.erase();
+	Config::defaults(c, 0,0,pointer);
+	Config::save(c, 0,0,pointer);	
+}
+
+void Config::defaults (Control *c, bool bigstep, bool add, u32 *pointer){
 	int i;
 		
 	#define SETTING(a, v)		{VAR_CFG.a = v; VAR_CFG.loadCount++;regHnd.update(1);}
@@ -294,29 +316,35 @@ void DEFAULTCONFIG(Control *c, bool bigstep, bool add, u32 *pointer){
 	}//205
 	#undef SETTING
 	
-	SRAM.songDefaults();
+	SRAM.songDefaults( true );
 
 	regHnd.progress.enabled = false;
 	regHnd.redraw = true;
 }
 
-void COLOREDITOR(Control *c, bool bigstep, bool add, u32 *pointer){
+void Config::reset (Control *c, bool bigstep, bool add, u32 *pointer){
+	sys.reset();
+}
+
+void Config::reinit (Control *c, bool bigstep, bool add, u32 *pointer){
+	Config::format(c, 0,0,pointer);
+	SRAM.sharedDataSave( true );
+}
+
+/*---------------------------------------------------------------------------*/
+
+void ColorEditor::run(Control *c, bool bigstep, bool add, u32 *pointer){
 	
 }
+
+void ColorEditor::update(RegionHandler* rh){
+
+}
+
+/*---------------------------------------------------------------------------*/
+
 void MIXER(Control *c, bool bigstep, bool add, u32 *pointer){
 	
-}
-
-//@refactor BACKUP
-void SLOTUSAGE(Control *c, bool bigstep, bool add, u32 *pointer){
-	//useless now.
-	SRAM.dataBackup();
-}
-
-//@refactor REVERT
-void PURGESONGS(Control *c, bool bigstep, bool add, u32 *pointer){
-	//useless now.
-	SRAM.dataRevert();
 }
 
 void MEMORYTEST(Control *c, bool bigstep, bool add, u32 *pointer){
@@ -336,25 +364,6 @@ void MEMORYTEST(Control *c, bool bigstep, bool add, u32 *pointer){
 	SRAM.drawPosition(27,1,0xF);
 }
 
-void RESET(Control *c, bool bigstep, bool add, u32 *pointer){
-	sys.reset();
-}
-
-void REINITIALIZE(Control *c, bool bigstep, bool add, u32 *pointer){
-	FORMATMEMORY(c, 0,0,pointer);
-	SRAM.sharedDataSave();
-}
-
-void FORMATMEMORY(Control *c, bool bigstep, bool add, u32 *pointer){
-	if(c){
-		ReallyDialog r;	
-		r.enable();
-		if(!r.result)return;
-	}
-	SRAM.erase();
-	DEFAULTCONFIG(c, 0,0,pointer);
-	SAVECONFIG(c, 0,0,pointer);	
-}
 //----------------------------------------------------------------------------------------
 void RECEIVESONG(Control *c, bool bigstep, bool add, u32 *pointer){
 
@@ -363,8 +372,61 @@ void SENDSONG(Control *c, bool bigstep, bool add, u32 *pointer){
 
 }
 
+#define MOSAIC_CNT *(u16*)0x400004C
+#define REG_BG0 *(u16*)0x4000008
+#define REG_BG1 *(u16*)0x400000A
+#define REG_BG2 *(u16*)0x400000C
+#define REG_BG3 *(u16*)0x400000E
+
+void LookNFeel::logoFade(){
+	int freeze=0;
+	REG_BG0 |= 0x0040;
+	REG_BG1 |= 0x0040;
+	REG_BG2 |= 0x0040;
+	REG_BG3 |= 0x0040;
+	if( VAR_CFG.LOOKNFEEL.STARTUPSFX ) Mixer::start();
+			
+	while( freeze < 0xfff>>3 ){
+		regHnd.drawVerticalCache(8,7,&CACHE_LOGOTYPE,0,0);
+		sys.update();
+		MOSAIC_CNT = 0xFF - ((freeze >> 1)&0xFF);
+		Synth::polysynth( freeze >> 1 );
+		if(!gpu.isVblank()) {
+			if( VAR_CFG.LOOKNFEEL.STARTUPSFX ) {
+			}
+			freeze++;
+		}
+	}
+	if( VAR_CFG.LOOKNFEEL.STARTUPSFX ) Mixer::stop();
+	
+	REG_BG0 	^= 0x0040;
+	REG_BG1 	^= 0x0040;
+	REG_BG2 	^= 0x0040;
+	REG_BG3 	^= 0x0040;
+	MOSAIC_CNT 	 = 0x0000;
+}
+
+void LookNFeel::logoWait(){
+	int freeze=0;
+	while( freeze < 2048 ){
+		regHnd.drawVerticalCache(8,7,&CACHE_LOGOTYPE,0,0);
+		sys.update();
+		if( KEY.activity() ) {
+			return;
+		}
+		freeze++;
+	}
+}
+
+void LookNFeel::init(){
+	if( VAR_CFG.LOOKNFEEL.SHOWLOGO ){
+		logoFade();
+		logoWait();
+	}
+}
+
 // Called when a look and feel value is changed
-void updateLOOKNFEEL(RegionHandler* rh){
+void LookNFeel::update( RegionHandler* rh ){
 	static u8 lastBorder = VAR_CFG.LOOKNFEEL.BORDER;
 	static u8 lastFont = VAR_CFG.LOOKNFEEL.FONT;
 	static u32 bigIndex = 0;
@@ -444,8 +506,6 @@ void updateTRACKER(RegionHandler* rh){
 }
 
 void updateMEMORY(RegionHandler* rh){
-}
-void updateCOLOREDITOR(RegionHandler* rh){
 }
 void updateCHANNELMIXER(RegionHandler* rh){
 }

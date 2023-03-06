@@ -50,15 +50,16 @@ void paste7BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE ==
 void paste8BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient8BIT; return; } transient7BIT = VARIABLE; transientChanged=true; }
 
 
-void modify3VAL(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? (add?0x2:0) : (VARIABLE + (add?1:-1)) ) % 3; if(VARIABLE>2) VARIABLE = 2; 	}
-void modify6VAL(Control *c, bool bigstep, bool add, u32 *pointer){  VARIABLE = ( bigstep ? (add?0x5:0) : (VARIABLE + (add?1:-1)) ) % 6;		}
-
-void modify5VAL(Control *c, bool bigstep, bool add, u32 *pointer){  
-	VARIABLE = (add ? (VARIABLE+1) : (VARIABLE-1)) % 5;	
-	if(VARIABLE > 4)VARIABLE = 4;
+void modifyValue(Control *c,bool bigstep, bool add, u32 *pointer, u8 quant){	
+	VARIABLE = ( bigstep ? (add ? quant - 1 : 0) : (VARIABLE + (add ? 1 : -1 )) ) % quant; 
+	if( VARIABLE > quant - 1 ) VARIABLE = quant - 1; 	
 }
+	
+void modify3VAL(Control *c, bool bigstep, bool add, u32 *pointer){ return modifyValue(c, bigstep, add, pointer, 3); }
+void modify5VAL(Control *c, bool bigstep, bool add, u32 *pointer){ return modifyValue(c, bigstep, add, pointer, 5); }
+void modify6VAL(Control *c, bool bigstep, bool add, u32 *pointer){ return modifyValue(c, bigstep, add, pointer, 6); }
+void modify27VAL(Control *c, bool bigstep, bool add, u32 *pointer){ return modifyValue(c, bigstep, add, pointer, 27); }
 
-void cellCopy(u8 channel);
 void modifyCommand(Control *c, bool bigstep, bool add, u32 *pointer){
 	if(CURRENT_PATTERN == 0x00)return;
 	
@@ -71,20 +72,27 @@ void modifyCommand(Control *c, bool bigstep, bool add, u32 *pointer){
 	transientCommand = VARIABLE;
 	transientChanged = true;
 	
-	cellCopy(VAR_CFG.CURRENTCHANNEL);
+	Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL );
 }
-void modifyNote(Control *c, bool bigstep, bool add, u32 *pointer);
+void modifyNote( Control *c, bool bigstep, bool add, u32 *pointer );
 
+void modifyInst( Control *c, bool bigstep, bool add, u32 *pointer ){
+	if( CURRENT_PATTERN == 0x00 ) return;
+	VARIABLE 			= (VARIABLE + ((bigstep?0x4:0x1) * (add?1:-1)) ) & 0x3F;	
+	transientInstrument = VARIABLE; 
+	transientChanged	= true; 
+	if( VARIABLE == 0 ) VARIABLE = 1;
+	Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); 
+}
 
-void modifyInst		(Control *c, bool bigstep, bool add, u32 *pointer){if(CURRENT_PATTERN == 0x00)return;VARIABLE = (VARIABLE + ((bigstep?0x4:0x1) * (add?1:-1))      ) & 0x3F;	transientInstrument = VARIABLE; transientChanged=true; cellCopy(VAR_CFG.CURRENTCHANNEL);}
-void modifyVolume	(Control *c, bool bigstep, bool add, u32 *pointer){if(CURRENT_PATTERN == 0x00)return;VARIABLE = ( bigstep ? (add?0xF:0) : (VARIABLE + (add?1:-1)) ) & 0xF; 	transientVolume 	= VARIABLE; transientChanged=true; cellCopy(VAR_CFG.CURRENTCHANNEL);}	
-void modifyValue	(Control *c, bool bigstep, bool add, u32 *pointer){if(CURRENT_PATTERN == 0x00)return;VARIABLE = (VARIABLE + ((bigstep?0x10:0x1)* (add?1:-1))      ) & 0xFF;	transientValue		= VARIABLE; transientChanged=true; cellCopy(VAR_CFG.CURRENTCHANNEL);}
+void modifyVolume	(Control *c, bool bigstep, bool add, u32 *pointer){if(CURRENT_PATTERN == 0x00)return;VARIABLE = ( bigstep ? (add?0xF:0) : (VARIABLE + (add?1:-1)) ) & 0xF; 	transientVolume 	= VARIABLE; transientChanged=true; Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); }	
+void modifyValue	(Control *c, bool bigstep, bool add, u32 *pointer){if(CURRENT_PATTERN == 0x00)return;VARIABLE = (VARIABLE + ((bigstep?0x10:0x1)* (add?1:-1))      ) & 0xFF;	transientValue		= VARIABLE; transientChanged=true; Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); }
 
-void pasteCommand	(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientCommand; 	cellCopy(VAR_CFG.CURRENTCHANNEL); return; } transientCommand 	= VARIABLE; transientChanged=true; }
-void pasteInst		(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientInstrument; cellCopy(VAR_CFG.CURRENTCHANNEL); return; } transientInstrument = VARIABLE; transientChanged=true; }
-void pasteNote		(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientNote; 		cellCopy(VAR_CFG.CURRENTCHANNEL); return; } transientNote 		= VARIABLE; transientChanged=true; }
-void pasteVolume	(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientVolume;		cellCopy(VAR_CFG.CURRENTCHANNEL); return; } transientVolume 	= VARIABLE; transientChanged=true; }
-void pasteValue		(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientValue; 		cellCopy(VAR_CFG.CURRENTCHANNEL); return; } transientValue 		= VARIABLE; transientChanged=true; }
+void pasteCommand	(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientCommand; 	Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); return; } transientCommand 		= VARIABLE; transientChanged=true; }
+void pasteInst		(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientInstrument; Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); return; } transientInstrument 	= VARIABLE; transientChanged=true; }
+void pasteNote		(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientNote; 		Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); return; } transientNote 		= VARIABLE; transientChanged=true; }
+void pasteVolume	(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientVolume;		Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); return; } transientVolume 		= VARIABLE; transientChanged=true; }
+void pasteValue		(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientValue; 		Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); return; } transientValue 		= VARIABLE; transientChanged=true; }
 
 #undef VARIABLE
 

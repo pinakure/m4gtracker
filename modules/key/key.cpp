@@ -113,4 +113,16 @@ bool cKEY::repeat(u8 index)
 	return(false);
 }
 
-
+bool cKEY::activity(){
+	if( this->down( KEY_A )) return true;
+	if( this->down( KEY_B )) return true;
+	if( this->down( KEY_START )) return true;
+	if( this->down( KEY_SELECT )) return true;
+	if( this->down( KEY_L )) return true;
+	if( this->down( KEY_R )) return true;
+	if( this->down( KEY_UP )) return true;
+	if( this->down( KEY_DOWN )) return true;
+	if( this->down( KEY_LEFT )) return true;
+	if( this->down( KEY_RIGHT )) return true;
+	return false;
+}

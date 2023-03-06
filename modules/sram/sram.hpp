@@ -27,20 +27,15 @@ class Sram {
 		void write16(u16);
 		void write32(u32);
 		
-		void songLoad();
-		void songSave();
-		void songDefaults();
-		void sharedDataLoad();
-		void sharedDataSave();
-		void dataRevert();
-		void dataBackup();
+		void songLoad		( bool verbose );
+		void songSave		( bool verbose );
+		void songDefaults	( bool verbose );
+		void sharedDataLoad	( bool verbose );
+		void sharedDataSave	( bool verbose );
+		void dataRevert		( bool verbose );
+		void dataBackup		( bool verbose );
 		
 		void drawPosition(u8 x, u8 y,u8 color);
 };
 
 extern Sram SRAM;
-
-extern void instrumentUnpack	(Instrument *i);
-extern void instrumentPack		(Instrument *i);
-extern void instcopy			(Instrument *s, Instrument *d);
-

@@ -25,6 +25,8 @@ class cKEY
 		bool up(u16 keyflag);
 		bool press(u16 keyflag);
 		bool repeat(u8 index);
+
+		bool activity();
 };
 
 extern cKEY KEY;

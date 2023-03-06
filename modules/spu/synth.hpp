@@ -14,7 +14,9 @@ class Synth {
 		static u8 	wav_adsr_table[4][0x40];
 		static u8 	fmw_adsr_table[4][0x40];
 		static u8 	smp_adsr_table   [0x40];
+		
 		static void init();
+		
 		static void noteOnPwm1( Channel* channel );
 		static void noteOnPwm2( Channel* channel );
 		static void noteOnNze ( Channel* channel );
@@ -29,6 +31,8 @@ class Synth {
 		static void renderWav( SETTINGS_WAV *settings, u8 vol );
 		static void renderFmw( SETTINGS_FMW *settings, u8 vol );
 		static void renderSmp( SETTINGS_SMP *settings, u8 vol );
+
+		static void polysynth( u16 note );
 		
 		static void triggerPwm1( Channel *channel );
 		static void triggerPwm2( Channel *channel );

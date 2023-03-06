@@ -119,13 +119,6 @@ void DECIMAL_DOUBLE_TWOTILES(u8 x, u8 y, u16 color, u16 value);
 /* Display update controller Callbacks (@ callbacks.c) */
 void updateLIVE2(RegionHandler* rh);
 void updateLIVE1(RegionHandler* rh);
-void updateHLP(RegionHandler* rh);
-void updateSNG(RegionHandler* rh);
-void updateINS_WAV(RegionHandler* rh);
-void updateINS_FMW(RegionHandler* rh);
-void updateINS_SMP(RegionHandler* rh);
-void updateINS_PWM(RegionHandler* rh);
-void updatePAT(RegionHandler* rh);
 void updateTABLE(RegionHandler* rh);
 void updateVIS(RegionHandler* rh);
 void updateHEADER1(RegionHandler* rh);
@@ -137,12 +130,10 @@ void updateCHANNEL3(RegionHandler* rh);
 void updateCHANNEL4(RegionHandler* rh);
 void updateCHANNEL5(RegionHandler* rh);
 void updateSNK(RegionHandler* rh);
-void updateLOOKNFEEL(RegionHandler* rh);
 void updateLINKMODE(RegionHandler* rh);
 void updateBEHAVIOR(RegionHandler* rh);
 void updateTRACKER(RegionHandler* rh);
 void updateMEMORY(RegionHandler* rh);
-void updateCOLOREDITOR(RegionHandler* rh);
 void updateCHANNELMIXER(RegionHandler* rh);
 void updateMEMORYSONGMAP(RegionHandler* rh);
 void updateMEMORYTEST(RegionHandler* rh);
@@ -171,15 +162,11 @@ void LOADWAVPRESET3(Control *c, bool bigstep, bool add, u32 *pointer);
 void LOADWAVPRESET4(Control *c, bool bigstep, bool add, u32 *pointer);
 void LOADWAVPRESET5(Control *c, bool bigstep, bool add, u32 *pointer);
 
-void COLOREDITOR(Control *c, bool bigstep, bool add, u32 *pointer);
-
 void RECEIVESONG(Control *c, bool bigstep, bool add, u32 *pointer);
 void SENDSONG(Control *c, bool bigstep, bool add, u32 *pointer);
 
 void MIXER(Control *c, bool bigstep, bool add, u32 *pointer);
 
-void SLOTUSAGE(Control *c, bool bigstep, bool add, u32 *pointer);
-void PURGESONGS(Control *c, bool bigstep, bool add, u32 *pointer);
 void MEMORYTEST(Control *c, bool bigstep, bool add, u32 *pointer);
 void REINITIALIZE(Control *c, bool bigstep, bool add, u32 *pointer);
 void FORMATMEMORY(Control *c, bool bigstep, bool add, u32 *pointer);
@@ -214,8 +201,6 @@ void modifyNOTE(Control*, bool bigstep, bool add, u32 *pointer);
 void modify3VAL(Control*, bool bigstep, bool add, u32 *pointer); // For variables which can take up do 3 different values
 void modify5VAL(Control*, bool bigstep, bool add, u32 *pointer); // For variables which can take up do 5 different values
 void modify6VAL(Control*, bool bigstep, bool add, u32 *pointer); // For variables which can take up to 6 different values
-void modify27VAL(Control*, bool bigstep, bool add, u32 *pointer); 
-
 
 void instLoad(void);
 void patternSync(u8 position);
@@ -269,7 +254,6 @@ void instrument27VAL(Control *c,bool bigstep, bool add, u32 *pointer);
 #include "data/layers.c"
 #include "data/tileset.c"
 #include "data/palette.c"
-#include "data/help.c"
 
 // Global variables
 
