@@ -129,7 +129,6 @@ void updateCHANNEL2(RegionHandler* rh);
 void updateCHANNEL3(RegionHandler* rh);
 void updateCHANNEL4(RegionHandler* rh);
 void updateCHANNEL5(RegionHandler* rh);
-void updateSNK(RegionHandler* rh);
 void updateLINKMODE(RegionHandler* rh);
 void updateBEHAVIOR(RegionHandler* rh);
 void updateTRACKER(RegionHandler* rh);

@@ -85,7 +85,8 @@ class RegionHandler {
 		Cache *dirty;
 		Region *region;
 		Control *control; //focused control
-		bool redraw;
+		bool redraw;  		// used to notify the loaded region it must be redrawn
+		bool new_region;  	// turned on @ load, screen responsible of reading this var must turn it off
 		
 		u32 messages[1024];
 		s32 messagecount;
@@ -113,6 +114,8 @@ class RegionHandler {
 		void updateProgress();
 		void update(u8 delta);
 };
+
+#define OnNewRegion( f ) if(rh->redraw){ f };
 
 extern RegionHandler regHnd;
 

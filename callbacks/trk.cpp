@@ -138,7 +138,7 @@ void modifyNote(Control *c, bool bigstep, bool add, u32 *pointer){
 	VARIABLE += (bigstep?0xC:0x1) * (add?1:-1);
 	if(VARIABLE > 159) VARIABLE = 0;
 	else if(VARIABLE > 119) VARIABLE = 119;
-	if(VARIABLE == 0 && !add)VARIABLE = 1;
+	if(VARIABLE == 0 )VARIABLE = 1;
 	transientNote = VARIABLE;
 	transientChanged = true;
 	Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL );

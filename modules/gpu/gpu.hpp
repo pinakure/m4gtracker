@@ -135,6 +135,20 @@ class GPU {
 	bool isVblank(void) {
 		return (R_VCOUNT&0x00FF >=160);
 	}
+	
+	void loadPalette(void){
+		// Load palette
+		DmaArrayCopy(3, Palette, BG_PALETTE, 16);
+		
+		/* txt layer's palette trick */
+		for(int i=0;i<16;i++)
+		{
+		//	 NUMBERS[i] = i;
+		
+			 *(u16*)(BG_PALETTE+(i*0x20))		=	*(u16*)(BG_PALETTE);
+			 *(u16*)(BG_PALETTE+(i*0x20)+0x10)	=	*(u16*)(BG_PALETTE+(i*0x2));
+		 }					
+	}
 
 	void start(void){
 		
@@ -142,18 +156,7 @@ class GPU {
 		R_DISPCNT = DISP_FORCE_HBLANK; 
 		
 			
-		// Load palette
-		DmaArrayCopy(3, Palette, BG_PALETTE, 16);
-		
-		/* txt layer's palette trick */
-		 for(int i=0;i<16;i++)
-		 {
-		//	 NUMBERS[i] = i;
-		
-			 *(u16*)(BG_PALETTE+(i*0x20))		=	*(u16*)(BG_PALETTE);
-			 *(u16*)(BG_PALETTE+(i*0x20)+0x10)	=	*(u16*)(BG_PALETTE+(i*0x2));
-		 }					
-		
+		loadPalette();
 		
 		// Load tilesets
 		DmaCopy(3, TILESET_0,CHAR_BASE0_ADDR, 8192, 16);//256 tiles

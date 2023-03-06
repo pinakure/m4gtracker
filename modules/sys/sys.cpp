@@ -27,6 +27,7 @@ void Sys::init(){
 	keyboard = 0x0000; // Clear Keypress, down and up buffer (AB, SL, ST, arrows)
 	cursor = 0x00; 
 	
+	SnakeGame::init();
 	/*for(int i=0; i<6; i++){
 		VAR_PATTERN[i].POINTER = VAR_PATTERN[i].ORDER;
 	}*/
@@ -60,6 +61,8 @@ void Sys::updateInput(){
 	if(VAR_LIVE.PERFORM.LOCK)return;
 	// Handle Navigation
 	if(KEY.press(KEY_SELECT)){
+		if(KEY.press(KEY_A))return;
+		if(KEY.press(KEY_B))return;
 		msg  = KEY.down(KEY_LEFT ) ? MESSAGE_NAVIGATE_LEFT  :
 			   KEY.down(KEY_RIGHT) ? MESSAGE_NAVIGATE_RIGHT :
 			   KEY.down(KEY_UP   ) ? MESSAGE_NAVIGATE_UP    :
@@ -93,8 +96,8 @@ void Sys::updateInput(){
 	
 	// Handle Copy Command (B+A)
 	if(KEY.press(KEY_B) && regHnd.control) {
-		if(KEY.down(KEY_A)) {
-			//regHnd.sendMessage(MESSAGE_COPY | (unsigned)regHnd.control);
+		if(KEY.press(KEY_A)) {
+			regHnd.sendMessage(MESSAGE_PASTE | (unsigned)regHnd.control);
 			return;		
 		}
 		

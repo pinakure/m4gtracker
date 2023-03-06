@@ -1096,7 +1096,7 @@ enum E_CallbackEvents {
 
 
 
-enum E_Messages {
+typedef enum eMessages {
 	MESSAGE_OTHER						= 0x00000000,
 	MESSAGE_OTHER_BIGPREV				= 0x00000001,//b+down
 	MESSAGE_OTHER_BIGNEXT				= 0x00000002,//b+up
@@ -1104,6 +1104,8 @@ enum E_Messages {
 	MESSAGE_OTHER_NEXT					= 0x00000004,//b+right
 	MESSAGE_OTHER_REDRAW_ALL_CONTROLS	= 0x00000005,
 	MESSAGE_OTHER_REFRESH_DATA			= 0x00000006,// refreshed data matrices
+	MESSAGE_CUT							= 0x00000007,// refreshed data matrices
+	MESSAGE_PASTE						= 0x00000008,// refreshed data matrices
 	MESSAGE_REDRAW_CONTROL 				= 0x10000000,
 	MESSAGE_REDRAW_DISPLAY 				= 0x20000000,
 	MESSAGE_REDRAW_VIEWPORT 			= 0x30000000,
@@ -1119,5 +1121,5 @@ enum E_Messages {
 	MESSAGE_ACTIVATE	 				= 0xD0000000,
 	MESSAGE_CANCEL	 					= 0xE0000000,
 	MESSAGE_KEYPRESS	 				= 0xF0000000
-};
+} Messages;
 

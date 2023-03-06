@@ -541,14 +541,14 @@ void InstEdit::synchronize(){
 
 void InstEdit::dispatchMessage(u32 msg) {
 	switch(msg) {
-		case MESSAGE_OTHER_PREV:
+		case MESSAGE_OTHER_PREV:// B + <-
 			VAR_CFG.CURRENTINSTRUMENT--;
 			VAR_CFG.CURRENTINSTRUMENT &= 0x3f;
 			if(VAR_CFG.CURRENTINSTRUMENT == 0) VAR_CFG.CURRENTINSTRUMENT=1;
 			InstEdit::load();
 			return;
 		
-		case MESSAGE_OTHER_NEXT:			
+		case MESSAGE_OTHER_NEXT:// B + ->	
 			VAR_CFG.CURRENTINSTRUMENT++;
 			VAR_CFG.CURRENTINSTRUMENT &= 0x3f;
 			if(VAR_CFG.CURRENTINSTRUMENT == 0) VAR_CFG.CURRENTINSTRUMENT=1;

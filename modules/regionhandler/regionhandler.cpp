@@ -231,11 +231,11 @@ void RegionHandler::dispatchMessages(){
 			case MESSAGE_ACTIVATE		: controlTrigger( ((Control*)pv), 1); break;
 			
 			/* Variable modification */
-			case MESSAGE_CANCEL			: controlClear(  ((Control*)pv) ); break;
-			case MESSAGE_MODIFY_ADD		: controlModify( ((Control*)pv)	, true  , false ); break;
-			case MESSAGE_MODIFY_SUB 	: controlModify( ((Control*)pv)	, false , false ); break;
-			case MESSAGE_MODIFY_BIGADD	: controlModify( ((Control*)pv)	, true	, true	); break;
-			case MESSAGE_MODIFY_BIGSUB	: controlModify( ((Control*)pv)	, false , true	); break;
+			case MESSAGE_CANCEL			: controlClear	( ((Control*)pv) ); break;
+			case MESSAGE_MODIFY_ADD		: controlModify	( ((Control*)pv) , true  , false ); break;
+			case MESSAGE_MODIFY_SUB 	: controlModify	( ((Control*)pv) , false , false ); break;
+			case MESSAGE_MODIFY_BIGADD	: controlModify	( ((Control*)pv) , true	 , true	 ); break;
+			case MESSAGE_MODIFY_BIGSUB	: controlModify	( ((Control*)pv) , false , true	 ); break;
 				
 			/* Redraw */
 			case MESSAGE_REDRAW_REGION	: this->redraw = true; break;
@@ -286,6 +286,7 @@ void RegionHandler::load(const Region *r){
 	region = (Region*)r;
 	control = r->focus?(Control*)r->focus:NULL;
 	redraw = true;
+	new_region = true;
 	// Set new dirty zone
 	dirty = (Cache*)region->dirty;
 	viewportLastValue = 0xFF;

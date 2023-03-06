@@ -390,11 +390,27 @@ void LookNFeel::logoFade(){
 		regHnd.drawVerticalCache(8,7,&CACHE_LOGOTYPE,0,0);
 		sys.update();
 		MOSAIC_CNT = 0xFF - ((freeze >> 1)&0xFF);
-		Synth::polysynth( freeze >> 1 );
+		if( VAR_CFG.LOOKNFEEL.STARTUPSFX ) {
+			Synth::polysynth( freeze >> 1 );
+		}
 		if(!gpu.isVblank()) {
-			if( VAR_CFG.LOOKNFEEL.STARTUPSFX ) {
-			}
 			freeze++;
+			for(int i=0;i<16;i++) {
+				int c1 = Palette[4+((freeze)&0x7)];
+				int r, g, b;
+				if(!(freeze&7)||!(freeze&3)){
+					r = (u8)( ( (c1 & 0x001f)	   )  * ((freeze*3) / (0xf * 3))); 
+					g = (u8)( ( (c1 & 0x02e0) >> 5  ) * ((freeze*3) / (0xf * 3)));
+					b = (u8)( ( (c1 & 0x3d00) >> 10 ) * ((freeze*3) / (0xf * 3)));
+				} else {
+					r = 0;
+					g = 0;
+					b = 0;
+				}
+				c1 = (b << 10) | (g << 5) | r;
+				*(u16*)(BG_PALETTE+(i*0x20)) 	  =	c1;
+				*(u16*)(BG_PALETTE+(i*0x20)+0x10) =	c1;
+			}		
 		}
 	}
 	if( VAR_CFG.LOOKNFEEL.STARTUPSFX ) Mixer::stop();
@@ -408,14 +424,23 @@ void LookNFeel::logoFade(){
 
 void LookNFeel::logoWait(){
 	int freeze=0;
+	
+	gpu.loadPalette();
 	while( freeze < 2048 ){
 		regHnd.drawVerticalCache(8,7,&CACHE_LOGOTYPE,0,0);
 		sys.update();
 		if( KEY.activity() ) {
-			return;
+			break;
 		}
+		/*
+		for(int i=0;i<16;i++) {
+			*(u16*)(BG_PALETTE+(i*0x20))		 =	Palette[(i+freeze)&0xFF];
+			*(u16*)(BG_PALETTE+(i*0x20)+0x10)	 =	Palette[((i+freeze)+i*0x2)&0xFF];
+		}*/
+		 
 		freeze++;
 	}
+	gpu.loadPalette();
 }
 
 void LookNFeel::init(){

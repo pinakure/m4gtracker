@@ -152,6 +152,18 @@
 								 INPUT DEFINES
 	-------------------------------------------------------------------------*/
 	/* KEYPAD SCANCODES */
+	typedef enum eAGBKeys {
+		KEY_A		= 0x0001,
+		KEY_B		= 0x0002,
+		KEY_SELECT	= 0x0004,
+		KEY_START	= 0x0008,
+		KEY_RIGHT	= 0x0010,
+		KEY_LEFT	= 0x0020,
+		KEY_UP		= 0x0040,
+		KEY_DOWN	= 0x0080,
+		KEY_R		= 0x0100,
+		KEY_L		= 0x0200,
+	} AGBKeys;
 	#define KEY_A					0x0001
 	#define KEY_B					0x0002
 	#define KEY_SELECT				0x0004
@@ -162,6 +174,7 @@
 	#define KEY_DOWN				0x0080
 	#define KEY_R					0x0100
 	#define KEY_L					0x0200
+	
 	/* KEYPAD POSITION INDEXES */
 	#define KEY_INDEX_A				0x0
 	#define KEY_INDEX_B				0x1
