@@ -1,3 +1,5 @@
+#include "palette.hpp"
+
 /* Palette: 5 bit per color, 2 byte per pixel (value 31 max), byte order: 0xBBGR : 0bbbBBGGgggrRRRR
            There are 16 subpalettes for the text being drawn in one of the 16 color without losing transparency*/
 const unsigned short Palette[256] = {

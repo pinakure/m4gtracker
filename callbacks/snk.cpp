@@ -25,9 +25,6 @@ u8			SnakeGame::last_length	= 0xFFFF;
 u32			SnakeGame::counter_a	= 0xFFFFFFFF;
 u32			SnakeGame::counter_b	= 0xFFFFFFFF;
 	
-
-extern GPU gpu;
-
 #define PHI 0x9e3779b9
 static u32 q[32], rc=362436;
 

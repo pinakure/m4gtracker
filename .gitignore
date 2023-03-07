@@ -177,3 +177,5 @@ modules/spu/sequencer.o
 modules/spu/synth.o
 synth.s
 sequencer.s
+callbacks/linkmode.o
+linkmode.s

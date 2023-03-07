@@ -560,6 +560,14 @@ void InstEdit::dispatchMessage(u32 msg) {
 void InstEdit::updateWav( RegionHandler* rh ){
 	const Control *cname = &INS_WAV_CONTROLS[CONTROL_INS_WAV_NAME];
 	STRING(false, cname->x, cname->y, cname->var);
+	
+	static int adsr_position;
+	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_WAV ].inst ) 
+	if( adsr_position != Synth::wav_adsr_position ){
+		adsr_position = Synth::wav_adsr_position;
+		viewQuadADSR( Synth::wav_adsr_table, adsr_position);
+	}
+	
 	InstEdit::synchronize();
 }
 
@@ -570,12 +578,28 @@ void InstEdit::updateFmw( RegionHandler* rh ){
 	static int recall = 0;
 	recall++;
 	HEXADECIMAL_DOUBLE(0,0,0xFF,recall);
+	
+	static int adsr_position;
+	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_FMW ].inst ) 
+	if( adsr_position != Synth::fmw_adsr_position ){
+		adsr_position = Synth::fmw_adsr_position;
+		viewQuadADSR( Synth::fmw_adsr_table, adsr_position);
+	}
+	
 	InstEdit::synchronize();
 }
 
 void InstEdit::updateSmp( RegionHandler* rh ){
 	const Control *cname = &INS_SMP_CONTROLS[CONTROL_INS_SMP_NAME];
 	STRING(false, cname->x, cname->y, cname->var);
+	
+	static int adsr_position;
+	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_SMP ].inst ) 
+	if( adsr_position != Synth::smp_adsr_position ){
+		adsr_position = Synth::smp_adsr_position;
+		viewADSR( Synth::smp_adsr_table, adsr_position);
+	}
+	
 	InstEdit::synchronize();
 }
 
@@ -642,3 +666,46 @@ void InstEdit::smpPreset(Control *c, bool bigstep, bool add, u32 *pointer){
 	DECIMAL_DOUBLE( 1, 2, 0x33, index + offset);
 	//BREAK
 }
+
+void InstEdit::viewQuadADSR( u8 adsr_tables[4][0x40] , u8 adsr_position ){
+
+	if(regHnd.region != &REGION_MAP_2_INS ) return;
+	
+	gpu.vs->clear();
+	
+	for(int x=0,d=0;x<0x40; x+=2,d=x>>1){
+		gpu.vs->set( d,  7 - ( adsr_tables[ 0 ][ x ] >> 1 ) );
+		gpu.vs->set( d, 15 - ( adsr_tables[ 1 ][ x ] >> 1 ) );
+		gpu.vs->set( d, 23 - ( adsr_tables[ 2 ][ x ] >> 1 ) );
+		gpu.vs->set( d, 31 - ( adsr_tables[ 3 ][ x ] >> 1 ) );
+		
+	}
+	
+	DECIMAL_DOUBLE( 14,2, 7, adsr_position );
+
+	if( adsr_position < 0x3F ){
+		VISPOS1(14, 1,	0xFF, adsr_position>>2);
+		VISPOS2(14, 18, 0xFF, adsr_position>>2);
+	}
+	gpu.vs->draw(14,6);
+}
+
+void InstEdit::viewADSR ( u8 adsr_table[0x40] , u8 adsr_position ){
+
+	if(regHnd.region != &REGION_MAP_2_INS ) return;
+	
+	gpu.vs->clear();
+	
+	for(int x=0;x<0x40; x+=2){
+		gpu.vs->set( x >> 1, 31 - (( adsr_table[ x ]<<1) ) );
+	}
+	
+	DECIMAL_DOUBLE( 14,2, 7, adsr_position );
+
+	if( adsr_position < 0x3F ){
+		VISPOS1(14, 1,	0xFF, adsr_position>>2);
+		VISPOS2(14, 18, 0xFF, adsr_position>>2);
+	}
+	gpu.vs->draw(14,6);
+}
+

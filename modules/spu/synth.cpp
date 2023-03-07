@@ -4,11 +4,12 @@
 #include "../../data/config.hpp"
 #include "../../data/song.hpp"
 #include "../../data/helpers.hpp"
+#include "../../data/enum.h"
 #include "../../data/settings.hpp"
 #include "../../data/instrument.hpp"
+#include "../../data/instrument.hpp"
 #include "../../callbacks/ins.hpp"
-
-extern void adsr_view();
+#include "../../modules/gpu/gpu.hpp"
 
 static bool swap_bank = false;
 
@@ -337,7 +338,8 @@ void Synth::updateADSRWav( SETTINGS_WAV *wav ){
 	renderADSR( wav->OP2_ADSR, wav_adsr_table[1] );
 	renderADSR( wav->OP3_ADSR, wav_adsr_table[2] );
 	renderADSR( wav->OP4_ADSR, wav_adsr_table[3] );
-	adsr_view();
+	if(VAR_INSTRUMENT.TYPE != INSTRUMENT_TYPE_WAV) return;
+	InstEdit::viewQuadADSR( wav_adsr_table, wav_adsr_position );
 }
 
 void Synth::updateADSRFmw( SETTINGS_FMW *fmw ){
@@ -345,12 +347,14 @@ void Synth::updateADSRFmw( SETTINGS_FMW *fmw ){
 	renderADSR( fmw->OP2_ADSR, fmw_adsr_table[1] );
 	renderADSR( fmw->OP3_ADSR, fmw_adsr_table[2] );
 	renderADSR( fmw->OP4_ADSR, fmw_adsr_table[3] );
-	adsr_view();
+	if(VAR_INSTRUMENT.TYPE != INSTRUMENT_TYPE_FMW) return;
+	InstEdit::viewQuadADSR( fmw_adsr_table, fmw_adsr_position );
 }
 
 void Synth::updateADSRSmp( SETTINGS_SMP *smp ){
 	renderADSR( smp->ADSR, smp_adsr_table );
-	adsr_view();
+	if(VAR_INSTRUMENT.TYPE != INSTRUMENT_TYPE_SMP) return;
+	InstEdit::viewADSR( smp_adsr_table, smp_adsr_position );
 }
 
 void Synth::renderADSR( u8 adsr[ 4 ], u8 adsr_table[0x40] ){
@@ -566,7 +570,7 @@ void Synth::polysynth( u16 input ){
 	static u16 lfo = 0;
 	lfo++;
 	//input+=lfo;
-	u8 len  = 0;//input & 0x1F; // 5 bit : 0 
+	//	u8 len  = 0;//input & 0x1F; // 5 bit : 0 
 	u8 duty = (lfo>>6) & 0x03; // 2 bit : 6
 	u8 step = 0x3; //input & 0x07; // 3 bit : 8
 	u8 edir = 0x0800;		// 1 bit : 11
@@ -640,6 +644,5 @@ void Synth::polysynth( u16 input ){
 		loadWav( wavedata );
 		init = true;
 	}
-	return;
-	
+	return;	
 }

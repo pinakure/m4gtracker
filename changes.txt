@@ -42,4 +42,10 @@ Added hud element displaying @ snake
 Fixed bug @ boot time
 Debugging class and helpers ( Debug::error, Debug::halt ) 
 Moved cfg.linkmode control list to separate file
+-------------------
+07-03-2023
+-------------------
 Clipboard Menu Interface working
+SMP Envelope visualization
+ADSR Envelope positions are drawn and autoupdated if playing on any channel (visible @ InstEdit screen, current instrument)
+Refactored Gpu class to allow external header inclusion

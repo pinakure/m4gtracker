@@ -1,4 +1,33 @@
-#include "regions.h"
+/*
+
+FILE DEPRECATED:
+This regions must reside in each correspondent callback/xxx file
+
+*/
+
+#include "data.hpp"
+
+void updateTABLE(RegionHandler* rh);
+void updateVIS(RegionHandler* rh);
+void updateHEADER1(RegionHandler* rh);
+void updateHEADER0(RegionHandler* rh);
+void updateCHANNEL0(RegionHandler* rh);
+void updateCHANNEL1(RegionHandler* rh);
+void updateCHANNEL2(RegionHandler* rh);
+void updateCHANNEL3(RegionHandler* rh);
+void updateCHANNEL4(RegionHandler* rh);
+void updateCHANNEL5(RegionHandler* rh);
+void updateBEHAVIOR(RegionHandler* rh);
+void updateTRACKER(RegionHandler* rh);
+void updateMEMORY(RegionHandler* rh);
+void updateCHANNELMIXER(RegionHandler* rh);
+void updateMEMORYSONGMAP(RegionHandler* rh);
+void updateMEMORYTEST(RegionHandler* rh);
+void updateLINKMODE(RegionHandler* rh);
+void updateLINKSTATUS(RegionHandler* rh);
+void updateCREDITS(RegionHandler* rh);
+void updatePROGRESS(RegionHandler* rh);
+
 
 #include "../callbacks/ins.hpp"
 #include "../callbacks/pat.hpp"
@@ -98,41 +127,3 @@ const Region REGION_MAP_4_MEMORYTEST = {	0xFF,	0xFF,	0x00, 	0x3c, 0x12, 0x04, 	N
 const Region REGION_MAP_4_LINKSTATUS = {	0xFF,	0xFF,	0x00, 	0x2c, 0x12, 0x04, 	NULL, 				NULL, 				NULL, 				NULL, 					0x03, 	&CACHE_DIRTY_MAP_4,	NULL, 					NULL, 				  NULL  															, VARS_LINKSTATUS 	, updateLINKSTATUS		, NULL			}; /*LINKSTATUS*/
 const Region REGION_MAP_4_CREDITS = { 		0xFF,	0xFF,	0x00, 	0x30, 0x12, 0x04, 	NULL, 				NULL, 				NULL, 				NULL, 					0x03, 	&CACHE_DIRTY_MAP_4,	NULL, 					NULL, 				  NULL  															, VARS_CREDITS 		, updateCREDITS			, NULL			}; /*CREDITS*/
 const Region REGION_MAP_5_PROGRESS = { 		0xFF,	0xFF,	0x1c, 	0x00, 0x0b, 0x08, 	NULL, 				NULL, 				NULL, 				NULL, 					0x04, 	NULL, 				NULL, 					NULL, 				  NULL  															, VARS_PROGRESS 	, NULL					, NULL			}; /*PROGRESS*/
-//------------------------------------------------------------------------------------------
-// VIEWPORT SECTION
-//------------------------------------------------------------------------------------------
-const Region *const VIEWPORT_TRK_REGIONS[6] = {
-	&REGION_MAP_3_CHANNEL0,
-	&REGION_MAP_3_CHANNEL1,
-	&REGION_MAP_3_CHANNEL2,
-	&REGION_MAP_3_CHANNEL3,
-	&REGION_MAP_3_CHANNEL4,
-	&REGION_MAP_3_CHANNEL5
-};
-
-const Region *const VIEWPORT_INS_REGIONS[4] = {
-	&REGION_MAP_2_INS_PWM,
-	&REGION_MAP_2_INS_WAV,
-	&REGION_MAP_2_INS_FMW,
-	&REGION_MAP_2_INS_SMP	
-};
-
-const Region *const VIEWPORT_CFG_REGIONS[5] = {
-	&REGION_MAP_4_LOOKNFEEL,
-	&REGION_MAP_4_LINKMODE,
-	&REGION_MAP_4_BEHAVIOR,
-	&REGION_MAP_4_TRACKER,
-	&REGION_MAP_4_MEMORY	
-};
-
-const Viewport VIEWPORT_INS = { 0x00, 0x00, 0x0E, 0x14, &(VAR_INSTRUMENT.TYPE),		VIEWPORT_INS_REGIONS, 		4};
-const Viewport VIEWPORT_CFG = { 0x04, 0x04, 0x19, 0x0A, &(VAR_CFG.MENUSLOT), 		VIEWPORT_CFG_REGIONS,		5};
-const Viewport VIEWPORT_TRK = { 0x01, 0x03, 0x1D, 0x11, &(VAR_CFG.CURRENTCHANNEL),	VIEWPORT_TRK_REGIONS,		6};
-
-/*const Viewport VIEWPORT_TABLEVIS = (Viewport) {
-.x=0x0E, .y=0x15, .width=0x10, .height=0x12, .var=CFG.INSTRUMENTVISTYPE, .regions=NULL, .count=0, .region=NULL
-const Viewport VIEWPORT_HEADER = (Viewport) {
-.x=0x00, .y=0x00, .width=0x1E, .height=0x03, .var=NULL, .regions=NULL, .count=0, .region=NULL
-const Viewport VIEWPORT_SUBMENU2 = (Viewport) {
-.x=0x0B, .y=0x0F, .width=0x12, .height=0x04, .var=CFG.MENUSLOT, .regions=NULL, .count=0, .region=NULL
-*/

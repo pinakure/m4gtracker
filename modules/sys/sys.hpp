@@ -1,3 +1,6 @@
+#ifndef SYS_HPP
+#define SYS_HPP
+
 // #define KEYDOWN_A		((sys.keyboard & 0x0003) == 0x0001)
 // #define KEYDOWN_B		((sys.keyboard & 0x000C) == 0x0004)
 // #define KEYDOWN_SELECT	((sys.keyboard & 0x0030) == 0x0010)
@@ -85,3 +88,4 @@ class Sys {
 
 extern Sys sys;
 
+#endif 

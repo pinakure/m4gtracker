@@ -40,9 +40,18 @@ typedef struct sChannel {
 	u8 				tsp_position;
 	u8 				vol_position;
 	
-	void (*trigger)(Channel*);
+	void 			(*trigger)(Channel*);
 		
 }Channel;
+
+typedef enum eChannelTypes {
+	CHANNEL_PWM1,
+	CHANNEL_PWM2,
+	CHANNEL_NZE,
+	CHANNEL_WAV,
+	CHANNEL_FMW,
+	CHANNEL_SMP,
+};
 
 extern Channel VAR_CHANNEL[6];
 

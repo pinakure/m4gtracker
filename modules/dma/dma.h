@@ -1,3 +1,6 @@
+#ifndef DMA_HPP
+#define DMA_HPP
+
 /* These pieces of code were directly taken from Nintendo AGB libary */
 /* if you don't own a licensed copy of the SDK you are owed to erase this file */
 
@@ -129,3 +132,5 @@ DmaSet(DmaNo, Srcp, Destp,  (                           \
 
 #define DmaArrayCopyIf(DmaNo, Srcp, Destp, Bit)         \
     DmaCopyIf(     DmaNo, Srcp, Destp, sizeof(Srcp), Bit)
+
+#endif

@@ -1,5 +1,29 @@
+---------------------------
 TODO
 ---------------------------
-Pattern shift functionalities (L or R)
-Clipboard...
-AUTOSAVE Option @ CFG::BEHAVIOR
+Pattern shift 
+	- Shift pattern up 		( R + UP   )
+	- Shift pattern down  	( R + DOWN )
+	- Shift column  up  	( R + SELECT + UP   )
+	- Shift column  down  	( R + SELECT + DOWN )
+Clipboard 
+	- Change clipboar menu hotkey
+		- L + SELECT : show menu
+	- Selection Mask
+		- L + UP   : Grow selection up   from current position or selection top
+		- L + DOWN : Grow selection down from current position or selection bottom
+	- Copy / Paste / Cut / Clone 
+		- Selecting the option in the clipboard menu
+WAV channel wavedata display
+	- Show shape @ operator change
+	- Live wavedata rendering ( HOLD SELECT during playback )
+FMW channel wavedata display
+	- Show shape @ operator change
+	- Live wavedata rendering ( HOLD SELECT during playback )
+SMP channel wavedata display
+	- Show sample @ kit change
+	- Live wavedata rendering ( HOLD SELECT during playback )
+Add missing Config options
+	- AUTOSAVE Option @ Behavior: If enabled, song is saved automatically each time the song playback is stopped.
+Help pages for Nze channel
+	- Not very relevant btm, but it should have some mention...

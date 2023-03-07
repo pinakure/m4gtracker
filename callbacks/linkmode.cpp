@@ -1,5 +1,5 @@
 #include "linkmode.hpp" 
-
+#include "../m4g.hpp" 
 				
 #define THIS(a) 					&LINKMODE_CONTROLS[ CONTROL_LINKMODE_##a ]
 #define THISVAR(a) 					((u8*)&( VAR_CFG.LINKMODE.a ))

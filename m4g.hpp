@@ -44,123 +44,16 @@ extern vu32 SYS_PROFILETIMER;				 //Profiling timer (Debug Only)
 extern vu32 SYS_FPS;						 //Frames(program cycles) / sec
 extern vu32 SYS_FRAMES;						 //Current framecount	
 
-enum E_StatusStrings {
-	STATUS_SAVING,
-	STATUS_LOADING,
-	STATUS_RECEIVING,
-	STATUS_SENDING,
-	STATUS_SYNCWITH,
-	STATUS_RESTORING,
-	STATUS_PURGING,
-	STATUS_TESTING,
-	STATUS_REINIT,
-	STATUS_CELLS,
-	STATUS_DEFAULTS,
-	STATUS_INSTDATA,
-	STATUS_MASTER,
-	STATUS_MEMORY,
-	STATUS_MIDIIN,
-	STATUS_MIDIOUT,
-	STATUS_PATTERNS,
-	STATUS_SETTINGS,
-	STATUS_SLAVE,
-	STATUS_SONG,
-	STATUS_CORRUPTED
-};
-
-enum eLinkModes {
-	LINKMODE_GBA,
-	LINKMODE_IBM,
-	LINKMODE_SYNC_SLAVE,
-	LINKMODE_SYNC_MASTER,
-};
-
-enum E_InstrumentTypes {
-	INSTRUMENT_TYPE_PWM,
-	INSTRUMENT_TYPE_WAV,
-	INSTRUMENT_TYPE_FMW,
-	INSTRUMENT_TYPE_SMP,
-	INSTRUMENT_TYPE_COUNT
-};
-
-void PIXEL(u8 x, u8 y, u16 color, u16 value);
-void VISPOS2(u8 x, u8 y, u16 color, u16 value);
-void VISPOS1(u8 x, u8 y, u16 color, u16 value);
-void NOTE(u8 x, u8 y, u16 color, u16 value);
-void TABLEPOS(u8 x, u8 y, u16 color, u16 value);
-void COMMAND(u8 x, u8 y, u16 color, u16 value);	
-void VUMETER_V1(u8 x, u8 y, u16 color, u16 value);	
-void VUMETER_H1(u8 x, u8 y, u16 color, u16 value);	
-void VUMETER_H3(u8 x, u8 y, u16 color, u16 value);
-void VUMETER_V3(u8 x, u8 y, u16 color, u16 value);
-void TEXT(u8 x, u8 y, u16 color, u16 value);
-void BIGTEXT(u8 x, u8 y, u16 color, u16 value);
-void BIGDEC(u8 x, u8 y, u16 color, u16 value);
-void BIGHEX(u8 x, u8 y, u16 color, u16 value);
-void NIBBLE(u8 x, u8 y, u16 color, u16 value);
-void WAVE_SINGLE(u8 x, u8 y, u16 color, u16 value);
-void WAVE_DOUBLE(u8 x, u8 y, u16 color, u16 value);
-void PROGRESS(u8 x, u8 y, u16 color, u16 value);
-void STATUS(u8 x, u8 y, u16 color, u16 value);
-void HEXADECIMAL(u8 x, u8 y, u16 color, u16 value);
-void HEXADECIMAL_DOUBLE(u8 x, u8 y, u16 color, u16 value);
-void HEXADECIMAL_TWOTILES(u8 x, u8 y, u16 color, u16 value);
-void HEXADECIMAL_INSTRUMENT(u8 x, u8 y, u16 color, u16 value);
-void DECIMAL(u8 x, u8 y, u16 color, u16 value);
-void DECIMAL_DOUBLE(u8 x, u8 y, u16 color, u16 value);
-void DECIMAL_TWOTILES(u8 x, u8 y, u16 color, u16 value);
-void DECIMAL_DOUBLE_TWOTILES(u8 x, u8 y, u16 color, u16 value);
+#include "data/enum.h"
+#include "data/helpers.hpp"
 
 #define BUTTON_ALTER		KEY_A	
 #define BUTTON_NAVIGATE	KEY_SELECT
 
-#include "data/enum.h"
 #include "data/datatypes.h"
 
 /* Display update controller Callbacks (@ callbacks.c) */
-void updateLIVE2(RegionHandler* rh);
-void updateLIVE1(RegionHandler* rh);
-void updateTABLE(RegionHandler* rh);
-void updateVIS(RegionHandler* rh);
-void updateHEADER1(RegionHandler* rh);
-void updateHEADER0(RegionHandler* rh);
-void updateCHANNEL0(RegionHandler* rh);
-void updateCHANNEL1(RegionHandler* rh);
-void updateCHANNEL2(RegionHandler* rh);
-void updateCHANNEL3(RegionHandler* rh);
-void updateCHANNEL4(RegionHandler* rh);
-void updateCHANNEL5(RegionHandler* rh);
-void updateLINKMODE(RegionHandler* rh);
-void updateBEHAVIOR(RegionHandler* rh);
-void updateTRACKER(RegionHandler* rh);
-void updateMEMORY(RegionHandler* rh);
-void updateCHANNELMIXER(RegionHandler* rh);
-void updateMEMORYSONGMAP(RegionHandler* rh);
-void updateMEMORYTEST(RegionHandler* rh);
-void updateLINKSTATUS(RegionHandler* rh);
-void updateCREDITS(RegionHandler* rh);
-void updatePROGRESS(RegionHandler* rh);
 
-/* Button Callbacks (callbacks.c) */
-void SOLO0(Control *c, bool bigstep, bool add, u32 *pointer);
-void SOLO1(Control *c, bool bigstep, bool add, u32 *pointer);
-void SOLO2(Control *c, bool bigstep, bool add, u32 *pointer);
-void SOLO3(Control *c, bool bigstep, bool add, u32 *pointer);
-void SOLO4(Control *c, bool bigstep, bool add, u32 *pointer);
-void SOLO5(Control *c, bool bigstep, bool add, u32 *pointer);
-void MUTE0(Control *c, bool bigstep, bool add, u32 *pointer);
-void MUTE1(Control *c, bool bigstep, bool add, u32 *pointer);
-void MUTE2(Control *c, bool bigstep, bool add, u32 *pointer);
-void MUTE3(Control *c, bool bigstep, bool add, u32 *pointer);
-void MUTE4(Control *c, bool bigstep, bool add, u32 *pointer);
-void MUTE5(Control *c, bool bigstep, bool add, u32 *pointer);
-
-void LOADWAVPRESET0(Control *c, bool bigstep, bool add, u32 *pointer);
-void LOADWAVPRESET1(Control *c, bool bigstep, bool add, u32 *pointer);
-void LOADWAVPRESET2(Control *c, bool bigstep, bool add, u32 *pointer);
-void LOADWAVPRESET3(Control *c, bool bigstep, bool add, u32 *pointer);
-void LOADWAVPRESET4(Control *c, bool bigstep, bool add, u32 *pointer);
-void LOADWAVPRESET5(Control *c, bool bigstep, bool add, u32 *pointer);
 
 void RECEIVESONG(Control *c, bool bigstep, bool add, u32 *pointer);
 void SENDSONG(Control *c, bool bigstep, bool add, u32 *pointer);
@@ -176,51 +69,14 @@ void LOADCONFIG(Control *c, bool bigstep, bool add, u32 *pointer);
 void SAVECONFIG(Control *c, bool bigstep, bool add, u32 *pointer);
 void DEFAULTCONFIG(Control *c, bool bigstep, bool add, u32 *pointer);
 
-void LOADSLOT(Control *c, bool bigstep, bool add, u32 *pointer);
-void SAVESLOT(Control *c, bool bigstep, bool add, u32 *pointer);
-void PURGESLOT(Control *c, bool bigstep, bool add, u32 *pointer);
-void COPYSLOT(Control *c, bool bigstep, bool add, u32 *pointer);
-void ERASESLOT(Control *c, bool bigstep, bool add, u32 *pointer);
-void TEMPOTAP(Control *c, bool bigstep, bool add, u32 *pointer);
 void ALPHA14(Control *c, bool bigstep, bool add, u32 *pointer);
 void ALPHA6(Control *c, bool bigstep, bool add, u32 *pointer);
 
 void BPMUPDATE(Control *c, bool bigstep, bool add, u32 *pointer);
 
 /* Variable Operator callbacks */
-void modify1BIT(Control*, bool bigstep, bool add, u32 *pointer);
-void modify2BIT(Control*, bool bigstep, bool add, u32 *pointer);
-void modify3BIT(Control*, bool bigstep, bool add, u32 *pointer);
-void modify4BIT(Control*, bool bigstep, bool add, u32 *pointer);
-void modify5BIT(Control*, bool bigstep, bool add, u32 *pointer);
-void modify6BIT(Control*, bool bigstep, bool add, u32 *pointer);
 void modify8BIT(Control*, bool bigstep, bool add, u32 *pointer);
-void modifyTEMPO(Control*, bool bigstep, bool add, u32 *pointer);
-void modifyCHAR(Control*, bool bigstep, bool add, u32 *pointer); // Append char received to the string, if room left
-void modifyNOTE(Control*, bool bigstep, bool add, u32 *pointer);
-void modify3VAL(Control*, bool bigstep, bool add, u32 *pointer); // For variables which can take up do 3 different values
-void modify5VAL(Control*, bool bigstep, bool add, u32 *pointer); // For variables which can take up do 5 different values
-void modify6VAL(Control*, bool bigstep, bool add, u32 *pointer); // For variables which can take up to 6 different values
 
-void instLoad(void);
-void patternSync(u8 position);
-void cellSync(void);
-
-
-void instrument1BIT(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument2BIT(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrumentType(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrumentIndex(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument3BIT(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument4BIT(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument5BIT(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument6BIT(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument7BIT(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument8BIT(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument3VAL(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument6VAL(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument5VAL(Control *c, bool bigstep, bool add, u32 *pointer);
-void instrument27VAL(Control *c,bool bigstep, bool add, u32 *pointer);
 
 #define EXTRACT(packed, position, mask)		((packed >> position) & mask)
 #define PORT(a)		*((u8*)a)
@@ -245,43 +101,17 @@ void instrument27VAL(Control *c,bool bigstep, bool add, u32 *pointer);
 
 
 
-#include "data/tables.c"
-#include "data/caches.c"
-#include "data/controls.c"
-#include "data/displays.c"
-#include "data/regions.c"
-#include "data/viewports.c"
-#include "data/layers.c"
-#include "data/tileset.c"
-#include "data/palette.c"
+#include "data/tables.hpp"
+#include "data/caches.hpp"
+#include "data/controls.hpp"
+#include "data/displays.hpp"
+#include "data/regions.hpp"
+#include "data/viewports.hpp"
+#include "data/layers.hpp"
+#include "data/tileset.hpp"
+#include "data/palette.hpp"
 
 // Global variables
-
-vu32 SYS_TIMER=0;
-u32 SYS_PROFILEDTIME=0;
-vu32 SYS_PROFILETIMER=0;
-vu32 SYS_FPS=0;
-vu32 SYS_FRAMES=0;
-volatile bool SYS_SOUNDTIME=false;
-u8 SYS_ACTIVESCREEN=0;
-u8 SYS_PARAM=0;
-bool SYS_SYNCTRACKER = false;
-volatile bool SYS_QUERYKEY=false;
-MEM_IN_EWRAM Song			VAR_SONG;
-MEM_IN_EWRAM Song			VAR_SONGS[6];
-MEM_IN_EWRAM Input 			VAR_INPUT; 
-MEM_IN_EWRAM u8 			VAR_KEY[4];
-MEM_IN_EWRAM Pattern 		VAR_PATTERN[6];
-MEM_IN_EWRAM SETTINGS_PWM 	VAR_PWM;
-MEM_IN_EWRAM SETTINGS_FMW 	VAR_FMW;
-MEM_IN_EWRAM SETTINGS_SMP 	VAR_SMP;
-MEM_IN_EWRAM SETTINGS_WAV 	VAR_WAV;
-MEM_IN_EWRAM Instrument 	VAR_INSTRUMENTS[64];
-MEM_IN_EWRAM Instrument 	VAR_INSTRUMENT;
-MEM_IN_EWRAM CFG 			VAR_CFG;
-MEM_IN_EWRAM Live 			VAR_LIVE;
-MEM_IN_EWRAM Channel 		VAR_CHANNEL[6];
-MEM_IN_EWRAM PatternCell 	VAR_CELLS[6]; 
-MEM_IN_EWRAM PatternCell 	VAR_DATA[128]; 
+#include "data/data.hpp"
 
 #endif

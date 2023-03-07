@@ -2,9 +2,12 @@
 #define INS_HPP
 
 #include "../agb.h"
+#include "../data/control.hpp"
+#include "../data/settings.hpp"
+#include "../data/instrument.hpp"
+#include "../data/controls.hpp"
 
 class RegionHandler;
-typedef struct _Control Control;
 
 class InstEdit {
 	public:
@@ -56,6 +59,10 @@ class InstEdit {
 		static void modAdsrWav	( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void modAdsrFmw  ( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void modAdsrSmp	( Control *c, bool bigstep, bool add, u32 *pointer );
+
+		static void viewADSR 	( u8 adsr_table    [0x40] , u8 adsr_position );
+		static void viewQuadADSR( u8 adsr_tables[4][0x40] , u8 adsr_position );
+
 };
 
 

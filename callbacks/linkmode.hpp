@@ -3,6 +3,8 @@
 
 #include "../agb.h"
 
+#include "../data/control.hpp"
+
 enum E_LINKMODE_CONTROLS { 
 	CONTROL_LINKMODE_MENU2,			
 	CONTROL_LINKMODE_MODE,			
@@ -20,6 +22,7 @@ class LinkMode {
 		
 };
 
+extern const Control LINKMODE_CONTROLS[ CONTROL_LINKMODE_MAX ];
 
 #endif
 

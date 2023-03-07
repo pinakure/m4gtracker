@@ -1,6 +1,8 @@
+#ifndef NET_HPP
+#define NET_HPP
 
-typedef struct _Control Control;
-
+#include "../../agb.h"
+#include "../../data/control.hpp"
 
 typedef enum eNetMode {
 	NET_GBA,
@@ -22,3 +24,5 @@ class Net {
 		static void ibmSync();
 		static void alterMode(Control *c, bool bigstep, bool add, u32 *pointer);
 };
+
+#endif

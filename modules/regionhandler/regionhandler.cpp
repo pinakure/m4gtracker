@@ -1,5 +1,7 @@
 #include "regionhandler.hpp"
 
+RegionHandler regHnd;
+
 void Progress::update(){
 	if(current != *var){
 		current = *var;
