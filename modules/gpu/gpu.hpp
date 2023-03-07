@@ -130,7 +130,12 @@ class GPU {
 	
 	GPU(void){
 		redraw = 0;
+		vcount = 0;
+		blink  = false;
 	}
+	
+	int vcount;
+	bool blink;
 	
 	bool isVblank(void) {
 		return (R_VCOUNT&0x00FF >=160);
@@ -228,6 +233,13 @@ class GPU {
 	
 	u16 get(u8 layer, u8 x, u8 y) {
 		return *(u16*)(*(((const u32 *) LAYERS)+ layer) + ( (y << 6 /*x64*/) + (x << 1) ));
+	}
+
+	void blinkUpdate( int speed=0){
+		if( R_VCOUNT&0x00FF >=160 ){
+			vcount++;
+			blink = (vcount & 0xFFF>>speed) > 0x800>>speed;
+		}
 	}
 	
 	void update(u8 delta) {

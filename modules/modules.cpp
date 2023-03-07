@@ -8,4 +8,5 @@
 #include "key/key.cpp"
 #include "sram/sram.cpp"
 #include "regionhandler/regionhandler.cpp"
+#include "clip/clip.cpp"
 #include "sys/sys.cpp"

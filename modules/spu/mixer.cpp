@@ -212,12 +212,12 @@ void Mixer::enableFmw (){ }
 void Mixer::enableSmp (){ }
 
 void Mixer::start(){
-	enablePwm1();
-	enablePwm2();
-	enableNze();
-	enableWav();
-	enableFmw();
-	enableSmp();
+	if( !VAR_CHANNEL[0].mute ) enablePwm1();
+	if( !VAR_CHANNEL[1].mute ) enablePwm2();
+	if( !VAR_CHANNEL[2].mute ) enableNze();
+	if( !VAR_CHANNEL[3].mute ) enableWav();
+	if( !VAR_CHANNEL[4].mute ) enableFmw();
+	if( !VAR_CHANNEL[5].mute ) enableSmp();
 }
 
 void Mixer::disablePwm1(){ (*(vu16*)0x4000080) &= ~0x1100; }

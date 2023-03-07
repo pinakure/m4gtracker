@@ -1,4 +1,5 @@
 #include "cfg.hpp"
+#include "linkmode.cpp"
 
 CALLBACK( cb_cfg_menuindex	, modify5VAL		, EVENT_MODIFY_B			, &VAR_CFG.MENUSLOT				, NULL);
 
@@ -11,8 +12,8 @@ CALLBACK( cb_cfg_coloreditor, ColorEditor::run 	, EVENT_KEYUP_B				, NULL							
 
 CALLBACK( cb_cfg_linkmode	, Net::alterMode	, EVENT_MODIFY_B			, &VAR_CFG.LINKMODE.LINKMODE	, NULL);
 CALLBACK( cb_cfg_masterclock, modify1BIT		, EVENT_KEYDOWN_B			, &VAR_CFG.LINKMODE.MASTERCLOCK	, NULL);
-CALLBACK( cb_cfg_midichan	, modify4BIT		, EVENT_MODIFY_B			, &VAR_CFG.LINKMODE.MIDICHAN	, NULL);
-CALLBACK( cb_cfg_clocktempo , modify8BIT		, EVENT_MODIFY_B			, &VAR_CFG.LINKMODE.CLOCKTEMPO	, NULL);
+CALLBACK( cb_cfg_syncrate	, modify4BIT		, EVENT_MODIFY_B			, &VAR_CFG.LINKMODE.SYNCRATE	, NULL);
+CALLBACK( cb_cfg_syncticks  , modify8BIT		, EVENT_MODIFY_B			, &VAR_CFG.LINKMODE.SYNCTICKS	, NULL);
 CALLBACK( cb_cfg_receivesong, RECEIVESONG		, EVENT_KEYUP_B				, NULL 							, NULL);
 CALLBACK( cb_cfg_sendsong	, SENDSONG			, EVENT_KEYUP_B				, NULL 							, NULL);
 
@@ -79,8 +80,8 @@ void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 	// Link mode
 	VAR_CFG.LINKMODE.LINKMODE 		= SRAM.read();
 	VAR_CFG.LINKMODE.MASTERCLOCK 	= SRAM.read();
-	VAR_CFG.LINKMODE.MIDICHAN 		= SRAM.read();
-	VAR_CFG.LINKMODE.CLOCKTEMPO 	= SRAM.read();
+	VAR_CFG.LINKMODE.SYNCRATE 		= SRAM.read();
+	VAR_CFG.LINKMODE.SYNCTICKS		= SRAM.read();
 	
 	// Behavior, live and tracker
 	VAR_CFG.BEHAVIOR.KEYRATE 		= SRAM.read();
@@ -189,8 +190,8 @@ void Config::save (Control *c, bool bigstep, bool add, u32 *pointer){
 	// Link mode
 	SRAM.write(VAR_CFG.LINKMODE.LINKMODE);
 	SRAM.write(VAR_CFG.LINKMODE.MASTERCLOCK);
-	SRAM.write(VAR_CFG.LINKMODE.MIDICHAN);
-	SRAM.write(VAR_CFG.LINKMODE.CLOCKTEMPO);
+	SRAM.write(VAR_CFG.LINKMODE.SYNCRATE);
+	SRAM.write(VAR_CFG.LINKMODE.SYNCTICKS);
 	
 	// Behavior
 	SRAM.write(VAR_CFG.BEHAVIOR.KEYRATE);
@@ -279,10 +280,10 @@ void Config::defaults (Control *c, bool bigstep, bool add, u32 *pointer){
 	SETTING(LOOKNFEEL.SHOWLOGO, 0x01);
 	SETTING(LOOKNFEEL.STARTUPSFX, 0x01);
 	//172
-	SETTING(LINKMODE.LINKMODE, 0x00);
+	SETTING(LINKMODE.LINKMODE	, 0x00);
 	SETTING(LINKMODE.MASTERCLOCK, 0x01);
-	SETTING(LINKMODE.MIDICHAN, 0x00);
-	SETTING(LINKMODE.CLOCKTEMPO, 0x8C); //140 BPM
+	SETTING(LINKMODE.SYNCRATE	, 0x00); //0-16
+	SETTING(LINKMODE.SYNCTICKS	, 0x00); //0-255
 	//176
 	SETTING(BEHAVIOR.AUTOLOAD, 0x01);
 	SETTING(BEHAVIOR.KEYRATE, 0x08);

@@ -1,8 +1,11 @@
+#include "liv.hpp"
+
 CALLBACK( cb_live_retrig	, modify1BIT		, EVENT_KEYDOWN_B 		, &VAR_LIVE.PERFORM.RETRIG		, NULL					);
 CALLBACK( cb_live_speed	 	, modify8BIT		, EVENT_MODIFY_B 		, &VAR_LIVE.PERFORM.SPEED		, NULL					);
 CALLBACK( cb_live_quantize1	, modify3BIT		, EVENT_MODIFY_B 		, &VAR_LIVE.PERFORM.QUANTIZE	, NULL					);
 #define CB_LIVE_LEFT(n, i, m)		CALLBACK( cb_live_left_##n##_0##i, 	m, EVENT_MODIFY_B, &VAR_LIVE.PERFORM.LEFT.n[i], NULL)
 #define CB_LIVE_RIGHT(n, i, m)		CALLBACK( cb_live_right_##n##_0##i, m, EVENT_MODIFY_B, &VAR_LIVE.PERFORM.RIGHT.n[i], NULL)
+
 CB_LIVE_LEFT(VAL, 0, modifyValue);
 CB_LIVE_LEFT(VAL, 1, modifyValue);
 CB_LIVE_LEFT(VAL, 2, modifyValue);
@@ -113,7 +116,7 @@ CB_LIVE_RIGHT(KEY, 7, modifyNote);
 #undef CB_LIVE_LEFT
 #undef CB_LIVE_RIGHT
 
-void updateLIVE1(RegionHandler* rh){
+void LiveSet::updateCmder( RegionHandler* rh ){
 	if(KEYDOWN_START){
 		rh->sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&rh->region->displays[LIVE1_DISPLAY_STATUS_FREE])&0x0fffffff);
 		VAR_LIVE.PERFORM.LOCK ^= 1;
@@ -130,12 +133,11 @@ void updateLIVE1(RegionHandler* rh){
 		rh->sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&rh->region->displays[LIVE1_DISPLAY_SELECT])&0x0fffffff);
 	}
 	
-#define MONITOR(a)		if( KEYDOWN_##a || KEYUP_##a ) {	\
-						VAR_INPUT.a = KEYDOWN_##a ? 1 : 0;	\
-						rh->sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&rh->region->displays[LIVE1_DISPLAY_RIGHT_##a])&0x0fffffff); \
-						rh->sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&rh->region->displays[LIVE1_DISPLAY_LEFT_##a])&0x0fffffff) ; \
-					}
-
+	#define MONITOR(a)	if( KEYDOWN_##a || KEYUP_##a ) {		\
+							VAR_INPUT.a = KEYDOWN_##a ? 1 : 0;	\
+							rh->sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&rh->region->displays[LIVE1_DISPLAY_RIGHT_##a])&0x0fffffff); \
+							rh->sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&rh->region->displays[LIVE1_DISPLAY_LEFT_##a ])&0x0fffffff); \
+						}
 	MONITOR(A);
 	MONITOR(B);
 	MONITOR(L);
@@ -146,11 +148,9 @@ void updateLIVE1(RegionHandler* rh){
 	else MONITOR(DOWN) 
 	else MONITOR(LEFT);
 	
-#undef MONITOR
+	#undef MONITOR
 	
 	// We must send signals from this function, any time a note is pressed / released,
 	// and always when VAR_LIVE.PERFORM.LOCK = 1
 	// If quantize is on, signals must be sent fixing their tick to desired quant time
-		
 }	
-

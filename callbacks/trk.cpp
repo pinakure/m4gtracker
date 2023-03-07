@@ -174,11 +174,14 @@ void Tracker::drawLine( int channel ){
 
 void Tracker::dispatchMessage(u32 msg){
 	switch(msg){
-		/*case MESSAGE_OTHER_REFRESH_DATA:
-			Tracker::syncChannel( ?? );	
-			return;*/
+		
+		case MESSAGE_OTHER_REFRESH_DATA:
+			Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL );	
+			return;
 			
 		case MESSAGE_OTHER_PREV:
+			// Jump to previous channel
+			if( Clip::visible ) return;
 			VAR_CFG.CURRENTCHANNEL = VAR_CFG.CURRENTCHANNEL>0?VAR_CFG.CURRENTCHANNEL-1:5;
 			for(int i=0; i<6;i++){
 				Tracker::drawPosition(i, i==VAR_CFG.CURRENTCHANNEL);
@@ -187,6 +190,8 @@ void Tracker::dispatchMessage(u32 msg){
 			return;
 		
 		case MESSAGE_OTHER_NEXT:
+			// Jump to next channel
+			if( Clip::visible ) return;
 			VAR_CFG.CURRENTCHANNEL = VAR_CFG.CURRENTCHANNEL<5?VAR_CFG.CURRENTCHANNEL+1:0;
 			for(int i=0; i<6;i++){
 				Tracker::drawPosition(i, i==VAR_CFG.CURRENTCHANNEL);
@@ -199,6 +204,9 @@ void Tracker::dispatchMessage(u32 msg){
 void Tracker::globalUpdate( RegionHandler* rh ){
 	static bool tracker_clean = false;
 
+	Clip::update( rh );
+	
+	
 	gpu.set(2,0,1, Sequencer::playing ? 0xF08D  : 0x31FE );
 	gpu.set(1,0,0, Sequencer::playing ? ((Sequencer::currentBeats) == 0?0x32 : ((Sequencer::currentBeats&3) == 0?0x34 : 0x33)):0x33);
 		

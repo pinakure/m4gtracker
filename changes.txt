@@ -1,0 +1,45 @@
+Changes
+-------------------
+02-03-2023
+-------------------
+PWM 1 & 2 Fine tune
+PWM 1 & 2 Volume Table (Forward)
+PWM 1 & 2 Transpose Table (Forward)
+PWM 1 Sweep
+PWM 1 & 2 Global Transpose
+PWM 1 & 2 Song Transpose
+-------------------
+03-03-2023
+-------------------
+ANALOG MASTER SYNC OUT (Enabled by default, 48 PPQ)
+ANALOG SLAVE SYNC IN ( To be tested, accesible via cfg linkmode menu )
+Swapped MIDI and SYNC symbols
+Noise Channel Using PWM Instruments
+Erase notes by pressing R while editing a note (Note controls)
+-------------------
+04-03-2023
+-------------------
+Wave Channel Basic Operators
+Brought mixer code from M0-k1
+-------------------
+05-03-2023
+-------------------
+Refactored SPU into 3 separate classes, enhancing rom speed in the process
+Added boot logotype functionality
+Added boot logo sfx and animation
+-------------------
+06-03-2023
+-------------------
+Refactored INS Screen Callbacks into InstEdit class methods
+Refactored PAT Screen Callbacks into PatEdit class methods
+Refactored TRK Screen Callbacks into Tracker class methods
+Refactored HLP Screen Callbacks into Help class methods - 508160
+Channel Muting and soloing
+Controls can be set to Zero by using A+B
+--- addendum ---
+Refactored SNK screen callbacks into SnakeGame class 
+Added hud element displaying @ snake
+Fixed bug @ boot time
+Debugging class and helpers ( Debug::error, Debug::halt ) 
+Moved cfg.linkmode control list to separate file
+Clipboard Menu Interface working

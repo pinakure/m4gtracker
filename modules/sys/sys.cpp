@@ -9,6 +9,8 @@ void Sys::reset(){
 void Sys::init(){
 	KEY.init();
 	
+	Clip::init();
+	
 	Sequencer::init( VAR_SONG.BPM );
 	Synth::init();
 	Mixer::init();
@@ -96,6 +98,11 @@ void Sys::updateInput(){
 	
 	// Handle Copy Command (B+A)
 	if(KEY.press(KEY_B) && regHnd.control) {
+		if(KEY.down( KEY_SELECT )){
+			Clip::show();
+			return;
+		}
+		
 		if(KEY.press(KEY_A)) {
 			regHnd.sendMessage(MESSAGE_PASTE | (unsigned)regHnd.control);
 			return;		

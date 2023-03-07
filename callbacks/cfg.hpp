@@ -16,6 +16,8 @@ class Config {
 
 };
 
+#include "linkmode.hpp"
+
 class LookNFeel {
 	public:
 		static void init	( );

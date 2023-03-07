@@ -228,10 +228,24 @@ void RegionHandler::dispatchMessages(){
 			case MESSAGE_NAVIGATE_UP	: load( ((Region*)pv)->up   ); break;
 			
 			/* Direct callback */
-			case MESSAGE_ACTIVATE		: controlTrigger( ((Control*)pv), 1); break;
+			case MESSAGE_ACTIVATE		: 
+				if( Clip::visible ) 
+					Clip::activate();
+				else 
+					controlTrigger( ((Control*)pv), 1); 
+				break;
 			
 			/* Variable modification */
-			case MESSAGE_CANCEL			: controlClear	( ((Control*)pv) ); break;
+			case MESSAGE_CANCEL			: 
+				if( Clip::visible ) 
+					Clip::hide(); 
+				else 
+					controlClear( ((Control*)pv) );
+				if(region == &REGION_MAP_3_TRK) Tracker::dispatchMessage( MESSAGE_OTHER_REFRESH_DATA ); else 
+				if(region == &REGION_MAP_2_PAT) PatEdit::dispatchMessage( MESSAGE_OTHER_REFRESH_DATA ); else 
+				if(region == &REGION_MAP_2_INS) InstEdit::dispatchMessage( MESSAGE_OTHER_REFRESH_DATA );				
+				break;
+				
 			case MESSAGE_MODIFY_ADD		: controlModify	( ((Control*)pv) , true  , false ); break;
 			case MESSAGE_MODIFY_SUB 	: controlModify	( ((Control*)pv) , false , false ); break;
 			case MESSAGE_MODIFY_BIGADD	: controlModify	( ((Control*)pv) , true	 , true	 ); break;
@@ -266,6 +280,7 @@ void RegionHandler::dispatchMessages(){
 				break;
 
 			case MESSAGE_KEYPRESS:
+				if( Clip::visible ) return Clip::processInput();
 				if(KEYDOWN_LEFT ) jumpToControl(control->left ); else 
 				if(KEYDOWN_RIGHT) jumpToControl(control->right); else
 				if(KEYDOWN_UP   ) jumpToControl(control->up   ); else 
@@ -283,6 +298,7 @@ void RegionHandler::sendMessage(u32 message){
 }
 
 void RegionHandler::load(const Region *r){
+	if( Clip::visible )return;
 	region = (Region*)r;
 	control = r->focus?(Control*)r->focus:NULL;
 	redraw = true;
@@ -491,8 +507,8 @@ void RegionHandler::draw(){
 }
 
 void RegionHandler::jumpToControl(const Control *c){
-	if(VAR_LIVE.PERFORM.LOCK)return;
-	if(!c)return;
+	if( VAR_LIVE.PERFORM.LOCK || Clip::visible || !c ) return;
+	
 	Control *o = control;
 	control = (Control*)c;
 	
@@ -502,7 +518,7 @@ void RegionHandler::jumpToControl(const Control *c){
 }
 
 void RegionHandler::controlTrigger(const Control *c, u16 q){
-	if(!c->callback)return;
+	if( !c->callback ) return;
 	dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_B, (u32*)this);
 	dispatchCallback(c->callback, c, true, true, EVENT_KEYUP_B, (u32*)this);
 	/*control->callback(control, true, true, (u32*)this); */
@@ -512,13 +528,13 @@ void RegionHandler::controlTrigger(const Control *c, u16 q){
 }
 
 void RegionHandler::controlClear(const Control *c){
-	if(!c->callback)return;
+	if( !c->callback || Clip::visible ) return;
 	(*(u8*) c->var) = 0;
 	sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)c);
 }
 
 void RegionHandler::controlModify(const Control *c, bool big, bool add){
-	if(!c->callback)return;
+	if( !c->callback || Clip::visible ) return;
 	dispatchCallback(c->callback, c, add, big, EVENT_MODIFY_B, (u32*)this);
 	sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)c);
 }

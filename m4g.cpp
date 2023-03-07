@@ -14,7 +14,6 @@ int main(void){
 		INT.Init();	
 		MEM.Init();
 		sys.init();
-		//KEY.Init();
 		SRAM.Init();
 		gpu.start();
 		INT.Enable(IRQ_VBLANK);
@@ -36,6 +35,8 @@ int main(void){
 		SRAM.dataRevert( false );
 		InstEdit::unpack( &VAR_INSTRUMENT );	
 
+		Debug::runTests();
+		Debug::clear();
 		LookNFeel::init();
 		
 		// Start at Tracker screen

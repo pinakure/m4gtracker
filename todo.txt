@@ -1,0 +1,5 @@
+TODO
+---------------------------
+Pattern shift functionalities (L or R)
+Clipboard...
+AUTOSAVE Option @ CFG::BEHAVIOR

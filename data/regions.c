@@ -6,6 +6,11 @@
 #include "../callbacks/sng.hpp"
 #include "../callbacks/hlp.hpp"
 #include "../callbacks/snk.hpp"
+#include "../callbacks/liv.hpp"
+#include "../callbacks/cfg.hpp"
+#include "../callbacks/linkmode.hpp"
+
+extern const Control LINKMODE_CONTROLS[ CONTROL_LINKMODE_MAX ];
 
 //----------------------------------------------------------------------------------------
 //	REGIONS
@@ -58,8 +63,8 @@ extern const Viewport VIEWPORT_CFG;
 #include "../callbacks/cfg.hpp"
 
 //										    xadd	yadd 	x		y     width height	 up                 right				down				left					map 	dirty				controls				displays			, focus																, controlVars		, updater				, viewport			name 
-const Region REGION_MAP_1_LIVE2 = { 		0xFF,	0xFF,	0x1e, 	0x00, 0x1e, 0x14, 	&REGION_MAP_4_CFG, 	&REGION_MAP_1_HLP, 	&REGION_MAP_3_TRK, 	&REGION_MAP_1_LIVE1, 	0x00, 	&CACHE_DIRTY_MAP_1,	LIVE2_CONTROLS, 		LIVE2_DISPLAYS, 	  (Control*)&(LIVE2_CONTROLS[CONTROL_LIVE2_LIVEMODE]) 				, VARS_LIVE2 		, updateLIVE2			, NULL			}; /*LIVE2*/
-const Region REGION_MAP_1_LIVE1 = { 		0xFF,	0xFF, 	0x00, 	0x00, 0x1e, 0x14, 	&REGION_MAP_2_SNG, 	&REGION_MAP_1_LIVE2,&REGION_MAP_2_PAT, 	&REGION_MAP_1_HLP, 		0x00, 	&CACHE_DIRTY_MAP_1,	LIVE1_CONTROLS, 		LIVE1_DISPLAYS,		  (Control*)&(LIVE1_CONTROLS[CONTROL_LIVE1_KEY_LEFT_00])			, VARS_LIVE1 		, updateLIVE1			, NULL			}; /*LIVE1*/
+const Region REGION_MAP_1_LIVE2 = { 		0xFF,	0xFF,	0x1e, 	0x00, 0x1e, 0x14, 	&REGION_MAP_4_CFG, 	&REGION_MAP_1_HLP, 	&REGION_MAP_3_TRK, 	&REGION_MAP_1_LIVE1, 	0x00, 	&CACHE_DIRTY_MAP_1,	LIVE2_CONTROLS, 		LIVE2_DISPLAYS, 	  (Control*)&(LIVE2_CONTROLS[CONTROL_LIVE2_LIVEMODE]) 				, VARS_LIVE2 		, LiveSet::updatePiano	, NULL			}; /*LIVE2*/
+const Region REGION_MAP_1_LIVE1 = { 		0xFF,	0xFF, 	0x00, 	0x00, 0x1e, 0x14, 	&REGION_MAP_2_SNG, 	&REGION_MAP_1_LIVE2,&REGION_MAP_2_PAT, 	&REGION_MAP_1_HLP, 		0x00, 	&CACHE_DIRTY_MAP_1,	LIVE1_CONTROLS, 		LIVE1_DISPLAYS,		  (Control*)&(LIVE1_CONTROLS[CONTROL_LIVE1_KEY_LEFT_00])			, VARS_LIVE1 		, LiveSet::updateCmder	, NULL			}; /*LIVE1*/
 const Region REGION_MAP_1_HLP = { 			0xFF,	0xFF, 	0x00, 	0x14, 0x1e, 0x14, 	&REGION_MAP_4_SNK, 	&REGION_MAP_1_LIVE1,&REGION_MAP_2_INS, 	&REGION_MAP_1_LIVE2, 	0x00, 	&CACHE_DIRTY_MAP_1,	NULL, 					NULL, 				  NULL  															, VARS_HLP 			, Help::update			, NULL			}; /*HLP*/
 const Region REGION_MAP_2_SNG = { 			0xFF,	0xFF, 	0x1e, 	0x00, 0x1e, 0x14, 	&REGION_MAP_2_PAT, 	&REGION_MAP_4_CFG, 	&REGION_MAP_1_LIVE1,&REGION_MAP_4_SNK, 		0x01, 	&CACHE_DIRTY_MAP_2,	SNG_CONTROLS, 			SNG_DISPLAYS, 		  (Control*)&(SNG_CONTROLS[CONTROL_SNG_LOAD]) 						, VARS_SNG 			, SongEdit::update		, NULL			}; /*SNG*/
 const Region REGION_MAP_2_INS = { 			0xFF,	0xFF, 	0x00, 	0x14, 0x1e, 0x14, 	&REGION_MAP_1_HLP, 	&REGION_MAP_2_PAT, 	&REGION_MAP_4_SNK, 	&REGION_MAP_3_TRK, 		0x01, 	&CACHE_DIRTY_MAP_2,	NULL, 					NULL, 				  NULL 																, VARS_INS 			, NULL					, &VIEWPORT_INS	}; /*INS*/

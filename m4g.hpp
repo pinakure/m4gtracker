@@ -29,6 +29,7 @@
 
 #include "agb.h"
 
+#define CONTROL_TERMINATOR			{ 0xFF, 0xFF, NULL, NULL, NULL, NULL, NULL, NULL, NULL }
 
 //MEM_FUNC_IN_IWRAM
 

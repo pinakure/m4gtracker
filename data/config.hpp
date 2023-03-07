@@ -22,8 +22,8 @@ typedef struct _CFG_LOOKNFEEL {
 typedef struct _CFG_LINKMODE {
 	u8 				LINKMODE /*2*/;
 	u8				MASTERCLOCK;
-	u8 				MIDICHAN /*4*/;
-	u8 				CLOCKTEMPO;
+	u8 				SYNCRATE /*4*/;
+	u8 				SYNCTICKS;
 }CFG_LINKMODE;
 
 typedef struct _CFG_BEHAVIOR {
