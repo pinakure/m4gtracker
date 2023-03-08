@@ -131,8 +131,8 @@ class Gpu {
 	const unsigned short *MAP2;
 
 	VirtualScreen *vs;
-	int vcount;
-	bool blink;
+	u16 	vcount;
+	bool 	blink;
 	
 	Gpu(void);
 	

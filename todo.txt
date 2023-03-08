@@ -7,11 +7,6 @@ Pattern shift
 	- Shift column  up  	( R + SELECT + UP   )
 	- Shift column  down  	( R + SELECT + DOWN )
 Clipboard 
-	- Change clipboar menu hotkey
-		- L + SELECT : show menu
-	- Selection Mask
-		- L + UP   : Grow selection up   from current position or selection top
-		- L + DOWN : Grow selection down from current position or selection bottom
 	- Copy / Paste / Cut / Clone 
 		- Selecting the option in the clipboard menu
 WAV channel wavedata display

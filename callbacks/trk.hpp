@@ -6,14 +6,14 @@
 #include "../data/controls.hpp"
 #include "../modules/regionhandler/regionhandler.hpp"
 
-#define CURRENT_PATTERN 	VAR_SONG.PATTERNS[VAR_CFG.CURRENTCHANNEL].ORDER[VAR_CHANNEL[VAR_CFG.CURRENTCHANNEL].POSITION]
-
 class Tracker{
 	public:
 		static const u8 	columns[6][6];
 		static const u8 	positions_x[6];
 		static const u8 	positions_y[6];
 		static const u16 	channel_symbols[6][6];
+		static 		 u16 	icon_time;
+
 
 		static void syncPattern			( );
 		static void syncChannel			( u8 channel_index );
@@ -31,8 +31,10 @@ class Tracker{
 		static void updateHeader2		( RegionHandler* rh );
 		static void updateTable			( RegionHandler* rh );
 
-
-
+		static void processInput		(  );
+		static void shift				( int q );
+		static void transpose			( int q );
+		static void icon 				( u16 upper, u16 lower);
 };
 
 extern const Control CHAN0_CONTROLS[ CONTROL_CHANNEL0_0_MAX ]; 

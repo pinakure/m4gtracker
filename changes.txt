@@ -50,3 +50,7 @@ SMP Envelope visualization
 ADSR Envelope positions are drawn and autoupdated if playing on any channel (visible @ InstEdit screen, current instrument)
 Refactored Gpu class to allow external header inclusion
 Moved SNG Controls to sng callback file
+Change clipboar menu hotkey
+Selection Mask on both tracker and pattern screens
+Track transpose hotkey, shift hotkey ( lack functionality )
+

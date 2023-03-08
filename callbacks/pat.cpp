@@ -4,6 +4,7 @@
 #include "../modules/key/key.hpp"
 #include "../modules/gpu/gpu.hpp"
 #include "../modules/spu/mixer.hpp"
+#include "../modules/clip/clip.hpp"
 
 const 	u8 	NUMBERS[16] 				= { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 const 	u8 	PatEdit::arrow_position[6] 	= { 3, 7, 11, 15, 19, 23 };
@@ -235,7 +236,9 @@ void PatEdit::globalUpdate(RegionHandler* rh){
 	
 void PatEdit::update(RegionHandler* rh){
 	static int last_position=0xFFFF;
-
+	
+	Clip::update( rh );
+	
 	PatEdit::globalUpdate( rh );
 	
 	// Draw position arrows
@@ -398,4 +401,19 @@ void PatEdit::dispatchMessage(u32 msg){
 			}
 			return;		
 	}
+}
+
+void PatEdit::shift( int q ){
+	
+}
+
+void PatEdit::transpose( int q ){
+
+}
+
+void PatEdit::processInput( ){
+	if		( KEY.down( KEY_LEFT  ) ) transpose( -1 );
+	else if	( KEY.down( KEY_RIGHT ) ) transpose(  1 );
+	if		( KEY.down( KEY_UP    ) ) shift( -1 );
+	else if	( KEY.down( KEY_DOWN  ) ) shift(  1 );
 }

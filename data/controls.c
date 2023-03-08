@@ -4,6 +4,7 @@
 #include "../modules/spu/sequencer.hpp"
 #include "../callbacks/trk.hpp"
 #include "../modules/spu/mixer.hpp"
+#include "../macros.h"
 
 u8 sTransient::bit1;
 u8 sTransient::bit2;

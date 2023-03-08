@@ -68,16 +68,6 @@ class ReallyDialog {
 		void enable();
 };
 
-typedef struct sClipboard {
-	u16 	*blockdata[16*5*6];		// 6 channels, 5 fields per channel row, 16 rows max ;; these are actually pointers to each control currently selected 
-	u16 	blocklength;			// length of the block used currently (0 by default)
-	u8 		blockstart;				// logical tile where the block starts
-	u8 		blockwidth;				// width for the block displayed on the screen
-	u8 		blockheight;			// height for the block displayed on the screen
-	bool	blockclean;				// true if no copy operations were done yet
-	bool	blockactive;			// true if block is visible and receiving arrow input, or waiting either B for cancel or A to copy, or B+A to cut 'cancel the cancel'. R + A, clone, R + arrows move the block by the other corner
-} Clipboard;
-
 class RegionHandler {
 	private:
 		

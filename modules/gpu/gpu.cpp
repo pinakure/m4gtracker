@@ -118,10 +118,17 @@ u16 Gpu::get(u8 layer, u8 x, u8 y) {
 }
 
 void Gpu::blinkUpdate( int speed){
-	if( R_VCOUNT&0x00FF >=160 ){
+	static bool blink_lock = false;
+	if( ((R_VCOUNT&0x00FF) >=160) && (!blink_lock)){
+		blink_lock ^= 1;
 		vcount++;
-		blink = (vcount & 0xFFF>>speed) > 0x800>>speed;
-	}
+	} else blink_lock = false;
+	
+	/*
+	HEXADECIMAL_DOUBLE(6,4,0xFF, ( vcount >>8  	) & 0xFF );
+	HEXADECIMAL_DOUBLE(7,4,0xFF, ( vcount 		) & 0xFF );
+	*/
+	blink = (vcount & 0xFFFF>>speed) > (0x8000>>speed);
 }
 
 void Gpu::otherBlit(const u16 *map_address, int startx, int starty, int x, int y, int width, int height){

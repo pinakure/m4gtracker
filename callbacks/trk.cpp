@@ -2,6 +2,7 @@
 #include "../data/data.hpp"
 #include "../data/helpers.hpp"
 #include "../modules/gpu/gpu.hpp"
+#include "../modules/key/key.hpp"
 #include "../modules/clip/clip.hpp"
 #include "../data/viewports.hpp"
 #include "../modules/spu/sequencer.hpp"
@@ -29,6 +30,8 @@ const u16 	Tracker::channel_symbols[6][6] 	= {
 	{ 0xB035, 0xB035, 0xB036, 0xB037, 0x7038, 0xB039 },
 	{ 0xB035, 0xB035, 0xB036, 0xB037, 0xB038, 0x7039 }	
 };
+
+u16 Tracker::icon_time = 0;
 
 // TBC on All Channel Data Update
 // move to channel if more apropiate
@@ -165,7 +168,7 @@ void Tracker::drawPosition( int i ){
 	gpu.set( 2 , 			Tracker::positions_x[ i ]		, Tracker::positions_y[ i ] , Tracker::channel_symbols[ VAR_CFG.CURRENTCHANNEL ][ i ] );
 	HEXADECIMAL( 			Tracker::positions_x[ i ] + 1	, Tracker::positions_y[ i ] , 0x1 + hl 		, VAR_CHANNEL[ i ].POSITION >>  4 );
 	HEXADECIMAL( 			Tracker::positions_x[ i ] + 2	, Tracker::positions_y[ i ] , 0x1 + hl 		, VAR_CHANNEL[ i ].POSITION & 0xf );
-	HEXADECIMAL_TWOTILES( 	Tracker::positions_x[ i ] + 3 , Tracker::positions_y[ i ] , hl ? 0x6 : 0xD 	, VAR_SONG.PATTERNS[ i ].ORDER[ VAR_CHANNEL[ i ].POSITION ] );
+	HEXADECIMAL_TWOTILES( 	Tracker::positions_x[ i ] + 3 	, Tracker::positions_y[ i ] , hl ? 0x6 : 0xD 	, VAR_SONG.PATTERNS[ i ].ORDER[ VAR_CHANNEL[ i ].POSITION ] );
 	VAR_CHANNEL[ i ].LASTPOSITION = VAR_CHANNEL[ i ].POSITION;
 }
 
@@ -212,6 +215,15 @@ void Tracker::globalUpdate( RegionHandler* rh ){
 	static bool tracker_clean = false;
 
 	Clip::update( rh );
+	
+	// Erase icon when time is over
+	if( icon_time ){
+		icon_time--;
+		if(icon_time==1){
+			gpu.set(2, 0, 2, 0); 
+			gpu.set(2, 1, 2, 0); 	
+		}
+	}
 	
 	gpu.set(2,0,1, Sequencer::playing ? 0xF08D  : 0x31FE );
 	gpu.set(1,0,0, Sequencer::playing ? ((Sequencer::currentBeats) == 0?0x32 : ((Sequencer::currentBeats&3) == 0?0x34 : 0x33)):0x33);
@@ -395,4 +407,26 @@ CB_CHAN_VAL(5, F);	CB_CHAN_CMD(5, F);	CB_CHAN_VOL(5, F);	CB_CHAN_INS(5, F);	CB_C
 void Tracker::update( RegionHandler* rh ){
 	const Region *c = &REGION_MAP_4_CHANNELMIXER;	
 	gpu.otherBlit(MAPDATA + ((MAP_CFG * 3) << 12), c->x, c->y, 0xb, 0xf, c->width, c->height);
+	
+}
+
+void Tracker::icon( u16 upper, u16 lower ){
+	gpu.set(2, 0, 2, upper); 
+	gpu.set(2, 1, 2, lower); 	
+	icon_time = 0x7FF;
+}
+
+void Tracker::shift( int q ){
+	icon( 0x7112, q > 0 ? 0x408E : 0x408C);
+}
+
+void Tracker::transpose( int q ){
+	icon( 0x706D, q > 0 ? 0x408C : 0x408E);
+}
+
+void Tracker::processInput( ){
+	if		( KEY.down( KEY_LEFT  ) ) transpose( -1 );
+	else if	( KEY.down( KEY_RIGHT ) ) transpose(  1 );
+	if		( KEY.down( KEY_UP    ) ) shift( -1 );
+	else if	( KEY.down( KEY_DOWN  ) ) shift(  1 );
 }

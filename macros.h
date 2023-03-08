@@ -10,6 +10,36 @@
 #define BUTTON_ALTER						KEY_A	
 #define BUTTON_NAVIGATE						KEY_SELECT
 
+#define AT_INSTRUMENT_SCREEN				(regHnd.region == &REGION_MAP_2_INS)
+#define AT_TRACKER_SCREEN					(regHnd.region == &REGION_MAP_3_TRK)
+#define AT_PATTERN_SCREEN					(regHnd.region == &REGION_MAP_2_PAT)
+
+
+#define TRACKER_ACTIVE_COLUMN (										\
+	(regHnd.control->cache == &CACHE_NOTES					) ? 0 : \
+	(regHnd.control->cache == &CACHE_HEXADECIMAL			) ? 2 :	\
+	(regHnd.control->cache == &CACHE_COMMANDS				) ? 3 :	\
+	(regHnd.control->cache == &CACHE_HEXADECIMAL_INSTRUMENT	) ? 4 :	\
+	(regHnd.control->cache == &CACHE_HEXADECIMAL_TWOTILES	) ? 1 : \
+	1 																\
+)
+#define TRACKER_ACTIVE_ROW					(regHnd.control->y - 4)
+#define PATTERN_ACTIVE_COLUMN				VAR_CFG.CURRENTCHANNEL
+#define PATTERN_ACTIVE_ROW  				PatEdit::bookmark_row
+
+#define CURRENT_PATTERN 					VAR_SONG.PATTERNS[ PATTERN_ACTIVE_COLUMN ].ORDER[ VAR_CHANNEL[ PATTERN_ACTIVE_COLUMN ].POSITION]
+
+#define CLIPBOARD_HAS_DATA					( Clipboard::width * Clipboard::height )
+#define NO_CLIPBOARD_DATA 					( ( Clipboard::type == CLIPDATA_PATTERN		) && !CLIPBOARD_HAS_DATA )
+#define CLIPBOARD_HAS_PATTERN				( ( Clipboard::type == CLIPDATA_PATTERN 	) &&  CLIPBOARD_HAS_DATA )
+#define CLIPBOARD_HAS_NOTE					( ( Clipboard::type &  CLIPDATA_NOTE		) &&  CLIPBOARD_HAS_DATA )
+#define CLIPBOARD_HAS_INSTRUMENT			( ( Clipboard::type &  CLIPDATA_INSTRUMENT	) &&  CLIPBOARD_HAS_DATA )
+#define CLIPBOARD_HAS_VOLUME				( ( Clipboard::type &  CLIPDATA_VOLUME		) &&  CLIPBOARD_HAS_DATA )
+#define CLIPBOARD_HAS_COMMAND				( ( Clipboard::type &  CLIPDATA_COMMAND		) &&  CLIPBOARD_HAS_DATA )
+#define CLIPBOARD_HAS_VALUE					( ( Clipboard::type &  CLIPDATA_VALUE		) &&  CLIPBOARD_HAS_DATA )
+	
+
+
 #define EXPECT( a, up, down ) {										\
 	VAR_CFG.loadCount = 0;											\
 	regHnd.progress.set( 											\

@@ -63,11 +63,54 @@ void Sys::init(){
 void Sys::updateInput(){
 	u32 msg = 0;
 
+	/* IGNORE this update function if LIVE1 lock var is true */
 	if(VAR_LIVE.PERFORM.LOCK)return;
-	// Handle Navigation
-	if(KEY.press(KEY_SELECT)){
-		if(KEY.press(KEY_A))return;
-		if(KEY.press(KEY_B))return;
+	
+	
+	/* ------------------------------------------------------------------------
+		( Tracker Screen Only )
+		- Clipboard Management 
+		- Grow Clipboard 
+		- Cancel selection
+		- Confirm selection
+	---------------------------------------------------------------------------
+		L + SELECT
+	-------------------------------------------------------------------------*/ 
+	if( AT_TRACKER_SCREEN ){
+		if( KEY.press(KEY_L) ) {
+			return Clip::processInput();
+		}
+		if( KEY.press(KEY_R) ) {
+			if( Clip::visible ) 
+				return Clip::processInput();
+			else 
+				return Tracker::processInput();
+		}
+	}
+	
+	if( AT_PATTERN_SCREEN ){
+		if( KEY.press(KEY_L) ) {
+			return Clip::processInput();
+		}
+		if( KEY.press(KEY_R) ) {
+			if( Clip::visible ) 
+				return Clip::processInput();
+			else 
+				return PatEdit::processInput();
+		}
+	}
+	
+	/* ------------------------------------------------------------------------
+		Handle Navigation
+	---------------------------------------------------------------------------
+		SELECT + LEFT
+		SELECT + RIGHT
+		SELECT + UP
+		SELECT + DOWN
+	-------------------------------------------------------------------------*/ 
+	if(KEY.press(KEY_SELECT	)&&
+	  !KEY.press(KEY_A		)&&
+	  !KEY.press(KEY_B		)){
 		msg  = KEY.down(KEY_LEFT ) ? MESSAGE_NAVIGATE_LEFT  :
 			   KEY.down(KEY_RIGHT) ? MESSAGE_NAVIGATE_RIGHT :
 			   KEY.down(KEY_UP   ) ? MESSAGE_NAVIGATE_UP    :
@@ -79,12 +122,23 @@ void Sys::updateInput(){
 		}
 	}
 	
-	// Handle ACTIVATE message
+	/* ------------------------------------------------------------------------
+		Control ACTIVATION 
+	---------------------------------------------------------------------------
+		A
+	-------------------------------------------------------------------------*/ 
 	if(KEY.down(KEY_A) && regHnd.control) {
 		regHnd.sendMessage(MESSAGE_ACTIVATE | (unsigned)regHnd.control);
 		return;		
 	}
 	
+	/* ------------------------------------------------------------------------
+		Play / Stop / Play from Start
+	---------------------------------------------------------------------------
+		START
+		START
+		SELECT + START
+	-------------------------------------------------------------------------*/ 
 	if( KEY.down( KEY_START ) ) {
 		if( Sequencer::playing ) {
 			Sequencer::stop();
@@ -94,17 +148,14 @@ void Sys::updateInput(){
 		if( KEY.press( KEY_SELECT ) ) {
 			Sequencer::play(true);
 			return;
-		}		
-		if( !Sequencer::playing ) Sequencer::play( false );
+		}	
+		if( !Sequencer::playing ) 
+			Sequencer::play( false );
 		return;
 	}
-	
-	// Handle Copy Command (B+A)
+		// Handle Copy Command (B+A)
 	if(KEY.press(KEY_B) && regHnd.control) {
-		if(KEY.down( KEY_SELECT )){
-			Clip::show();
-			return;
-		}
+		
 		
 		if(KEY.press(KEY_A)) {
 			regHnd.sendMessage(MESSAGE_PASTE | (unsigned)regHnd.control);

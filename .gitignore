@@ -179,3 +179,7 @@ synth.s
 sequencer.s
 callbacks/linkmode.o
 linkmode.s
+callbacks/coloreditor.o
+callbacks/looknfeel.o
+callbacks/behavior.o
+behavior.s

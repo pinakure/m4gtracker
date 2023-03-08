@@ -22,7 +22,9 @@ class PatEdit {
 		static void solo( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void mute( Control *c, bool bigstep, bool add, u32 *pointer );
 
-
+		static void shift				( int q );
+		static void transpose			( int q );
+		static void processInput		( );
 };
 
 extern const Control PAT_CONTROLS[ CONTROL_PAT_MAX ];
