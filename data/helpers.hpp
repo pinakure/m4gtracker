@@ -3,8 +3,6 @@
 
 #include "../agb.h"
 
-#define BREAK while(1){ static int freeze = 0; freeze++; STATUS(12, 8, (freeze>>8)&0xFF, 0x7);}
-	
 /* Draws given string on screen */
 void STRING					( bool big, u8 x, u8 y, u8 *data );
 

@@ -10,6 +10,8 @@
 
 class RegionHandler;
 
+#define REDRAW(a)	rh->sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&rh->region->displays[a])&0x0fffffff);
+
 typedef struct sRegion Region;
 
 typedef struct sRegion {

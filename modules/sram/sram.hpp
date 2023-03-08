@@ -1,3 +1,7 @@
+#ifndef SRAM_HPP 
+#define SRAM_HPP 
+
+#include "../../agb.h"
 
 #define DEVICE_EEPROM		0x0000
 #define DEVICE_SST			0xD4BF
@@ -39,3 +43,5 @@ class Sram {
 };
 
 extern Sram SRAM;
+
+#endif

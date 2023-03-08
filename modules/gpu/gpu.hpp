@@ -142,6 +142,8 @@ class Gpu {
 	void 	safeblit	( E_Maps mapIndex, int startx, int starty, int x, int y, int width, int height);
 	void 	blit_0		( E_Maps mapIndex,  u8 startx, int starty,  u8 x,  u8 y,  u8 width,  u8 height);
 	void 	blit		( E_Maps mapIndex, int startx, int starty, int x, int y, int width, int height);
+	void 	otherBlit	( const u16 *map_address, int startx, int starty, int x, int y, int width, int height);
+
 	void 	set			( u8 layer, u8 x, u8 y, u16 index );
 	u16 	get			( u8 layer, u8 x, u8 y );
 	void 	blinkUpdate	( int speed = 0 );

@@ -14,7 +14,20 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 		data/controls.o \
 		data/displays.o \
 		data/viewports.o \
+		callbacks/sng.o \
+		callbacks/liv1.o \
+		callbacks/liv2.o \
+		callbacks/pat.o \
+		callbacks/debug.o \
+		callbacks/hlp.o \
+		callbacks/snk.o \
+		callbacks/ins.o \
+		callbacks/trk.o \
+		callbacks/cfg.o \
 		callbacks/linkmode.o \
+		callbacks/looknfeel.o \
+		callbacks/behavior.o \
+		callbacks/coloreditor.o \
 		m4g.o 
 
 HAM_VERSION_MAJOR = 2
@@ -89,4 +102,11 @@ fixheader:
 
 clean:
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f *.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f data/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f callbacks/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/gpu/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/spu/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/sram/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/key/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/clip/*.o *.i *.ii *.m4h	
 	

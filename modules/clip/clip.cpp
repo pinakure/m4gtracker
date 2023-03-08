@@ -60,7 +60,14 @@ void Clip::show(){
 
 void Clip::hide(){
 	if( !visible ) return;
+	redraw = false;
 	visible = false;
+	regHnd.draw();
+
+	for(int i=0; i<6; i++){
+		Tracker::drawPosition(i);
+	}
+	Transient::changed = true;
 }
 
 void Clip::processInput(){
@@ -78,8 +85,10 @@ void Clip::draw( RegionHandler *rh ){
 		rh->draw();
 		return;
 	}
-	rh->drawCache(10, 3, &CACHE_CLIPBOARD2, 0, false);
-	gpu.set(0, 12 + int(positions[ (int)action ][0]), 5 + int(positions[ (int)action ][1]), gpu.blink ? 0x14 : 0x13);
+	int cc = VAR_CFG.CURRENTCHANNEL;
+	cc = ( cc < 5 ) ? cc *= 4 : 6; 
+ 	rh->drawCache(cc+10, 3, &CACHE_CLIPBOARD2, 0, false);
+	gpu.set(0, cc+12 + int(positions[ (int)action ][0]), 5 + int(positions[ (int)action ][1]), gpu.blink ? 0x14 : 0x13);
 	blink_monitor = gpu.blink;
 }
 

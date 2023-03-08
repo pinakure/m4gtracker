@@ -1,4 +1,5 @@
 #include "sys.hpp"
+#include "../../data/input.hpp"
 #include "../../callbacks/snk.hpp"
 
 Sys sys;

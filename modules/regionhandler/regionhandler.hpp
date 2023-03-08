@@ -3,6 +3,11 @@
 
 #include "../../agb.h"
 
+#include "../../data/enum.h"
+#include "../../data/caches.hpp"
+#include "../../data/controls.hpp"
+#include "../../data/regions.hpp"
+
 class Progress {
 	private:
 	public:
@@ -77,21 +82,22 @@ class RegionHandler {
 	private:
 		
 	public:
-		Progress progress;
+		Progress 	progress;
+		
 		const unsigned short *map0;
 		const unsigned short *map1;
 		const unsigned short *map2;
 		
-		Cache *dirty;
-		Region *region;
-		Control *control; //focused control
-		bool redraw;  		// used to notify the loaded region it must be redrawn
-		bool new_region;  	// turned on @ load, screen responsible of reading this var must turn it off
+		Cache*		dirty;
+		Region*		region;
+		Control*	control; 		//focused control
+		bool 		redraw;  		// used to notify the loaded region it must be redrawn
+		bool 		new_region;  	// turned on @ load, screen responsible of reading this var must turn it off
 		
-		u32 messages[1024];
-		s32 messagecount;
+		u32 		messages[1024];
+		s32 		messagecount;
 		
-		u8 viewportLastValue;// <--- warning!: this disrupts recursive functionality!
+		u8 			viewportLastValue;// <--- warning!: this disrupts recursive functionality!
 		
 		RegionHandler();
 		void dispatchMessages();

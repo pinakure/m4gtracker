@@ -322,4 +322,10 @@ void Mixer::solo(int channel){
 	// Unmute and enable solo on selected channel 
 }
 
+void Mixer::show( Control *c, bool bigstep, bool add, u32 *pointer ){
+	
+}
+
+void Mixer::update( RegionHandler *rh ){
+}
 

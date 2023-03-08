@@ -4,6 +4,7 @@
 #include "../agb.h"
 
 #include "../data/control.hpp"
+#include "../modules/regionhandler/regionhandler.hpp"
 
 enum E_LINKMODE_CONTROLS { 
 	CONTROL_LINKMODE_MENU2,			
@@ -19,7 +20,10 @@ enum E_LINKMODE_CONTROLS {
 
 class LinkMode {
 	public:
-		
+		static void update		( RegionHandler *rh );
+		static void monitor 	( RegionHandler *rh );
+		static void songRecv	( Control *c, bool bigstep, bool add, u32 *pointer );
+		static void songSend 	( Control *c, bool bigstep, bool add, u32 *pointer );
 };
 
 extern const Control LINKMODE_CONTROLS[ CONTROL_LINKMODE_MAX ];

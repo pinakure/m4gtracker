@@ -1,102 +1,4 @@
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
-/*                                                 SPECIFIC TYPE VARIABLE MODIFIERS														 */
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
-
-#define CURRENT_PATTERN 		VAR_SONG.PATTERNS[VAR_CFG.CURRENTCHANNEL].ORDER[VAR_CHANNEL[VAR_CFG.CURRENTCHANNEL].POSITION]
-#define VARIABLE	(*(u8*) c->var)
-void modifyCHAR(Control *c, bool bigstep, bool add, u32 *pointer){}
-void modify1BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE^=0x1; }
-void modifyTempo(Control *c, bool bigstep, bool add, u32 *pointer){	modify8BIT(c, bigstep, add, pointer); Sequencer::setTempo( VAR_SONG.BPM ); }
-
-
-static u8 transient2BIT;
-static u8 transient3BIT;
-static u8 transient4BIT;
-static u8 transient5BIT;
-static u8 transient6BIT;
-static u8 transient7BIT;
-static u8 transient8BIT;
-
-static u8 transientNote;
-static u8 transientValue;
-static u8 transientVolume;
-static u8 transientInstrument;
-static u8 transientCommand;
-
-static u8 transientChanged;
-
-void Net::alterMode(Control *c, bool bigstep, bool add, u32 *pointer){	
-	VARIABLE 	 	 = ( bigstep ? (add?0x3:0) : (VARIABLE + (add?1:-1)) ) & 0x3; 	
-	transient2BIT 	 = VARIABLE; 
-	transientChanged = true;
-	setMode( (eNetMode) VARIABLE );
-}
-
-void modify2BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? (add?0x3:0) : (VARIABLE + (add?1:-1)) ) & 0x3; 	transient2BIT = VARIABLE; transientChanged=true;}
-void modify3BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? (add?0x7:0) : (VARIABLE + (add?1:-1)) ) & 0x7; 	transient3BIT = VARIABLE; transientChanged=true;}
-void modify4BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? (add?0xF:0) : (VARIABLE + (add?1:-1)) ) & 0xF; 	transient4BIT = VARIABLE; transientChanged=true;}	
-void modify5BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x4:0x1) * (add?1:-1))      ) & 0x1F;	transient5BIT = VARIABLE; transientChanged=true;}
-void modify6BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x4:0x1) * (add?1:-1))      ) & 0x3F;	transient6BIT = VARIABLE; transientChanged=true;}
-void modify7BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x4:0x1) * (add?1:-1))      ) & 0x7F;	transient7BIT = VARIABLE; transientChanged=true;}
-void modify8BIT(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x10:0x1)* (add?1:-1))      ) & 0xFF;	transient8BIT = VARIABLE; transientChanged=true;}
-
-
-void paste2BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient2BIT; return; } transient2BIT = VARIABLE; transientChanged=true; }
-void paste3BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient3BIT; return; } transient3BIT = VARIABLE; transientChanged=true; }
-void paste4BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient4BIT; return; } transient4BIT = VARIABLE; transientChanged=true; }
-void paste5BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient5BIT; return; } transient5BIT = VARIABLE; transientChanged=true; }
-void paste6BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient6BIT; return; } transient6BIT = VARIABLE; transientChanged=true; }
-void paste7BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient7BIT; return; } transient7BIT = VARIABLE; transientChanged=true; }
-void paste8BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = transient8BIT; return; } transient7BIT = VARIABLE; transientChanged=true; }
-
-
-void modifyValue(Control *c,bool bigstep, bool add, u32 *pointer, u8 quant){	
-	VARIABLE = ( bigstep ? (add ? quant - 1 : 0) : (VARIABLE + (add ? 1 : -1 )) ) % quant; 
-	if( VARIABLE > quant - 1 ) VARIABLE = quant - 1; 	
-}
-	
-void modify3VAL(Control *c, bool bigstep, bool add, u32 *pointer){ return modifyValue(c, bigstep, add, pointer, 3); }
-void modify5VAL(Control *c, bool bigstep, bool add, u32 *pointer){ return modifyValue(c, bigstep, add, pointer, 5); }
-void modify6VAL(Control *c, bool bigstep, bool add, u32 *pointer){ return modifyValue(c, bigstep, add, pointer, 6); }
-void modify27VAL(Control *c, bool bigstep, bool add, u32 *pointer){ return modifyValue(c, bigstep, add, pointer, 27); }
-
-void modifyCommand(Control *c, bool bigstep, bool add, u32 *pointer){
-	if(CURRENT_PATTERN == 0x00)return;
-	
-	if(bigstep&!add)VARIABLE = 0;
-	else {
-		VARIABLE += (add?1:-1);
-		if((VARIABLE > 26) && (VARIABLE < 0x80)) VARIABLE = 26;
-		else if(VARIABLE > 0x26) VARIABLE = 0;
-	}
-	transientCommand = VARIABLE;
-	transientChanged = true;
-	
-	Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL );
-}
-void modifyNote( Control *c, bool bigstep, bool add, u32 *pointer );
-
-void modifyInst( Control *c, bool bigstep, bool add, u32 *pointer ){
-	if( CURRENT_PATTERN == 0x00 ) return;
-	VARIABLE 			= (VARIABLE + ((bigstep?0x4:0x1) * (add?1:-1)) ) & 0x3F;	
-	transientInstrument = VARIABLE; 
-	transientChanged	= true; 
-	if( VARIABLE == 0 ) VARIABLE = 1;
-	Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); 
-}
-
-void modifyVolume	(Control *c, bool bigstep, bool add, u32 *pointer){if(CURRENT_PATTERN == 0x00)return;VARIABLE = ( bigstep ? (add?0xF:0) : (VARIABLE + (add?1:-1)) ) & 0xF; 	transientVolume 	= VARIABLE; transientChanged=true; Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); }	
-void modifyValue	(Control *c, bool bigstep, bool add, u32 *pointer){if(CURRENT_PATTERN == 0x00)return;VARIABLE = (VARIABLE + ((bigstep?0x10:0x1)* (add?1:-1))      ) & 0xFF;	transientValue		= VARIABLE; transientChanged=true; Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); }
-
-void pasteCommand	(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientCommand; 	Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); return; } transientCommand 		= VARIABLE; transientChanged=true; }
-void pasteInst		(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientInstrument; Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); return; } transientInstrument 	= VARIABLE; transientChanged=true; }
-void pasteNote		(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientNote; 		Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); return; } transientNote 		= VARIABLE; transientChanged=true; }
-void pasteVolume	(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientVolume;		Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); return; } transientVolume 		= VARIABLE; transientChanged=true; }
-void pasteValue		(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){if(CURRENT_PATTERN == 0x00)return; VARIABLE = transientValue; 		Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); return; } transientValue 		= VARIABLE; transientChanged=true; }
-
-#undef VARIABLE
-
-/* ------------------------------------------------------------------------------------------------------------------------------------- */
 /*                                               SPECIFIC TYPE DISPLAY / INPUT METHODS													 */
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 
@@ -109,28 +11,6 @@ void STRING(bool big, u8 x, u8 y, u8 *data) {
 		i++;
 		if(i==limit)break;
 	}
-}
-
-/* Invokes AlphaNumeric input modal dialog, and sets its return var */
-// Also Sets regionHander in modal alphanumeric dialog mode, max string len 14
-void ALPHA14(Control *c, bool bigstep, bool add, u32 *pointer){
-
-	// TODO: Rename to getTitle and getArtist
-	AlphaDialog a;
-	a.enable(true, c->var, c->x, c->y);
-	
-	regHnd.redraw=true;
-}
-
-/* Invokes AlphaNumeric input modal dialog, and sets its return var */
-// Also Sets regionHander in modal alphanumeric dialog mode, max string len 6
-void ALPHA6(Control *c, bool bigstep, bool add, u32 *pointer){
-	
-	AlphaDialog a;
-	a.enable(false, c->var, c->x, c->y);
-	
-	regHnd.redraw=true;
-	
 }
 
 // Single 8x8 tile, 1 hexadecimal digit
@@ -412,20 +292,6 @@ void STATUS(u8 x, u8 y, u16 color, u16 value) {
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 /*                                               EXCLUSIVE SCREEN CALLBACKS 															 */
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
-#define CALLBACK(n, c, t, v, nx)			const Callback n = { c , t , v, nx}
 
-CALLBACK( cb_no_callback	, NULL			, 0x0000 /* No key presses*/, NULL /* No var */		, NULL /* Last element */	);
-CALLBACK( cb_reset			, RESET			, EVENT_PANIC 				, NULL 					, NULL 						);
-
-#include "callbacks/debug.cpp"
-#include "callbacks/hlp.cpp"
-#include "callbacks/ins.cpp"
-#include "callbacks/pat.cpp"
-#include "callbacks/trk.cpp"
-#include "callbacks/cfg.cpp"
-#include "callbacks/sng.cpp"
-#include "callbacks/snk.cpp"
-#include "callbacks/liv1.cpp"
-#include "callbacks/liv2.cpp"
-
-#undef CALLBACK	
+const Callback cb_no_callback	= { NULL			, 0x0000 /* No key presses*/, NULL /* No var */		, NULL /* Last element */	};
+const Callback cb_reset			= { RESET			, EVENT_PANIC 				, NULL 					, NULL 						};

@@ -1,4 +1,6 @@
 #include "hlp.hpp"
+#include "../modules/gpu/gpu.hpp"
+#include "../modules/key/key.hpp"
 #include "../data/help.c"
 
 u16 	Help::index_button 		= 0;

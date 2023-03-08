@@ -29,8 +29,6 @@
 
 #include "agb.h"
 
-#define CONTROL_TERMINATOR			{ 0xFF, 0xFF, NULL, NULL, NULL, NULL, NULL, NULL, NULL }
-
 //MEM_FUNC_IN_IWRAM
 
 // Global callbacks and vars
@@ -46,14 +44,11 @@ extern vu32 SYS_FRAMES;						 //Current framecount
 
 #include "data/enum.h"
 #include "data/helpers.hpp"
-
-#define BUTTON_ALTER		KEY_A	
-#define BUTTON_NAVIGATE	KEY_SELECT
+#include "macros.h"
 
 #include "data/datatypes.h"
 
 /* Display update controller Callbacks (@ callbacks.c) */
-
 
 void RECEIVESONG(Control *c, bool bigstep, bool add, u32 *pointer);
 void SENDSONG(Control *c, bool bigstep, bool add, u32 *pointer);
@@ -78,27 +73,8 @@ void BPMUPDATE(Control *c, bool bigstep, bool add, u32 *pointer);
 void modify8BIT(Control*, bool bigstep, bool add, u32 *pointer);
 
 
-#define EXTRACT(packed, position, mask)		((packed >> position) & mask)
-#define PORT(a)		*((u8*)a)
-#define M4G_VERSION			0x81
-#define M4GEEK_SIGNATURE	0xE5ACFECA
-
-#define EXPECT(a, up, down)			{VAR_CFG.loadCount = 0;regHnd.progress.set(0, a, STATUS_##up, STATUS_##down, &VAR_CFG.loadCount);}
-#define OK()						{VAR_CFG.loadCount++;regHnd.update(1);	DECIMAL_DOUBLE(28,1,9, SRAM.position-1);}
-
-
-#define PRINTPOINTER(x, y, c, a)	TEXT(x,y, 0x6, c-13); \
-						HEXADECIMAL_DOUBLE(x+1,y, 0x6, (((unsigned)a)&0xFF000000) >> 24); \
-						HEXADECIMAL_DOUBLE(x+2,y, 0x6, (((unsigned)a)&0x00FF0000) >> 16); \
-						HEXADECIMAL_DOUBLE(x+3,y, 0x6, (((unsigned)a)&0x0000FF00) >>  8); \
-						HEXADECIMAL_DOUBLE(x+4,y, 0x6, ((unsigned)a)&0x000000FF);
-
-#define PRINTVAR(x, y, c, a)		TEXT(x,y, 0x6, c-13); \
-						HEXADECIMAL_DOUBLE(x+1,y, 6, a);
-
 #include "data/variables.h"
 #include "callbacks/callbacks.h"
-
 
 
 #include "data/tables.hpp"

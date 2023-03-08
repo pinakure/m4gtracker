@@ -1,3 +1,5 @@
+#include "sram.hpp" 
+
 Sram SRAM;
 
 #include "../../callbacks/ins.hpp"

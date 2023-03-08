@@ -3,6 +3,9 @@
 
 #include "../../agb.h"
 
+#include "../../data/control.hpp"
+#include "../regionhandler/regionhandler.hpp"
+
 
 #define TIMER0			(*(u32*)0x4000100)
 #define TIMER0_LO		(*(u16*)0x4000100)
@@ -79,6 +82,10 @@ class Mixer {
 		static void disable	(u8 channel);// move to mixer
 		static void mute	(int channel);// move to mixer
 		static void solo	(int channel);// move to mixer
+		
+		// These are interacted through Cfg Screen
+		static void show 	( Control* c, bool bigstep, bool add, u32* pointer );
+		static void update  ( RegionHandler* rh );
 };
 
 #endif

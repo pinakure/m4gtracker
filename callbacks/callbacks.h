@@ -293,39 +293,5 @@ CALLBACKDEC(live_right_VAL , D); CALLBACKDEC(live_right_VOL , D); CALLBACKDEC(li
 CALLBACKDEC(live_right_VAL , E); CALLBACKDEC(live_right_VOL , E); CALLBACKDEC(live_right_INS , E); CALLBACKDEC(live_right_CMD , E); CALLBACKDEC(live_right_CHAN , E); CALLBACKDEC(live_right_KEY , E);
 CALLBACKDEC(live_right_VAL , F); CALLBACKDEC(live_right_VOL , F); CALLBACKDEC(live_right_INS , F); CALLBACKDEC(live_right_CMD , F); CALLBACKDEC(live_right_CHAN , F); CALLBACKDEC(live_right_KEY , F);
 
-//------------------------------------------------------------------------------------------//
-// SONG CALLBACKS 																			//
-//------------------------------------------------------------------------------------------//
-CALLBACK(sng_load		);
-CALLBACK(sng_save		);
-CALLBACK(sng_purge		);
-CALLBACK(sng_copy		);
-CALLBACK(sng_erase		);
-CALLBACK(sng_slot		);
-CALLBACK(sng_artist		);
-CALLBACK(sng_title		);
-CALLBACK(sng_tempotap	);
-CALLBACK(sng_patlength	);
-CALLBACK(sng_transpose	);
-CALLBACK(sng_bpm		);
-CALLBACK(sng_groove		);
-
-CALLBACKDEC(sng_groove, 0);
-CALLBACKDEC(sng_groove, 1);
-CALLBACKDEC(sng_groove, 2);
-CALLBACKDEC(sng_groove, 3);
-CALLBACKDEC(sng_groove, 4);
-CALLBACKDEC(sng_groove, 5);
-CALLBACKDEC(sng_groove, 6);
-CALLBACKDEC(sng_groove, 7);
-CALLBACKDEC(sng_groove, 8);
-CALLBACKDEC(sng_groove, 9);
-CALLBACKDEC(sng_groove, A);
-CALLBACKDEC(sng_groove, B);
-CALLBACKDEC(sng_groove, C);
-CALLBACKDEC(sng_groove, D);
-CALLBACKDEC(sng_groove, E);
-CALLBACKDEC(sng_groove, F);
-
 #undef CALLBACK
 #undef CALLBACKDEC

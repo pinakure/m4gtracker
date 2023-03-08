@@ -3,6 +3,8 @@
 
 #include "../agb.h"
 
+#include "../modules/regionhandler/regionhandler.hpp"
+
 typedef enum eSnakeDirs {
 	SNAKE_UP,
 	SNAKE_RIGHT,

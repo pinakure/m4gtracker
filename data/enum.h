@@ -1,3 +1,6 @@
+#ifndef ENUM_HPP
+#define ENUM_HPP
+
 enum eLinkModes {
 	LINKMODE_GBA,
 	LINKMODE_IBM,
@@ -1161,3 +1164,23 @@ typedef enum eMessages {
 	MESSAGE_KEYPRESS	 				= 0xF0000000
 } Messages;
 
+typedef enum eColors{
+	COLOR_NONE,
+	COLOR_DARK_CYAN,
+	COLOR_CYAN,
+	COLOR_RED,
+	COLOR_ORANGE,
+	COLOR_DARK_RED,
+	COLOR_WHITE,
+	COLOR_YELLOW,
+	COLOR_BLACK,
+	COLOR_DARK_BLUE,
+	COLOR_BROWN,
+	COLOR_OLIVE,
+	COLOR_DARK_GREEN,
+	COLOR_GRAY,
+	COLOR_BLUE,
+	COLOR_GREEN,
+}Colors;
+
+#endif

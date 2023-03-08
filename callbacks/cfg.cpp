@@ -1,44 +1,54 @@
 #include "cfg.hpp"
-#include "linkmode.cpp"
 
-CALLBACK( cb_cfg_menuindex	, modify5VAL		, EVENT_MODIFY_B			, &VAR_CFG.MENUSLOT				, NULL);
+#include "../macros.h"
+#include "../modules/sys/sys.hpp"
+#include "../modules/net/net.hpp"
+#include "../modules/sram/sram.hpp"
+#include "../modules/spu/mixer.hpp"
+#include "../modules/spu/synth.hpp"
+#include "../modules/gpu/gpu.hpp"
+#include "../modules/key/key.hpp"
+#include "../callbacks/debug.hpp"
+#include "../data/data.hpp"
 
-CALLBACK( cb_cfg_interface	, modify1BIT		, EVENT_MODIFY_B			, &VAR_CFG.LOOKNFEEL.INTERFACE	, NULL);
-CALLBACK( cb_cfg_font		, modify2BIT		, EVENT_MODIFY_B			, &VAR_CFG.LOOKNFEEL.FONT		, NULL);
-CALLBACK( cb_cfg_border		, modify2BIT		, EVENT_MODIFY_B			, &VAR_CFG.LOOKNFEEL.BORDER		, NULL);
-CALLBACK( cb_cfg_showlogo	, modify1BIT		, EVENT_KEYDOWN_B			, &VAR_CFG.LOOKNFEEL.SHOWLOGO	, NULL);
-CALLBACK( cb_cfg_startupsfx	, modify1BIT		, EVENT_KEYDOWN_B			, &VAR_CFG.LOOKNFEEL.STARTUPSFX	, NULL);
-CALLBACK( cb_cfg_coloreditor, ColorEditor::run 	, EVENT_KEYUP_B				, NULL							, NULL);
-
-CALLBACK( cb_cfg_linkmode	, Net::alterMode	, EVENT_MODIFY_B			, &VAR_CFG.LINKMODE.LINKMODE	, NULL);
-CALLBACK( cb_cfg_masterclock, modify1BIT		, EVENT_KEYDOWN_B			, &VAR_CFG.LINKMODE.MASTERCLOCK	, NULL);
-CALLBACK( cb_cfg_syncrate	, modify4BIT		, EVENT_MODIFY_B			, &VAR_CFG.LINKMODE.SYNCRATE	, NULL);
-CALLBACK( cb_cfg_syncticks  , modify8BIT		, EVENT_MODIFY_B			, &VAR_CFG.LINKMODE.SYNCTICKS	, NULL);
-CALLBACK( cb_cfg_receivesong, RECEIVESONG		, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_sendsong	, SENDSONG			, EVENT_KEYUP_B				, NULL 							, NULL);
-
-CALLBACK( cb_cfg_autoload	, modify1BIT		, EVENT_KEYDOWN_B			, &VAR_CFG.BEHAVIOR.AUTOLOAD	, NULL);
-CALLBACK( cb_cfg_keyrate	, modify4BIT		, EVENT_MODIFY_B			, &VAR_CFG.BEHAVIOR.KEYRATE		, NULL);
-CALLBACK( cb_cfg_buttonset	, modify2BIT		, EVENT_MODIFY_B			, &VAR_CFG.BEHAVIOR.BUTTONSET	, NULL);
-CALLBACK( cb_cfg_saveconfig	, Config::save		, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_loadconfig	, Config::load		, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_initconfig	, Config::defaults	, EVENT_KEYUP_B				, NULL 							, NULL);
-
-CALLBACK( cb_cfg_finetune	, modify4BIT		, EVENT_MODIFY_B			, &VAR_CFG.TRACKER.FINETUNE		, NULL);
-CALLBACK( cb_cfg_prelisten	, modify1BIT		, EVENT_KEYDOWN_B			, &VAR_CFG.TRACKER.PRELISTEN	, NULL);
-CALLBACK( cb_cfg_transpose	, modify8BIT		, EVENT_MODIFY_B			, &VAR_CFG.TRACKER.TRANSPOSE	, NULL);
-CALLBACK( cb_cfg_inputmode	, modify1BIT		, EVENT_MODIFY_B			, &VAR_CFG.TRACKER.INPUTMODE	, NULL);
-CALLBACK( cb_cfg_soundbias	, modify8BIT		, EVENT_MODIFY_B			, &VAR_CFG.TRACKER.SOUNDBIAS	, NULL);
-CALLBACK( cb_cfg_mixer		, MIXER				, EVENT_KEYUP_B				, NULL 							, NULL);
-
-CALLBACK( cb_cfg_prefetch	, modify1BIT		, EVENT_KEYDOWN_B			, &VAR_CFG.MEMORY.PREF	 		, NULL);
-CALLBACK( cb_cfg_backup		, Config::backup	, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_revert		, Config::revert	, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_memorytest	, MEMORYTEST		, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_format		, Config::format 	, EVENT_KEYUP_B				, NULL 							, NULL);
-CALLBACK( cb_cfg_reset		, Config::reset		, EVENT_KEYUP_B				, NULL 							, NULL);
-
-/*---------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------------------------------------------------*/
+const Callback cb_cfg_menuindex		= { modify5VAL			, EVENT_MODIFY_B	, &VAR_CFG.MENUSLOT				, NULL };
+// LookNFeel Submenu
+const Callback cb_cfg_interface		= { modify1BIT			, EVENT_MODIFY_B	, &VAR_CFG.LOOKNFEEL.INTERFACE	, NULL };
+const Callback cb_cfg_font			= { modify2BIT			, EVENT_MODIFY_B	, &VAR_CFG.LOOKNFEEL.FONT		, NULL };
+const Callback cb_cfg_border		= { modify2BIT			, EVENT_MODIFY_B	, &VAR_CFG.LOOKNFEEL.BORDER		, NULL };
+const Callback cb_cfg_showlogo		= { modify1BIT			, EVENT_KEYDOWN_B	, &VAR_CFG.LOOKNFEEL.SHOWLOGO	, NULL };
+const Callback cb_cfg_startupsfx	= { modify1BIT			, EVENT_KEYDOWN_B	, &VAR_CFG.LOOKNFEEL.STARTUPSFX	, NULL };
+const Callback cb_cfg_coloreditor	= { ColorEditor::show 	, EVENT_KEYUP_B		, NULL							, NULL };
+// LinkMode Submenu
+const Callback cb_cfg_linkmode		= { Net::alterMode		, EVENT_MODIFY_B	, &VAR_CFG.LINKMODE.LINKMODE	, NULL };
+const Callback cb_cfg_masterclock	= { modify1BIT			, EVENT_KEYDOWN_B	, &VAR_CFG.LINKMODE.MASTERCLOCK	, NULL };
+const Callback cb_cfg_syncrate		= { modify4BIT			, EVENT_MODIFY_B	, &VAR_CFG.LINKMODE.SYNCRATE	, NULL };
+const Callback cb_cfg_syncticks  	= { modify8BIT			, EVENT_MODIFY_B	, &VAR_CFG.LINKMODE.SYNCTICKS	, NULL };
+const Callback cb_cfg_receivesong	= { LinkMode::songRecv  , EVENT_KEYUP_B		, NULL 							, NULL };
+const Callback cb_cfg_sendsong		= { LinkMode::songSend  , EVENT_KEYUP_B		, NULL 							, NULL };
+// Behavior SubMenu
+const Callback cb_cfg_autoload		= { modify1BIT			, EVENT_KEYDOWN_B	, &VAR_CFG.BEHAVIOR.AUTOLOAD	, NULL };
+const Callback cb_cfg_keyrate		= { modify4BIT			, EVENT_MODIFY_B	, &VAR_CFG.BEHAVIOR.KEYRATE		, NULL };
+const Callback cb_cfg_buttonset		= { modify2BIT			, EVENT_MODIFY_B	, &VAR_CFG.BEHAVIOR.BUTTONSET	, NULL };
+const Callback cb_cfg_saveconfig	= { Config::save		, EVENT_KEYUP_B		, NULL 							, NULL };
+const Callback cb_cfg_loadconfig	= { Config::load		, EVENT_KEYUP_B		, NULL 							, NULL };
+const Callback cb_cfg_initconfig	= { Config::defaults	, EVENT_KEYUP_B		, NULL 							, NULL };
+// Tracker SubMenu
+const Callback cb_cfg_finetune		= { modify4BIT			, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.FINETUNE		, NULL };
+const Callback cb_cfg_prelisten		= { modify1BIT			, EVENT_KEYDOWN_B	, &VAR_CFG.TRACKER.PRELISTEN	, NULL };
+const Callback cb_cfg_transpose		= { modify8BIT			, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.TRANSPOSE	, NULL };
+const Callback cb_cfg_inputmode		= { modify1BIT			, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.INPUTMODE	, NULL };
+const Callback cb_cfg_soundbias		= { modify8BIT			, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.SOUNDBIAS	, NULL };
+const Callback cb_cfg_mixer			= { Mixer::show			, EVENT_KEYUP_B		, NULL 							, NULL };
+//	Memory Submenu
+const Callback cb_cfg_prefetch		= { modify1BIT			, EVENT_KEYDOWN_B	, &VAR_CFG.MEMORY.PREF	 		, NULL };
+const Callback cb_cfg_backup		= { Config::backup		, EVENT_KEYUP_B		, NULL 							, NULL };
+const Callback cb_cfg_revert		= { Config::revert		, EVENT_KEYUP_B		, NULL 							, NULL };
+const Callback cb_cfg_memorytest	= { Debug::memoryTest	, EVENT_KEYUP_B		, NULL 							, NULL };
+const Callback cb_cfg_format		= { Config::format 		, EVENT_KEYUP_B		, NULL 							, NULL };
+const Callback cb_cfg_reset			= { Config::reset		, EVENT_KEYUP_B		, NULL 							, NULL };
+/*---------------------------------------------------------------------------------------------------------------------*/
 
 void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 	int i, di;
@@ -332,214 +342,6 @@ void Config::reinit (Control *c, bool bigstep, bool add, u32 *pointer){
 	SRAM.sharedDataSave( true );
 }
 
-/*---------------------------------------------------------------------------*/
+void Config::memMap( RegionHandler* rh ){
 
-void ColorEditor::run(Control *c, bool bigstep, bool add, u32 *pointer){
-	
-}
-
-void ColorEditor::update(RegionHandler* rh){
-
-}
-
-/*---------------------------------------------------------------------------*/
-
-void MIXER(Control *c, bool bigstep, bool add, u32 *pointer){
-	
-}
-
-void MEMORYTEST(Control *c, bool bigstep, bool add, u32 *pointer){
-	u8 a1,a2,a3;
-	int i;
-	
-	for(i=0;i<0x8000; i++){
-		SRAM.seek(i); a1 = SRAM.read();
-		SRAM.seek(i); a2 = SRAM.read();
-		SRAM.seek(i); a3 = SRAM.read();
-		
-		if(((a1!=a2) || (a2!=a3)) || a1!=a3){
-			SRAM.drawPosition(27,1,7);
-			return;
-		}
-	}
-	SRAM.drawPosition(27,1,0xF);
-}
-
-//----------------------------------------------------------------------------------------
-void RECEIVESONG(Control *c, bool bigstep, bool add, u32 *pointer){
-
-}
-void SENDSONG(Control *c, bool bigstep, bool add, u32 *pointer){
-
-}
-
-#define MOSAIC_CNT *(u16*)0x400004C
-#define REG_BG0 *(u16*)0x4000008
-#define REG_BG1 *(u16*)0x400000A
-#define REG_BG2 *(u16*)0x400000C
-#define REG_BG3 *(u16*)0x400000E
-
-void LookNFeel::logoFade(){
-	int freeze=0;
-	REG_BG0 |= 0x0040;
-	REG_BG1 |= 0x0040;
-	REG_BG2 |= 0x0040;
-	REG_BG3 |= 0x0040;
-	if( VAR_CFG.LOOKNFEEL.STARTUPSFX ) Mixer::start();
-			
-	while( freeze < 0xfff>>3 ){
-		regHnd.drawVerticalCache(8,7,&CACHE_LOGOTYPE,0,0);
-		sys.update();
-		MOSAIC_CNT = 0xFF - ((freeze >> 1)&0xFF);
-		if( VAR_CFG.LOOKNFEEL.STARTUPSFX ) {
-			Synth::polysynth( freeze >> 1 );
-		}
-		if(!gpu.isVblank()) {
-			freeze++;
-			for(int i=0;i<16;i++) {
-				int c1 = Palette[4+((freeze)&0x7)];
-				int r, g, b;
-				if(!(freeze&7)||!(freeze&3)){
-					r = (u8)( ( (c1 & 0x001f)	   )  * ((freeze*3) / (0xf * 3))); 
-					g = (u8)( ( (c1 & 0x02e0) >> 5  ) * ((freeze*3) / (0xf * 3)));
-					b = (u8)( ( (c1 & 0x3d00) >> 10 ) * ((freeze*3) / (0xf * 3)));
-				} else {
-					r = 0;
-					g = 0;
-					b = 0;
-				}
-				c1 = (b << 10) | (g << 5) | r;
-				*(u16*)(BG_PALETTE+(i*0x20)) 	  =	c1;
-				*(u16*)(BG_PALETTE+(i*0x20)+0x10) =	c1;
-			}		
-		}
-	}
-	if( VAR_CFG.LOOKNFEEL.STARTUPSFX ) Mixer::stop();
-	
-	REG_BG0 	^= 0x0040;
-	REG_BG1 	^= 0x0040;
-	REG_BG2 	^= 0x0040;
-	REG_BG3 	^= 0x0040;
-	MOSAIC_CNT 	 = 0x0000;
-}
-
-void LookNFeel::logoWait(){
-	int freeze=0;
-	
-	gpu.loadPalette();
-	while( freeze < 2048 ){
-		regHnd.drawVerticalCache(8,7,&CACHE_LOGOTYPE,0,0);
-		sys.update();
-		if( KEY.activity() ) {
-			break;
-		}
-		/*
-		for(int i=0;i<16;i++) {
-			*(u16*)(BG_PALETTE+(i*0x20))		 =	Palette[(i+freeze)&0xFF];
-			*(u16*)(BG_PALETTE+(i*0x20)+0x10)	 =	Palette[((i+freeze)+i*0x2)&0xFF];
-		}*/
-		 
-		freeze++;
-	}
-	gpu.loadPalette();
-}
-
-void LookNFeel::init(){
-	if( VAR_CFG.LOOKNFEEL.SHOWLOGO ){
-		logoFade();
-		logoWait();
-	}
-}
-
-// Called when a look and feel value is changed
-void LookNFeel::update( RegionHandler* rh ){
-	static u8 lastBorder = VAR_CFG.LOOKNFEEL.BORDER;
-	static u8 lastFont = VAR_CFG.LOOKNFEEL.FONT;
-	static u32 bigIndex = 0;
-	static u8 index = 3;
-	
-	#define ROWSIZE 		(16*32)
-	#define FONTSIZE 		(ROWSIZE * 3)
-	
-	//#define CYCLEPOS 		CHAR_BASE0_ADDR+(ROWSIZE*4)
-	#define CYCLEPOS 		CHAR_BASE0_ADDR+(ROWSIZE*4)
-	#define CYCLEPOS1 	CYCLEPOS+(index*32)
-	#define CYCLEPOS2 	CYCLEPOS+(32*6)+(index*32)
-	#define CYCLEBAK		CHAR_BASE0_ADDR+(ROWSIZE*10)
-	if(bigIndex < 100) { bigIndex++; } else {
-		// Draw M4G logo
-		DmaCopy(3, CYCLEPOS1, CYCLEBAK, 32, 16);
-		DmaCopy(3, CYCLEPOS2, CYCLEPOS1, 32, 16);
-		DmaCopy(3, CYCLEBAK, CYCLEPOS2, 32, 16);
-	
-		index++;
-		if(index == 6)index=0;
-		
-		
-		
-		bigIndex = 0x0;
-	}
-	
-	// Reload HUD style
-	if((VAR_CFG.LOOKNFEEL.BORDER != lastBorder)||(VAR_CFG.RELOADSKIN)){
-		lastBorder = VAR_CFG.LOOKNFEEL.BORDER;
-		DmaCopy(3, CHAR_BASE1_ADDR+ROWSIZE+(ROWSIZE*lastBorder),CHAR_BASE1_ADDR, ROWSIZE, 16);
-	}
-
-	// Reload font		
-	if((VAR_CFG.LOOKNFEEL.FONT != lastFont)||(VAR_CFG.RELOADSKIN)){
-		lastFont = VAR_CFG.LOOKNFEEL.FONT;
-		DmaCopy(3, CHAR_BASE2_ADDR+(ROWSIZE*36)+(FONTSIZE*lastFont),CHAR_BASE2_ADDR, FONTSIZE, 16);
-		VAR_CFG.RELOADSKIN = false;
-	}
-	#undef FONTSIZE
-	#undef ROWSIZE	
-}
-
-
-static void otherBlit(const u16 *map_address, int startx, int starty, int x, int y, int width, int height){
-	int offsetSrc;
-	int offsetDst;
-	
-	width = width << 1; //double word per item!
-	
-	x<<=1;
-	
-	//R_DISPCNT = DISP_FORCE_HBLANK | (DISP_BG0_ON | DISP_BG1_ON |  DISP_BG2_ON) &0x0f00;			
-	for(int sy=starty; sy<height+starty; sy++){
-		offsetSrc = (sy<<6)+startx;
-		offsetDst = (y<<6)+x;
-		
-		DmaCopy(3, map_address + offsetSrc, (SCREEN_BASE0_ADDR)+offsetDst, width, 16);
-		DmaCopy(3, map_address + 4096 + offsetSrc, (SCREEN_BASE1_ADDR)+offsetDst, width, 16);
-		DmaCopy(3, map_address + 8192 + offsetSrc, (SCREEN_BASE2_ADDR)+offsetDst, width, 16);
-		y++;
-	}
-	//R_DISPCNT = (DISP_BG0_ON | DISP_BG1_ON |  DISP_BG2_ON) &0x0f00;
-}
-
-void updateLINKMODE(RegionHandler* rh){
-	const Region *c = &REGION_MAP_4_LINKSTATUS;	
-	otherBlit(MAPDATA + ((MAP_CFG * 3) << 12), c->x, c->y, 0xb, 0xf, c->width, c->height);
-}
-
-void updateBEHAVIOR(RegionHandler* rh){
-}
-
-void updateTRACKER(RegionHandler* rh){
-	const Region *c = &REGION_MAP_4_CHANNELMIXER;	
-	otherBlit(MAPDATA + ((MAP_CFG * 3) << 12), c->x, c->y, 0xb, 0xf, c->width, c->height);
-}
-
-void updateMEMORY(RegionHandler* rh){
-}
-void updateCHANNELMIXER(RegionHandler* rh){
-}
-void updateMEMORYSONGMAP(RegionHandler* rh){
-}
-void updateMEMORYTEST(RegionHandler* rh){
-}
-void updateLINKSTATUS(RegionHandler* rh){
-}
-void updateCREDITS(RegionHandler* rh){
 }

@@ -123,3 +123,25 @@ void Gpu::blinkUpdate( int speed){
 		blink = (vcount & 0xFFF>>speed) > 0x800>>speed;
 	}
 }
+
+void Gpu::otherBlit(const u16 *map_address, int startx, int starty, int x, int y, int width, int height){
+	int offsetSrc;
+	int offsetDst;
+	
+	width = width << 1; //double word per item!
+	
+	x<<=1;
+	
+	//R_DISPCNT = DISP_FORCE_HBLANK | (DISP_BG0_ON | DISP_BG1_ON |  DISP_BG2_ON) &0x0f00;			
+	for(int sy=starty; sy<height+starty; sy++){
+		offsetSrc = (sy<<6)+startx;
+		offsetDst = (y<<6)+x;
+		
+		DmaCopy(3, map_address + offsetSrc, (SCREEN_BASE0_ADDR)+offsetDst, width, 16);
+		DmaCopy(3, map_address + 4096 + offsetSrc, (SCREEN_BASE1_ADDR)+offsetDst, width, 16);
+		DmaCopy(3, map_address + 8192 + offsetSrc, (SCREEN_BASE2_ADDR)+offsetDst, width, 16);
+		y++;
+	}
+	//R_DISPCNT = (DISP_BG0_ON | DISP_BG1_ON |  DISP_BG2_ON) &0x0f00;
+}
+

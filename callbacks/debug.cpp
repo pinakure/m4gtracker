@@ -1,30 +1,18 @@
 #include "debug.hpp"
 
+#include "../modules/gpu/gpu.hpp"
+#include "../modules/sys/sys.hpp"
+#include "../modules/key/key.hpp"
+#include "../modules/sram/sram.hpp"
+#include "../data/helpers.hpp"
+#include "../data/enum.h"
+
 int Debug::counter=0;
 
 void Debug::runTests(){
 //	error(0xCAFECAFE, true);
 //	error(0xCAFECAFE, false);
 }
-
-typedef enum eColors{
-	COLOR_NONE,
-	COLOR_DARK_CYAN,
-	COLOR_CYAN,
-	COLOR_RED,
-	COLOR_ORANGE,
-	COLOR_DARK_RED,
-	COLOR_WHITE,
-	COLOR_YELLOW,
-	COLOR_BLACK,
-	COLOR_DARK_BLUE,
-	COLOR_BROWN,
-	COLOR_OLIVE,
-	COLOR_DARK_GREEN,
-	COLOR_GRAY,
-	COLOR_BLUE,
-	COLOR_GREEN,
-}Colors;
 
 void Debug::clear( ){
 	for(int x=0; x<30; x++){
@@ -219,3 +207,25 @@ void Debug::benchmark( RegionHandler &regHnd ){
 	o++;
 }
 
+void Debug::updateMemory( RegionHandler* rh ){
+}
+
+void Debug::updateMemTest(RegionHandler* rh){
+}
+
+void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
+	u8 	a1,a2,a3;
+	int i;
+	
+	for( i = 0 ; i < 0x8000 ; i++ ){
+		SRAM.seek( i ); a1 = SRAM.read();
+		SRAM.seek( i ); a2 = SRAM.read();
+		SRAM.seek( i ); a3 = SRAM.read();
+		
+		if( ( ( a1 != a2 ) || ( a2 != a3 ) ) || a1 != a3 ){
+			SRAM.drawPosition( 27, 1, 7 );
+			return;
+		}
+	}
+	SRAM.drawPosition( 27, 1, 0xF );
+}

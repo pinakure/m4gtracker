@@ -2,6 +2,7 @@
 #include "data/helpers.hpp"
 #include "modules/modules.cpp"
 #include "callbacks.cpp"
+#include "callbacks/cfg.hpp"
 
 
 vu32 SYS_TIMER=0;

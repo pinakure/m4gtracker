@@ -3,6 +3,9 @@
 
 #include "../agb.h"
 
+#include "../modules/regionhandler/regionhandler.hpp"
+#include "../data/callback.hpp"
+
 class SongEdit {
 	public:
 		static void update( RegionHandler* rh );
@@ -16,5 +19,36 @@ class SongEdit {
 		static void select	( Control *c	 , bool bigstep		 , bool add		 , u32 *pointer		 );
 
 };
+
+extern const Callback cb_sng_load;
+extern const Callback cb_sng_save;
+extern const Callback cb_sng_purge;
+extern const Callback cb_sng_copy;
+extern const Callback cb_sng_erase;
+extern const Callback cb_sng_slot;
+extern const Callback cb_sng_artist;
+extern const Callback cb_sng_title;
+extern const Callback cb_sng_tempotap;
+extern const Callback cb_sng_patlength;
+extern const Callback cb_sng_transpose;
+extern const Callback cb_sng_bpm;
+extern const Callback cb_sng_groove;
+
+extern const Callback cb_sng_groove_00;
+extern const Callback cb_sng_groove_01;
+extern const Callback cb_sng_groove_02;
+extern const Callback cb_sng_groove_03;
+extern const Callback cb_sng_groove_04;
+extern const Callback cb_sng_groove_05;
+extern const Callback cb_sng_groove_06;
+extern const Callback cb_sng_groove_07;
+extern const Callback cb_sng_groove_08;
+extern const Callback cb_sng_groove_09;
+extern const Callback cb_sng_groove_0A;
+extern const Callback cb_sng_groove_0B;
+extern const Callback cb_sng_groove_0C;
+extern const Callback cb_sng_groove_0D;
+extern const Callback cb_sng_groove_0E;
+extern const Callback cb_sng_groove_0F;
 
 #endif

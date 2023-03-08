@@ -584,9 +584,9 @@ void Synth::polysynth( u16 input ){
 	};
 	u16 freq[6] = {
 		PWM_FREQ_TABLE[ input>>(input%8) ],
-		PWM_FREQ_TABLE[ input + (lfo>>8) ],
-		PWM_FREQ_TABLE[ input + (lfo>>8) ],
-		PWM_FREQ_TABLE[ input>>(input%8) ],
+		PWM_FREQ_TABLE[ input   ] +lfo,
+		PWM_FREQ_TABLE[ input+7 ] + lfo,
+		PWM_FREQ_TABLE[ input   ] + lfo,
 		PWM_FREQ_TABLE[ input>>(input%8) ],
 		PWM_FREQ_TABLE[ input>>(input%8) ],
 	};

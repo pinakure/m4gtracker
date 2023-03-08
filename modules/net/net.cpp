@@ -81,3 +81,10 @@ void Net::sendSync(){
 	// Working! Set up your synth to sync @ 48 PPQ, then preferably work using triplets
 	RCNT_SIO = 0x8100 | RCNT_SO | RCNT_SO_OUT;	
 }
+
+void Net::alterMode(Control *c, bool bigstep, bool add, u32 *pointer){	
+	VAR_CFG.LINKMODE.LINKMODE 	= ( bigstep ? (add?0x3:0) : (VAR_CFG.LINKMODE.LINKMODE + (add?1:-1)) ) & 0x3; 	
+	Transient::bit2 	 		= VAR_CFG.LINKMODE.LINKMODE ; 
+	Transient::changed 			= true;
+	setMode( (eNetMode) VAR_CFG.LINKMODE.LINKMODE );
+}

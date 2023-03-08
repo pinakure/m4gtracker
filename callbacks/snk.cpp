@@ -1,4 +1,7 @@
 #include "snk.hpp" 
+#include "../modules/gpu/gpu.hpp"
+#include "../modules/key/key.hpp"
+#include "../data/helpers.hpp"
 
 bool 		SnakeGame::turbo;
 bool 		SnakeGame::redraw_game 	= true;

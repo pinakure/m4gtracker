@@ -2,6 +2,7 @@
 #define PAT_HPP
 
 #include "../agb.h"
+#include "../modules/regionhandler/regionhandler.hpp"
 
 class PatEdit {
 	public:
@@ -23,5 +24,21 @@ class PatEdit {
 
 
 };
+
+extern const Control PAT_CONTROLS[ CONTROL_PAT_MAX ];
+extern const Callback cb_pat_solo_0;
+extern const Callback cb_pat_solo_1;
+extern const Callback cb_pat_solo_2;
+extern const Callback cb_pat_solo_3;
+extern const Callback cb_pat_solo_4;
+extern const Callback cb_pat_solo_5;
+extern const Callback cb_pat_mute_0;
+extern const Callback cb_pat_mute_1;
+extern const Callback cb_pat_mute_2;
+extern const Callback cb_pat_mute_3;
+extern const Callback cb_pat_mute_4;
+extern const Callback cb_pat_mute_5;
+
+
 
 #endif

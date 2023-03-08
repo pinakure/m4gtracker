@@ -2,6 +2,7 @@
 #define INS_HPP
 
 #include "../agb.h"
+#include "../data/enum.h"
 #include "../data/control.hpp"
 #include "../data/settings.hpp"
 #include "../data/instrument.hpp"

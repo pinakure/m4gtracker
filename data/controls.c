@@ -1,176 +1,182 @@
 #include "controls.hpp"
 #include "data.hpp"
+#include "../modules/regionhandler/regionhandler.hpp"
+#include "../modules/spu/sequencer.hpp"
+#include "../callbacks/trk.hpp"
+#include "../modules/spu/mixer.hpp"
+
+u8 sTransient::bit1;
+u8 sTransient::bit2;
+u8 sTransient::bit3;
+u8 sTransient::bit4;
+u8 sTransient::bit5;
+u8 sTransient::bit6;
+u8 sTransient::bit7;
+u8 sTransient::bit8;
+u8 sTransient::note;
+u8 sTransient::value;
+u8 sTransient::volume;
+u8 sTransient::instrument;
+u8 sTransient::command;
+u8 sTransient::changed;
+
+#define VARIABLE			(*(u8*) c->var)
+
+void modify1BIT	(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE^=0x1; Transient::bit1 = VARIABLE; Transient::changed = true; }
+void modify2BIT	(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? ( add	?0x03:0x0) : (VARIABLE + (add?1:-1)) ) & 0x03; Transient::bit2 = VARIABLE; Transient::changed = true; }
+void modify3BIT	(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? ( add	?0x07:0x0) : (VARIABLE + (add?1:-1)) ) & 0x07; Transient::bit3 = VARIABLE; Transient::changed = true; }
+void modify4BIT	(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = ( bigstep ? ( add	?0x0F:0x0) : (VARIABLE + (add?1:-1)) ) & 0x0F; Transient::bit4 = VARIABLE; Transient::changed = true; }	
+void modify5BIT	(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x04:0x1) * ( add ? 1 : -1 ) )      ) & 0x1F; Transient::bit5 = VARIABLE; Transient::changed = true; }
+void modify6BIT	(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x04:0x1) * ( add ? 1 : -1 ) )      ) & 0x3F; Transient::bit6 = VARIABLE; Transient::changed = true; }
+void modify7BIT	(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x04:0x1) * ( add ? 1 : -1 ) )      ) & 0x7F; Transient::bit7 = VARIABLE; Transient::changed = true; }
+void modify8BIT	(Control *c, bool bigstep, bool add, u32 *pointer){	VARIABLE = (VARIABLE + ((bigstep?0x10:0x1) * ( add ? 1 : -1 ) )      ) & 0xFF; Transient::bit8 = VARIABLE; Transient::changed = true; }
+void modifyCHAR	(Control *c, bool bigstep, bool add, u32 *pointer){ }
+void modifyTempo(Control *c, bool bigstep, bool add, u32 *pointer){	modify8BIT(c, bigstep, add, pointer); Sequencer::setTempo( VAR_SONG.BPM ); }
+
+void modifyValue(Control *c, bool bigstep, bool add, u32 *pointer, u8 quant){	
+	VARIABLE = ( bigstep ? (add ? quant - 1 : 0) : (VARIABLE + (add ? 1 : -1 )) ) % quant; 
+	if( VARIABLE > quant - 1 ) VARIABLE = quant - 1; 	
+}	
+void modify3VAL (Control *c, bool bigstep, bool add, u32 *pointer){ return modifyValue(c, bigstep, add, pointer,  3); }
+void modify5VAL (Control *c, bool bigstep, bool add, u32 *pointer){ return modifyValue(c, bigstep, add, pointer,  5); }
+void modify6VAL (Control *c, bool bigstep, bool add, u32 *pointer){ return modifyValue(c, bigstep, add, pointer,  6); }
+void modify27VAL(Control *c, bool bigstep, bool add, u32 *pointer){ return modifyValue(c, bigstep, add, pointer, 27); }
+
+void modifyCommand (Control *c, bool bigstep, bool add, u32 *pointer){
+	if(CURRENT_PATTERN == 0x00)return;
+	
+	if( bigstep &! add) VARIABLE = 0; else {
+		VARIABLE += (add?1:-1);
+		if((VARIABLE > 26) && (VARIABLE < 0x80)) VARIABLE = 26;
+		else if(VARIABLE > 0x26) VARIABLE = 0;
+	}
+	Transient::command = VARIABLE;
+	Transient::changed = true;
+	
+	Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL );
+}
+
+void modifyInst ( Control *c, bool bigstep, bool add, u32 *pointer ){
+	if( CURRENT_PATTERN == 0x00 ) return;
+	VARIABLE 			= (VARIABLE + ((bigstep?0x4:0x1) * (add?1:-1)) ) & 0x3F;	
+	Transient::instrument= VARIABLE; 
+	Transient::changed	= true; 
+	if( VARIABLE == 0 ) VARIABLE = 1;
+	Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); 
+}
+
+void modifyVolume (Control *c, bool bigstep, bool add, u32 *pointer){
+	if(CURRENT_PATTERN == 0x00) return;
+	VARIABLE 			= ( bigstep ? (add?0xF:0) : (VARIABLE + (add?1:-1)) ) & 0xF; 	
+	Transient::volume 	= VARIABLE; 
+	Transient::changed 	= true; 
+	Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); 
+}	
+
+void modifyValue (Control *c, bool bigstep, bool add, u32 *pointer){
+	if(CURRENT_PATTERN == 0x00) return;
+	VARIABLE 			= (VARIABLE + ((bigstep?0x10:0x1)* (add?1:-1)) ) & 0xFF;
+	Transient::value		= VARIABLE; 
+	Transient::changed 	= true; 
+	Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); 
+}
+
+void paste2BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = Transient::bit2; return; } Transient::bit2 = VARIABLE; Transient::changed = true; }
+void paste3BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = Transient::bit3; return; } Transient::bit3 = VARIABLE; Transient::changed = true; }
+void paste4BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = Transient::bit4; return; } Transient::bit4 = VARIABLE; Transient::changed = true; }
+void paste5BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = Transient::bit5; return; } Transient::bit5 = VARIABLE; Transient::changed = true; }
+void paste6BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = Transient::bit6; return; } Transient::bit6 = VARIABLE; Transient::changed = true; }
+void paste7BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = Transient::bit7; return; } Transient::bit7 = VARIABLE; Transient::changed = true; }
+void paste8BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = Transient::bit8; return; } Transient::bit7 = VARIABLE; Transient::changed = true; }
+
+void pasteCommand (Control *c, bool bigstep, bool add, u32 *pointer){ 
+	if(VARIABLE == 0x00){
+		if(CURRENT_PATTERN == 0x00) return; 
+		VARIABLE = Transient::command; 		
+		Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); 
+		return; 
+	} 
+	Transient::command = VARIABLE; 
+	Transient::changed = true; 
+}
+
+void pasteInst (Control *c, bool bigstep, bool add, u32 *pointer){ 
+	if(VARIABLE == 0x00){
+		if(CURRENT_PATTERN == 0x00)return; 
+		VARIABLE = Transient::instrument; 	
+		Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); 
+		return; 
+	} 
+	Transient::instrument = VARIABLE; 
+	Transient::changed 	 = true; 
+}
+
+void pasteNote (Control *c, bool bigstep, bool add, u32 *pointer){ 
+	if(VARIABLE == 0x00){
+		if(CURRENT_PATTERN == 0x00) return; 
+		VARIABLE = Transient::note; 			
+		Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); 
+		return; 
+	} 
+	Transient::note 		= VARIABLE; 
+	Transient::changed 	= true; 
+}
+
+void pasteVolume (Control *c, bool bigstep, bool add, u32 *pointer){ 
+	if(VARIABLE == 0x00){
+		if(CURRENT_PATTERN == 0x00) return; 
+		VARIABLE = Transient::volume;
+		Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL );
+		return; 
+	} 
+	Transient::volume	= VARIABLE; 
+	Transient::changed   = true;
+}
+
+void pasteValue	(Control *c, bool bigstep, bool add, u32 *pointer){ 
+	if(VARIABLE == 0x00){
+		if(CURRENT_PATTERN == 0x00) return; 
+		VARIABLE = Transient::value;
+		Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); 
+		return; 
+	} 
+	Transient::value 	= VARIABLE; 
+	Transient::changed 	= true; 
+}
+
+/* Invokes AlphaNumeric input modal dialog, and sets its return var */
+// Also Sets regionHander in modal alphanumeric dialog mode, max string len 14
+void ALPHA14(Control *c, bool bigstep, bool add, u32 *pointer){
+
+	// TODO: Rename to getTitle and getArtist
+	AlphaDialog a;
+	a.enable(true, c->var, c->x, c->y);
+	
+	regHnd.redraw=true;
+}
+
+/* Invokes AlphaNumeric input modal dialog, and sets its return var */
+// Also Sets regionHander in modal alphanumeric dialog mode, max string len 6
+void ALPHA6(Control *c, bool bigstep, bool add, u32 *pointer){
+	
+	AlphaDialog a;
+	a.enable(false, c->var, c->x, c->y);
+	
+	regHnd.redraw=true;
+	
+}
+
+#undef CURRENT_PATTERN
+#undef VARIABLE
 
 /*
 
-FILE DEPRECATED:
+DATA IN FILE FROM THIS POINT DEPRECATED:
 This controls must reside in each correspondent callback/xxx file
 Use as example LinkMode class at Config screen 
 
 */
 
-#define T(a) &SNG_CONTROLS[CONTROL_SNG_##a]
-#define TV(a) ((u8*)&(VAR_SONG.a))
-const Control SNG_CONTROLS[CONTROL_SNG_MAX] = { 
-	//  x	  y		up						right					down				left				cache							var						callback
-	{	0x0b , 0x0f	, T(GROOVE_SWITCH)		, T(GROOVE_01)			, T(GROOVE_04)		, T(SONGSELECTOR)	, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[0])	, &cb_sng_groove_00 	},
-	{	0x10 , 0x0f	, T(GROOVE_SWITCH)		, T(GROOVE_02)			, T(GROOVE_05)		, T(GROOVE_00)		, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[1])	, &cb_sng_groove_01 	},
-	{	0x15 , 0x0f	, T(GROOVE_SWITCH)		, T(GROOVE_03)			, T(GROOVE_06)		, T(GROOVE_01)		, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[2])	, &cb_sng_groove_02 	},
-	{	0x1a , 0x0f	, T(GROOVE_SWITCH)		, T(SONGSELECTOR)		, T(GROOVE_07)		, T(GROOVE_02)		, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[3])	, &cb_sng_groove_03 	},
-	{	0x0b , 0x10	, T(GROOVE_00)			, T(GROOVE_05)			, T(GROOVE_08)		, T(SONGSELECTOR)	, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[4])	, &cb_sng_groove_04 	},
-	{	0x10 , 0x10	, T(GROOVE_01)			, T(GROOVE_06)			, T(GROOVE_09)		, T(GROOVE_04)		, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[5])	, &cb_sng_groove_05 	},
-	{	0x15 , 0x10	, T(GROOVE_02)			, T(GROOVE_07)			, T(GROOVE_0A)		, T(GROOVE_05)		, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[6])	, &cb_sng_groove_06 	},
-	{	0x1a , 0x10	, T(GROOVE_03)			, T(SONGSELECTOR)		, T(GROOVE_0B)		, T(GROOVE_06)		, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[7])	, &cb_sng_groove_07 	},
-	{	0x0b , 0x11	, T(GROOVE_04)			, T(GROOVE_09)			, T(GROOVE_0C)		, T(SONGSELECTOR)	, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[8])	, &cb_sng_groove_08 	},
-	{	0x10 , 0x11	, T(GROOVE_05)			, T(GROOVE_0A)			, T(GROOVE_0D)		, T(GROOVE_08)		, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[9])	, &cb_sng_groove_09 	},
-	{	0x15 , 0x11	, T(GROOVE_06)			, T(GROOVE_0B)			, T(GROOVE_0E)		, T(GROOVE_09)		, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[10])	, &cb_sng_groove_0A 	},
-	{	0x1a , 0x11	, T(GROOVE_07)			, T(SONGSELECTOR)		, T(GROOVE_0F)		, T(GROOVE_0A)		, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[11])	, &cb_sng_groove_0B 	},
-	{	0x0b , 0x12	, T(GROOVE_08)			, T(GROOVE_0D)			, T(LOAD)			, T(SONGSELECTOR)	, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[12])	, &cb_sng_groove_0C 	},
-	{	0x10 , 0x12	, T(GROOVE_09)			, T(GROOVE_0E)			, T(LOAD)			, T(GROOVE_0C)		, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[13])	, &cb_sng_groove_0D 	},
-	{	0x15 , 0x12	, T(GROOVE_0A)			, T(GROOVE_0F)			, T(LOAD)			, T(GROOVE_0D)		, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[14])	, &cb_sng_groove_0E 	},
-	{	0x1a , 0x12	, T(GROOVE_0B)			, T(SONGSELECTOR)		, T(LOAD)			, T(GROOVE_0E)		, &CACHE_HEXADECIMAL_TWOTILES	, TV(GROOVE.STEP[15])	, &cb_sng_groove_0F 	},
-	{	0x04 , 0x07	, T(SONGSELECTOR)		, T(ARTIST)				, T(SONGSELECTOR)	, T(ARTIST)			, &CACHE_SONGSLOTS				, (u8*)&(VAR_CFG.SLOT)	, &cb_sng_slot		},
-	{	0x0d , 0x01	, T(GROOVE_0F)			, T(SONGSELECTOR)		, T(SAVE)			, T(SONGSELECTOR)	, &CACHE_ARROW_LEFT				, NULL					, &cb_sng_load		},
-	{	0x0d , 0x02	, T(LOAD)				, T(SONGSELECTOR)		, T(PURGE)			, T(SONGSELECTOR)	, &CACHE_ARROW_LEFT				, NULL					, &cb_sng_save		},
-	{	0x0d , 0x03	, T(SAVE)				, T(SONGSELECTOR)		, T(COPY)			, T(SONGSELECTOR)	, &CACHE_ARROW_LEFT				, NULL					, &cb_sng_purge		},
-	{	0x0d , 0x04	, T(PURGE)				, T(SONGSELECTOR)		, T(ERASE)			, T(SONGSELECTOR)	, &CACHE_ARROW_LEFT				, NULL					, &cb_sng_copy		},
-	{	0x0d , 0x05	, T(COPY)				, T(SONGSELECTOR)		, T(ARTIST)			, T(SONGSELECTOR)	, &CACHE_ARROW_LEFT				, NULL					, &cb_sng_erase		},
-	{	0x0f , 0x07	, T(ERASE)				, T(SONGSELECTOR)		, T(TITLE)			, T(SONGSELECTOR)	, &CACHE_TEXT					, TV(ARTIST)			, &cb_sng_artist		},
-	{	0x0f , 0x08	, T(ARTIST)				, T(SONGSELECTOR)		, T(BPM)			, T(SONGSELECTOR)	, &CACHE_TEXT					, TV(TITLE)				, &cb_sng_title		},
-	{	0x1c , 0x0a	, T(BPM)				, T(SONGSELECTOR)		, T(TRANSPOSE)		, T(SONGSELECTOR)	, &CACHE_ARROW_LEFT				, NULL					, &cb_sng_tempotap	},
-	{	0x1c , 0x0c	, T(TRANSPOSE)			, T(SONGSELECTOR)		, T(GROOVE_SWITCH)	, T(SONGSELECTOR)	, &CACHE_HEXADECIMAL			, TV(PATTERNLENGTH)		, &cb_sng_patlength	},
-	{	0x1c , 0x0b	, T(TEMPOTAP)			, T(SONGSELECTOR)		, T(PATTERNLENGTH)	, T(SONGSELECTOR)	, &CACHE_HEXADECIMAL_DOUBLE		, TV(TRANSPOSE)			, &cb_sng_transpose	},
-	{	0x1b , 0x09	, T(TITLE)				, T(SONGSELECTOR)		, T(TEMPOTAP)		, T(SONGSELECTOR)	, &CACHE_DECIMAL_DOUBLE_TWOTILES, TV(BPM)				, &cb_sng_bpm		},
-	{	0x1c , 0x0e	, T(PATTERNLENGTH)		, T(SONGSELECTOR)		, T(GROOVE_00)		, T(SONGSELECTOR)	, &CACHE_CHECK					, TV(GROOVE.ENABLE)		, &cb_sng_groove		},
-	{	0xFF , 0xFF	, NULL					, NULL					, NULL				, NULL				, NULL							, NULL					, NULL				}	/*TERMINATOR*/
-};
-#undef TV
-#undef T
-
-#define THIS(a) &LIVE1_CONTROLS[CONTROL_LIVE1_##a]
-#define THISVAR(a) ((u8*)&(VAR_LIVE.PERFORM.a))
-const Control LIVE1_CONTROLS[CONTROL_LIVE1_MAX] = { 
-	//  x	 y		up						right					down					left					cache							var						callback		
-	{	0x0c , 0x0f , THIS(VAL_LEFT_07)		, NULL					, THIS(SPEED)			, NULL					, &CACHE_CHECK					, THISVAR(RETRIG)		, &cb_live_retrig 		},
-	{	0x0c , 0x10 , THIS(RETRIG)			, NULL					, THIS(QUANTIZE1)		, NULL					, &CACHE_HEXADECIMAL_DOUBLE		, THISVAR(SPEED)		, &cb_live_speed 		},
-	{	0x0c , 0x11 , THIS(SPEED)			, NULL					, THIS(VAL_LEFT_00)		, NULL					, &CACHE_QUANTIZES				, THISVAR(QUANTIZE)		, &cb_live_quantize1		},
-	{	0x0b , 0x06 , THIS(QUANTIZE1)		, THIS(KEY_RIGHT_00)	, THIS(VAL_LEFT_01)		, THIS(CMD_LEFT_00)		, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(LEFT.VAL[0])	, &cb_live_left_VAL_00	},
-	{	0x0b , 0x07 , THIS(VAL_LEFT_00)		, THIS(KEY_RIGHT_01)	, THIS(VAL_LEFT_02)		, THIS(CMD_LEFT_01)		, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(LEFT.VAL[1])	, &cb_live_left_VAL_01	},
-	{	0x0b , 0x08 , THIS(VAL_LEFT_01)		, THIS(KEY_RIGHT_02)	, THIS(VAL_LEFT_03)		, THIS(CMD_LEFT_02)		, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(LEFT.VAL[2])	, &cb_live_left_VAL_02	},
-	{	0x0b , 0x09 , THIS(VAL_LEFT_02)		, THIS(KEY_RIGHT_03)	, THIS(VAL_LEFT_04)		, THIS(CMD_LEFT_03)		, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(LEFT.VAL[3])	, &cb_live_left_VAL_03	},
-	{	0x0b , 0x0a , THIS(VAL_LEFT_03)		, THIS(KEY_RIGHT_04)	, THIS(VAL_LEFT_05)		, THIS(CMD_LEFT_04)		, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(LEFT.VAL[4])	, &cb_live_left_VAL_04	},
-	{	0x0b , 0x0b , THIS(VAL_LEFT_04)		, THIS(KEY_RIGHT_05)	, THIS(VAL_LEFT_06)		, THIS(CMD_LEFT_05)		, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(LEFT.VAL[5])	, &cb_live_left_VAL_05	},
-	{	0x0b , 0x0c , THIS(VAL_LEFT_05)		, THIS(KEY_RIGHT_06)	, THIS(VAL_LEFT_07)		, THIS(CMD_LEFT_06)		, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(LEFT.VAL[6])	, &cb_live_left_VAL_06	},
-	{	0x0b , 0x0d , THIS(VAL_LEFT_06)		, THIS(KEY_RIGHT_07)	, THIS(RETRIG)			, THIS(CMD_LEFT_07)		, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(LEFT.VAL[7])	, &cb_live_left_VAL_07	},
-	{	0x09 , 0x06 , THIS(QUANTIZE1)		, THIS(CMD_LEFT_00)		, THIS(VOL_LEFT_01)		, THIS(CHAN_LEFT_00)	, &CACHE_HEXADECIMAL			, THISVAR(LEFT.VOL[0])	, &cb_live_left_VOL_00	},
-	{	0x09 , 0x07 , THIS(VOL_LEFT_00)		, THIS(CMD_LEFT_01)		, THIS(VOL_LEFT_02)		, THIS(CHAN_LEFT_01)	, &CACHE_HEXADECIMAL			, THISVAR(LEFT.VOL[1])	, &cb_live_left_VOL_01	},
-	{	0x09 , 0x08 , THIS(VOL_LEFT_01)		, THIS(CMD_LEFT_02)		, THIS(VOL_LEFT_03)		, THIS(CHAN_LEFT_02)	, &CACHE_HEXADECIMAL			, THISVAR(LEFT.VOL[2])	, &cb_live_left_VOL_02	},
-	{	0x09 , 0x09 , THIS(VOL_LEFT_02)		, THIS(CMD_LEFT_03)		, THIS(VOL_LEFT_04)		, THIS(CHAN_LEFT_03)	, &CACHE_HEXADECIMAL			, THISVAR(LEFT.VOL[3])	, &cb_live_left_VOL_03	},
-	{	0x09 , 0x0a , THIS(VOL_LEFT_03)		, THIS(CMD_LEFT_04)		, THIS(VOL_LEFT_05)		, THIS(CHAN_LEFT_04)	, &CACHE_HEXADECIMAL			, THISVAR(LEFT.VOL[4])	, &cb_live_left_VOL_04	},
-	{	0x09 , 0x0b , THIS(VOL_LEFT_04)		, THIS(CMD_LEFT_05)		, THIS(VOL_LEFT_06)		, THIS(CHAN_LEFT_05)	, &CACHE_HEXADECIMAL			, THISVAR(LEFT.VOL[5])	, &cb_live_left_VOL_05	},
-	{	0x09 , 0x0c , THIS(VOL_LEFT_05)		, THIS(CMD_LEFT_06)		, THIS(VOL_LEFT_07)		, THIS(CHAN_LEFT_06)	, &CACHE_HEXADECIMAL			, THISVAR(LEFT.VOL[6])	, &cb_live_left_VOL_06	},
-	{	0x09 , 0x0d , THIS(VOL_LEFT_06)		, THIS(CMD_LEFT_07)		, THIS(RETRIG)			, THIS(CHAN_LEFT_07)	, &CACHE_HEXADECIMAL			, THISVAR(LEFT.VOL[7])	, &cb_live_left_VOL_07	},
-	{	0x06 , 0x06 , THIS(QUANTIZE1)		, THIS(CHAN_LEFT_00)	, THIS(INS_LEFT_01)		, THIS(KEY_LEFT_00)		, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(LEFT.INS[0])	, &cb_live_left_INS_00	},
-	{	0x06 , 0x07 , THIS(INS_LEFT_00)		, THIS(CHAN_LEFT_01)	, THIS(INS_LEFT_02)		, THIS(KEY_LEFT_01)		, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(LEFT.INS[1])	, &cb_live_left_INS_01	},
-	{	0x06 , 0x08 , THIS(INS_LEFT_01)		, THIS(CHAN_LEFT_02)	, THIS(INS_LEFT_03)		, THIS(KEY_LEFT_02)		, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(LEFT.INS[2])	, &cb_live_left_INS_02	},
-	{	0x06 , 0x09 , THIS(INS_LEFT_02)		, THIS(CHAN_LEFT_03)	, THIS(INS_LEFT_04)		, THIS(KEY_LEFT_03)		, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(LEFT.INS[3])	, &cb_live_left_INS_03	},
-	{	0x06 , 0x0a , THIS(INS_LEFT_03)		, THIS(CHAN_LEFT_04)	, THIS(INS_LEFT_05)		, THIS(KEY_LEFT_04)		, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(LEFT.INS[4])	, &cb_live_left_INS_04	},
-	{	0x06 , 0x0b , THIS(INS_LEFT_04)		, THIS(CHAN_LEFT_05)	, THIS(INS_LEFT_06)		, THIS(KEY_LEFT_05)		, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(LEFT.INS[5])	, &cb_live_left_INS_05	},
-	{	0x06 , 0x0c , THIS(INS_LEFT_05)		, THIS(CHAN_LEFT_06)	, THIS(INS_LEFT_07)		, THIS(KEY_LEFT_06)		, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(LEFT.INS[6])	, &cb_live_left_INS_06	},
-	{	0x06 , 0x0d , THIS(INS_LEFT_06)		, THIS(CHAN_LEFT_07)	, THIS(RETRIG)			, THIS(KEY_LEFT_07)		, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(LEFT.INS[7])	, &cb_live_left_INS_07	},
-	{	0x08 , 0x06 , THIS(QUANTIZE1)		, THIS(VOL_LEFT_00)		, THIS(CHAN_LEFT_01)	, THIS(INS_LEFT_00)		, &CACHE_CHANNELS				, THISVAR(LEFT.CHAN[0])	, &cb_live_left_CHAN_00 	},
-	{	0x08 , 0x07 , THIS(CHAN_LEFT_00)	, THIS(VOL_LEFT_01)		, THIS(CHAN_LEFT_02)	, THIS(INS_LEFT_01)		, &CACHE_CHANNELS				, THISVAR(LEFT.CHAN[1])	, &cb_live_left_CHAN_01 	},
-	{	0x08 , 0x08 , THIS(CHAN_LEFT_01)	, THIS(VOL_LEFT_02)		, THIS(CHAN_LEFT_03)	, THIS(INS_LEFT_02)		, &CACHE_CHANNELS				, THISVAR(LEFT.CHAN[2])	, &cb_live_left_CHAN_02 	},
-	{	0x08 , 0x09 , THIS(CHAN_LEFT_02)	, THIS(VOL_LEFT_03)		, THIS(CHAN_LEFT_04)	, THIS(INS_LEFT_03)		, &CACHE_CHANNELS				, THISVAR(LEFT.CHAN[3])	, &cb_live_left_CHAN_03 	},
-	{	0x08 , 0x0a , THIS(CHAN_LEFT_03)	, THIS(VOL_LEFT_04)		, THIS(CHAN_LEFT_05)	, THIS(INS_LEFT_04)		, &CACHE_CHANNELS				, THISVAR(LEFT.CHAN[4])	, &cb_live_left_CHAN_04 	},
-	{	0x08 , 0x0b , THIS(CHAN_LEFT_04)	, THIS(VOL_LEFT_05)		, THIS(CHAN_LEFT_06)	, THIS(INS_LEFT_05)		, &CACHE_CHANNELS				, THISVAR(LEFT.CHAN[5])	, &cb_live_left_CHAN_05 	},
-	{	0x08 , 0x0c , THIS(CHAN_LEFT_05)	, THIS(VOL_LEFT_06)		, THIS(CHAN_LEFT_07)	, THIS(INS_LEFT_06)		, &CACHE_CHANNELS				, THISVAR(LEFT.CHAN[6])	, &cb_live_left_CHAN_06 	},
-	{	0x08 , 0x0d , THIS(CHAN_LEFT_06)	, THIS(VOL_LEFT_07)		, THIS(RETRIG)			, THIS(INS_LEFT_07)		, &CACHE_CHANNELS				, THISVAR(LEFT.CHAN[7])	, &cb_live_left_CHAN_07 	},
-	{	0x03 , 0x06 , THIS(QUANTIZE1)		, THIS(INS_LEFT_00)		, THIS(KEY_LEFT_01)		, THIS(VAL_RIGHT_00)	, &CACHE_NOTES					, THISVAR(LEFT.KEY[0])	, &cb_live_left_KEY_00 	},
-	{	0x03 , 0x07 , THIS(KEY_LEFT_00)		, THIS(INS_LEFT_01)		, THIS(KEY_LEFT_02)		, THIS(VAL_RIGHT_01)	, &CACHE_NOTES					, THISVAR(LEFT.KEY[1])	, &cb_live_left_KEY_01	},
-	{	0x03 , 0x08 , THIS(KEY_LEFT_01)		, THIS(INS_LEFT_02)		, THIS(KEY_LEFT_03)		, THIS(VAL_RIGHT_02)	, &CACHE_NOTES					, THISVAR(LEFT.KEY[2])	, &cb_live_left_KEY_02	},
-	{	0x03 , 0x09 , THIS(KEY_LEFT_02)		, THIS(INS_LEFT_03)		, THIS(KEY_LEFT_04)		, THIS(VAL_RIGHT_03)	, &CACHE_NOTES					, THISVAR(LEFT.KEY[3])	, &cb_live_left_KEY_03	},
-	{	0x03 , 0x0a , THIS(KEY_LEFT_03)		, THIS(INS_LEFT_04)		, THIS(KEY_LEFT_05)		, THIS(VAL_RIGHT_04)	, &CACHE_NOTES					, THISVAR(LEFT.KEY[4])	, &cb_live_left_KEY_04	},
-	{	0x03 , 0x0b , THIS(KEY_LEFT_04)		, THIS(INS_LEFT_05)		, THIS(KEY_LEFT_06)		, THIS(VAL_RIGHT_05)	, &CACHE_NOTES					, THISVAR(LEFT.KEY[5])	, &cb_live_left_KEY_05	},
-	{	0x03 , 0x0c , THIS(KEY_LEFT_05)		, THIS(INS_LEFT_06)		, THIS(KEY_LEFT_07)		, THIS(VAL_RIGHT_06)	, &CACHE_NOTES					, THISVAR(LEFT.KEY[6])	, &cb_live_left_KEY_06	},
-	{	0x03 , 0x0d , THIS(KEY_LEFT_06)		, THIS(INS_LEFT_07)		, THIS(RETRIG)			, THIS(VAL_RIGHT_07)	, &CACHE_NOTES					, THISVAR(LEFT.KEY[7])	, &cb_live_left_KEY_07	},
-	{	0x0a , 0x06 , THIS(QUANTIZE1)		, THIS(VAL_LEFT_00)		, THIS(CMD_LEFT_01)		, THIS(VOL_LEFT_00)		, &CACHE_COMMANDS				, THISVAR(LEFT.CMD[0])	, &cb_live_left_CMD_00	},
-	{	0x0a , 0x07 , THIS(CMD_LEFT_00)		, THIS(VAL_LEFT_01)		, THIS(CMD_LEFT_02)		, THIS(VOL_LEFT_01)		, &CACHE_COMMANDS				, THISVAR(LEFT.CMD[1])	, &cb_live_left_CMD_01	},
-	{	0x0a , 0x08 , THIS(CMD_LEFT_01)		, THIS(VAL_LEFT_02)		, THIS(CMD_LEFT_03)		, THIS(VOL_LEFT_02)		, &CACHE_COMMANDS				, THISVAR(LEFT.CMD[2])	, &cb_live_left_CMD_02	},
-	{	0x0a , 0x09 , THIS(CMD_LEFT_02)		, THIS(VAL_LEFT_03)		, THIS(CMD_LEFT_04)		, THIS(VOL_LEFT_03)		, &CACHE_COMMANDS				, THISVAR(LEFT.CMD[3])	, &cb_live_left_CMD_03	},
-	{	0x0a , 0x0a , THIS(CMD_LEFT_03)		, THIS(VAL_LEFT_04)		, THIS(CMD_LEFT_05)		, THIS(VOL_LEFT_04)		, &CACHE_COMMANDS				, THISVAR(LEFT.CMD[4])	, &cb_live_left_CMD_04	},
-	{	0x0a , 0x0b , THIS(CMD_LEFT_04)		, THIS(VAL_LEFT_05)		, THIS(CMD_LEFT_06)		, THIS(VOL_LEFT_05)		, &CACHE_COMMANDS				, THISVAR(LEFT.CMD[5])	, &cb_live_left_CMD_05	},
-	{	0x0a , 0x0c , THIS(CMD_LEFT_05)		, THIS(VAL_LEFT_06)		, THIS(CMD_LEFT_07)		, THIS(VOL_LEFT_06)		, &CACHE_COMMANDS				, THISVAR(LEFT.CMD[6])	, &cb_live_left_CMD_06	},
-	{	0x0a , 0x0d , THIS(CMD_LEFT_06)		, THIS(VAL_LEFT_07)		, THIS(RETRIG)			, THIS(VOL_LEFT_07)		, &CACHE_COMMANDS				, THISVAR(LEFT.CMD[7])	, &cb_live_left_CMD_07	},
-	{	0x19 , 0x06 , THIS(VAL_RIGHT_07)	, THIS(KEY_LEFT_00)		, THIS(VAL_RIGHT_01)	, THIS(CMD_RIGHT_00)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(RIGHT.VAL[0])	, &cb_live_right_VAL_00	},
-	{	0x19 , 0x07 , THIS(VAL_RIGHT_00)	, THIS(KEY_LEFT_01)		, THIS(VAL_RIGHT_02)	, THIS(CMD_RIGHT_01)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(RIGHT.VAL[1])	, &cb_live_right_VAL_01	},
-	{	0x19 , 0x08 , THIS(VAL_RIGHT_01)	, THIS(KEY_LEFT_02)		, THIS(VAL_RIGHT_03)	, THIS(CMD_RIGHT_02)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(RIGHT.VAL[2])	, &cb_live_right_VAL_02	},
-	{	0x19 , 0x09 , THIS(VAL_RIGHT_02)	, THIS(KEY_LEFT_03)		, THIS(VAL_RIGHT_04)	, THIS(CMD_RIGHT_03)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(RIGHT.VAL[3])	, &cb_live_right_VAL_03	},
-	{	0x19 , 0x0a , THIS(VAL_RIGHT_03)	, THIS(KEY_LEFT_04)		, THIS(VAL_RIGHT_05)	, THIS(CMD_RIGHT_04)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(RIGHT.VAL[4])	, &cb_live_right_VAL_04	},
-	{	0x19 , 0x0b , THIS(VAL_RIGHT_04)	, THIS(KEY_LEFT_05)		, THIS(VAL_RIGHT_06)	, THIS(CMD_RIGHT_05)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(RIGHT.VAL[5])	, &cb_live_right_VAL_05	},
-	{	0x19 , 0x0c , THIS(VAL_RIGHT_05)	, THIS(KEY_LEFT_06)		, THIS(VAL_RIGHT_07)	, THIS(CMD_RIGHT_06)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(RIGHT.VAL[6])	, &cb_live_right_VAL_06	},
-	{	0x19 , 0x0d , THIS(VAL_RIGHT_06)	, THIS(KEY_LEFT_07)		, THIS(VAL_RIGHT_00)	, THIS(CMD_RIGHT_07)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(RIGHT.VAL[7])	, &cb_live_right_VAL_07	},
-	{	0x18 , 0x06 , THIS(CMD_RIGHT_07)	, THIS(VAL_RIGHT_00)	, THIS(CMD_RIGHT_01)	, THIS(VOL_RIGHT_00)	, &CACHE_COMMANDS				, THISVAR(RIGHT.CMD[0])	, &cb_live_right_CMD_00	},
-	{	0x18 , 0x07 , THIS(CMD_RIGHT_00)	, THIS(VAL_RIGHT_01)	, THIS(CMD_RIGHT_02)	, THIS(VOL_RIGHT_01)	, &CACHE_COMMANDS				, THISVAR(RIGHT.CMD[1])	, &cb_live_right_CMD_01	},
-	{	0x18 , 0x08 , THIS(CMD_RIGHT_01)	, THIS(VAL_RIGHT_02)	, THIS(CMD_RIGHT_03)	, THIS(VOL_RIGHT_02)	, &CACHE_COMMANDS				, THISVAR(RIGHT.CMD[2])	, &cb_live_right_CMD_02	},
-	{	0x18 , 0x09 , THIS(CMD_RIGHT_02)	, THIS(VAL_RIGHT_03)	, THIS(CMD_RIGHT_04)	, THIS(VOL_RIGHT_03)	, &CACHE_COMMANDS				, THISVAR(RIGHT.CMD[3])	, &cb_live_right_CMD_03	},
-	{	0x18 , 0x0a , THIS(CMD_RIGHT_03)	, THIS(VAL_RIGHT_04)	, THIS(CMD_RIGHT_05)	, THIS(VOL_RIGHT_04)	, &CACHE_COMMANDS				, THISVAR(RIGHT.CMD[4])	, &cb_live_right_CMD_04	},
-	{	0x18 , 0x0b , THIS(CMD_RIGHT_04)	, THIS(VAL_RIGHT_05)	, THIS(CMD_RIGHT_06)	, THIS(VOL_RIGHT_05)	, &CACHE_COMMANDS				, THISVAR(RIGHT.CMD[5])	, &cb_live_right_CMD_05	},
-	{	0x18 , 0x0c , THIS(CMD_RIGHT_05)	, THIS(VAL_RIGHT_06)	, THIS(CMD_RIGHT_07)	, THIS(VOL_RIGHT_06)	, &CACHE_COMMANDS				, THISVAR(RIGHT.CMD[6])	, &cb_live_right_CMD_06	},
-	{	0x18 , 0x0d , THIS(CMD_RIGHT_06)	, THIS(VAL_RIGHT_07)	, THIS(CMD_RIGHT_00)	, THIS(VOL_RIGHT_07)	, &CACHE_COMMANDS				, THISVAR(RIGHT.CMD[7])	, &cb_live_right_CMD_07	},
-	{	0x16 , 0x06 , THIS(CHAN_RIGHT_07)	, THIS(VOL_RIGHT_00)	, THIS(CHAN_RIGHT_01)	, THIS(INS_RIGHT_00)	, &CACHE_CHANNELS				, THISVAR(RIGHT.CHAN[0]), &cb_live_right_CHAN_00 },
-	{	0x16 , 0x07 , THIS(CHAN_RIGHT_00)	, THIS(VOL_RIGHT_01)	, THIS(CHAN_RIGHT_02)	, THIS(INS_RIGHT_01)	, &CACHE_CHANNELS				, THISVAR(RIGHT.CHAN[1]), &cb_live_right_CHAN_01 },
-	{	0x16 , 0x08 , THIS(CHAN_RIGHT_01)	, THIS(VOL_RIGHT_02)	, THIS(CHAN_RIGHT_03)	, THIS(INS_RIGHT_02)	, &CACHE_CHANNELS				, THISVAR(RIGHT.CHAN[2]), &cb_live_right_CHAN_02 },
-	{	0x16 , 0x09 , THIS(CHAN_RIGHT_02)	, THIS(VOL_RIGHT_03)	, THIS(CHAN_RIGHT_04)	, THIS(INS_RIGHT_03)	, &CACHE_CHANNELS				, THISVAR(RIGHT.CHAN[3]), &cb_live_right_CHAN_03 },
-	{	0x16 , 0x0a , THIS(CHAN_RIGHT_03)	, THIS(VOL_RIGHT_04)	, THIS(CHAN_RIGHT_05)	, THIS(INS_RIGHT_04)	, &CACHE_CHANNELS				, THISVAR(RIGHT.CHAN[4]), &cb_live_right_CHAN_04 },
-	{	0x16 , 0x0b , THIS(CHAN_RIGHT_04)	, THIS(VOL_RIGHT_05)	, THIS(CHAN_RIGHT_06)	, THIS(INS_RIGHT_05)	, &CACHE_CHANNELS				, THISVAR(RIGHT.CHAN[5]), &cb_live_right_CHAN_05 },
-	{	0x16 , 0x0c , THIS(CHAN_RIGHT_05)	, THIS(VOL_RIGHT_06)	, THIS(CHAN_RIGHT_07)	, THIS(INS_RIGHT_06)	, &CACHE_CHANNELS				, THISVAR(RIGHT.CHAN[6]), &cb_live_right_CHAN_06 },
-	{	0x16 , 0x0d , THIS(CHAN_RIGHT_06)	, THIS(VOL_RIGHT_07)	, THIS(CHAN_RIGHT_00)	, THIS(INS_RIGHT_07)	, &CACHE_CHANNELS				, THISVAR(RIGHT.CHAN[7]), &cb_live_right_CHAN_07 },
-	{	0x14 , 0x06 , THIS(INS_RIGHT_07)	, THIS(CHAN_RIGHT_00)	, THIS(INS_RIGHT_01)	, THIS(KEY_RIGHT_00)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(RIGHT.INS[0])	, &cb_live_right_INS_00	},
-	{	0x14 , 0x07 , THIS(INS_RIGHT_00)	, THIS(CHAN_RIGHT_01)	, THIS(INS_RIGHT_02)	, THIS(KEY_RIGHT_01)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(RIGHT.INS[1])	, &cb_live_right_INS_01	},
-	{	0x14 , 0x08 , THIS(INS_RIGHT_01)	, THIS(CHAN_RIGHT_02)	, THIS(INS_RIGHT_03)	, THIS(KEY_RIGHT_02)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(RIGHT.INS[2])	, &cb_live_right_INS_02	},
-	{	0x14 , 0x09 , THIS(INS_RIGHT_02)	, THIS(CHAN_RIGHT_03)	, THIS(INS_RIGHT_04)	, THIS(KEY_RIGHT_03)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(RIGHT.INS[3])	, &cb_live_right_INS_03	},
-	{	0x14 , 0x0a , THIS(INS_RIGHT_03)	, THIS(CHAN_RIGHT_04)	, THIS(INS_RIGHT_05)	, THIS(KEY_RIGHT_04)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(RIGHT.INS[4])	, &cb_live_right_INS_04	},
-	{	0x14 , 0x0b , THIS(INS_RIGHT_04)	, THIS(CHAN_RIGHT_05)	, THIS(INS_RIGHT_06)	, THIS(KEY_RIGHT_05)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(RIGHT.INS[5])	, &cb_live_right_INS_05	},
-	{	0x14 , 0x0c , THIS(INS_RIGHT_05)	, THIS(CHAN_RIGHT_06)	, THIS(INS_RIGHT_07)	, THIS(KEY_RIGHT_06)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(RIGHT.INS[6])	, &cb_live_right_INS_06	},
-	{	0x14 , 0x0d , THIS(INS_RIGHT_06)	, THIS(CHAN_RIGHT_07)	, THIS(INS_RIGHT_00)	, THIS(KEY_RIGHT_07)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(RIGHT.INS[7])	, &cb_live_right_INS_07	},
-	{	0x17 , 0x06 , THIS(VOL_RIGHT_07)	, THIS(CMD_RIGHT_00)	, THIS(VOL_RIGHT_01)	, THIS(CHAN_RIGHT_00)	, &CACHE_HEXADECIMAL			, THISVAR(RIGHT.VOL[0])	, &cb_live_right_VOL_00	},
-	{	0x17 , 0x07 , THIS(VOL_RIGHT_00)	, THIS(CMD_RIGHT_01)	, THIS(VOL_RIGHT_02)	, THIS(CHAN_RIGHT_01)	, &CACHE_HEXADECIMAL			, THISVAR(RIGHT.VOL[1])	, &cb_live_right_VOL_01	},
-	{	0x17 , 0x08 , THIS(VOL_RIGHT_01)	, THIS(CMD_RIGHT_02)	, THIS(VOL_RIGHT_03)	, THIS(CHAN_RIGHT_02)	, &CACHE_HEXADECIMAL			, THISVAR(RIGHT.VOL[2])	, &cb_live_right_VOL_02	},
-	{	0x17 , 0x09 , THIS(VOL_RIGHT_02)	, THIS(CMD_RIGHT_03)	, THIS(VOL_RIGHT_04)	, THIS(CHAN_RIGHT_03)	, &CACHE_HEXADECIMAL			, THISVAR(RIGHT.VOL[3])	, &cb_live_right_VOL_03	},
-	{	0x17 , 0x0a , THIS(VOL_RIGHT_03)	, THIS(CMD_RIGHT_04)	, THIS(VOL_RIGHT_05)	, THIS(CHAN_RIGHT_04)	, &CACHE_HEXADECIMAL			, THISVAR(RIGHT.VOL[4])	, &cb_live_right_VOL_04	},
-	{	0x17 , 0x0b , THIS(VOL_RIGHT_04)	, THIS(CMD_RIGHT_05)	, THIS(VOL_RIGHT_06)	, THIS(CHAN_RIGHT_05)	, &CACHE_HEXADECIMAL			, THISVAR(RIGHT.VOL[5])	, &cb_live_right_VOL_05	},
-	{	0x17 , 0x0c , THIS(VOL_RIGHT_05)	, THIS(CMD_RIGHT_06)	, THIS(VOL_RIGHT_07)	, THIS(CHAN_RIGHT_06)	, &CACHE_HEXADECIMAL			, THISVAR(RIGHT.VOL[6])	, &cb_live_right_VOL_06	},
-	{	0x17 , 0x0d , THIS(VOL_RIGHT_06)	, THIS(CMD_RIGHT_07)	, THIS(VOL_RIGHT_00)	, THIS(CHAN_RIGHT_07)	, &CACHE_HEXADECIMAL			, THISVAR(RIGHT.VOL[7])	, &cb_live_right_VOL_07	},
-	{	0x11 , 0x06 , THIS(KEY_RIGHT_07)	, THIS(INS_RIGHT_00)	, THIS(KEY_RIGHT_01)	, THIS(VAL_LEFT_00)		, &CACHE_NOTES					, THISVAR(RIGHT.KEY[0])	, &cb_live_right_KEY_00 	},
-	{	0x11 , 0x07 , THIS(KEY_RIGHT_00)	, THIS(INS_RIGHT_01)	, THIS(KEY_RIGHT_02)	, THIS(VAL_LEFT_01)		, &CACHE_NOTES					, THISVAR(RIGHT.KEY[1])	, &cb_live_right_KEY_01	},
-	{	0x11 , 0x08 , THIS(KEY_RIGHT_01)	, THIS(INS_RIGHT_02)	, THIS(KEY_RIGHT_03)	, THIS(VAL_LEFT_02)		, &CACHE_NOTES					, THISVAR(RIGHT.KEY[2])	, &cb_live_right_KEY_02	},
-	{	0x11 , 0x09 , THIS(KEY_RIGHT_02)	, THIS(INS_RIGHT_03)	, THIS(KEY_RIGHT_04)	, THIS(VAL_LEFT_03)		, &CACHE_NOTES					, THISVAR(RIGHT.KEY[3])	, &cb_live_right_KEY_03	},
-	{	0x11 , 0x0a , THIS(KEY_RIGHT_03)	, THIS(INS_RIGHT_04)	, THIS(KEY_RIGHT_05)	, THIS(VAL_LEFT_04)		, &CACHE_NOTES					, THISVAR(RIGHT.KEY[4])	, &cb_live_right_KEY_04	},
-	{	0x11 , 0x0b , THIS(KEY_RIGHT_04)	, THIS(INS_RIGHT_05)	, THIS(KEY_RIGHT_06)	, THIS(VAL_LEFT_05)		, &CACHE_NOTES					, THISVAR(RIGHT.KEY[5])	, &cb_live_right_KEY_05	},
-	{	0x11 , 0x0c , THIS(KEY_RIGHT_05)	, THIS(INS_RIGHT_06)	, THIS(KEY_RIGHT_07)	, THIS(VAL_LEFT_06)		, &CACHE_NOTES					, THISVAR(RIGHT.KEY[6])	, &cb_live_right_KEY_06	},
-	{	0x11 , 0x0d , THIS(KEY_RIGHT_06)	, THIS(INS_RIGHT_07)	, THIS(KEY_RIGHT_00)	, THIS(VAL_LEFT_07)		, &CACHE_NOTES					, THISVAR(RIGHT.KEY[7])	, &cb_live_right_KEY_07	},
-	{	0xFF , 0xFF , NULL					, NULL					, NULL					, NULL					, NULL							, NULL					, NULL					} /*TERMINATOR*/
-};
-#undef THISVAR
-#undef THIS
-
-#define THIS(a) &LIVE2_CONTROLS[CONTROL_LIVE2_##a]
-#define THISVAR(a) ((u8*)&(VAR_LIVE.PIANO.a))
-const Control LIVE2_CONTROLS[CONTROL_LIVE2_MAX] = { 
-	//  x	 y		up						right					down					left					cache							var						callback	modify			
-	{	0x1b , 0x01 , THIS(QUANTIZE2)		, THIS(CHANNEL2)		, THIS(MIDICHAN1)		, THIS(OCTAVE)			, &CACHE_CHANNELS				, THISVAR(CHANNEL[0])	, &cb_live_chan1 		},
-	{	0x10 , 0x00 , THIS(TRANSPOSE)		, THIS(QUANTIZE2)		, THIS(OCTAVE)			, THIS(QUANTIZE2)		, &CACHE_LIVE_MODE				, THISVAR(MODE)			, &cb_live_mode			},
-	{	0x1c , 0x02 , THIS(CHANNEL2)		, THIS(TRANSPOSE)		, THIS(QUANTIZE2)		, THIS(MIDICHAN1)		, &CACHE_HEXADECIMAL			, THISVAR(MIDICHAN[1])	, &cb_live_midichan2		},
-	{	0x12 , 0x01 , THIS(LIVEMODE)		, THIS(CHANNEL1)		, THIS(TRANSPOSE)		, THIS(CHANNEL2)		, &CACHE_HEXADECIMAL			, THISVAR(OCTAVE)		, &cb_live_octave		},
-	{	0x1b , 0x02 , THIS(CHANNEL1)		, THIS(MIDICHAN2)		, THIS(QUANTIZE2)		, THIS(TRANSPOSE)		, &CACHE_HEXADECIMAL			, THISVAR(MIDICHAN[0])	, &cb_live_midichan1		},
-	{	0x1c , 0x01 , THIS(QUANTIZE2)		, THIS(OCTAVE)			, THIS(MIDICHAN2)		, THIS(CHANNEL1)		, &CACHE_CHANNELS				, THISVAR(CHANNEL[1])	, &cb_live_chan2 		},
-	{	0x12 , 0x02 , THIS(OCTAVE)			, THIS(MIDICHAN1)		, THIS(LIVEMODE)		, THIS(MIDICHAN2)		, &CACHE_HEXADECIMAL_DOUBLE		, THISVAR(TRANSPOSE)	, &cb_live_transpose		},
-	{	0x1c , 0x00 , THIS(MIDICHAN2)		, THIS(LIVEMODE)		, THIS(CHANNEL2)		, THIS(LIVEMODE)		, &CACHE_QUANTIZES				, THISVAR(QUANTIZE)		, &cb_live_quantize2		},
-	{	0xFF , 0xFF , NULL					, NULL					, NULL					, NULL					, NULL							, NULL					, NULL					} /*TERMINATOR*/
-};
-#undef THISVAR
-#undef THIS
 
 //********************************************//
 // CONFIG SCREEN::Viewport Regions' Controls  //
@@ -186,7 +192,7 @@ const Control LOOKNFEEL_CONTROLS[CONTROL_LOOKNFEEL_MAX] = {
 	{	0x1b , 0x09 , THIS(BORDER)			, THIS(SHOWLOGO)		, THIS(STARTSFX)		, THIS(MENU1)			, &CACHE_CHECK				, THISVAR(SHOWLOGO)			, &cb_cfg_showlogo		},
 	{	0x1b , 0x0a , THIS(SHOWLOGO)		, THIS(STARTSFX)		, THIS(EDITPAL)			, THIS(MENU1)			, &CACHE_CHECK				, THISVAR(STARTUPSFX)		, &cb_cfg_startupsfx		},
 	{	0x1b , 0x0b , THIS(STARTSFX)		, THIS(EDITPAL)			, THIS(INTERFACE)		, THIS(MENU1)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_coloreditor	},
-	{	0xFF , 0xFF , NULL					, NULL					, NULL					, NULL					, NULL						, NULL						, NULL					} /*TERMINATOR*/
+	CONTROL_TERMINATOR
 };
 #undef THISVAR
 #undef THIS
@@ -202,7 +208,7 @@ const Control BEHAVIOR_CONTROLS[CONTROL_BEHAVIOR_MAX] = {
 	{	0x1b , 0x09 , THIS(BUTTONSET)		, THIS(SAVE)			, THIS(LOAD)			, THIS(MENU3)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_saveconfig		}, /*save*/
 	{	0x1b , 0x0a , THIS(SAVE)			, THIS(LOAD)			, THIS(DEFAULTS)		, THIS(MENU3)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_loadconfig		}, /*load*/
 	{	0x1b , 0x0b , THIS(LOAD)			, THIS(DEFAULTS)		, THIS(AUTOLOAD)		, THIS(MENU3)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_initconfig		}, /*defaults*/
-	{	0xFF , 0xFF , NULL					, NULL					, NULL					, NULL					, NULL						, NULL						, NULL					} /*TERMINATOR*/
+	CONTROL_TERMINATOR
 };
 #undef THISVAR
 #undef THIS
@@ -218,7 +224,7 @@ const Control TRACKER_CONTROLS[CONTROL_TRACKER_MAX] = {
 	{	0x1a , 0x09 , THIS(TRANSPOSE)		, THIS(INPUTMODE)		, THIS(SOUNDBIAS)		, THIS(MENU4)			, &CACHE_INPUT_TYPE			, THISVAR(INPUTMODE)		, &cb_cfg_inputmode		}, /*inputmode*/
 	{	0x1b , 0x0a , THIS(INPUTMODE)		, THIS(SOUNDBIAS)		, THIS(MIXER)			, THIS(MENU4)			, &CACHE_HEXADECIMAL_DOUBLE	, THISVAR(SOUNDBIAS)		, &cb_cfg_soundbias		}, /*soundbias*/
 	{	0x1b , 0x0b , THIS(SOUNDBIAS)		, THIS(MIXER)			, THIS(FINETUNE)		, THIS(MENU4)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_mixer			}, /*defaults*/
-	{	0xFF , 0xFF , NULL					, NULL					, NULL					, NULL					, NULL						, NULL						, NULL					} /*TERMINATOR*/
+	CONTROL_TERMINATOR
 };
 #undef THISVAR
 #undef THIS
@@ -234,8 +240,8 @@ const Control MEMORY_CONTROLS[CONTROL_MEMORY_MAX] = {
 	{	0x1b , 0x09 , THIS(PURGESONGS)		, THIS(MEMORYTEST)		, THIS(REINIT)			, THIS(MENU5)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_memorytest		}, /*memorytest*/
 	{	0x1b , 0x0a , THIS(MEMORYTEST)		, THIS(REINIT)			, THIS(RESET)			, THIS(MENU5)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_format			}, /*reinit*/
 	{	0x1b , 0x0b , THIS(REINIT)			, THIS(RESET)			, THIS(PREFETCH)		, THIS(MENU5)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_reset			}, /*reset*/
-	{	0xFF , 0xFF , NULL					, NULL					, NULL					, NULL					, NULL						, NULL						, NULL					} /*TERMINATOR*/
-};	
+	CONTROL_TERMINATOR
+};
 #undef THISVAR
 #undef THIS
 
@@ -293,10 +299,10 @@ const Control INS_PWM_CONTROLS[CONTROL_INS_PWM_MAX] = {
 	{	0x0a , 0x0e , THIS(VOL_TABLE_09)	, THIS(VOL_TABLE_0E)	, THIS(ENVELOPEDIR)		, THIS(VOL_TABLE_0C)	, &CACHE_HEXADECIMAL			, THISVAR(VOL[13])					, &cb_ins_vol_0D			},
 	{	0x0b , 0x0e , THIS(VOL_TABLE_0A)	, THIS(VOL_TABLE_0F)	, THIS(ENVELOPEDIR)		, THIS(VOL_TABLE_0D)	, &CACHE_HEXADECIMAL			, THISVAR(VOL[14])					, &cb_ins_vol_0E			},
 	{	0x0c , 0x0e , THIS(VOL_TABLE_0B)	, THIS(SWEEPSTEPS)		, THIS(ENVELOPEDIR)		, THIS(VOL_TABLE_0E)	, &CACHE_HEXADECIMAL			, THISVAR(VOL[15])					, &cb_ins_vol_0F			},
-	{	0xFF , 0xFF , NULL					, NULL					, NULL					, NULL					, NULL							, NULL								, NULL					} /*TERMINATOR*/
+	CONTROL_TERMINATOR
+};
 #undef THIS
 #undef THISVAR
-};
 
 #define THIS(a) &INS_WAV_CONTROLS[CONTROL_INS_WAV_##a]
 #define THISVAR(a) ((u8*)&(VAR_WAV.a))
@@ -334,7 +340,7 @@ const Control INS_WAV_CONTROLS[CONTROL_INS_WAV_MAX] = {
 	{	0x0b , 0x11 , THIS(OP3_ADSR_03)		, THIS(OP4_TYPE)		, THIS(OP4_ADSR_03)		, THIS(OP4_ADSR_00)		, &CACHE_HEXADECIMAL			, THISVAR(OP4_ADSR[1])				, &cb_ins_wav_op4adsr_1	},
 	{	0x09 , 0x12 , THIS(OP4_ADSR_00)		, THIS(OP4_ADSR_03)		, THIS(OP1_ADSR_00)		, THIS(WAVPRESET_05)	, &CACHE_HEXADECIMAL			, THISVAR(OP4_ADSR[2])				, &cb_ins_wav_op4adsr_2	},
 	{	0x0b , 0x12 , THIS(OP4_ADSR_01)		, THIS(OP4_TYPE)		, THIS(OP1_ADSR_01)		, THIS(OP4_ADSR_02)		, &CACHE_HEXADECIMAL			, THISVAR(OP4_ADSR[3])				, &cb_ins_wav_op4adsr_3	},
-	{	0xFF , 0xFF , NULL					, NULL					, NULL					, NULL					, NULL							, NULL								, NULL					} /*TERMINATOR*/
+	CONTROL_TERMINATOR
 };
 #undef THISVAR
 #undef THIS
@@ -368,7 +374,7 @@ const Control INS_FMW_CONTROLS[CONTROL_INS_FMW_MAX] = {
 	{	0x0b , 0x01 , THIS(MODE)			, THIS(INDEX)			, THIS(FM1_ADSR_03)		, THIS(FM1_ADSR_00)		, &CACHE_HEXADECIMAL			, THISVAR(OP1_ADSR[1])				, &cb_ins_fm_op1adsr_1	},
 	{	0x09 , 0x02 , THIS(FM1_ADSR_00)		, THIS(FM1_ADSR_03)		, THIS(FM2_ADSR_00)		, THIS(INDEX)			, &CACHE_HEXADECIMAL			, THISVAR(OP1_ADSR[2])				, &cb_ins_fm_op1adsr_2	},
 	{	0x0b , 0x02 , THIS(FM1_ADSR_01)		, THIS(INDEX)			, THIS(FM2_ADSR_01)		, THIS(FM1_ADSR_02)		, &CACHE_HEXADECIMAL			, THISVAR(OP1_ADSR[3])				, &cb_ins_fm_op1adsr_3	},
-	{	0xFF , 0xFF , NULL					, NULL					, NULL					, NULL					, NULL							, NULL								, NULL					} /*TERMINATOR*/
+	CONTROL_TERMINATOR
 };
 #undef THISVAR
 #undef THIS
@@ -405,10 +411,10 @@ const Control INS_SMP_CONTROLS[CONTROL_INS_SMP_MAX] = {
 	{	0x0b , 0x02 , THIS(FREQUENCY)		, THIS(FREQUENCY)		, THIS(ADSR_03)			, THIS(ADSR_00)			, &CACHE_HEXADECIMAL			, THISVAR(ADSR[1])   				, &cb_ins_smp_adsr_1		},
 	{	0x09 , 0x03 , THIS(ADSR_00)			, THIS(ADSR_03)			, THIS(B)				, THIS(INDEX)			, &CACHE_HEXADECIMAL			, THISVAR(ADSR[2])   				, &cb_ins_smp_adsr_2		},
 	{	0x0b , 0x03 , THIS(ADSR_01)			, THIS(FREQUENCY)		, THIS(B)				, THIS(ADSR_02)			, &CACHE_HEXADECIMAL			, THISVAR(ADSR[3])   				, &cb_ins_smp_adsr_3		},
-	{	0xFF , 0xFF , NULL					, NULL					, NULL					, NULL					, NULL							, NULL								, NULL 					} /*TERMINATOR*/
+	CONTROL_TERMINATOR
+};
 #undef THIS
 #undef THISVAR
-};
 #undef INSTRUM
 
 
@@ -516,133 +522,11 @@ const Control TABLE_CONTROLS[CONTROL_TABLE_MAX] = {
 	{	0x1b , 0x0e , THIS(COMMAND2_0C)		, THIS(VALUE2_0D)		, THIS(COMMAND2_0E)		, THIS(VALUE1_0D)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][13])		, &cb_ins_table_command2_0D	},
 	{	0x1b , 0x0f , THIS(COMMAND2_0D)		, THIS(VALUE2_0E)		, THIS(COMMAND2_0F)		, THIS(VALUE1_0E)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][14])		, &cb_ins_table_command2_0E	},
 	{	0x1b , 0x10 , THIS(COMMAND2_0E)		, THIS(VALUE2_0F)		, THIS(COMMAND2_00)		, THIS(VALUE1_0F)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][15])		, &cb_ins_table_command2_0F	},
-	{	0xFF , 0xFF , NULL					, NULL					, NULL					, NULL					, NULL							, NULL								, NULL						} /*TERMINATOR*/
+	CONTROL_TERMINATOR
+};
 #undef THIS 
 #undef INSTRUM
-};
 
-//**************//
-// PAT Controls //
-//**************// 
-
-const Control PAT_CONTROLS[CONTROL_PAT_MAX] = { 
-#define THIS(a) &PAT_CONTROLS[CONTROL_PAT_##a]
-#define THISVAR(index, a) ((u8*)&(VAR_PATTERN[index].a))
-
-	//  x	 y		up						right					down					left					cache							var									callback		
-	{	0x04 , 0x04 , THIS(SOLO_LEFT_02) 	, THIS(PATTERNS_B_00)	, THIS(PATTERNS_A_01)	, THIS(PATTERNS_F_00)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(0,ORDER[0])				, &cb_patterns_0_00	},
-	{	0x04 , 0x05 , THIS(PATTERNS_A_00)	, THIS(PATTERNS_B_01)	, THIS(PATTERNS_A_02)	, THIS(PATTERNS_F_01)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(0,ORDER[1])				, &cb_patterns_0_01	},
-	{	0x04 , 0x06 , THIS(PATTERNS_A_01)	, THIS(PATTERNS_B_02)	, THIS(PATTERNS_A_03)	, THIS(PATTERNS_F_02)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(0,ORDER[2])				, &cb_patterns_0_02	},
-	{	0x04 , 0x07 , THIS(PATTERNS_A_02)	, THIS(PATTERNS_B_03)	, THIS(PATTERNS_A_04)	, THIS(PATTERNS_F_03)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(0,ORDER[3])				, &cb_patterns_0_03	},
-	{	0x04 , 0x08 , THIS(PATTERNS_A_03)	, THIS(PATTERNS_B_04)	, THIS(PATTERNS_A_05)	, THIS(PATTERNS_F_04)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(0,ORDER[4])				, &cb_patterns_0_04	},
-	{	0x04 , 0x09 , THIS(PATTERNS_A_04)	, THIS(PATTERNS_B_05)	, THIS(PATTERNS_A_06)	, THIS(PATTERNS_F_05)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(0,ORDER[5])				, &cb_patterns_0_05	},
-	{	0x04 , 0x0a , THIS(PATTERNS_A_05)	, THIS(PATTERNS_B_06)	, THIS(PATTERNS_A_07)	, THIS(PATTERNS_F_06)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(0,ORDER[6])				, &cb_patterns_0_06	},
-	{	0x04 , 0x0b , THIS(PATTERNS_A_06)	, THIS(PATTERNS_B_07)	, THIS(PATTERNS_A_08)	, THIS(PATTERNS_F_07)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(0,ORDER[7])				, &cb_patterns_0_07	},
-	{	0x04 , 0x0c , THIS(PATTERNS_A_07)	, THIS(PATTERNS_B_08)	, THIS(PATTERNS_A_09)	, THIS(PATTERNS_F_08)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(0,ORDER[8])				, &cb_patterns_0_08	},
-	{	0x04 , 0x0d , THIS(PATTERNS_A_08)	, THIS(PATTERNS_B_09)	, THIS(PATTERNS_A_0A)	, THIS(PATTERNS_F_09)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(0,ORDER[9])				, &cb_patterns_0_09	},
-	{	0x04 , 0x0e , THIS(PATTERNS_A_09)	, THIS(PATTERNS_B_0A)	, THIS(PATTERNS_A_0B)	, THIS(PATTERNS_F_0A)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(0,ORDER[10])				, &cb_patterns_0_0A	},
-	{	0x04 , 0x0f , THIS(PATTERNS_A_0A)	, THIS(PATTERNS_B_0B)	, THIS(PATTERNS_A_0C)	, THIS(PATTERNS_F_0B)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(0,ORDER[11])				, &cb_patterns_0_0B	},
-	{	0x04 , 0x10 , THIS(PATTERNS_A_0B)	, THIS(PATTERNS_B_0C)	, THIS(PATTERNS_A_0D)	, THIS(PATTERNS_F_0C)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(0,ORDER[12])				, &cb_patterns_0_0C	},
-	{	0x04 , 0x11 , THIS(PATTERNS_A_0C)	, THIS(PATTERNS_B_0D)	, THIS(PATTERNS_A_0E)	, THIS(PATTERNS_F_0D)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(0,ORDER[13])				, &cb_patterns_0_0D	},
-	{	0x04 , 0x12 , THIS(PATTERNS_A_0D)	, THIS(PATTERNS_B_0E)	, THIS(PATTERNS_A_0F)	, THIS(PATTERNS_F_0E)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(0,ORDER[14])				, &cb_patterns_0_0E	},
-	{	0x04 , 0x13 , THIS(PATTERNS_A_0E)	, THIS(PATTERNS_B_0F)	, THIS(SOLO_LEFT_00 )	, THIS(PATTERNS_F_0F)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(0,ORDER[15])				, &cb_patterns_0_0F	},
-	{	0x08 , 0x04 , THIS(SOLO_LEFT_02 ) 	, THIS(PATTERNS_C_00) 	, THIS(PATTERNS_B_01) 	, THIS(PATTERNS_A_00) 	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(1,ORDER[0])				, &cb_patterns_1_00	},
-	{	0x08 , 0x05 , THIS(PATTERNS_B_00)	, THIS(PATTERNS_C_01)	, THIS(PATTERNS_B_02)	, THIS(PATTERNS_A_01)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(1,ORDER[1])				, &cb_patterns_1_01	},
-	{	0x08 , 0x06 , THIS(PATTERNS_B_01)	, THIS(PATTERNS_C_02)	, THIS(PATTERNS_B_03)	, THIS(PATTERNS_A_02)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(1,ORDER[2])				, &cb_patterns_1_02	},
-	{	0x08 , 0x07 , THIS(PATTERNS_B_02)	, THIS(PATTERNS_C_03)	, THIS(PATTERNS_B_04)	, THIS(PATTERNS_A_03)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(1,ORDER[3])				, &cb_patterns_1_03	},
-	{	0x08 , 0x08 , THIS(PATTERNS_B_03)	, THIS(PATTERNS_C_04)	, THIS(PATTERNS_B_05)	, THIS(PATTERNS_A_04)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(1,ORDER[4])				, &cb_patterns_1_04	},
-	{	0x08 , 0x09 , THIS(PATTERNS_B_04)	, THIS(PATTERNS_C_05)	, THIS(PATTERNS_B_06)	, THIS(PATTERNS_A_05)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(1,ORDER[5])				, &cb_patterns_1_05	},
-	{	0x08 , 0x0a , THIS(PATTERNS_B_05)	, THIS(PATTERNS_C_06)	, THIS(PATTERNS_B_07)	, THIS(PATTERNS_A_06)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(1,ORDER[6])				, &cb_patterns_1_06	},
-	{	0x08 , 0x0b , THIS(PATTERNS_B_06)	, THIS(PATTERNS_C_07)	, THIS(PATTERNS_B_08)	, THIS(PATTERNS_A_07)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(1,ORDER[7])				, &cb_patterns_1_07	},
-	{	0x08 , 0x0c , THIS(PATTERNS_B_07)	, THIS(PATTERNS_C_08)	, THIS(PATTERNS_B_09)	, THIS(PATTERNS_A_08)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(1,ORDER[8])				, &cb_patterns_1_08	},
-	{	0x08 , 0x0d , THIS(PATTERNS_B_08)	, THIS(PATTERNS_C_09)	, THIS(PATTERNS_B_0A)	, THIS(PATTERNS_A_09)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(1,ORDER[9])				, &cb_patterns_1_09	},
-	{	0x08 , 0x0e , THIS(PATTERNS_B_09)	, THIS(PATTERNS_C_0A)	, THIS(PATTERNS_B_0B)	, THIS(PATTERNS_A_0A)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(1,ORDER[10])				, &cb_patterns_1_0A	},
-	{	0x08 , 0x0f , THIS(PATTERNS_B_0A)	, THIS(PATTERNS_C_0B)	, THIS(PATTERNS_B_0C)	, THIS(PATTERNS_A_0B)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(1,ORDER[11])				, &cb_patterns_1_0B	},
-	{	0x08 , 0x10 , THIS(PATTERNS_B_0B)	, THIS(PATTERNS_C_0C)	, THIS(PATTERNS_B_0D)	, THIS(PATTERNS_A_0C)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(1,ORDER[12])				, &cb_patterns_1_0C	},
-	{	0x08 , 0x11 , THIS(PATTERNS_B_0C)	, THIS(PATTERNS_C_0D)	, THIS(PATTERNS_B_0E)	, THIS(PATTERNS_A_0D)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(1,ORDER[13])				, &cb_patterns_1_0D	},
-	{	0x08 , 0x12 , THIS(PATTERNS_B_0D)	, THIS(PATTERNS_C_0E)	, THIS(PATTERNS_B_0F)	, THIS(PATTERNS_A_0E)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(1,ORDER[14])				, &cb_patterns_1_0E	},
-	{	0x08 , 0x13 , THIS(PATTERNS_B_0E)	, THIS(PATTERNS_C_0F)	, THIS(SOLO_LEFT_00 )	, THIS(PATTERNS_A_0F)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(1,ORDER[15])				, &cb_patterns_1_0F	},
-	{	0x0c , 0x04 , THIS(SOLO_LEFT_02 ) 	, THIS(PATTERNS_D_00) 	, THIS(PATTERNS_C_01)	, THIS(PATTERNS_B_00) 	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(2,ORDER[0])				, &cb_patterns_2_00	}, 
-	{	0x0c , 0x05 , THIS(PATTERNS_C_00)	, THIS(PATTERNS_D_01)	, THIS(PATTERNS_C_02)	, THIS(PATTERNS_B_01)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(2,ORDER[1])				, &cb_patterns_2_01	}, 
-	{	0x0c , 0x06 , THIS(PATTERNS_C_01)	, THIS(PATTERNS_D_02)	, THIS(PATTERNS_C_03)	, THIS(PATTERNS_B_02)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(2,ORDER[2])				, &cb_patterns_2_02	}, 
-	{	0x0c , 0x07 , THIS(PATTERNS_C_02)	, THIS(PATTERNS_D_03)	, THIS(PATTERNS_C_04)	, THIS(PATTERNS_B_03)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(2,ORDER[3])				, &cb_patterns_2_03	}, 
-	{	0x0c , 0x08 , THIS(PATTERNS_C_03)	, THIS(PATTERNS_D_04)	, THIS(PATTERNS_C_05)	, THIS(PATTERNS_B_04)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(2,ORDER[4])				, &cb_patterns_2_04	}, 
-	{	0x0c , 0x09 , THIS(PATTERNS_C_04)	, THIS(PATTERNS_D_05)	, THIS(PATTERNS_C_06)	, THIS(PATTERNS_B_05)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(2,ORDER[5])				, &cb_patterns_2_05	}, 
-	{	0x0c , 0x0a , THIS(PATTERNS_C_05)	, THIS(PATTERNS_D_06)	, THIS(PATTERNS_C_07)	, THIS(PATTERNS_B_06)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(2,ORDER[6])				, &cb_patterns_2_06	}, 
-	{	0x0c , 0x0b , THIS(PATTERNS_C_06)	, THIS(PATTERNS_D_07)	, THIS(PATTERNS_C_08)	, THIS(PATTERNS_B_07)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(2,ORDER[7])				, &cb_patterns_2_07	}, 
-	{	0x0c , 0x0c , THIS(PATTERNS_C_07)	, THIS(PATTERNS_D_08)	, THIS(PATTERNS_C_09)	, THIS(PATTERNS_B_08)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(2,ORDER[8])				, &cb_patterns_2_08	}, 
-	{	0x0c , 0x0d , THIS(PATTERNS_C_08)	, THIS(PATTERNS_D_09)	, THIS(PATTERNS_C_0A)	, THIS(PATTERNS_B_09)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(2,ORDER[9])				, &cb_patterns_2_09	}, 
-	{	0x0c , 0x0e , THIS(PATTERNS_C_09)	, THIS(PATTERNS_D_0A)	, THIS(PATTERNS_C_0B)	, THIS(PATTERNS_B_0A)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(2,ORDER[10])				, &cb_patterns_2_0A	}, 
-	{	0x0c , 0x0f , THIS(PATTERNS_C_0A)	, THIS(PATTERNS_D_0B)	, THIS(PATTERNS_C_0C)	, THIS(PATTERNS_B_0B)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(2,ORDER[11])				, &cb_patterns_2_0B	}, 
-	{	0x0c , 0x10 , THIS(PATTERNS_C_0B)	, THIS(PATTERNS_D_0C)	, THIS(PATTERNS_C_0D)	, THIS(PATTERNS_B_0C)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(2,ORDER[12])				, &cb_patterns_2_0C	}, 
-	{	0x0c , 0x11 , THIS(PATTERNS_C_0C)	, THIS(PATTERNS_D_0D)	, THIS(PATTERNS_C_0E)	, THIS(PATTERNS_B_0D)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(2,ORDER[13])				, &cb_patterns_2_0D	}, 
-	{	0x0c , 0x12 , THIS(PATTERNS_C_0D)	, THIS(PATTERNS_D_0E)	, THIS(PATTERNS_C_0F)	, THIS(PATTERNS_B_0E)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(2,ORDER[14])				, &cb_patterns_2_0E	}, 
-	{	0x0c , 0x13 , THIS(PATTERNS_C_0E)	, THIS(PATTERNS_D_0F)	, THIS(SOLO_LEFT_00 ) 	, THIS(PATTERNS_B_0F)   , &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(2,ORDER[15])				, &cb_patterns_2_0F	}, 
-	{	0x10 , 0x04 , THIS(MUTE_LEFT_02 ) 	, THIS(PATTERNS_E_00)	, THIS(PATTERNS_D_01)	, THIS(PATTERNS_C_00)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(3,ORDER[0])				, &cb_patterns_3_00	},  
-	{	0x10 , 0x05 , THIS(PATTERNS_D_00)	, THIS(PATTERNS_E_01)	, THIS(PATTERNS_D_02)	, THIS(PATTERNS_C_01)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(3,ORDER[1])				, &cb_patterns_3_01	},  
-	{	0x10 , 0x06 , THIS(PATTERNS_D_01)	, THIS(PATTERNS_E_02)	, THIS(PATTERNS_D_03)	, THIS(PATTERNS_C_02)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(3,ORDER[2])				, &cb_patterns_3_02	},  
-	{	0x10 , 0x07 , THIS(PATTERNS_D_02)	, THIS(PATTERNS_E_03)	, THIS(PATTERNS_D_04)	, THIS(PATTERNS_C_03)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(3,ORDER[3])				, &cb_patterns_3_03	},  
-	{	0x10 , 0x08 , THIS(PATTERNS_D_03)	, THIS(PATTERNS_E_04)	, THIS(PATTERNS_D_05)	, THIS(PATTERNS_C_04)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(3,ORDER[4])				, &cb_patterns_3_04	},  
-	{	0x10 , 0x09 , THIS(PATTERNS_D_04)	, THIS(PATTERNS_E_05)	, THIS(PATTERNS_D_06)	, THIS(PATTERNS_C_05)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(3,ORDER[5])				, &cb_patterns_3_05	},  
-	{	0x10 , 0x0a , THIS(PATTERNS_D_05)	, THIS(PATTERNS_E_06)	, THIS(PATTERNS_D_07)	, THIS(PATTERNS_C_06)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(3,ORDER[6])				, &cb_patterns_3_06	},  
-	{	0x10 , 0x0b , THIS(PATTERNS_D_06)	, THIS(PATTERNS_E_07)	, THIS(PATTERNS_D_08)	, THIS(PATTERNS_C_07)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(3,ORDER[7])				, &cb_patterns_3_07	},  
-	{	0x10 , 0x0c , THIS(PATTERNS_D_07)	, THIS(PATTERNS_E_08)	, THIS(PATTERNS_D_09)	, THIS(PATTERNS_C_08)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(3,ORDER[8])				, &cb_patterns_3_08	},  
-	{	0x10 , 0x0d , THIS(PATTERNS_D_08)	, THIS(PATTERNS_E_09)	, THIS(PATTERNS_D_0A)	, THIS(PATTERNS_C_09)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(3,ORDER[9])				, &cb_patterns_3_09	},  
-	{	0x10 , 0x0e , THIS(PATTERNS_D_09)	, THIS(PATTERNS_E_0A)	, THIS(PATTERNS_D_0B)	, THIS(PATTERNS_C_0A)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(3,ORDER[10])				, &cb_patterns_3_0A	},  
-	{	0x10 , 0x0f , THIS(PATTERNS_D_0A)	, THIS(PATTERNS_E_0B)	, THIS(PATTERNS_D_0C)	, THIS(PATTERNS_C_0B)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(3,ORDER[11])				, &cb_patterns_3_0B	},  
-	{	0x10 , 0x10 , THIS(PATTERNS_D_0B)	, THIS(PATTERNS_E_0C)	, THIS(PATTERNS_D_0D)	, THIS(PATTERNS_C_0C)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(3,ORDER[12])				, &cb_patterns_3_0C	},  
-	{	0x10 , 0x11 , THIS(PATTERNS_D_0C)	, THIS(PATTERNS_E_0D)	, THIS(PATTERNS_D_0E)	, THIS(PATTERNS_C_0D)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(3,ORDER[13])				, &cb_patterns_3_0D	},  
-	{	0x10 , 0x12 , THIS(PATTERNS_D_0D)	, THIS(PATTERNS_E_0E)	, THIS(PATTERNS_D_0F)	, THIS(PATTERNS_C_0E)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(3,ORDER[14])				, &cb_patterns_3_0E	},  
-	{	0x10 , 0x13 , THIS(PATTERNS_D_0E)	, THIS(PATTERNS_E_0F)	, THIS(MUTE_LEFT_00 ) 	, THIS(PATTERNS_C_0F)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(3,ORDER[15])				, &cb_patterns_3_0F	},  
-	{	0x14 , 0x04 , THIS(MUTE_RIGHT_02)	, THIS(PATTERNS_F_00)	, THIS(PATTERNS_E_01)	, THIS(PATTERNS_D_00)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(4,ORDER[0])				, &cb_patterns_4_00	},  
-	{	0x14 , 0x05 , THIS(PATTERNS_E_00)	, THIS(PATTERNS_F_01)	, THIS(PATTERNS_E_02)	, THIS(PATTERNS_D_01)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(4,ORDER[1])				, &cb_patterns_4_01	},  
-	{	0x14 , 0x06 , THIS(PATTERNS_E_01)	, THIS(PATTERNS_F_02)	, THIS(PATTERNS_E_03)	, THIS(PATTERNS_D_02)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(4,ORDER[2])				, &cb_patterns_4_02	},  
-	{	0x14 , 0x07 , THIS(PATTERNS_E_02)	, THIS(PATTERNS_F_03)	, THIS(PATTERNS_E_04)	, THIS(PATTERNS_D_03)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(4,ORDER[3])				, &cb_patterns_4_03	},  
-	{	0x14 , 0x08 , THIS(PATTERNS_E_03)	, THIS(PATTERNS_F_04)	, THIS(PATTERNS_E_05)	, THIS(PATTERNS_D_04)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(4,ORDER[4])				, &cb_patterns_4_04	},  
-	{	0x14 , 0x09 , THIS(PATTERNS_E_04)	, THIS(PATTERNS_F_05)	, THIS(PATTERNS_E_06)	, THIS(PATTERNS_D_05)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(4,ORDER[5])				, &cb_patterns_4_05	},  
-	{	0x14 , 0x0a , THIS(PATTERNS_E_05)	, THIS(PATTERNS_F_06)	, THIS(PATTERNS_E_07)	, THIS(PATTERNS_D_06)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(4,ORDER[6])				, &cb_patterns_4_06	},  
-	{	0x14 , 0x0b , THIS(PATTERNS_E_06)	, THIS(PATTERNS_F_07)	, THIS(PATTERNS_E_08)	, THIS(PATTERNS_D_07)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(4,ORDER[7])				, &cb_patterns_4_07	},  
-	{	0x14 , 0x0c , THIS(PATTERNS_E_07)	, THIS(PATTERNS_F_08)	, THIS(PATTERNS_E_09)	, THIS(PATTERNS_D_08)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(4,ORDER[8])				, &cb_patterns_4_08	},  
-	{	0x14 , 0x0d , THIS(PATTERNS_E_08)	, THIS(PATTERNS_F_09)	, THIS(PATTERNS_E_0A)	, THIS(PATTERNS_D_09)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(4,ORDER[9])				, &cb_patterns_4_09	},  
-	{	0x14 , 0x0e , THIS(PATTERNS_E_09)	, THIS(PATTERNS_F_0A)	, THIS(PATTERNS_E_0B)	, THIS(PATTERNS_D_0A)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(4,ORDER[10])				, &cb_patterns_4_0A	},  
-	{	0x14 , 0x0f , THIS(PATTERNS_E_0A)	, THIS(PATTERNS_F_0B)	, THIS(PATTERNS_E_0C)	, THIS(PATTERNS_D_0B)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(4,ORDER[11])				, &cb_patterns_4_0B	},  
-	{	0x14 , 0x10 , THIS(PATTERNS_E_0B)	, THIS(PATTERNS_F_0C)	, THIS(PATTERNS_E_0D)	, THIS(PATTERNS_D_0C)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(4,ORDER[12])				, &cb_patterns_4_0C	},  
-	{	0x14 , 0x11 , THIS(PATTERNS_E_0C)	, THIS(PATTERNS_F_0D)	, THIS(PATTERNS_E_0E)	, THIS(PATTERNS_D_0D)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(4,ORDER[13])				, &cb_patterns_4_0D	},  
-	{	0x14 , 0x12 , THIS(PATTERNS_E_0D)	, THIS(PATTERNS_F_0E)	, THIS(PATTERNS_E_0F)	, THIS(PATTERNS_D_0E)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(4,ORDER[14])				, &cb_patterns_4_0E	},  
-	{	0x14 , 0x13 , THIS(PATTERNS_E_0E)	, THIS(PATTERNS_F_0F)	, THIS(MUTE_RIGHT_00)	, THIS(PATTERNS_D_0F)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(4,ORDER[15])				, &cb_patterns_4_0F	},  
-	{	0x18 , 0x04 , THIS(SOLO_RIGHT_02)	, THIS(PATTERNS_A_00)	, THIS(PATTERNS_F_01)	, THIS(PATTERNS_E_00)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(5,ORDER[0])				, &cb_patterns_5_00	},  
-	{	0x18 , 0x05 , THIS(PATTERNS_F_00)	, THIS(PATTERNS_A_01)	, THIS(PATTERNS_F_02)	, THIS(PATTERNS_E_01)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(5,ORDER[1])				, &cb_patterns_5_01	},  
-	{	0x18 , 0x06 , THIS(PATTERNS_F_01)	, THIS(PATTERNS_A_02)	, THIS(PATTERNS_F_03)	, THIS(PATTERNS_E_02)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(5,ORDER[2])				, &cb_patterns_5_02	},  
-	{	0x18 , 0x07 , THIS(PATTERNS_F_02)	, THIS(PATTERNS_A_03)	, THIS(PATTERNS_F_04)	, THIS(PATTERNS_E_03)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(5,ORDER[3])				, &cb_patterns_5_03	},  
-	{	0x18 , 0x08 , THIS(PATTERNS_F_03)	, THIS(PATTERNS_A_04)	, THIS(PATTERNS_F_05)	, THIS(PATTERNS_E_04)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(5,ORDER[4])				, &cb_patterns_5_04	},  
-	{	0x18 , 0x09 , THIS(PATTERNS_F_04)	, THIS(PATTERNS_A_05)	, THIS(PATTERNS_F_06)	, THIS(PATTERNS_E_05)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(5,ORDER[5])				, &cb_patterns_5_05	},  
-	{	0x18 , 0x0a , THIS(PATTERNS_F_05)	, THIS(PATTERNS_A_06)	, THIS(PATTERNS_F_07)	, THIS(PATTERNS_E_06)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(5,ORDER[6])				, &cb_patterns_5_06	},  
-	{	0x18 , 0x0b , THIS(PATTERNS_F_06)	, THIS(PATTERNS_A_07)	, THIS(PATTERNS_F_08)	, THIS(PATTERNS_E_07)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(5,ORDER[7])				, &cb_patterns_5_07	},  
-	{	0x18 , 0x0c , THIS(PATTERNS_F_07)	, THIS(PATTERNS_A_08)	, THIS(PATTERNS_F_09)	, THIS(PATTERNS_E_08)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(5,ORDER[8])				, &cb_patterns_5_08	},  
-	{	0x18 , 0x0d , THIS(PATTERNS_F_08)	, THIS(PATTERNS_A_09)	, THIS(PATTERNS_F_0A)	, THIS(PATTERNS_E_09)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(5,ORDER[9])				, &cb_patterns_5_09	},  
-	{	0x18 , 0x0e , THIS(PATTERNS_F_09)	, THIS(PATTERNS_A_0A)	, THIS(PATTERNS_F_0B)	, THIS(PATTERNS_E_0A)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(5,ORDER[10])				, &cb_patterns_5_0A	},  
-	{	0x18 , 0x0f , THIS(PATTERNS_F_0A)	, THIS(PATTERNS_A_0B)	, THIS(PATTERNS_F_0C)	, THIS(PATTERNS_E_0B)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(5,ORDER[11])				, &cb_patterns_5_0B	},  
-	{	0x18 , 0x10 , THIS(PATTERNS_F_0B)	, THIS(PATTERNS_A_0C)	, THIS(PATTERNS_F_0D)	, THIS(PATTERNS_E_0C)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(5,ORDER[12])				, &cb_patterns_5_0C	},  
-	{	0x18 , 0x11 , THIS(PATTERNS_F_0C)	, THIS(PATTERNS_A_0D)	, THIS(PATTERNS_F_0E)	, THIS(PATTERNS_E_0D)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(5,ORDER[13])				, &cb_patterns_5_0D	},  
-	{	0x18 , 0x12 , THIS(PATTERNS_F_0D)	, THIS(PATTERNS_A_0E)	, THIS(PATTERNS_F_0F)	, THIS(PATTERNS_E_0E)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(5,ORDER[14])				, &cb_patterns_5_0E	},  
-	{	0x18 , 0x13 , THIS(PATTERNS_F_0E)	, THIS(PATTERNS_A_0F)	, THIS(SOLO_RIGHT_00)	, THIS(PATTERNS_E_0F)	, &CACHE_HEXADECIMAL_TWOTILES	, THISVAR(5,ORDER[15])				, &cb_patterns_5_0F	},  
-	{	0x0c , 0x00 , THIS(PATTERNS_C_0F)	, THIS(MUTE_LEFT_00 ) 	, THIS(SOLO_LEFT_01 ) 	, THIS(SOLO_RIGHT_00)	, &CACHE_ARROW_LEFT				, NULL								, &cb_pat_solo_0		},
-	{	0x0c , 0x01 , THIS(SOLO_LEFT_00 ) 	, THIS(MUTE_LEFT_01 ) 	, THIS(SOLO_LEFT_02 ) 	, THIS(SOLO_RIGHT_01)	, &CACHE_ARROW_LEFT				, NULL								, &cb_pat_solo_1		},
-	{	0x0c , 0x02 , THIS(SOLO_LEFT_01 ) 	, THIS(MUTE_LEFT_02 ) 	, THIS(PATTERNS_C_00)	, THIS(SOLO_RIGHT_02)	, &CACHE_ARROW_LEFT				, NULL								, &cb_pat_solo_2		},
-	{	0x0f , 0x00 , THIS(PATTERNS_D_0F)	, THIS(MUTE_RIGHT_00)	, THIS(MUTE_LEFT_01 ) 	, THIS(SOLO_LEFT_00 ) 	, &CACHE_ARROW_LEFT				, NULL								, &cb_pat_mute_0		},
-	{	0x0f , 0x01 , THIS(MUTE_LEFT_00 ) 	, THIS(MUTE_RIGHT_01)	, THIS(MUTE_LEFT_02 ) 	, THIS(SOLO_LEFT_01 ) 	, &CACHE_ARROW_LEFT				, NULL								, &cb_pat_mute_1		},
-	{	0x0f , 0x02 , THIS(MUTE_LEFT_01 ) 	, THIS(MUTE_RIGHT_02)	, THIS(PATTERNS_D_00)	, THIS(SOLO_LEFT_02 ) 	, &CACHE_ARROW_LEFT				, NULL								, &cb_pat_mute_2		},
-	{	0x16 , 0x00 , THIS(PATTERNS_E_0F)	, THIS(SOLO_RIGHT_00)	, THIS(MUTE_RIGHT_01)	, THIS(MUTE_LEFT_00 ) 	, &CACHE_ARROW_RIGHT			, NULL 								, &cb_pat_mute_3		},
-	{	0x16 , 0x01 , THIS(MUTE_RIGHT_00)	, THIS(SOLO_RIGHT_01)	, THIS(MUTE_RIGHT_02)	, THIS(MUTE_LEFT_01 ) 	, &CACHE_ARROW_RIGHT			, NULL 								, &cb_pat_mute_4		},
-	{	0x16 , 0x02 , THIS(MUTE_RIGHT_01)	, THIS(SOLO_RIGHT_02)	, THIS(PATTERNS_E_00)	, THIS(MUTE_LEFT_02 ) 	, &CACHE_ARROW_RIGHT			, NULL 								, &cb_pat_mute_5		},
-	{	0x19 , 0x00 , THIS(PATTERNS_F_0F)	, THIS(SOLO_LEFT_00 ) 	, THIS(SOLO_RIGHT_01)	, THIS(MUTE_RIGHT_00)	, &CACHE_ARROW_RIGHT			, NULL 								, &cb_pat_solo_3		}, 
-	{	0x19 , 0x01 , THIS(SOLO_RIGHT_00)	, THIS(SOLO_LEFT_01 ) 	, THIS(SOLO_RIGHT_02)	, THIS(MUTE_RIGHT_01)	, &CACHE_ARROW_RIGHT			, NULL 								, &cb_pat_solo_4		},
-	{	0x19 , 0x02 , THIS(SOLO_RIGHT_01)	, THIS(SOLO_LEFT_02 ) 	, THIS(PATTERNS_F_00)	, THIS(MUTE_RIGHT_02)	, &CACHE_ARROW_RIGHT			, NULL 								, &cb_pat_solo_5		},
-	{	0xFF , 0xFF , NULL					, NULL					, NULL					, NULL					, NULL							, NULL								, NULL				} /*TERMINATOR*/
-#undef THIS
-#undef THISVAR
-};
-	
 //**************************//
 // TRACKER Screen CONTROLS  //
 //**************************//
@@ -835,10 +719,10 @@ const Control CHAN0_CONTROLS[CONTROL_CHANNEL0_0_MAX] = {
 	{	0x1b , 0x11 , THIS(CHAN5KEY_0C)		, THIS(CHAN5INS_0D)		, THIS(CHAN5KEY_0E)		, THIS(CHAN5VAL_0D)		, &CACHE_NOTES					, THISVAR(KEY[13])					, &cb_ch5_key_0D },
 	{	0x1b , 0x12 , THIS(CHAN5KEY_0D)		, THIS(CHAN5INS_0E)		, THIS(CHAN5KEY_0F)		, THIS(CHAN5VAL_0E)		, &CACHE_NOTES					, THISVAR(KEY[14])					, &cb_ch5_key_0E },
 	{	0x1b , 0x13 , THIS(CHAN5KEY_0E)		, THIS(CHAN5INS_0F)		, THIS(CHAN5KEY_00)		, THIS(CHAN5VAL_0F)		, &CACHE_NOTES					, THISVAR(KEY[15])					, &cb_ch5_key_0F },
+	CONTROL_TERMINATOR
+};
 #undef THISVAR
 #undef THIS
-	{	0xFF , 0xFF , NULL					, NULL					, NULL					, NULL					, NULL							, NULL								, NULL					} /*TERMINATOR*/
-};
 
 #define THIS(a) &CHAN1_CONTROLS[CONTROL_CHANNEL1_0_##a]
 #define THISVAR(a) ((u8*)&(VAR_CELLS[1].a))
@@ -1029,10 +913,10 @@ const Control CHAN1_CONTROLS[CONTROL_CHANNEL1_0_MAX] = {
 	{	0x1b , 0x11 , THIS(CHAN5KEY_0C)		, THIS(CHAN5INS_0D)		, THIS(CHAN5KEY_0E)		, THIS(CHAN5VAL_0D)		, &CACHE_NOTES					, THISVAR(KEY[13])					, &cb_ch5_key_0D },
 	{	0x1b , 0x12 , THIS(CHAN5KEY_0D)		, THIS(CHAN5INS_0E)		, THIS(CHAN5KEY_0F)		, THIS(CHAN5VAL_0E)		, &CACHE_NOTES					, THISVAR(KEY[14])					, &cb_ch5_key_0E },
 	{	0x1b , 0x13 , THIS(CHAN5KEY_0E)		, THIS(CHAN5INS_0F)		, THIS(CHAN5KEY_00)		, THIS(CHAN5VAL_0F)		, &CACHE_NOTES					, THISVAR(KEY[15])					, &cb_ch5_key_0F }, 
+	CONTROL_TERMINATOR
+};
 #undef THISVAR
 #undef THIS
-	{	0xFF , 0xFF	, NULL					, NULL					, NULL					, NULL					, NULL							, NULL								, NULL					}/*TERMINATOR*/
-};
 
 #define THIS(a) &CHAN2_CONTROLS[CONTROL_CHANNEL2_0_##a]
 #define THISVAR(a) ((u8*)&(VAR_CELLS[2].a))
@@ -1223,10 +1107,10 @@ const Control CHAN2_CONTROLS[CONTROL_CHANNEL2_0_MAX] = {
 	{	0x1b , 0x11 , THIS(CHAN5KEY_0C)		, THIS(CHAN5INS_0D)		, THIS(CHAN5KEY_0E)		, THIS(CHAN5VAL_0D)		, &CACHE_NOTES					, THISVAR(KEY[13])					, &cb_ch5_key_0D },
 	{	0x1b , 0x12 , THIS(CHAN5KEY_0D)		, THIS(CHAN5INS_0E)		, THIS(CHAN5KEY_0F)		, THIS(CHAN5VAL_0E)		, &CACHE_NOTES					, THISVAR(KEY[14])					, &cb_ch5_key_0E },
 	{	0x1b , 0x13 , THIS(CHAN5KEY_0E)		, THIS(CHAN5INS_0F)		, THIS(CHAN5KEY_00)		, THIS(CHAN5VAL_0F)		, &CACHE_NOTES					, THISVAR(KEY[15])					, &cb_ch5_key_0F },
+	CONTROL_TERMINATOR
+};
 #undef THISVAR
 #undef THIS
-	{	0xFF , 0xFF , NULL					, NULL					, NULL					, NULL					, NULL							, NULL								, NULL					} /*TERMINATOR*/
-};
 
 #define THISVAR(a) ((u8*)&(VAR_CELLS[3].a))
 #define THIS(a) &CHAN3_CONTROLS[CONTROL_CHANNEL3_0_##a]
@@ -1417,10 +1301,10 @@ const Control CHAN3_CONTROLS[CONTROL_CHANNEL3_0_MAX] = {
 	{	0x1b , 0x11 , THIS(CHAN5KEY_0C)		, THIS(CHAN5INS_0D)		, THIS(CHAN5KEY_0E)		, THIS(CHAN5VAL_0D)		, &CACHE_NOTES					, THISVAR(KEY[13])					, &cb_ch5_key_0D },
 	{	0x1b , 0x12 , THIS(CHAN5KEY_0D)		, THIS(CHAN5INS_0E)		, THIS(CHAN5KEY_0F)		, THIS(CHAN5VAL_0E)		, &CACHE_NOTES					, THISVAR(KEY[14])					, &cb_ch5_key_0E },
 	{	0x1b , 0x13 , THIS(CHAN5KEY_0E)		, THIS(CHAN5INS_0F)		, THIS(CHAN5KEY_00)		, THIS(CHAN5VAL_0F)		, &CACHE_NOTES					, THISVAR(KEY[15])					, &cb_ch5_key_0F },
+	CONTROL_TERMINATOR
+};
 #undef THISVAR
 #undef THIS
-	{	0xFF , 0xFF , NULL					, NULL					, NULL					, NULL					, NULL							, NULL								, NULL					} /*TERMINATOR*/
-};
 
 #define THIS(a) &CHAN4_CONTROLS[CONTROL_CHANNEL4_0_##a]
 #define THISVAR(a) ((u8*)&(VAR_CELLS[4].a))
@@ -1613,10 +1497,10 @@ const Control CHAN4_CONTROLS[CONTROL_CHANNEL4_0_MAX] = {
 	{	0x1b , 0x11 , THIS(CHAN5KEY_0C)		, THIS(CHAN5INS_0D)		, THIS(CHAN5KEY_0E)		, THIS(CHAN5VAL_0D)		, &CACHE_NOTES					, THISVAR(KEY[13])					, &cb_ch5_key_0D },
 	{	0x1b , 0x12 , THIS(CHAN5KEY_0D)		, THIS(CHAN5INS_0E)		, THIS(CHAN5KEY_0F)		, THIS(CHAN5VAL_0E)		, &CACHE_NOTES					, THISVAR(KEY[14])					, &cb_ch5_key_0E },
 	{	0x1b , 0x13 , THIS(CHAN5KEY_0E)		, THIS(CHAN5INS_0F)		, THIS(CHAN5KEY_00)		, THIS(CHAN5VAL_0F)		, &CACHE_NOTES					, THISVAR(KEY[15])					, &cb_ch5_key_0F },
+	CONTROL_TERMINATOR
+};
 #undef THISVAR
 #undef THIS
-	{	0xFF , 0xFF , NULL					, NULL					, NULL					, NULL					, NULL							, NULL								, NULL					} /*TERMINATOR*/
-};
 
 #define THIS(a) &CHAN5_CONTROLS[CONTROL_CHANNEL5_0_##a]
 #define THISVAR(a) ((u8*)&(VAR_CELLS[5].a))
@@ -1807,7 +1691,7 @@ const Control CHAN5_CONTROLS[CONTROL_CHANNEL5_0_MAX] = {
 	{	0x11 , 0x11 , THIS(CHAN4KEY_0C)		, THIS(CHAN4INS_0D)		, THIS(CHAN4KEY_0E)		, THIS(CHAN4VAL_0D)		, &CACHE_NOTES					, THISVAR(KEY[13])					, &cb_ch4_key_0D }, 
 	{	0x11 , 0x12 , THIS(CHAN4KEY_0D)		, THIS(CHAN4INS_0E)		, THIS(CHAN4KEY_0F)		, THIS(CHAN4VAL_0E)		, &CACHE_NOTES					, THISVAR(KEY[14])					, &cb_ch4_key_0E }, 
 	{	0x11 , 0x13 , THIS(CHAN4KEY_0E)		, THIS(CHAN4INS_0F)		, THIS(CHAN4KEY_00)		, THIS(CHAN4VAL_0F)		, &CACHE_NOTES					, THISVAR(KEY[15])					, &cb_ch4_key_0F }, 
+	CONTROL_TERMINATOR
+};
 #undef THIS
 #undef THISVAR
-	{ 	0xFF , 0xFF , NULL					, NULL					, NULL					, NULL					, NULL							, NULL								, NULL					} /*TERMINATOR*/
-};
