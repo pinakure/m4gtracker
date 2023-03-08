@@ -43,7 +43,7 @@ void Clip::activate(){
 }
 
 void Clip::copy(){
-	if( !Clipboard::width || !Clipboard::height) {
+	if( !Clipboard::width ) {
 		Tracker::icon( 0x7051, 0x00A2);
 		return;
 	}
@@ -51,7 +51,7 @@ void Clip::copy(){
 }
 
 void Clip::cut(){
-	if( !Clipboard::width || !Clipboard::height) {
+	if( !Clipboard::width ) {
 		Tracker::icon( 0x7051, 0x00A2);
 		return;
 	}
@@ -59,6 +59,10 @@ void Clip::cut(){
 }
 
 void Clip::paste(){
+	if( !Clipboard::width ) {
+		Tracker::icon( 0x7051, 0x00A2);
+		return;
+	}
 	Tracker::icon( 0x7054, 0x7058);
 }
 

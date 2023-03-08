@@ -222,6 +222,8 @@ void Tracker::globalUpdate( RegionHandler* rh ){
 		if(icon_time==1){
 			gpu.set(2, 0, 2, 0); 
 			gpu.set(2, 1, 2, 0); 	
+			gpu.set(2, 2, 2, 0); 	
+			gpu.set(2, 3, 2, 0); 	
 		}
 	}
 	
@@ -411,8 +413,8 @@ void Tracker::update( RegionHandler* rh ){
 }
 
 void Tracker::icon( u16 upper, u16 lower ){
-	gpu.set(2, 0, 2, upper); 
-	gpu.set(2, 1, 2, lower); 	
+	gpu.set(2, 1, 2, upper); 
+	gpu.set(2, 2, 2, lower); 	
 	icon_time = 0x7FF;
 }
 
