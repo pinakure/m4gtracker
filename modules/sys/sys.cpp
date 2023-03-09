@@ -10,6 +10,9 @@ void Sys::reset(){
 }
 
 void Sys::init(){
+	
+	DEBUG_INIT();
+	
 	KEY.init();
 	
 	Clip::init();
@@ -211,6 +214,8 @@ void Sys::updateInput(){
 void overloadTest(RegionHandler &regHnd);
 
 void Sys::update(){
+	
+	DEBUG_UPDATE();
 	
 	Sequencer::update();	
 	KEY.update();

@@ -28,11 +28,27 @@ typedef struct sClipboard {
 	static u8 	width;	
 	static u8 	height;
 	static u8	type;
+	static u8 	columns; 	// How many data columns are currently on clipboard 
+	static u8 	rows;		// How many data rows are currently on clipboard 
+	// static u8   column;		// Initial data 	
+	// static u8   row;		// 
 } Clipboard;
+
+class Notifier {
+	private:
+		static u16 					time;
+		static void					clear();
+	
+	public: 
+		static void					init();
+		static void					update();
+		static void 				icon( u16 upper, u16 lower, u16 extra=0x0000 );
+};
 
 class Clip {
 	private:
 		static bool 				redraw;
+		
 		static void drawMaskTrk		(int color);
 		static void drawMaskPat		(int color);
 		
@@ -40,7 +56,6 @@ class Clip {
 		static bool 				visible;
 		static bool 				blink_monitor;
 		static ClipboardAction 		action;
-		
 		
 		static void init			();
 		static void draw			( RegionHandler *rh );
@@ -60,7 +75,7 @@ class Clip {
 		static void maskSizeVert	( bool increase );
 		static void maskSizeHorz	( bool increase );
 		static void resizeMask		( int direction );
-		static void drawMask		(int color);
+		static void drawMask		( int color );
 };
 
 #endif

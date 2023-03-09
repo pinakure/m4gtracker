@@ -35,6 +35,7 @@ MEM_IN_EWRAM PatternCell 	VAR_CELLS[6];
 MEM_IN_EWRAM PatternCell 	VAR_DATA[128]; 
 
 int main(void){
+	
 	while(1){
 		PREFETCH
 		

@@ -12,8 +12,6 @@ class Tracker{
 		static const u8 	positions_x[6];
 		static const u8 	positions_y[6];
 		static const u16 	channel_symbols[6][6];
-		static 		 u16 	icon_time;
-
 
 		static void syncPattern			( );
 		static void syncChannel			( u8 channel_index );
@@ -34,7 +32,6 @@ class Tracker{
 		static void processInput		(  );
 		static void shift				( int q );
 		static void transpose			( int q );
-		static void icon 				( u16 upper, u16 lower);
 };
 
 extern const Control CHAN0_CONTROLS[ CONTROL_CHANNEL0_0_MAX ]; 

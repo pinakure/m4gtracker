@@ -13,6 +13,7 @@ u8 			PatEdit::bookmark_row 		= 0;
 u8 			PatEdit::bookmarks[6] 		= {0,0,0,0,0,0};
 bool 		PatEdit::solo_clean 		= false;
 bool 		PatEdit::clean 				= false;
+u16 		PatEdit::icon_time 			= 0;
 
 #define CTL(a) &PAT_CONTROLS[CONTROL_PAT_##a]
 #define VAR(index, a) ((u8*)&(VAR_PATTERN[index].a))
@@ -404,11 +405,11 @@ void PatEdit::dispatchMessage(u32 msg){
 }
 
 void PatEdit::shift( int q ){
-	
+	Notifier::icon( 0x7112, q > 0 ? 0x408E : 0x408C);
 }
 
 void PatEdit::transpose( int q ){
-
+	Notifier::icon( 0x706D, q > 0 ? 0x408C : 0x408E);
 }
 
 void PatEdit::processInput( ){

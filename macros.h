@@ -24,7 +24,9 @@
 	1 																\
 )
 #define TRACKER_ACTIVE_ROW					(regHnd.control->y - 4)
-#define PATTERN_ACTIVE_COLUMN				VAR_CFG.CURRENTCHANNEL
+#define TRACKER_ACTIVE_CHANNEL				VAR_CFG.CURRENTCHANNEL
+#define PATTERN_ACTIVE_COLUMN				TRACKER_ACTIVE_CHANNEL
+#define PATTERN_ACTIVE_CHANNEL				PATTERN_ACTIVE_COLUMN
 #define PATTERN_ACTIVE_ROW  				PatEdit::bookmark_row
 
 #define CURRENT_PATTERN 					VAR_SONG.PATTERNS[ PATTERN_ACTIVE_COLUMN ].ORDER[ VAR_CHANNEL[ PATTERN_ACTIVE_COLUMN ].POSITION]
@@ -37,9 +39,7 @@
 #define CLIPBOARD_HAS_VOLUME				( ( Clipboard::type &  CLIPDATA_VOLUME		) &&  CLIPBOARD_HAS_DATA )
 #define CLIPBOARD_HAS_COMMAND				( ( Clipboard::type &  CLIPDATA_COMMAND		) &&  CLIPBOARD_HAS_DATA )
 #define CLIPBOARD_HAS_VALUE					( ( Clipboard::type &  CLIPDATA_VALUE		) &&  CLIPBOARD_HAS_DATA )
-	
-
-
+		
 #define EXPECT( a, up, down ) {										\
 	VAR_CFG.loadCount = 0;											\
 	regHnd.progress.set( 											\

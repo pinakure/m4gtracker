@@ -18,8 +18,11 @@ void LookNFeel::logoFade(){
 	REG_BG1 |= 0x0040;
 	REG_BG2 |= 0x0040;
 	REG_BG3 |= 0x0040;
+	
 	if( VAR_CFG.LOOKNFEEL.STARTUPSFX ) Mixer::start();
-			
+	
+	Synth::lfo = 0x00;
+	
 	while( freeze < 0xfff>>4 ){
 		regHnd.drawVerticalCache(8,7,&CACHE_LOGOTYPE,0,0);
 		sys.update();
@@ -27,7 +30,8 @@ void LookNFeel::logoFade(){
 		if( VAR_CFG.LOOKNFEEL.STARTUPSFX ) {
 			Synth::polysynth( 0xffffffff - ((freeze>>4)+(freeze>>2)) );
 		}
-		if(!gpu.isVblank()) {
+		if( ((R_VCOUNT&0x00FF) >=160)){
+		//if(!gpu.isVblank()) {
 			freeze++;
 			for(int i=0;i<16;i++) {
 				int c1 = Palette[4+((freeze)&0x7)];

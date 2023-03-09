@@ -12,6 +12,7 @@ class PatEdit {
 		static 			u8 		bookmarks[6];
 		static 			bool 	solo_clean;
 		static 			bool 	clean;
+		static 			u16  	icon_time;
 
 		static void sync				( ); // sync pattern data
 		static void syncPosition		( u8 position );
@@ -19,8 +20,8 @@ class PatEdit {
 		static void globalUpdate		(RegionHandler *rh);
 		static void update				(RegionHandler *rh);
 		static void dispatchMessage		(u32 msg);
-		static void solo( Control *c, bool bigstep, bool add, u32 *pointer );
-		static void mute( Control *c, bool bigstep, bool add, u32 *pointer );
+		static void solo				( Control *c, bool bigstep, bool add, u32 *pointer );
+		static void mute				( Control *c, bool bigstep, bool add, u32 *pointer );
 
 		static void shift				( int q );
 		static void transpose			( int q );

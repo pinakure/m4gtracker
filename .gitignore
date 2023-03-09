@@ -179,8 +179,8 @@ synth.s
 sequencer.s
 callbacks/linkmode.o
 linkmode.s
-callbacks/behavior.o
 callbacks/coloreditor.o
+callbacks/behavior.o
 callbacks/looknfeel.o
 looknfeel.s
 coloreditor.s

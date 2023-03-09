@@ -54,3 +54,9 @@ Change clipboar menu hotkey
 Selection Mask on both tracker and pattern screens
 Track transpose hotkey, shift hotkey ( lack functionality )
 
+-------------------
+08-03-2023
+-------------------
+Debug::panic( message, *pointer );
+Debug::watch( varname, var );
+WATCH macro

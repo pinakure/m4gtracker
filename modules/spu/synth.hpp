@@ -14,6 +14,7 @@ class Synth {
 		static u8 	wav_adsr_table[4][0x40];
 		static u8 	fmw_adsr_table[4][0x40];
 		static u8 	smp_adsr_table   [0x40];
+		static u16 	lfo;
 		
 		static void init();
 		

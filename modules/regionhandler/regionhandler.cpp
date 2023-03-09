@@ -1,4 +1,5 @@
 #include "regionhandler.hpp"
+#include "../../callbacks/debug.hpp"
 
 RegionHandler regHnd;
 
@@ -509,6 +510,8 @@ void RegionHandler::draw(){
 }
 
 void RegionHandler::jumpToControl(const Control *c){
+	if( !c ) Debug::panic("No control", (u32*)c );
+	
 	if( VAR_LIVE.PERFORM.LOCK || Clip::visible || !c ) return;
 	
 	Control *o = control;

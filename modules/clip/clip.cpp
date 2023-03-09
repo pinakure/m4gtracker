@@ -8,6 +8,10 @@ u8 	Clipboard::y;
 u8 	Clipboard::width;	
 u8 	Clipboard::height;
 u8 	Clipboard::type;
+u8 	Clipboard::columns;
+u8 	Clipboard::rows;
+// u8 	Clipboard::column;
+// u8 	Clipboard::row;
 
 bool 			Clip::visible = false;
 bool 			Clip::redraw  = false;
@@ -22,9 +26,45 @@ const u8 positions[ 5 ][2] = {
 	{ 0x00, 0x01 }, // CLIP_CLONE
 };
 
+u16 			Notifier::time;
+
+void Notifier::init(){
+	time = 0x00;
+}
+
+void Notifier::clear(){
+	gpu.set( 2, 1, 2, 0x0000 ); 
+	gpu.set( 2, 2, 2, 0x0000 ); 	
+	gpu.set( 2, 3, 2, 0x0000 ); 	
+}
+
+void Notifier::update(){
+	// Erase icon when time is over
+	if( time ){
+		time--;
+		if( time == 1 ){
+			Notifier::clear(); 	
+		}
+	}
+}
+
+void Notifier::icon( u16 upper, u16 lower, u16 extra ){
+	gpu.set(2, 1, 2, upper); 
+	gpu.set(2, 2, 2, lower); 	
+	gpu.set(2, 3, 2, extra); 	
+	time = 0x7FF;
+}
+
 void Clip::init(){
+	Notifier::init();
 	redraw  = false;
 	visible = false;
+
+	Clipboard::columns = 0;
+	Clipboard::rows    = 0;
+	// Clipboard::column  = 0;
+	// Clipboard::row     = 0;
+	
 	action  = CLIP_NONE;
 }
 
@@ -44,30 +84,122 @@ void Clip::activate(){
 
 void Clip::copy(){
 	if( !Clipboard::width ) {
-		Tracker::icon( 0x7051, 0x00A2);
+		Notifier::icon( 0x7051, 0x00A2);
 		return;
 	}
-	Tracker::icon( 0x7051, 0x00A3);
+	Clipboard::columns 	= Clipboard::width;
+	Clipboard::rows		= Clipboard::height+1;
+	Clipboard::type 	= 0x0000;
+	WATCH( Clipboard::rows );
+	if(AT_TRACKER_SCREEN){
+		for(int i = Clipboard::x; i<Clipboard::x+Clipboard::width; i++){
+			switch( i ){
+				case 4: Clipboard::type |= CLIPDATA_VALUE;		continue;
+				case 3: Clipboard::type |= CLIPDATA_COMMAND;	continue;
+				case 2: Clipboard::type |= CLIPDATA_VOLUME;		continue;
+				case 1: Clipboard::type |= CLIPDATA_INSTRUMENT;	continue;
+				case 0: Clipboard::type |= CLIPDATA_NOTE; 		continue;
+				break;
+			}
+		}
+		
+		// Copy column data
+		for(int y = 0; y < Clipboard::rows; y++){
+			int pos = ( y * 6 );
+			if( Clipboard::type & CLIPDATA_VALUE 		) Clipboard::data[pos+4] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VAL[ Clipboard::y + y ];
+			if( Clipboard::type & CLIPDATA_COMMAND 		) Clipboard::data[pos+3] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].CMD[ Clipboard::y + y ];
+			if( Clipboard::type & CLIPDATA_VOLUME 		) Clipboard::data[pos+2] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VOL[ Clipboard::y + y ];
+			if( Clipboard::type & CLIPDATA_INSTRUMENT	) Clipboard::data[pos+1] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].INS[ Clipboard::y + y ];
+			if( Clipboard::type & CLIPDATA_NOTE			) Clipboard::data[pos+0] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ Clipboard::y + y ];
+		}
+		
+	} else {
+		
+		// Copy pattern data
+		for( int y = Clipboard::y; y < Clipboard::y + Clipboard::height; y++ ){
+			int pos = ( y * 6 );
+			for( int x = Clipboard::x; x < Clipboard::x + Clipboard::width; x++ ){
+				Clipboard::data[ pos + x ] = VAR_PATTERN[ x ].ORDER[ y ]; 
+			}
+		}
+	}
+	Notifier::icon( 0x7051, 0x00A3 );
 }
 
 void Clip::cut(){
 	if( !Clipboard::width ) {
-		Tracker::icon( 0x7051, 0x00A2);
+		Notifier::icon( 0x7051, 0x00A2);
 		return;
 	}
-	Tracker::icon( 0x7050, 0x00A3);
+	Notifier::icon( 0x7050, 0x00A3);
 }
 
 void Clip::paste(){
-	if( !Clipboard::width ) {
-		Tracker::icon( 0x7051, 0x00A2);
+
+	if( !Clipboard::columns || !Clipboard::rows) {
+		// Cannot paste, no data in clipboard is present
+		Notifier::icon( 0x3054, 0x3058, 0x00A2);
 		return;
 	}
-	Tracker::icon( 0x7054, 0x7058);
+	if( ((!Clipboard::type == CLIPDATA_PATTERN) && AT_TRACKER_SCREEN ) ||
+		((!Clipboard::type != CLIPDATA_PATTERN) && !AT_TRACKER_SCREEN ) ){
+		// Cannot paste, clipboard data type is incorrect for this screen ( buffer is shared )
+		Notifier::icon( 0x3054, 0x3058, 0x00A2);
+		return;
+	}
+	
+	Notifier::icon( 0x7054, 0x7058, 0x00A3);
+	
+	//CHANNEL PASTE
+	if( AT_TRACKER_SCREEN ){
+		
+		for(int y = 0; y < Clipboard::rows; y++){
+			int rpos = ( y * 6 );
+			int wpos = (Clipboard::y + y) & 0xF;
+			if( Clipboard::type & CLIPDATA_VALUE 		) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VAL[ wpos ] = Clipboard::data[ rpos + 4 ];
+			if( Clipboard::type & CLIPDATA_COMMAND 		) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].CMD[ wpos ] = Clipboard::data[ rpos + 3 ];
+			if( Clipboard::type & CLIPDATA_VOLUME 		) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VOL[ wpos ] = Clipboard::data[ rpos + 2 ];
+			if( Clipboard::type & CLIPDATA_INSTRUMENT	) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].INS[ wpos ] = Clipboard::data[ rpos + 1 ];
+			if( Clipboard::type & CLIPDATA_NOTE			) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ wpos ] = Clipboard::data[ rpos + 0 ];
+		}
+		WATCH(Clipboard::data[8]);
+		Tracker::copyChannel( TRACKER_ACTIVE_CHANNEL );
+		return;
+	}
+	
+	// PATTERN PASTE
 }
 
 void Clip::clone(){
-	Tracker::icon( 0x7052, 0x7053);
+	
+	if( !Clipboard::width ) {
+		// Cannot clone, not enough buffer to clone
+		Notifier::icon( 0x3052, 0x3053, 0x00A2);
+		return;
+	}
+	
+	Clip::copy();
+	
+	Notifier::icon( 0x7052, 0x7053, 0x00A3);
+	
+	// CHANNEL CLONE
+	if( AT_TRACKER_SCREEN ){
+				
+		for(int y = 0; y < Clipboard::rows; y++){
+			int rpos = ( y * 6 );
+			int wpos = (Clipboard::y + Clipboard::rows + y) & 0xF;
+			if( Clipboard::type & CLIPDATA_VALUE 		) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VAL[ wpos ] = Clipboard::data[ rpos + 4 ];
+			if( Clipboard::type & CLIPDATA_COMMAND 		) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].CMD[ wpos ] = Clipboard::data[ rpos + 3 ];
+			if( Clipboard::type & CLIPDATA_VOLUME 		) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VOL[ wpos ] = Clipboard::data[ rpos + 2 ];
+			if( Clipboard::type & CLIPDATA_INSTRUMENT	) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].INS[ wpos ] = Clipboard::data[ rpos + 1 ];
+			if( Clipboard::type & CLIPDATA_NOTE			) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ wpos ] = Clipboard::data[ rpos + 0 ];
+		}
+		
+		Tracker::copyChannel( TRACKER_ACTIVE_CHANNEL );
+		return;
+	}	
+
+	// PATTERN CLONE
 }
 
 void Clip::show(){
@@ -82,6 +214,8 @@ void Clip::show(){
 	visible 			= true;
 	redraw  			= true;
 	action  			= CLIP_NONE;
+	
+	if(!regHnd.control) Debug::panic("No regHnd.control", (u32*)&regHnd );
 }
 
 void Clip::hide(){
@@ -95,6 +229,9 @@ void Clip::hide(){
 			Tracker::drawPosition(i);
 		}
 		Transient::changed = true;
+	} else {
+		// Notify PatEdit there is dirt on screen and it needs to be redrawn
+		PatEdit::clean = false;
 	}
 }
 
@@ -150,8 +287,10 @@ void Clip::maskSizeVert( bool increase ){
 void Clip::maskSizeHorz( bool increase ){
 	drawMask(0x00);
 	u8 max = ( AT_TRACKER_SCREEN ? 5 : 6 );
-	Clipboard::width += increase ? 1 : -1;
-	if( Clipboard::width  > max ) Clipboard::width	= max;
+	if(increase){
+		if( Clipboard::x + Clipboard::width  < max ) Clipboard::width++;
+	} else if( Clipboard::width ) Clipboard::width--;
+	else Clipboard::width	= max;
 }
 
 void Clip::setAction( ClipboardAction selected_action ){
@@ -164,7 +303,7 @@ void Clip::drawMaskPat(int color){
 	
 	for( int y = 0; y < Clipboard::height+1; y++){
 		u8 cc = 4 + ( Clipboard::x * 4);
-		for( int x = 0; x < Clipboard::width; x++){
+		for( int x = Clipboard::x; x < Clipboard::x + Clipboard::width; x++){
 			gpu.set( 1, cc    , Clipboard::y + 4 + y, c1 );
 			gpu.set( 1, cc + 1, Clipboard::y + 4 + y, c1 );
 			cc+=4;
@@ -242,6 +381,8 @@ void Clip::draw( RegionHandler *rh ){
 
 
 void Clip::update(RegionHandler *rh){
+	
+	Notifier::update();
 	
 	gpu.blinkUpdate(8);
 	

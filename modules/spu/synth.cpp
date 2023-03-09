@@ -19,6 +19,7 @@ u8 		Synth::smp_adsr_table   [0x40];
 u8 		Synth::wav_adsr_position = 0;
 u8 		Synth::smp_adsr_position = 0;
 u8 		Synth::fmw_adsr_position = 0;
+u16		Synth::lfo				 = 0;
 
 const u16 SMP_FREQ_TABLE[120]={ 
 	0xF8DD	,0xF917	,0xF94F ,0xF995	,0xF9D7	,0xFA22	,0xFA68	,0xFAB2	,0xFAF8	,0xFB3E	,0xFB80, 0xFBC0,
@@ -93,6 +94,8 @@ void Synth::init(){
 			case 5: c->trigger = &Synth::triggerSmp;break;
 		}
 	}
+
+	lfo = 0;
 }
 
 void Synth::noteOnPwm1( Channel* channel ){
@@ -567,7 +570,8 @@ void Synth::triggerSmp( Channel* channel ){
 
 void Synth::polysynth( u16 input ){
 	static u8 wavedata[16];
-	static u16 lfo = 0;
+	bool initialized = lfo == 0;
+	
 	lfo++;
 	//input+=lfo;
 	//	u8 len  = 0;//input & 0x1F; // 5 bit : 0 
@@ -584,13 +588,12 @@ void Synth::polysynth( u16 input ){
 	};
 	u16 freq[6] = {
 		PWM_FREQ_TABLE[ input>>(input%8) ],
-		PWM_FREQ_TABLE[ input   ] +lfo,
-		PWM_FREQ_TABLE[ input+7 ] + lfo,
+		PWM_FREQ_TABLE[ input   ] +(lfo),
+		PWM_FREQ_TABLE[ input+7 ] + lfo*lfo,
 		PWM_FREQ_TABLE[ input   ] + lfo,
 		PWM_FREQ_TABLE[ input>>(input%8) ],
 		PWM_FREQ_TABLE[ input>>(input%8) ],
 	};
-	static bool init = false;
 	
 	// Pulse 1
 	*((volatile u16*)0x04000064) = 0x0000 | freq[0]; // Retrigger PU1
@@ -606,7 +609,7 @@ void Synth::polysynth( u16 input ){
 	*((volatile u16*)0x04000072) = (vol[2] << 12) | (step << 8); // WAV Envelope
 	*((volatile u16*)0x04000078) = (vol[3] << 12) | (step << 8); // NZE Envelope
 	// Trigger channels just once
-	if(!init) {
+	if(!initialized) {
 		*((volatile u16*)0x04000064) = 0x8000 | freq[0];
 		*((volatile u16*)0x0400006C) = 0x8000 | freq[1];
 		*((volatile u16*)0x04000074) = 0x8000 | freq[2];
@@ -642,7 +645,7 @@ void Synth::polysynth( u16 input ){
 		#undef OPERATOR1
 		
 		loadWav( wavedata );
-		init = true;
+		initialized = true;
 	}
 	return;	
 }
