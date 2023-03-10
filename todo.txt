@@ -22,3 +22,7 @@ Add missing Config options
 	- AUTOSAVE Option @ Behavior: If enabled, song is saved automatically each time the song playback is stopped.
 Help pages for Nze channel
 	- Not very relevant btm, but it should have some mention...
+	
+	
+	
+	

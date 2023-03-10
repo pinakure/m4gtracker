@@ -54,76 +54,69 @@ void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 	int i, di;
 	u16 w;
 	u8 h;
+
+	static const BitField tracker_settings[8] = {
+		{ &VAR_LIVE.PERFORM.RETRIG		, 6 , 	1 },
+		{ &VAR_CFG.MEMORY.PREF			, 5 , 	1 },
+		{ &VAR_CFG.TRACKER.HEADERTYPE	, 4 , 	1 },
+		{ &VAR_CFG.TRACKER.INPUTMODE	, 3 , 	1 },
+		{ &VAR_CFG.TRACKER.PRELISTEN	, 2 , 	1 },
+		{ &VAR_CFG.BEHAVIOR.BUTTONSET	, 0 , 	2 },
+		{ NULL							, 0 ,   0 }, 
+		{ NULL							, 0 ,   0 }, 
+	};
+		
+	static const BitField look_n_feel[8] = {
+		{ &VAR_CFG.BEHAVIOR.AUTOLOAD	, 7 , 	1 },
+		{ &VAR_CFG.LOOKNFEEL.STARTUPSFX , 6 , 	1 },
+		{ &VAR_CFG.LOOKNFEEL.SHOWLOGO   , 5 , 	1 },
+		{ &VAR_CFG.LOOKNFEEL.INTERFACE  , 4 , 	1 },
+		{ &VAR_CFG.LOOKNFEEL.FONT		, 2 , 	2 },
+		{ &VAR_CFG.LOOKNFEEL.BORDER 	, 0 , 	2 },
+		{ NULL							, 0 ,   0 }, 
+		{ NULL							, 0 ,   0 }, 
+	};
+
 	EXPECT(10, SAVING, SETTINGS);
 	
 	// Check Signature and version
 	SRAM.seek(0);
-	if(SRAM.read32() != M4GEEK_SIGNATURE) return Config::defaults(c, 0, 0, pointer);
-	if(SRAM.read() != M4G_VERSION) return Config::defaults(c, 0, 0, pointer);
+	if(SRAM.read32	() != M4GEEK_SIGNATURE	) return Config::defaults(c, 0, 0, pointer);
+	if(SRAM.read	() != M4G_VERSION		) return Config::defaults(c, 0, 0, pointer);
 	
 	// Palette colors
 	for(i=0;i<8; i++){
 		di = i<<1;
-		
-		h = SRAM.read();		
-		VAR_CFG.PAL[ di ].R = h << 4;
-		VAR_CFG.PAL[ di ].G = h & 0x0F;
-		
-		h = SRAM.read();
-		VAR_CFG.PAL[ di ].B = h << 4;
-		VAR_CFG.PAL[di+1].R = h & 0x0F;
-		
-		h = SRAM.read();
-		VAR_CFG.PAL[di+1].G = h << 4;
-		VAR_CFG.PAL[di+1].B = h & 0x0F;
+		readNibbles( VAR_CFG.PAL[ di ].R, VAR_CFG.PAL[ di ].G);
+		readNibbles( VAR_CFG.PAL[ di ].B, VAR_CFG.PAL[di+1].R);
+		readNibbles( VAR_CFG.PAL[di+1].G, VAR_CFG.PAL[di+1].B);
 	}	
 		
 	// Look And Feel
-	h = SRAM.read();	
-	VAR_CFG.BEHAVIOR.AUTOLOAD 		= EXTRACT(h, 7, 0x1);
-	VAR_CFG.LOOKNFEEL.STARTUPSFX 	= EXTRACT(h, 6, 0x1);
-	VAR_CFG.LOOKNFEEL.SHOWLOGO 		= EXTRACT(h, 5, 0x1);
-	VAR_CFG.LOOKNFEEL.INTERFACE 	= EXTRACT(h, 4, 0x1);
-	VAR_CFG.LOOKNFEEL.FONT 			= EXTRACT(h, 2, 0x3);
-	VAR_CFG.LOOKNFEEL.BORDER		= h & 0x3;
-	
+	readFields	( look_n_feel );
+
 	// Link mode
-	VAR_CFG.LINKMODE.LINKMODE 		= SRAM.read();
-	VAR_CFG.LINKMODE.MASTERCLOCK 	= SRAM.read();
-	VAR_CFG.LINKMODE.SYNCRATE 		= SRAM.read();
-	VAR_CFG.LINKMODE.SYNCTICKS		= SRAM.read();
+	readByte	( VAR_CFG.LINKMODE.LINKMODE 									);
+	readByte	( VAR_CFG.LINKMODE.MASTERCLOCK									);
+	readByte	( VAR_CFG.LINKMODE.SYNCRATE 									);
+	readByte	( VAR_CFG.LINKMODE.SYNCTICKS									);
 	
 	// Behavior, live and tracker
-	VAR_CFG.BEHAVIOR.KEYRATE 		= SRAM.read();
+	readByte	( VAR_CFG.BEHAVIOR.KEYRATE 		);
 
-	h = SRAM.read();
-	VAR_LIVE.PERFORM.RETRIG 		= EXTRACT(h, 6, 0x1);
-	VAR_CFG.MEMORY.PREF				= EXTRACT(h, 5, 0x1);
-	VAR_CFG.TRACKER.HEADERTYPE		= EXTRACT(h, 4, 0x1);
-	VAR_CFG.TRACKER.INPUTMODE		= EXTRACT(h, 3, 0x1);
-	VAR_CFG.TRACKER.PRELISTEN		= EXTRACT(h, 2, 0x1);
-	VAR_CFG.BEHAVIOR.BUTTONSET		= h & 0x3;
+	// Tracker settings
+	readFields	( tracker_settings );
 	
-	VAR_CFG.TRACKER.TRANSPOSE = SRAM.read();
-	VAR_CFG.TRACKER.SOUNDBIAS = SRAM.read();
-	
-	h = SRAM.read();
-	VAR_LIVE.PERFORM.SPEED 			= EXTRACT(h, 4, 0xf);
-	VAR_CFG.TRACKER.FINETUNE 		= h & 0x0F;
-	
-	h = SRAM.read();
-	VAR_LIVE.PERFORM.QUANTIZE		= EXTRACT(h, 4, 0x3);
-	VAR_LIVE.PIANO.QUANTIZE			= h & 0x3;
-	
-	h = SRAM.read();
-	VAR_LIVE.PIANO.OCTAVE			= EXTRACT(h, 4, 0xf);
-	VAR_LIVE.PIANO.MODE				= h & 0xf;
-	
-	VAR_LIVE.PIANO.TRANSPOSE 		= SRAM.read();
+	readByte	( VAR_CFG.TRACKER.TRANSPOSE 									);
+	readByte	( VAR_CFG.TRACKER.SOUNDBIAS 									);
+	readNibbles	( VAR_LIVE.PERFORM.SPEED	, VAR_CFG.TRACKER.FINETUNE	, 0xF	);
+	readNibbles	( VAR_LIVE.PERFORM.QUANTIZE	, VAR_LIVE.PIANO.QUANTIZE	, 0x3	);
+	readNibbles	( VAR_LIVE.PIANO.OCTAVE		, VAR_LIVE.PIANO.MODE 		, 0xF	);
+	readByte	( VAR_LIVE.PIANO.TRANSPOSE);
 	
 	for(i=0; i<2; i++){
-		VAR_LIVE.PIANO.CHANNEL[i] = SRAM.read();
-		VAR_LIVE.PIANO.MIDICHAN[i]= SRAM.read();
+		readByte( VAR_LIVE.PIANO.CHANNEL[i]  );
+		readByte( VAR_LIVE.PIANO.MIDICHAN[i] );
 	}
 	
 	//46dec
@@ -300,7 +293,7 @@ void Config::defaults (Control *c, bool bigstep, bool add, u32 *pointer){
 	SETTING(BEHAVIOR.BUTTONSET, 0x00);
 	SETTING(BEHAVIOR.VISTYPE, 0); //0 vis - 1 table
 	//180
-	SETTING(TRACKER.FINETUNE, 0x80);
+	SETTING(TRACKER.FINETUNE, 0x0);
 	SETTING(TRACKER.PRELISTEN, 0x1);
 	SETTING(TRACKER.TRANSPOSE, 0x80);
 	SETTING(TRACKER.INPUTMODE, 0x0);

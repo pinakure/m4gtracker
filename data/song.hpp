@@ -21,4 +21,5 @@ typedef struct sSong {
 extern Song VAR_SONGS[6]; //Song data for 6 song slots
 extern Song VAR_SONG; //Current loaded song (copied from active one)
 
+
 #endif 

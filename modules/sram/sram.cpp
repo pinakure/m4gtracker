@@ -11,6 +11,28 @@ extern "C" {
 	void SRAM_WriteByte(u16 position, u8 byte);
 };
 
+void readByte( u8 &byte ){
+	byte = SRAM.read();
+}
+
+void readNibbles(u8 &nibble1, u8 &nibble2, u8 mask){
+	u8 h = SRAM.read();
+	nibble1 = (h >> 4) & mask;
+	nibble2 = h & mask;
+}
+void writeNibbles(u8 nibble1, u8 nibble2, u8 mask){
+	SRAM.write(((nibble1 & mask) << 4) | (nibble2 & mask));
+}
+
+void readFields( const BitField fields[8] ) {
+	u8 byte = SRAM.read();
+	for( int i=0; i<8; i++){
+		if( !fields[ i ].var ) continue;
+		u8 mask = ( 2 << (fields[ i ].width-1) ) - 1;
+		*fields[ i ].var = (byte >> fields[ i ].position) & mask;
+	}	
+}
+
 void Sram::Init(void){
 	// Set WAITCNT (Waitstate controller) to 8 wait cycle mode	
 	
@@ -121,6 +143,14 @@ void Sram::songSave( bool verbose ){
 		write(VAR_SONG.PATTERNS[3].ORDER[i]);
 		write(VAR_SONG.PATTERNS[4].ORDER[i]);
 		write(VAR_SONG.PATTERNS[5].ORDER[i]);
+		#ifndef NSONGTRANSPOSE
+		write(VAR_SONG.PATTERNS[0].TRANSPOSE[i]);
+		write(VAR_SONG.PATTERNS[1].TRANSPOSE[i]);
+		write(VAR_SONG.PATTERNS[2].TRANSPOSE[i]);
+		write(VAR_SONG.PATTERNS[3].TRANSPOSE[i]);
+		write(VAR_SONG.PATTERNS[4].TRANSPOSE[i]);
+		write(VAR_SONG.PATTERNS[5].TRANSPOSE[i]);
+		#endif
 	}
 	
 	if( verbose ) drawPosition(27, 4, 2);	
@@ -173,6 +203,14 @@ void Sram::songLoad( bool verbose ){
 		VAR_SONG.PATTERNS[3].ORDER[i] = read();
 		VAR_SONG.PATTERNS[4].ORDER[i] = read();
 		VAR_SONG.PATTERNS[5].ORDER[i] = read();
+		#ifndef NSONGTRANSPOSE
+		VAR_SONG.PATTERNS[0].TRANSPOSE[i] = read();
+		VAR_SONG.PATTERNS[1].TRANSPOSE[i] = read();
+		VAR_SONG.PATTERNS[2].TRANSPOSE[i] = read();
+		VAR_SONG.PATTERNS[3].TRANSPOSE[i] = read();
+		VAR_SONG.PATTERNS[4].TRANSPOSE[i] = read();
+		VAR_SONG.PATTERNS[5].TRANSPOSE[i] = read();
+		#endif
 	}
 	
 	PatEdit::syncPosition( VAR_CFG.ORDERPOSITION );
@@ -181,6 +219,12 @@ void Sram::songLoad( bool verbose ){
 	if( verbose ) drawPosition(27, 4, 6);	
 	
 	sharedDataLoad( verbose );
+	
+	// Update controls to show recently loaded data
+	for(int i=0; i<6; i++){
+		Tracker::syncChannel(0);
+	}
+	PatEdit::sync();
 }
 
 void Sram::songDefaults( bool verbose ){
@@ -229,6 +273,9 @@ void Sram::songDefaults( bool verbose ){
 	for(i=0; i<6; i++){
 		for(di=0; di<256; di++){
 			VAR_SONG.PATTERNS[i].ORDER[di] = 0;
+			#ifndef NSONGTRANSPOSE
+			VAR_SONG.PATTERNS[i].TRANSPOSE[di] = 0;
+			#endif
 		}
 		VAR_SONG.PATTERNS[i].POSITION = 0;
 	}	
@@ -363,6 +410,14 @@ void Sram::dataBackup( bool verbose ){
 			write(VAR_SONGS[i].PATTERNS[3].ORDER[di]);
 			write(VAR_SONGS[i].PATTERNS[4].ORDER[di]);
 			write(VAR_SONGS[i].PATTERNS[5].ORDER[di]);
+			#ifndef NSONGTRANSPOSE
+			write(VAR_SONGS[i].PATTERNS[0].TRANSPOSE[i]);
+			write(VAR_SONGS[i].PATTERNS[1].TRANSPOSE[i]);
+			write(VAR_SONGS[i].PATTERNS[2].TRANSPOSE[i]);
+			write(VAR_SONGS[i].PATTERNS[3].TRANSPOSE[i]);
+			write(VAR_SONGS[i].PATTERNS[4].TRANSPOSE[i]);
+			write(VAR_SONGS[i].PATTERNS[5].TRANSPOSE[i]);
+			#endif
 		}
 	}
 	
@@ -415,6 +470,14 @@ void Sram::dataRevert( bool verbose ){
 			VAR_SONGS[i].PATTERNS[3].ORDER[di] = read();
 			VAR_SONGS[i].PATTERNS[4].ORDER[di] = read();
 			VAR_SONGS[i].PATTERNS[5].ORDER[di] = read();
+			#ifndef NSONGTRANSPOSE
+			VAR_SONGS[i].PATTERNS[0].TRANSPOSE[i] = read();
+			VAR_SONGS[i].PATTERNS[1].TRANSPOSE[i] = read();
+			VAR_SONGS[i].PATTERNS[2].TRANSPOSE[i] = read();
+			VAR_SONGS[i].PATTERNS[3].TRANSPOSE[i] = read();
+			VAR_SONGS[i].PATTERNS[4].TRANSPOSE[i] = read();
+			VAR_SONGS[i].PATTERNS[5].TRANSPOSE[i] = read();
+			#endif
 		}
 	}
 	

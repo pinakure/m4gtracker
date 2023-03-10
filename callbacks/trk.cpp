@@ -31,6 +31,8 @@ const u16 	Tracker::channel_symbols[6][6] 	= {
 	{ 0xB035, 0xB035, 0xB036, 0xB037, 0xB038, 0x7039 }	
 };
 
+bool 	Tracker::clean = false;
+
 // TBC on All Channel Data Update
 // move to channel if more apropiate
 void Tracker::syncPattern(){
@@ -210,7 +212,7 @@ void Tracker::dispatchMessage(u32 msg){
 }
 
 void Tracker::globalUpdate( RegionHandler* rh ){
-	static bool tracker_clean = false;
+	//Tracker::clean = false;
 
 	Clip::update( rh );
 	
@@ -243,19 +245,19 @@ void Tracker::globalUpdate( RegionHandler* rh ){
 	}
 	
 	if( !Sequencer::playing){
-		tracker_clean = false;
+		Tracker::clean = false;
 		return;
 	}
 	
 	// Tracker screen is dirty; Clean and redraw active control
-	if(!tracker_clean) {
+	if( !Tracker::clean ) {
 		for(int y=4; y<20;y++){
 			for(int i=1; i<30; i++){
 				gpu.set(0, i, y, 0x0);
 			}
 		}
 		regHnd.sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)(regHnd.control)&0x0fffffff);
-		tracker_clean = true;
+		Tracker::clean = true;
 	}
 }
 
@@ -399,11 +401,53 @@ void Tracker::update( RegionHandler* rh ){
 }
 
 void Tracker::shift( int q ){
-	Notifier::icon( 0x7112, q > 0 ? 0x408E : 0x408C);
+	bool expr = (q<0);
+	Notifier::icon( 0, 0x7112, expr ? 0x408C : 0x408E);
+	PatternCell copy = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ];
+	
+	for(int i = 0; i<16; i++){
+		VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ expr ? i&0xF : 0xF - (i&0xF) ] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ expr ? (i+1)&0xF : 0xF - ((i+1)&0xF) ];
+		VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].INS[ expr ? i&0xF : 0xF - (i&0xF) ] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].INS[ expr ? (i+1)&0xF : 0xF - ((i+1)&0xF) ];
+		VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VOL[ expr ? i&0xF : 0xF - (i&0xF) ] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VOL[ expr ? (i+1)&0xF : 0xF - ((i+1)&0xF) ];
+		VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].CMD[ expr ? i&0xF : 0xF - (i&0xF) ] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].CMD[ expr ? (i+1)&0xF : 0xF - ((i+1)&0xF) ];
+		VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VAL[ expr ? i&0xF : 0xF - (i&0xF) ] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VAL[ expr ? (i+1)&0xF : 0xF - ((i+1)&0xF) ];
+	} 
+	VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ expr ? 0xF : 0x0 ] = copy.KEY[ expr ? 0x0 : 0xF ];
+	VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].INS[ expr ? 0xF : 0x0 ] = copy.INS[ expr ? 0x0 : 0xF ];
+	VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VOL[ expr ? 0xF : 0x0 ] = copy.VOL[ expr ? 0x0 : 0xF ];
+	VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].CMD[ expr ? 0xF : 0x0 ] = copy.CMD[ expr ? 0x0 : 0xF ];
+	VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VAL[ expr ? 0xF : 0x0 ] = copy.VAL[ expr ? 0x0 : 0xF ];
+	
+	// Copy temporary data to pattern data
+	Tracker::copyChannel( TRACKER_ACTIVE_CHANNEL );
+	// Reload data from pattern data to temporary AND REDRAW CURRENT CHANNEL (not needed if playing since it will be updated automatically and quickly)
+	if(!Sequencer::playing) Tracker::syncChannel( TRACKER_ACTIVE_CHANNEL );
 }
 
 void Tracker::transpose( int q ){
-	Notifier::icon( 0x706D, q > 0 ? 0x408C : 0x408E);
+	Notifier::icon( 0x306D, q > 0 ? 0x308C : 0x308E, 0x8A);
+	// Check first we dont destroy data 
+	for(int i = 0; i<16; i++){
+		// Ignore silenced cells 
+		if(VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ i ] == 0) continue;
+		// Abort operation if transformation would move the lowest note into a silence
+		if(( VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ i ] + q) ==   0) return;
+		// Abort operation if transformation would move the highest note out of range
+		if(( VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ i ] + q) >= 160) return;
+	}
+	Notifier::icon( 0, 0x706D, q > 0 ? 0x408C : 0x408E);
+	// Transpose notes
+	for(int i = 0; i<16; i++){
+		// Ignore silenced cells 
+		if(VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ i ] == 0) continue; 
+		// Transpose note
+		VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ i ] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ i ] + q;
+	}
+
+	// Copy temporary data to pattern data
+	Tracker::copyChannel( TRACKER_ACTIVE_CHANNEL );
+	// Reload data from pattern data to temporary AND REDRAW CURRENT CHANNEL (not needed if playing since it will be updated automatically and quickly)
+	if(!Sequencer::playing) Tracker::syncChannel( TRACKER_ACTIVE_CHANNEL );
 }
 
 void Tracker::processInput( ){

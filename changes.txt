@@ -66,4 +66,7 @@ WATCH macro
 Copy, Cut, Paste & Clone Channel @ Tracker Screen ( L + SELECT , L + ARROWS )
 Copy, Cut, Paste & Clone Pattern @ Pattern Screen ( L + SELECT , L + ARROWS )
 WATCHARRAY macro
-
+Bugfixed pattern editor bug affecting correct scrolling  at rows 0xA ~ 0xF
+Swapped clipboard action and clipboard mask size buttons
+Channel shift up/down ( R + UP / DOWN )
+Channel transpose up/down ( R + LEFT/RIGHT )

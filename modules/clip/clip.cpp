@@ -280,24 +280,24 @@ void Clip::processInput(){
 	if(KEY.down( KEY_SELECT )) return Clip::show();
 	if(! Clip::visible ) return;
 	
-	if( KEY.press ( KEY_L )){
-		if( KEY.down( KEY_UP    ) ) maskSizeVert( false ); 
-		if( KEY.down( KEY_DOWN  ) ) maskSizeVert( true  ); 
-		if( KEY.down( KEY_RIGHT ) ) maskSizeHorz( true  );
-		if( KEY.down( KEY_LEFT  ) ) maskSizeHorz( false );
+	if( KEY.press ( KEY_R )){
+		if( KEY.down( KEY_UP    ) ) maskMoveVert( false ); 
+		if( KEY.down( KEY_DOWN  ) ) maskMoveVert( true  ); 
+		if( KEY.down( KEY_RIGHT ) ) maskMoveHorz( true  );
+		if( KEY.down( KEY_LEFT  ) ) maskMoveHorz( false );
 		return;
 	}
 	
-	if(! KEY.press ( KEY_R )){	
+	if( KEY.press ( KEY_L )){	
 		if( KEY.down( KEY_LEFT  ) ) setAction( CLIP_COPY	); 
 		if( KEY.down( KEY_RIGHT ) ) setAction( CLIP_CUT		); 
 		if( KEY.down( KEY_UP    ) ) setAction( CLIP_PASTE	); 
 		if( KEY.down( KEY_DOWN  ) ) setAction( CLIP_CLONE	); 
 	} else {
-		if( KEY.down( KEY_UP    ) ) maskMoveVert( false ); 
-		if( KEY.down( KEY_DOWN  ) ) maskMoveVert( true  ); 
-		if( KEY.down( KEY_RIGHT ) ) maskMoveHorz( true  );
-		if( KEY.down( KEY_LEFT  ) ) maskMoveHorz( false );
+		if( KEY.down( KEY_UP    ) ) maskSizeVert( false ); 
+		if( KEY.down( KEY_DOWN  ) ) maskSizeVert( true  ); 
+		if( KEY.down( KEY_RIGHT ) ) maskSizeHorz( true  );
+		if( KEY.down( KEY_LEFT  ) ) maskSizeHorz( false );
 	}
 }
 

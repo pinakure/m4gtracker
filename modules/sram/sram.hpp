@@ -11,6 +11,12 @@
 #define DEVICE_SANYO_128	0x1362
 #define DEVICE_MACRONIX_128	0x09C2
 
+typedef struct sBitField {
+	u8 *var;
+	u8 position;
+	u8 width;
+}BitField;
+
 class Sram {
 	private:
 		u8 *sram;
@@ -43,5 +49,10 @@ class Sram {
 };
 
 extern Sram SRAM;
+
+extern void readByte	( u8 &byte );
+extern void readNibbles	( u8 &nibble1	, u8 &nibble2	, u8 mask = 0xF );
+extern void writeNibbles( u8  nibble1 	, u8  nibble2 	, u8 mask = 0xF );
+extern void readFields	( const BitField fields[ 8 ] );
 
 #endif

@@ -12,6 +12,7 @@ class Tracker{
 		static const u8 	positions_x[6];
 		static const u8 	positions_y[6];
 		static const u16 	channel_symbols[6][6];
+		static bool  		clean; // true if tracker not needing redraw
 
 		static void syncPattern			( );
 		static void syncChannel			( u8 channel_index );
