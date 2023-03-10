@@ -60,3 +60,10 @@ Track transpose hotkey, shift hotkey ( lack functionality )
 Debug::panic( message, *pointer );
 Debug::watch( varname, var );
 WATCH macro
+-------------------
+09-03-2023
+-------------------
+Copy, Cut, Paste & Clone Channel @ Tracker Screen ( L + SELECT , L + ARROWS )
+Copy, Cut, Paste & Clone Pattern @ Pattern Screen ( L + SELECT , L + ARROWS )
+WATCHARRAY macro
+

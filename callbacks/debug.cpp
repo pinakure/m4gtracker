@@ -8,7 +8,27 @@
 #include "../callbacks/cfg.hpp"
 #include "../data/enum.h"
 
-const u16 debug_colors[16][2] = {
+
+#include "../modules/clip/clip.hpp"
+	
+void Debug::clear( u8 color ){
+	for(int x=0; x<30; x++){
+		for(int y=0; y<20; y++){
+			gpu.set( 0	, x	, y , color );
+			gpu.set( 1	, x	, y , 0x0000);
+			gpu.set( 2	, x	, y , 0x00FC);
+		}
+	}
+}	
+	
+#ifndef NDEBUG
+
+static const u16 color_hex = COLOR_ORANGE;
+static const u16 color_dec = COLOR_WHITE;
+static const u16 color_bef = COLOR_RED;
+static const u16 color_aft = COLOR_GREEN;
+
+const u16 Debug::colors[16][2] = {
 	{ COLOR_NONE		<< 12 , COLOR_NONE 			<< 12 },
 	{ COLOR_DARK_CYAN	<< 12 , COLOR_CYAN 			<< 12 },
 	{ COLOR_CYAN		<< 12 , COLOR_DARK_CYAN 	<< 12 },
@@ -27,59 +47,329 @@ const u16 debug_colors[16][2] = {
 	{ COLOR_GREEN		<< 12 , COLOR_DARK_GREEN  	<< 12 },
 };
 
-int 		Debug::counter	 	= 0;
-void*		Debug::watch_var 	= NULL;
-const char* Debug::watch_name 	= NULL;
-u8		 	Debug::watch_size 	= 0;
-u32 		Debug::last_var 	= 0xFFFF;
-bool 		Debug::step_by_step = false;
+VariableWatch	Debug::variables[4];
+ArrayWatch		Debug::arrays[4];
+u8 				Debug::variable_count;
+u8 				Debug::array_count;
 
+int 			Debug::counter	 	= 0;
+bool 			Debug::step_by_step = false;
+bool 			Debug::watch_hex 	= false;
 
-#include "../modules/clip/clip.hpp"
-	
-
-void Debug::clear( u8 color ){
-	for(int x=0; x<30; x++){
-		for(int y=0; y<20; y++){
-			gpu.set( 0	, x	, y , color );
-			gpu.set( 1	, x	, y , 0x0000);
-			gpu.set( 2	, x	, y , 0x00FC);
-		}
-	}
-}	
-	
-#ifndef NDEBUG
-
-static bool redraw;
-static bool watch_hex;	
-static u16 	color_timer;
 void Debug::init(){
-	color_timer = 0;
-	watch_var 	= NULL;
-	counter 	= 0;
-	watch_size  = 0;
-	watch_name  = NULL;
-	watch_hex   = false;
-	step_by_step= false;
-	last_var 	= 0xFFFFFFFF;
-	WATCH( Clipboard::type );
+	counter 	 	= 0;
+	watch_hex    	= false;
+	step_by_step 	= false;
+	variable_count 	= 0;
+	array_count		= 0;
+	
+	for( int i=0; i<4; i++){
+		variables[ i ].variable = NULL;
+		arrays[ i ].array		= NULL;
+	}
+	
+	//Debug::watchArray("test", (u8**)&test[0] );
 }
 
 void Debug::updateWatch(){
-	if( !watch_var ) return;
 	
-	if(KEY.up(KEY_SELECT)){
-		watch_hex ^=1;
-		redraw = true;
+	bool redraw = false;
+	
+	if( regHnd.new_region || regHnd.redraw ) redraw = true;
+	
+	if(KEY.press( KEY_L ) && KEY.up(KEY_R)) {
+		redraw 		  = true;
+		watch_hex 	 ^= 1;
+	}
+	if(KEY.press( KEY_R ) && KEY.up(KEY_L)) {
+		redraw 		  = true;
+		step_by_step ^= 1;
 	}
 	
-	switch(watch_size){
-		case  8: return watch( watch_name, *((    u8*) watch_var), watch_size );
-		case 16: return watch( watch_name, *((   u16*) watch_var), watch_size );
-		case 32: return watch( watch_name, *((   u32*) watch_var), watch_size );
-		case 64: return watch( watch_name, *((size_t*) watch_var), watch_size );
+	if( redraw ){
+		for( int i=0; i<4; i++){
+			variables	[ i ].redraw = true;
+			arrays		[ i ].redraw = true;
+		}
+		redraw = false;
+	}
+	
+	for( int i = 0; i < variable_count; i++ ){
+		watchUpdate( i );
+	}
+	
+	for( int i = 0; i < array_count; i++ ){
+		watchUpdateArray( i );
 	}
 }
+
+void Debug::watchArray	( const char *varname , u8**	   	  var ){ watchArray	( varname, ( void** ) var,  8 ); }
+void Debug::watchArray	( const char *varname , u16**		  var ){ watchArray	( varname, ( void** ) var, 16 ); }
+void Debug::watchArray	( const char *varname , u32**		  var ){ watchArray	( varname, ( void** ) var, 32 ); }
+void Debug::watchArray	( const char *varname , size_t** 	  var ){ watchArray	( varname, ( void** ) var, 64 ); }
+void Debug::watch		( const char *varname , u8*			  var ){ watch		( varname, ( void*  ) var,  8 ); }
+void Debug::watch		( const char *varname , u16*		  var ){ watch		( varname, ( void*  ) var, 16 ); }
+void Debug::watch		( const char *varname , u32*  		  var ){ watch		( varname, ( void*  ) var, 32 ); }
+void Debug::watch		( const char *varname , size_t* 	  var ){ watch		( varname, ( void*  ) var, 64 ); }
+
+void Debug::watchArray	( const char *varname , void** array, u8 size ){
+	
+	// Ignore watch if it is already been watched
+	for( int i=0; i<4; i++){
+		if( arrays[ i ].array == array ) return;
+	}
+	
+	if( array_count > 2 ) arrays[ 3 ] = arrays[ 2 ];
+	if( array_count > 1 ) arrays[ 2 ] = arrays[ 1 ];
+	if( array_count > 0 ) arrays[ 1 ] = arrays[ 0 ];
+	
+	arrays[ 0 ].name  		= varname;
+	arrays[ 0 ].size  		= size;
+	arrays[ 0 ].array 	 	= array; 
+	arrays[ 0 ].timer 		= 0; 
+	arrays[ 0 ].redraw 		= true; 
+	
+	for( int i = 0; i<16; i++ ){
+		arrays[ 0 ].last_value[ i ] = 0xFFFF; 
+	}
+	
+	if( array_count < 3 ) array_count++;
+}
+
+void Debug::watch( const char *varname	, void* 	var , u8 size ){
+	
+	// Ignore watch if it is already been watched
+	for( int i=0; i<4; i++){
+		if( variables[ i ].variable == var ) return;
+	}
+	
+	if( variable_count > 2 ) variables[3] = variables[2];
+	if( variable_count > 1 ) variables[2] = variables[1];
+	if( variable_count > 0 ) variables[1] = variables[0];
+
+	variables[ 0 ].name  	= varname;
+	variables[ 0 ].size  	= size;
+	variables[ 0 ].variable = var; 
+	variables[ 0 ].timer 	= 0; 
+	variables[ 0 ].redraw 	= true; 
+	
+	if( variable_count < 3 ) variable_count++;
+}
+
+void Debug::drawFrame( u8 pos_x, u8 pos_y, u8 width, u8 height, const char *title, u8 size, bool alt_color ){
+	
+	u16 	border 	  	= ( ( step_by_step 	? COLOR_DARK_RED 	: ( step_by_step ? COLOR_DARK_RED : watch_hex ? COLOR_BROWN : COLOR_DARK_BLUE)	) << 12 );
+	u16 	primary   	= ( ( alt_color 	? COLOR_DARK_RED	: ( step_by_step ? COLOR_DARK_RED : watch_hex ? COLOR_BROWN : COLOR_DARK_BLUE)	) << 12 );
+
+	// Draw Watch Window Frame
+	for(int y=0; y < height; y++){
+		for(int x=0; x < width; x++){
+			
+			if( (y > 0) && (y<height-1)) gpu.set( 0, pos_x + x, pos_y + y, primary  	| 0x0D );
+			
+			gpu.set( 1, pos_x + x, pos_y + y, 0x100);
+			gpu.set( 2, pos_x + x, pos_y + y, 0x100);
+			if( ( x != 0 ) && ( y != 0 ) && ( x != width - 1 ) && ( y != height - 1 ) ) continue;
+			gpu.set( 0, pos_x + x, pos_y + y, border | 0x10);
+			gpu.set( 1, pos_x + x, pos_y + y, 0x100);
+			gpu.set( 2, pos_x + x, pos_y + y, 0x100);
+		}		
+	}
+
+		// Draw variable name and bit width
+	ascii ( 		pos_x - (( pos_x & 0x1 ) ? 6 : 5 )	, pos_y	+ height - 1, title						, COLOR_WHITE	);
+	DECIMAL_DOUBLE( pos_x + 1							, pos_y 			, COLOR_YELLOW				, size 			);
+	gpu.set( 2,		pos_x								, pos_y 			, (COLOR_CYAN<<12) | 0x175					);
+	if( step_by_step )                            
+		ascii( 		pos_x - (( pos_x & 0x1 ) ? 5 : 4 )	, pos_y 			, "Step"					, COLOR_RED 	);
+}
+
+#include "../data/data.hpp"
+
+void Debug::watchUpdateArray( u8 index ){
+	ArrayWatch *aw = &arrays[ index ];
+	
+	if( aw->timer > 1 ) aw->timer--;
+	else if( aw->timer == 1 ) {
+		aw->timer 	= 0;
+		aw->redraw 	= true;
+	}
+	
+	// Cast variables in array to every posible value
+	static u8	u8value[16];
+	static u16	u16value[16]; 
+	static u32	u32value[16]; 
+	static u32 last_value[16]; 
+	
+	// Only let updation when variable value has change
+	for( int i=0; i<16; i++){
+		u8value			[ i ]  = 0;//*((  u8** ) aw->array)[i];
+		u16value		[ i ]  = VAR_CELLS[ 1 ].KEY[ i ];//*(( u16** ) aw->array)[i];
+		u32value		[ i ]  = 0;//*(( u32** ) aw->array)[i];
+		last_value		[ i ]  = aw->last_value[ i ];
+		aw->last_value	[ i ]  = u32value[ i ];
+		if( last_value	[ i ] != u32value[ i ] ) {
+			aw->timer = 0x7FF;
+			aw->redraw = true;
+		} 
+	}
+	
+	// Begin redraw / update 
+	if( !aw->redraw ) return;	
+	aw->redraw = false;
+
+	bool alt_color 	= aw->timer > 0;
+	int  pos_x 		= 26 - ( index * 4 );
+	int  pos_y 		=  3;
+	int  width 		=  4;
+	int  height 	= 18; 
+
+	// Draw Watch Window Frame
+	drawFrame( pos_x, pos_y, width, height, aw->name, aw->size, alt_color);
+	
+	for( int i=0; i<16; i++, pos_y++){
+		
+		// Draw variable representation, indicating when it changes
+		if( watch_hex ){
+			
+			switch( aw->size ){
+				case 8:
+					// Print 0x
+					gpu.set( 2, 		pos_x + width-3 , pos_y+1 	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
+					// Print Hexadecimal representation 
+					HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+1	,  	alt_color ? color_aft : color_hex 	, u8value[i]		);
+					break;
+				case 16:
+					// Print 0x
+					gpu.set( 2, 		pos_x + width-4	, pos_y+1	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
+					// Print Hexadecimal representation 
+					HEXADECIMAL_DOUBLE(	pos_x + width-3	, pos_y+1	,   alt_color ? color_aft : color_hex 	, u16value[i] >> 8	);
+					HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+1	,   alt_color ? color_aft : color_hex 	, u16value[i]		);
+					break;
+				case 32:
+				case 64:
+					// Print 0x
+					gpu.set( 2, 		pos_x + width-6	, pos_y+1	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
+					// Print Hexadecimal representation 
+					HEXADECIMAL_DOUBLE(	pos_x + width-5	, pos_y+1	,   alt_color ? color_aft : color_hex 	, u32value[i] >> 24	);
+					HEXADECIMAL_DOUBLE(	pos_x + width-4	, pos_y+1	,   alt_color ? color_aft : color_hex 	, u32value[i] >> 16	);
+					HEXADECIMAL_DOUBLE(	pos_x + width-3	, pos_y+1	,   alt_color ? color_aft : color_hex 	, u32value[i] >>  8	);
+					HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+1	,   alt_color ? color_aft : color_hex 	, u32value[i] 		);
+					break;
+			}
+		} else {
+			
+			if( aw->size == 8 ){
+				DECIMAL_DOUBLE(	pos_x + width - 2, pos_y + 1, alt_color ? color_aft : color_dec , u8value[i]	);
+			} else if( aw->size == 16 ){
+				DECIMAL_DOUBLE(	pos_x + width - 2, pos_y + 1, alt_color ? color_aft : color_dec , u16value[i]	);
+			} else {
+				number( pos_x + width - 5 , pos_y + 1 , u32value[i]		, alt_color ? color_aft : color_dec );
+			}
+			
+		}
+	}
+}
+
+void Debug::watchUpdate( u8 index ){
+	
+	VariableWatch *vw = &variables[ index ];
+	
+	if( vw->timer > 1 ) vw->timer--;
+	else if( vw->timer == 1 ) {
+		vw->timer 	= 0;
+		vw->redraw 	= true;
+	}
+	
+	// Cast variable to every posible value
+	u8	u8value 	= *(  u8* ) vw->variable;
+	u16	u16value 	= *( u16* ) vw->variable;
+	u32	u32value 	= *( u32* ) vw->variable;
+	u32 last_value	= vw->last_value;
+	
+	// Only let updation when variable value has change
+	if( ( vw->last_value == u32value ) && !( vw->redraw ) ) return;
+	
+	// Begin redraw / update 
+	vw->redraw = false;
+	
+	bool 	alt_color 	= vw->timer > 0;
+	int 	pos_x 		= 16;
+	int 	pos_y 		= 16 - ( index * 4 );
+	int 	width 		= 10;
+	int 	height 		=  4; 
+
+	// Draw Watch Window Frame
+	drawFrame( pos_x, pos_y, width, height, vw->name, vw->size, alt_color);
+	
+	// Draw variable representation, indicating when it changes
+	if( watch_hex ){
+		switch( vw->size ){
+			case 8:
+				// Print binary representation
+				NIBBLE(				pos_x + 1		, pos_y+1	,  	alt_color ? color_bef : color_hex 	, last_value >> 4 	);
+				NIBBLE(				pos_x + 3		, pos_y+1	,  	alt_color ? color_bef : color_hex 	, last_value		);
+				NIBBLE(				pos_x + 1		, pos_y+2	,  	alt_color ? color_aft : color_hex 	, u8value >> 4		);
+				NIBBLE(				pos_x + 3		, pos_y+2	,  	alt_color ? color_aft : color_hex 	, u8value			);
+				// Print 0x
+				gpu.set( 2, 		pos_x + width-3 , pos_y+1 	,((	alt_color ? color_bef : color_hex 	) << 12 ) | 0xB4	);
+				gpu.set( 2, 		pos_x + width-3 , pos_y+2 	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
+				// Print Hexadecimal representation 
+				HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+1	,  	alt_color ? color_bef : color_hex 	, last_value		);
+				HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+2	,  	alt_color ? color_aft : color_hex 	, u8value			);
+				break;
+			case 16:
+				// Print 0x
+				gpu.set( 2, 		pos_x + width-4	, pos_y+1	,((	alt_color ? color_bef : color_hex 	) << 12 ) | 0xB4	);
+				gpu.set( 2, 		pos_x + width-4	, pos_y+2	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
+				// Print Hexadecimal representation 
+				HEXADECIMAL_DOUBLE(	pos_x + width-3	, pos_y+1	,   alt_color ? color_bef : color_hex 	, last_value >> 8	);
+				HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+1	,   alt_color ? color_bef : color_hex 	, last_value		);
+				HEXADECIMAL_DOUBLE(	pos_x + width-3	, pos_y+2	,   alt_color ? color_aft : color_hex 	, u16value >> 8		);
+				HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+2	,   alt_color ? color_aft : color_hex 	, u16value			);
+				break;
+			case 32:
+			case 64:
+				// Print 0x
+				gpu.set( 2, 		pos_x + width-6	, pos_y+1	,((	alt_color ? color_bef : color_hex 	) << 12 ) | 0xB4	);
+				gpu.set( 2, 		pos_x + width-6	, pos_y+2	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
+				// Print Hexadecimal representation 
+				HEXADECIMAL_DOUBLE(	pos_x + width-5	, pos_y+1	,   alt_color ? color_bef : color_hex 	, last_value >> 24	);
+				HEXADECIMAL_DOUBLE(	pos_x + width-4	, pos_y+1	,   alt_color ? color_bef : color_hex 	, last_value >> 16	);
+				HEXADECIMAL_DOUBLE(	pos_x + width-3	, pos_y+1	,   alt_color ? color_bef : color_hex 	, last_value >>  8	);
+				HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+1	,   alt_color ? color_bef : color_hex 	, last_value		);
+				HEXADECIMAL_DOUBLE(	pos_x + width-5	, pos_y+2	,   alt_color ? color_aft : color_hex 	, u32value >> 24	);
+				HEXADECIMAL_DOUBLE(	pos_x + width-4	, pos_y+2	,   alt_color ? color_aft : color_hex 	, u32value >> 16	);
+				HEXADECIMAL_DOUBLE(	pos_x + width-3	, pos_y+2	,   alt_color ? color_aft : color_hex 	, u32value >>  8	);
+				HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+2	,   alt_color ? color_aft : color_hex 	, u32value 			);
+				break;
+		}
+	} else {
+		if( vw->size == 8 ){
+			DECIMAL_DOUBLE(	pos_x + width - 2, pos_y + 1, alt_color ? color_bef : color_dec , vw->last_value	);
+			DECIMAL_DOUBLE(	pos_x + width - 2, pos_y + 2, alt_color ? color_aft : color_dec , u8value			);
+		} else if( vw->size == 16 ){
+			DECIMAL_DOUBLE(	pos_x + width - 2, pos_y + 1, alt_color ? color_bef : color_dec , vw->last_value	);
+			DECIMAL_DOUBLE(	pos_x + width - 2, pos_y + 2, alt_color ? color_aft : color_dec , u16value			);
+		} else {
+			number( pos_x + width - 5 , pos_y + 1 , vw->last_value	, alt_color ? color_bef : color_dec );
+			number( pos_x + width - 5 , pos_y + 2 , u32value		, alt_color ? color_aft : color_dec );
+		}
+	}
+	
+	// If value of the var has changed since last iteration, update its value and increase redraw timer
+	if(	vw->last_value != u32value ){
+		
+		vw->timer = 0x7FF;
+		
+		if( step_by_step )while( !KEY.down( KEY_SELECT )) {
+			KEY.update();
+		}
+		
+		vw->last_value 	= u32value;
+		vw->redraw 		= true;
+	}
+}	
 
 void Debug::runTests(){
 	//error(0xCAFECAFE, true);
@@ -104,119 +394,6 @@ void Debug::ascii( u8 x, u8 y, const char *data, u8 color ){
 	}
 }
 
-void Debug::watch( const char *varname	, u8 var 	 ){ 	watch(varname, var,  8); }
-void Debug::watch( const char *varname	, u16 var 	 ){		watch(varname, var, 16); }
-void Debug::watch( const char *varname	, u32 var 	 ){ 	watch(varname, var, 32); }
-void Debug::watch( const char *varname	, size_t var ){ 	watch(varname, var, 64); }
-
-void Debug::watch( const char *varname	, u32 var 	 , u8 size){
-	if( color_timer > 1 ) color_timer--;
-	else if( color_timer == 1 ) {
-		color_timer = 0;
-		redraw = true;
-	}
-	
-	if( ( last_var == var ) && !redraw ) return;
-	bool alt_color = color_timer > 0;
-	redraw = false;
-	int pos_x 	= 20;
-	int pos_y 	= 16;
-	int width 	= 10;
-	int height 	=  4; 
-
-	watch_name = varname;
-	watch_size = size;
-	
-	
-	
-	u16 border 	  = ( ( step_by_step 	? COLOR_DARK_RED 	: ( step_by_step ? COLOR_DARK_RED : watch_hex ? COLOR_BROWN : COLOR_DARK_BLUE)	) << 12 );
-	u16 primary   = ( ( alt_color 		? COLOR_DARK_RED	: ( step_by_step ? COLOR_DARK_RED : watch_hex ? COLOR_BROWN : COLOR_DARK_BLUE)	) << 12 );
-	u16 secondary = ( ( alt_color 		? COLOR_DARK_GREEN	: ( step_by_step ? COLOR_DARK_RED : watch_hex ? COLOR_BROWN : COLOR_DARK_BLUE)	) << 12 );
-	
-	for(int y=0; y < height; y++){
-		for(int x=0; x < width; x++){
-
-			if( y == 1 ) gpu.set( 0, pos_x + x, pos_y + y, primary  	| 0x0D );
-			else 
-			if( y == 2 ) gpu.set( 0, pos_x + x, pos_y + y, secondary 	| 0x0D );
-			gpu.set( 1, pos_x + x, pos_y + y, 0x100);
-			gpu.set( 2, pos_x + x, pos_y + y, 0x100);
-
-			if( ( x != 0 ) && ( y != 0 ) && ( x != width - 1 ) && ( y != height - 1 ) ) continue;
-			gpu.set( 0, pos_x + x, pos_y + y, border | 0x10);
-			gpu.set( 1, pos_x + x, pos_y + y, 0x100);
-			gpu.set( 2, pos_x + x, pos_y + y, 0x100);
-		}		
-	}
-	
-	ascii ( 			14, pos_y			, varname		, COLOR_WHITE		);
-	DECIMAL_DOUBLE(pos_x+1, pos_y+height-1	, COLOR_YELLOW	, size				);
-	ascii(  			15, pos_y+height-1	, "bits"		, COLOR_CYAN 		);
-	
-	
-	u16 color_hex = COLOR_ORANGE;
-	u16 color_dec = COLOR_WHITE;
-	u16 color_bef = COLOR_RED;
-	u16 color_aft = COLOR_GREEN;
-	
-	if( watch_hex ){
-		switch(size){
-			case 8:
-				NIBBLE(				pos_x + 1		, pos_y+1	,  	alt_color ? color_bef : color_hex 	, last_var >> 4		);
-				NIBBLE(				pos_x + 3		, pos_y+1	,  	alt_color ? color_bef : color_hex 	, last_var			);
-				gpu.set( 2, 		pos_x + width-3 , pos_y+1 	,((	alt_color ? color_bef : color_hex 	) <<12) | 0xB4		);
-				HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+1	,  	alt_color ? color_bef : color_hex 	, last_var			);
-				NIBBLE(				pos_x + 1		, pos_y+2	,  	alt_color ? color_aft : color_hex 	, var >> 4			);
-				NIBBLE(				pos_x + 3		, pos_y+2	,  	alt_color ? color_aft : color_hex 	, var 				);
-				gpu.set( 2, 		pos_x + width-3 , pos_y+2 	,((	alt_color ? color_aft : color_hex 	) <<12) | 0xB4		);
-				HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+2	,  	alt_color ? color_aft : color_hex 	, var 				);
-				break;
-			case 16:
-				gpu.set( 2, 		pos_x + width-4	, pos_y+1	,((	alt_color ? color_bef : color_hex 	) <<12 ) | 0xB4		);
-				HEXADECIMAL_DOUBLE(	pos_x + width-3	, pos_y+1	,   alt_color ? color_bef : color_hex 	, last_var	>> 8	);
-				HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+1	,   alt_color ? color_bef : color_hex 	, last_var			);
-				gpu.set( 2, 		pos_x + width-4	, pos_y+2	,((	alt_color ? color_aft : color_hex 	) <<12 ) | 0xB4		);
-				HEXADECIMAL_DOUBLE(	pos_x + width-3	, pos_y+2	,   alt_color ? color_aft : color_hex 	, var 		>> 8	);
-				HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+2	,   alt_color ? color_aft : color_hex 	, var 				);
-				break;
-			case 32:
-			case 64:
-				gpu.set( 2, 		pos_x + width-6	, pos_y+1	,((	alt_color ? color_bef : color_hex 	) <<12 ) | 0xB4		);
-				HEXADECIMAL_DOUBLE(	pos_x + width-5	, pos_y+1	,   alt_color ? color_bef : color_hex 	, last_var	>> 24	);
-				HEXADECIMAL_DOUBLE(	pos_x + width-4	, pos_y+1	,   alt_color ? color_bef : color_hex 	, last_var	>> 16	);
-				HEXADECIMAL_DOUBLE(	pos_x + width-3	, pos_y+1	,   alt_color ? color_bef : color_hex 	, last_var	>> 8	);
-				HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+1	,   alt_color ? color_bef : color_hex 	, last_var			);
-				gpu.set( 2, 		pos_x + width-6	, pos_y+2	,((	alt_color ? color_aft : color_hex 	) <<12 ) | 0xB4		);
-				HEXADECIMAL_DOUBLE(	pos_x + width-5	, pos_y+2	,   alt_color ? color_aft : color_hex 	, var 		>> 24	);
-				HEXADECIMAL_DOUBLE(	pos_x + width-4	, pos_y+2	,   alt_color ? color_aft : color_hex 	, var 		>> 16	);
-				HEXADECIMAL_DOUBLE(	pos_x + width-3	, pos_y+2	,   alt_color ? color_aft : color_hex 	, var 		>> 8	);
-				HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+2	,   alt_color ? color_aft : color_hex 	, var 				);
-				break;
-		}
-	} else {
-		switch(size){
-			case 8:
-				DECIMAL_DOUBLE(pos_x+width-2, pos_y+1, alt_color ? color_bef : color_dec, last_var);
-				DECIMAL_DOUBLE(pos_x+width-2, pos_y+2, alt_color ? color_aft : color_dec, var 	);
-				break;
-			case 32:
-			case 64:
-			case 16:
-				number( pos_x+width-5	, pos_y+1	, last_var	, alt_color ? color_bef : color_dec );
-				number( pos_x+width-5	, pos_y+2	, var		, alt_color ? color_aft : color_dec );
-		}
-	}
-	
-	
-	if(	last_var != var){
-		color_timer = 0xFFF;
-		if( step_by_step )
-		while( !KEY.down( KEY_START )) KEY.update();
-		last_var = var;
-		redraw = true;
-	}
-}
-	
 void Debug::panic( const char *message, u32 *pointer){
 	clear( COLOR_BLUE );
 	Debug::bigString(9, 0, "KERNEL PANIC");
@@ -272,7 +449,13 @@ void Debug::error( int error_code, bool recoverable ){
 	*(u32*)(BG_PALETTE+16) = 0x00000000;
 	
 	// Clear screen
-	clear();
+	for(int x=0; x<30; x++){
+		for(int y=0; y<6; y++){
+			gpu.set( 0	, x	, y , 0 );
+			gpu.set( 1	, x	, y , 0x0000);
+			gpu.set( 2	, x	, y , 0x00FC);
+		}
+	}
 	
 	// Select corresponding error color
 	u16 color = recoverable ? 0x03E0 : 0x001F; 
@@ -283,7 +466,7 @@ void Debug::error( int error_code, bool recoverable ){
 	
 	// Draw guru rectangle
 	for( int x=1; x < 29 ; x++ ){
-		for( int y=1; y <  6 ; y++ ){
+		for( int y=1; y <  7 ; y++ ){
 			gpu.set( 1	,  0, y, 0x67);
 			gpu.set( 1	,  x, 0, 0x68);
 			gpu.set( 1	,  x, 6, 0x6A);
@@ -299,12 +482,14 @@ void Debug::error( int error_code, bool recoverable ){
 	if(!recoverable)
 		ascii(  2, 2, "Software Failure.    Press START to restart GBA.", COLOR_CYAN );
 	else 
-		ascii(  2, 2, "Software Failure.    Press B button to continue.", COLOR_CYAN );
-	ascii(  4, 4, "Guru Meditation ", COLOR_CYAN );
-	gpu.set(2, 14, 4, (COLOR_CYAN <<12) | 0x2D );
-	hexnum( 15, 4, error_code		, COLOR_CYAN );
+		ascii(  2, 2, "Breakpoint raised.   Press B button to continue.", COLOR_CYAN );
+	ascii(  5, 4, "Guru Meditation ", COLOR_CYAN );
+	gpu.set(2, 16, 4, (COLOR_CYAN <<12) | 0x2D );
+	HEXADECIMAL_DOUBLE( 17, 4, COLOR_CYAN , error_code>>24);
+	HEXADECIMAL_DOUBLE( 18, 4, COLOR_CYAN , error_code>>16);
 	gpu.set(2, 19, 4, (COLOR_CYAN <<12) | 0x2C );
-	hexnum( 20, 4, error_code		, COLOR_CYAN );
+	HEXADECIMAL_DOUBLE( 20, 4, COLOR_CYAN , error_code>>8);
+	HEXADECIMAL_DOUBLE( 21, 4, COLOR_CYAN , error_code	 );
 
 	while(1){
 		// Palette blink
@@ -314,7 +499,14 @@ void Debug::error( int error_code, bool recoverable ){
 		}
 		if( recoverable){
 			if( KEY.down( KEY_B ) ){
-				clear();
+				while( !KEY.up( KEY_B ) ){ KEY.update(); };
+				for(int x=0; x<30; x++){
+					for(int y=0; y<7; y++){
+						gpu.set( 0	, x	, y , 0 );
+						gpu.set( 1	, x	, y , 0x0000);
+						gpu.set( 2	, x	, y , 0x00FC);
+					}
+				}			
 				gpu.loadPalette();
 				return;
 			}
@@ -385,9 +577,9 @@ void Debug::string( u8 x, u8 y, const char *data, u8 color ){
 	for(int i=x, l=x+strlen(data), c = 0; i<l; i++){
 		char d = ( ( *data >= 'a' ) && ( *data <= 'z' ) ) ? *data - OFFSET : *data;
 		if( ( d >= '0' ) && ( d <= '9' ) ) 
-			c = debug_colors[ color&0xf][ 1 ] | ( d - 0x30);
+			c = colors[ color&0xf][ 1 ] | ( d - 0x30);
 		else 
-			c = debug_colors[ color&0xf ][ 0 ] | TABLE_TEXT[ d - 0x41 ][ 0 ];
+			c = colors[ color&0xf ][ 0 ] | TABLE_TEXT[ d - 0x41 ][ 0 ];
 		if( data[0] != ' ' ) gpu.set(2, i, y, c );
 		data++;
 	}
@@ -485,5 +677,6 @@ void Debug::updateMemory	( RegionHandler* rh 								){}
 void Debug::updateWatch		( 													){}
 void Debug::updateMemTest  	( RegionHandler* rh 								){}
 void Debug::memoryTest		( Control* c, bool bigstep, bool add, u32* pointer 	){}
+void Debug::watchArray		( 													){}
 	
 #endif

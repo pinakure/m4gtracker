@@ -75,6 +75,8 @@ int main(void){
 			if(!lock) { lock = true; continue; }							
 			sys.update();			
 			regHnd.update(1);
+			DEBUG_UPDATE();
+			regHnd.new_region = false;
 		};
 	}
 	return 0;

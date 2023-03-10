@@ -215,7 +215,7 @@ void overloadTest(RegionHandler &regHnd);
 
 void Sys::update(){
 	
-	DEBUG_UPDATE();
+	//DEBUG_UPDATE();
 	
 	Sequencer::update();	
 	KEY.update();

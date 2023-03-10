@@ -7,7 +7,8 @@ u8 	Clipboard::x;
 u8 	Clipboard::y;			
 u8 	Clipboard::width;	
 u8 	Clipboard::height;
-u8 	Clipboard::type;
+u8 	Clipboard::type;	// current type
+u8 	Clipboard::content;	// last type
 u8 	Clipboard::columns;
 u8 	Clipboard::rows;
 // u8 	Clipboard::column;
@@ -87,10 +88,11 @@ void Clip::copy(){
 		Notifier::icon( 0x7051, 0x00A2);
 		return;
 	}
+	
 	Clipboard::columns 	= Clipboard::width;
 	Clipboard::rows		= Clipboard::height+1;
 	Clipboard::type 	= 0x0000;
-	WATCH( Clipboard::rows );
+	
 	if(AT_TRACKER_SCREEN){
 		for(int i = Clipboard::x; i<Clipboard::x+Clipboard::width; i++){
 			switch( i ){
@@ -113,16 +115,19 @@ void Clip::copy(){
 			if( Clipboard::type & CLIPDATA_NOTE			) Clipboard::data[pos+0] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ Clipboard::y + y ];
 		}
 		
+		
 	} else {
 		
 		// Copy pattern data
-		for( int y = Clipboard::y; y < Clipboard::y + Clipboard::height; y++ ){
-			int pos = ( y * 6 );
-			for( int x = Clipboard::x; x < Clipboard::x + Clipboard::width; x++ ){
-				Clipboard::data[ pos + x ] = VAR_PATTERN[ x ].ORDER[ y ]; 
+		for( int x = 0; x < Clipboard::columns; x++ ){
+			for( int y = 0; y < Clipboard::rows; y++ ){
+				int pos = ( y * 6 ) + Clipboard::x;
+				// Clipboard::data[ pos + x ] = VAR_PATTERN[ Clipboard::x + x ].ORDER[ y ]; 
+				Clipboard::data[ pos + x ] = VAR_SONG.PATTERNS[ Clipboard::x + x ].ORDER[ VAR_CFG.ORDERPOSITION + Clipboard::y + y ];
 			}
 		}
 	}
+	Clipboard::content = Clipboard::type;
 	Notifier::icon( 0x7051, 0x00A3 );
 }
 
@@ -132,6 +137,25 @@ void Clip::cut(){
 		return;
 	}
 	Notifier::icon( 0x7050, 0x00A3);
+	
+	copy();
+
+	if( AT_TRACKER_SCREEN ){
+		
+		for(int y = 0; y < Clipboard::rows; y++){
+			u16 rpos = ( y * 6 );
+			u8 wpos = (Clipboard::y + y) & 0xF;
+			if( Clipboard::content & CLIPDATA_VALUE 		) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VAL[ wpos ] = 0x00;
+			if( Clipboard::content & CLIPDATA_COMMAND 		) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].CMD[ wpos ] = 0x00;
+			if( Clipboard::content & CLIPDATA_VOLUME 		) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VOL[ wpos ] = 0x00;
+			if( Clipboard::content & CLIPDATA_INSTRUMENT	) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].INS[ wpos ] = 0x00;
+			if( Clipboard::content & CLIPDATA_NOTE			) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ wpos ] = 0x00;
+		}
+		
+		Tracker::copyChannel( TRACKER_ACTIVE_CHANNEL );
+		return;
+	}
+	
 }
 
 void Clip::paste(){
@@ -141,8 +165,8 @@ void Clip::paste(){
 		Notifier::icon( 0x3054, 0x3058, 0x00A2);
 		return;
 	}
-	if( ((!Clipboard::type == CLIPDATA_PATTERN) && AT_TRACKER_SCREEN ) ||
-		((!Clipboard::type != CLIPDATA_PATTERN) && !AT_TRACKER_SCREEN ) ){
+	if( ((Clipboard::content == CLIPDATA_PATTERN) &&  AT_TRACKER_SCREEN ) ||
+		((Clipboard::content != CLIPDATA_PATTERN) && !AT_TRACKER_SCREEN ) ){
 		// Cannot paste, clipboard data type is incorrect for this screen ( buffer is shared )
 		Notifier::icon( 0x3054, 0x3058, 0x00A2);
 		return;
@@ -154,20 +178,29 @@ void Clip::paste(){
 	if( AT_TRACKER_SCREEN ){
 		
 		for(int y = 0; y < Clipboard::rows; y++){
-			int rpos = ( y * 6 );
-			int wpos = (Clipboard::y + y) & 0xF;
-			if( Clipboard::type & CLIPDATA_VALUE 		) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VAL[ wpos ] = Clipboard::data[ rpos + 4 ];
-			if( Clipboard::type & CLIPDATA_COMMAND 		) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].CMD[ wpos ] = Clipboard::data[ rpos + 3 ];
-			if( Clipboard::type & CLIPDATA_VOLUME 		) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VOL[ wpos ] = Clipboard::data[ rpos + 2 ];
-			if( Clipboard::type & CLIPDATA_INSTRUMENT	) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].INS[ wpos ] = Clipboard::data[ rpos + 1 ];
-			if( Clipboard::type & CLIPDATA_NOTE			) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ wpos ] = Clipboard::data[ rpos + 0 ];
+			u16 rpos = ( y * 6 );
+			u8 wpos = (Clipboard::y + y) & 0xF;
+			if( Clipboard::content & CLIPDATA_VALUE 		) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VAL[ wpos ] = Clipboard::data[ rpos + 4 ];
+			if( Clipboard::content & CLIPDATA_COMMAND 		) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].CMD[ wpos ] = Clipboard::data[ rpos + 3 ];
+			if( Clipboard::content & CLIPDATA_VOLUME 		) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VOL[ wpos ] = Clipboard::data[ rpos + 2 ];
+			if( Clipboard::content & CLIPDATA_INSTRUMENT	) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].INS[ wpos ] = Clipboard::data[ rpos + 1 ];
+			if( Clipboard::content & CLIPDATA_NOTE			) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ wpos ] = Clipboard::data[ rpos     ];
 		}
-		WATCH(Clipboard::data[8]);
+		
 		Tracker::copyChannel( TRACKER_ACTIVE_CHANNEL );
+		
 		return;
 	}
 	
 	// PATTERN PASTE
+	for( int x = 0; x < Clipboard::columns; x++ ){
+		for( int y = 0; y <  Clipboard::rows; y++ ){
+			int pos = ( y * 6 ) + Clipboard::x;
+			VAR_SONG.PATTERNS[ Clipboard::x + x ].ORDER[ VAR_CFG.ORDERPOSITION + Clipboard::y + y ] = Clipboard::data[ pos + x ]; 
+		}
+	}
+	PatEdit::sync();
+
 }
 
 void Clip::clone(){
@@ -200,6 +233,13 @@ void Clip::clone(){
 	}	
 
 	// PATTERN CLONE
+	for( int x = 0; x < Clipboard::columns; x++ ){
+		for( int y = 0; y < Clipboard::rows; y++ ){
+			int pos = ( y * 6 ) + Clipboard::x;
+			VAR_SONG.PATTERNS[ Clipboard::x + x ].ORDER[ VAR_CFG.ORDERPOSITION + Clipboard::y + y + Clipboard::rows] = Clipboard::data[ pos + x ]; 
+		}
+	}
+	PatEdit::sync();
 }
 
 void Clip::show(){

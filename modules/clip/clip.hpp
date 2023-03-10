@@ -28,10 +28,9 @@ typedef struct sClipboard {
 	static u8 	width;	
 	static u8 	height;
 	static u8	type;
+	static u8	content;	// last type
 	static u8 	columns; 	// How many data columns are currently on clipboard 
 	static u8 	rows;		// How many data rows are currently on clipboard 
-	// static u8   column;		// Initial data 	
-	// static u8   row;		// 
 } Clipboard;
 
 class Notifier {
