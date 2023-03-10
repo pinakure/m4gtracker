@@ -569,6 +569,16 @@ void InstEdit::synchronize(){
 
 void InstEdit::dispatchMessage(u32 msg) {
 	switch(msg) {
+		
+		case MESSAGE_CANCEL:			
+			regHnd.controlClear	( regHnd.control );
+			repack();//dispatchMessage		( MESSAGE_OTHER_REFRESH_DATA );
+			break;
+		
+		case MESSAGE_OTHER_REFRESH_DATA:
+			repack();
+			break;
+		
 		case MESSAGE_OTHER_PREV:// B + <-
 			VAR_CFG.CURRENTINSTRUMENT--;
 			VAR_CFG.CURRENTINSTRUMENT &= 0x3f;

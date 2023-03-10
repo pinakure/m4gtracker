@@ -12,6 +12,30 @@
 #define REG_BG2 *(u16*)0x400000C
 #define REG_BG3 *(u16*)0x400000E
 
+void rotateGfx(){
+	static u32 bigIndex = 0;
+	static u8 index = 3;
+	#define ROWSIZE 		(16*32)
+	#define FONTSIZE 		(ROWSIZE * 3)
+	
+	//#define CYCLEPOS 		CHAR_BASE0_ADDR+(ROWSIZE*4)
+	#define CYCLEPOS 		CHAR_BASE0_ADDR+(ROWSIZE*4)
+	#define CYCLEPOS1 		CYCLEPOS+(index*32)
+	#define CYCLEPOS2 		CYCLEPOS+(32*6)+(index*32)
+	#define CYCLEBAK		CHAR_BASE0_ADDR+(ROWSIZE*10)
+	if(bigIndex < 50) bigIndex++; else {
+		// Draw M4G logo
+		DmaCopy(3, CYCLEPOS1, CYCLEBAK , 32, 16);
+		DmaCopy(3, CYCLEPOS2, CYCLEPOS1, 32, 16);
+		DmaCopy(3, CYCLEBAK , CYCLEPOS2, 32, 16);
+	
+		index++;
+		if(index == 6)index=0;
+
+		bigIndex = 0x0;
+	}
+}
+
 void LookNFeel::logoFade(){
 	int freeze=0;
 	REG_BG0 |= 0x0040;
@@ -50,6 +74,7 @@ void LookNFeel::logoFade(){
 				*(u8*)(BG_PALETTE+(i*0x8)+0x04) = 0xFFFF-c1;
 			}		
 		}
+			rotateGfx();
 	}
 	if( VAR_CFG.LOOKNFEEL.STARTUPSFX ) Mixer::stop();
 	
@@ -70,12 +95,7 @@ void LookNFeel::logoWait(){
 		if( KEY.activity() ) {
 			break;
 		}
-		/*
-		for(int i=0;i<16;i++) {
-			*(u16*)(BG_PALETTE+(i*0x20))		 =	Palette[(i+freeze)&0xFF];
-			*(u16*)(BG_PALETTE+(i*0x20)+0x10)	 =	Palette[((i+freeze)+i*0x2)&0xFF];
-		}*/
-		 
+		rotateGfx(); 
 		freeze++;
 	}
 	gpu.loadPalette();
@@ -92,30 +112,8 @@ void LookNFeel::init(){
 void LookNFeel::update( RegionHandler* rh ){
 	static u8 lastBorder = VAR_CFG.LOOKNFEEL.BORDER;
 	static u8 lastFont = VAR_CFG.LOOKNFEEL.FONT;
-	static u32 bigIndex = 0;
-	static u8 index = 3;
 	
-	#define ROWSIZE 		(16*32)
-	#define FONTSIZE 		(ROWSIZE * 3)
-	
-	//#define CYCLEPOS 		CHAR_BASE0_ADDR+(ROWSIZE*4)
-	#define CYCLEPOS 		CHAR_BASE0_ADDR+(ROWSIZE*4)
-	#define CYCLEPOS1 	CYCLEPOS+(index*32)
-	#define CYCLEPOS2 	CYCLEPOS+(32*6)+(index*32)
-	#define CYCLEBAK		CHAR_BASE0_ADDR+(ROWSIZE*10)
-	if(bigIndex < 100) { bigIndex++; } else {
-		// Draw M4G logo
-		DmaCopy(3, CYCLEPOS1, CYCLEBAK, 32, 16);
-		DmaCopy(3, CYCLEPOS2, CYCLEPOS1, 32, 16);
-		DmaCopy(3, CYCLEBAK, CYCLEPOS2, 32, 16);
-	
-		index++;
-		if(index == 6)index=0;
-		
-		
-		
-		bigIndex = 0x0;
-	}
+	rotateGfx();
 	
 	// Reload HUD style
 	if((VAR_CFG.LOOKNFEEL.BORDER != lastBorder)||(VAR_CFG.RELOADSKIN)){

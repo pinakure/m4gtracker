@@ -1,0 +1,285 @@
+M4GEEK01 Project
+Technical Whitepaper
+August, 2015. M4Geek Ltd. All Rights Reserved
+---------------------------------------------
+M4GEEK01 is the codename used to refer M4GTracker (M4G from now on) which is a piece of 
+software, aimed to be run on portable gaming devices with Game Boy Advance software or 
+hardware emulation, or in native consoles in best case, and provides a Minimalistic Digital 
+Audio Workstation, with an interface optimized to run under GBA restrictions, and using its
+sound engine. The project includes a VM based compile flow, it has a solid toolchain system,
+designed to make it easy to mantain, foreseen any design issue that could raise in the code
+stage, so modifying a map source file does not involve additional coding, but automatically
+updating the code, so this is also a IDE intent, seen from another prism.
+
+-----------------------------
+DEMO VERSION FEATURE OVERVIEW
+-----------------------------
+* 16 steps max, 6 channels, each of one can run an independent pattern (only sharing tempo)
+* 2 tracker interfaces: compressed channels (full-view), or all channels expanded,scrolling
+* Alterations, can be shown as hashes or as 'bemol'
+* Two live modes, to insert fx on a song, alter it somehow (ie.vibrato), or piano roll
+* Realtime sound visualization using on screen vumeters
+* Clipboard: clone, copy and paste blocks of data, on song, pattern, or tracker fields
+* Complex instruments for each one of the channels, and command tables for every channel
+* OnScreen Help viewer, to fully understanding the software from the first day
+* Classic tracker effects (arpeggio, vibrato, legato) and some exclusive to some channels
+* Classic pulse & noise, hardware envelope based instruments, with frequency sweep on some
+* AM modulation capabilities and read-only presets to quickly setup the WAV sound channel
+* FM modulation cababilities and up to four read-only operators, on DSOUND1 channel
+* 32x32 dot matrix, cool for waveform and envelope display
+* Triggerable DPCM Sample kits on DSOUND2 channel
+* Can use a modified IBM Keyboard plugged on the link port as a 'piano' interface 
+* Persistent configuration choices
+* MIDI capabilities via the link cable interface
+* Cooperative execution with another instance of the program, via link cable interface
+* A snake minigame
+
+---------------------
+FULL VERSION FEATURES
+---------------------
+* Every feature included in demo version 
+* Customizable rom contents, using a tool (GNU & Win32) able to update the final rom file
+  Modificable things:
+  + WAV CHANNEL -> Presets
+  + SMP CHANNEL -> Modificable sample kits
+  + STARTING LOGO->Data / Map (customizable boot)
+  + HUD -> You can alter the hud tiles (4 skins available)
+  + FONTS -> You can add your own fonts too (5 font slots available)
+  + PALETTE->You can alter the palette of the game
+  + CRASH -> You can replace the crash screen, but you might not see it many times...
+* Instrument / Pattern / Song manager tool (GNU & Win32)
+* Support for up to 6 songs stored in SRAM memory (full version only)
+
+----------------
+TOOL DESCRIPTION
+----------------
+Some tools have been done exclusively for M4G. Although there shouldn't be any need to call 
+them manually, unless the compile script requested it, knowing about their presence may be 
+useful in certain cases. Here goes a brief description of them.
+
+* HELPCODER
+	Helpcoder tool is designed to convert special markup language files, into includable H
+	files, that are used by the OnScreen Help System in rom. This tool looks for special
+	color tags, hyperlinks and character escapes, to build a suitable object file, which is 
+	involved later in the program compile cycle, named as 'help.h'.
+	
+* M4GTOOL
+	M4GTool is an application of the UGE engine, which provides conversion methods used to 
+	obtain C header files with tilesets used in each layer, layer map data, and extracts
+	region sets, controllers and displays, while it defines where are the 'visible' screens
+	located in each map. Program uses 4 64x64 maps, so this tool needs to be called four
+	times, to update the variable source code and the gfx for the program. 
+	It also can be invoked without arguments but the map filename, to load it and watch
+	how the three layers overlap, and how the colors apply, which is a very useful feature, 
+	since it avoids the need of recompiling the map data before checking everything is ok, 
+	so the gba test process is reduced here.
+	
+* M4GNAGER
+	M4GNager is a program available solely to Registered users. It provides an interface to
+	alter the savegame data to extract/insert patterns, songs, samples or instruments, and 
+	rom data, so it can alter the samples encoded on the rom, the presets or alter general 
+	appearance of the program. It's coded in Java due to compatibility reasons.
+
+-------------------
+COMPILING THE TOOLS
+-------------------
+They use the same build script as UGE, the only requirement to start compiling them is to 
+decompress them directly under C:\toolchain, since it is preconfigured to look for binary
+files (including m4gtool, m4gnager and helpcoder), headers and libraries there.
+From that point, everything should work simply running C:\toolchain\windows_env.bat
+
+-----------------
+COMPILING THE ROM
+-----------------
+The rom is easier to compile, but requires installing VMPlayer, since this is done under 
+its own isolated system, so it won't interfere with other IDE's or environment variables.
+Simply start the 'M4GTracker Isolated Development System' virtual machine, which will load
+a tweaked windows xp, configured with a shared folder which should reside on C:\sync (host)
+machine, needs to be a shared folder, connected to guest machine using VM shared folders.
+From there, just enter in Z: in guest machine to gain a file bridge between host and guest.
+Source code resides inside the virtual machine to keep it virus & voyeur clean.
+To start compilin, a shorcut on the desktop opens the development environment shell, and 
+simply writing 'make gba' will do the job. To edit the files, notepad++ and tiled 0.13 are
+installed, 'Graphics Gale' to edit the graphics and goldwave for sample editing/converting.
+The makefile should get rid of the intermediate tools, invoking them when needed.
+
+--------------------
+DEVELOPMENT WORKFLOW
+--------------------
+There are 6 diferent stages on the development cycle, and all of them (against the first),
+are automatically done when any source file is modified, when running 'make gba'. Below
+are the stages, briefly explained:
+
+1.-tiled:
+	Screens, cache and dirty zones are placed on tmx files, following the same 
+	structure. The regions are defined as rectangular objects, and explicit properties
+	are set for everyone, so the map describe which cache is vertical/horizontal, 
+	which region is aimed to be directly displayed on the screen by scrolling the 
+	whole layer set or which are gonna be copied there, in conclussion: whats the 
+	use for every used zone on the map. The properties needed by m4gtool to correctly
+	convert data into valid C and H files. This will be explained later.
+
+2.-m4gtool:
+	It is responsible of extracting important data from custom tmx files:
+	- Extract C Headers, specially encoded to fit the gameboy specifications.
+	- Extract the C Code for regions, caches, screens and dirty boxes.
+
+3.-helpcode:
+	Creates 'help.h' from a special hypertext markup language file, which format is
+	described in depth later. It's utility is to convert human documentation in binary
+	gba data, which is converted to readable data in the rom, and provides a net of 
+	help documents built in the depths of M4GTracker.
+		
+4.-gcc-thumb-elf-as:
+	When every data file is encoded, the code start compiling. If any change is done
+	to the crt0.s (the c runtime assembler file), this is automatically called and the
+	new runtime (crt0.o) is linked later.
+	
+5.-gcc-thumb-elf-g++:
+	Classes and code for the program are compiled and linked.
+	
+6.-vba:
+	The program is tested in the emulator. It includes some cool debugging tools, but
+	emulator might switch to NO$GBA now that it has become freeware, since it has a poweful
+	debugger built-in.
+	
+---------------
+TMX SOURCE MAPS
+---------------
+Four 64x64 maps hold the map data used by the 9 navigable screens inside M4GTracker, in 
+the three visible layers. Each one of them can hold different kind of data, like color of 
+the text, background, hud, the path for the tilesets, and metadata compilable into buttons,
+controllers, display areas...etc.
+These maps have a specific, not variable layer structure, which is explained below:
+
+0.-BLACK:
+ 	It just provides a black background to preview the map more accurately.		
+	This layer is discarded during m4gtool stage.
+1.-BG_BG:	
+	Stores the background layer, used sometimes as cursor, highlighting active field, 
+	playback bars, etc. It is required to use here only in_bg
+2.-BG_HUD:	
+	Describes where are the hud lines, single tile vumeters, and dot matrix.
+	As usual, only a tileset can be used here, in_hud
+3.-COLOR:  
+	It uses the final tiles on the in_text tileset, to select a color for the text layer, 
+	but only the first nibble of the tile index will be used on compile time to guess the 
+	palette for the corresponding text tile.
+4.-BG_TEXT:
+	Monochromatic font, one color is transparent, the other one is specified in the COLOR 
+	layer. Note the black is not transparent on the tmx, but it	is indeed when previewing 
+	the map with m4gtool, and on the final ROM too.
+	Tileset in_text can be placed only in this layer, since BG3 is the only	backgroud able 
+	to store 1024 tiles, and this is the only tileset which can be used in this layer.
+5.-ZONES:
+	An object layer, which describes regions, fields, controllers, displays. 
+	The nomenclacy of these objects and their properties are explained below:
+
++---+--------------+---------+-----------------------------------------------------------+
+|MAP|     NAME     | GEOMETR |                       PROPERTIES                          |
++---+--------------+---------+-----------------------------------------------------------+
+| 	| SCREEN_LIVE1 |  30x20  | navigation, origin, dirtySize, dirtyOrigin, 
+| A	| SCREEN_LIVE2 |  30x20  |
+|	| SCREEN_HELP  |  30x20  |
++---+--------------+---------+-----------------------------------------------------------+
+|	| SCREEN_INST  |  30x20  |
+| B	| SCREEN_PATT  |  30x20  |
+|	| SCREEN_SONG  |  30x20  |
++---+--------------+---------+-----------------------------------------------------------+
+| C	| SCREEN_TRK   |  30x20  |
++---+--------------+---------+-----------------------------------------------------------+
+| D	| SCREEN_CFG   |  30x20  |
+|	| SCREEN_SNK   |  30x20  |
++---+--------------+---------+-----------------------------------------------------------+
+
+CONTROLLERS
+	The purpose for these is to provide listener objects which monitor the input, and alter
+	some parts of the display depending on the values taken by the variables or registers
+	binded to the controller, showing changes through the displays binded
++------------------+---------------+------------------------------------------------------+
+|       TYPE       |   PROPERTIES  |                     DESCRIPTION                      |
++------------------+---------------+------------------------------------------------------+
+|                  | max,min,wrap, | 32 bit variable controller.                          |
+|                  | inc,dec,clear,| Actions: Inc, Dec, Clear, BigInc, BigDec, Clipboard  |
+|                  | lnext, rnext, |                                                      |
+|  COMMON FOR ALL  | unext, dnext, |                                                      |
+|                  | ljump, rjump, |                                                      |
+|                  | ujump, djump, |                                                      |
+|				   | var, display  |                                                      |
++------------------+---------------+------------------------------------------------------+
+| alphalong		   |               | On ACTION the alphanumeric box dialog pops up, then  |
+|                  |               | it sets the string received as variable's new value. |
++------------------+---------------+------------------------------------------------------+
+| alphatiny        |               | Same as alphalong, but length of the string is tinier|
++------------------+---------------+------------------------------------------------------+
+| word             |               | 32 bit variable controller.                          |
++------------------+---------------+------------------------------------------------------+
+| number           |               | 16 bit variable controller.                          |
++------------------+---------------+------------------------------------------------------+
+| byte             |               | 8 bit variable controller.                           |
++------------------+---------------+------------------------------------------------------+
+| nibble           |               | 4 bit variable controller.                           |
++------------------+---------------+------------------------------------------------------+
+| twobit           |               | 2 bit variable controller.                           |
++------------------+---------------+------------------------------------------------------+
+| boolean          |               | 1 bit variable controller.                           |
++------------------+---------------+------------------------------------------------------+
+
+DISPLAYS
+	These are objects aimed to show special values, such as the values used in the
+	instrument editor fields, configuration options, and practically every graphic which
+	can change depending on a known value. Here are the different types:
+	
++------------------+---------------+------------------------------------------------------+
+|       TYPE       |   PROPERTIES  |                     DESCRIPTION                      |
++------------------+---------------+------------------------------------------------------+
+|                  | x, y, w, h,   |                                                      |
+|  COMMON FOR ALL  | active, redraw|                                                      |
+|                  | cache         |                                                      |
++------------------+---------------+------------------------------------------------------+
+| inputmonitor     |               | Changes text color for its defined zone when binded  |
+|                  | 		       | button is pressed. Dark red text if inactive, bright |
+|                  |               | red text when active. No redraw is performed on value|
+|                  |               | change, just change palette byte.                    |
++------------------+---------------+------------------------------------------------------+
+| dualzone         | vertical      | It is binded to a boolean var, and needs a cache zone|
+|                  |               | being assigned to it. When var = false, half of the  |
+|				   |               | cache zone is copied as display data, same for var=1,|
+|				   |               | but with the next half, it may be horizontal or vert.|
++------------------+---------------+------------------------------------------------------+
+| multizone        | vertical      | Changes BG, HUD, and TEXT layers, depending on var's |
+|                  | elementsize   | value, slicing the cache vertically or horizontally, |
+|                  |               | then copying the data to the display zone.           |
++------------------+---------------+------------------------------------------------------+
+
+
+------------
+EFFECT LIST
+------------
+-	No effect
+A	Volume Slide (SE=Start End)
+B	Break, jump to xx in next pattern (or on H xx value)
+C	Chord 
+D	Note delay (delays trigger xx ticks)
+E	-
+F	Run table from xx intrument
+G	Volume Slide + Keep Legato
+H	Volume Slide + Keep Vibrato
+I	Offset (Envelope / Sample / Table)
+J	Jump To Position (Once)
+K	Kill Note (after xx ticks)
+L	Legato (RS=Rate Speed)	
+M	Set SMP sample (Affects SMP chan from ANY channel!)
+N	Set SMP kit (Affect SMP chan from ANY Channel!)
+O	Output Stereo Channel (LR)
+P	Sweep (00-7F=UP , 80-FF=DOWN)
+Q	Change Loop Mode (Sample)
+R	Retrigger
+S	Speed (Tempo) xx
+T	Tremolo (RS=Rate Speed)
+U	Percent / Modulation Algorithm (Only FM & WAV)
+V	Vibrato(RS=Rate Speed)	
+W	Waveform (PWM, FM & WAV)
+X	Pattern Loop Start (No params)
+Y	Pattern Loop xx Times, and continue
+Z	Midi Macro

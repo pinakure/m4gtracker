@@ -185,6 +185,11 @@ void Tracker::drawLine( int channel ){
 void Tracker::dispatchMessage(u32 msg){
 	switch(msg){
 		
+		case MESSAGE_CANCEL:
+			regHnd.controlClear	( regHnd.control );
+			Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL );	//dispatchMessage		( MESSAGE_OTHER_REFRESH_DATA );
+			return;
+		
 		case MESSAGE_OTHER_REFRESH_DATA:
 			Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL );	
 			return;

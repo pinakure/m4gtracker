@@ -133,13 +133,14 @@ void Clip::copy(){
 
 void Clip::cut(){
 	if( !Clipboard::width ) {
-		Notifier::icon( 0x7051, 0x00A2);
+		Notifier::icon( 0x0, 0x7051, 0x00A2);
 		return;
 	}
-	Notifier::icon( 0x7050, 0x00A3);
-	
+
 	copy();
 
+	Notifier::icon( 0x0, 0x7050, 0x00A3);
+	
 	if( AT_TRACKER_SCREEN ){
 		
 		for(int y = 0; y < Clipboard::rows; y++){
@@ -155,7 +156,18 @@ void Clip::cut(){
 		Tracker::copyChannel( TRACKER_ACTIVE_CHANNEL );
 		return;
 	}
+
+	// Erase pattern data
 	
+	for( int x = 0; x < Clipboard::columns; x++ ){
+		for( int y = 0; y < Clipboard::rows; y++ ){
+			VAR_SONG.PATTERNS[ Clipboard::x + x ].ORDER[ VAR_CFG.ORDERPOSITION + Clipboard::y + y ] = 0x00;
+		}
+		// Ensure position arrows are redrawn if this action causes position to be invalid and move to valid value
+		VAR_CHANNEL[ Clipboard::x + x ].LASTPOSITION = VAR_CHANNEL[ Clipboard::x + x ].POSITION;
+	}
+	// Show changes in screen
+	PatEdit::sync();	
 }
 
 void Clip::paste(){
@@ -196,7 +208,7 @@ void Clip::paste(){
 	for( int x = 0; x < Clipboard::columns; x++ ){
 		for( int y = 0; y <  Clipboard::rows; y++ ){
 			int pos = ( y * 6 ) + Clipboard::x;
-			VAR_SONG.PATTERNS[ Clipboard::x + x ].ORDER[ VAR_CFG.ORDERPOSITION + Clipboard::y + y ] = Clipboard::data[ pos + x ]; 
+			VAR_SONG.PATTERNS[ Clipboard::x + x ].ORDER[ VAR_CFG.ORDERPOSITION + Clipboard::y + y ] = Clipboard::data[ pos + x - Clipboard::x]; 
 		}
 	}
 	PatEdit::sync();

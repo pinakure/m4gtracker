@@ -185,3 +185,7 @@ callbacks/looknfeel.o
 looknfeel.s
 coloreditor.s
 behavior.s
+docs/Thumbs.db
+*.db
+docs/Snaps/1.dia.autosave
+docs/mockup/HEXTILER.EXE

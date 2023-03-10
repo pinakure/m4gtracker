@@ -1,0 +1,134 @@
+===============================================================================
+    M4GEEK01 
+    by Joichiro Nishi a.k.a Smiker
+    M4Geek, 2011
+===============================================================================
+CHANGES LIST
+-------------------------------------------------------------------------------
+1.5.11
+Recovered some source files from the DATA CRASH on M4Geek's data warehouse.
+Almost all the last version's old code is gone. Me may have to recode from the
+beginning if it's neccessary. Considering options...
+-------------------------------------------------------------------------------
+2.5.11
+Started migration of the whole project from CPP + HAMLIB to a lower level code: 
+Naked Cpp + Thumb Assembler. Wish us luck, this is the last and final version,
+but it might be the hardest try, due to the fact there won't be ANY outer help.
+-------------------------------------------------------------------------------
+3.5.11
+Project is running on MVS without HAMLib, and we have just been able to load a
+tileset and a some palettes, interrupts ON too.
+Started GPU development, making wrapper functions for mapload, dynamic tile 
+reloading, palette modification. There isn't any Ham function we can use, so we
+have to design everything from nearly zero.
+-------------------------------------------------------------------------------
+4.5.11
+LoadMap, LoadTileset, and SetTile are working.
+After a lot of hellish trial and errors we have achieved a successful Interrupt
+handler.
+GUI subsystem started.
+-------------------------------------------------------------------------------
+5.5.11
+Basic KeyInput implemented, no uses yet. PrintF implemented. Now we are going 
+to fight against some color macros. Implemented Watch System. 
+PrintF supports colors now. 
+-------------------------------------------------------------------------------
+6.5.11 
+Debug Stop done,Guard system implemented,Breakpoint func added
+-------------------------------------------------------------------------------
+7.5.11
+Added InsertMap function, only for dialog or tiny maps, this is because loadmap
+is faster (10/3 Hblanks respectively).
+Some VIS coded, we have to make more stuff like that :P
+Assert Screen done. Works perfect. 
+-------------------------------------------------------------------------------
+8.5.11
+All the old screen maps were patched. They were a huge task to do manually!
+GUI.SetScreen (Screen Manager) Done.
+Patched Alphabetic Input dialog maps.
+Implemented Dialog Class.
+All Dialog Classes draw correctly. Added some tiles to TXT tileset.
+Added DEBUG_START() and  DEBUG_END()
+-------------------------------------------------------------------------------
+9.5.11
+Reprogramming Interrupt System to add support to Int Handlers in ARM-ASM
+Implemented Keypad Interrupt based Input System (and working nice!!!)
+-------------------------------------------------------------------------------
+10.5.11
+Map Navigation System Implemented.
+-------------------------------------------------------------------------------
+11.5.11
+Global CUR System Implemented.
+Live1 CUR System is working.
+-------------------------------------------------------------------------------
+12.5.11
+Live2 CUR System Working.Keyb func still undone for obvious reason (NO SPU YET)
+Done HELP bytecode.txt. I need it to understand data compiled with helpcode.V_v
+-------------------------------------------------------------------------------
+13.5.11
+Added HELP Class. Rewrite needed tough.
+Full rewrite of helpcode.exe (RHT parser - M4H compiler - Header Exporter) tool
+Increased performance of the help system a lot.
+-------------------------------------------------------------------------------
+14.5.11
+Help Viewer Implemented, navigation left.
+Navigation already done. Finishing docs left. Moving to 1.1.3.5!
+-------------------------------------------------------------------------------
+15.5.11
+Optimized helpmanager redraw.
+Added KeyRepeat Methods.
+Added help topic titles.
+-------------------------------------------------------------------------------
+16.5.11
+Implemented some new tiles, key icons and Special Character support in help.
+Added support for Katakana and Hexadecimal characters on Help Markup Language.
+Added strip parameters to the HML script.
+Completed 4/10 currently defined help pages.
+-------------------------------------------------------------------------------
+17.5.11
+Corrected some help bugs.
+Implemented basic pattern arranger screen. No gui input yet
+-------------------------------------------------------------------------------
+18.5.11
+
+-------------------------------------------------------------------------------
+19.5.11
+
+-------------------------------------------------------------------------------
+20.5.11
+
+-------------------------------------------------------------------------------
+21.5.11
+
+-------------------------------------------------------------------------------
+22.5.11
+
+-------------------------------------------------------------------------------
+23.5.11
+
+-------------------------------------------------------------------------------
+24.5.11
+
+-------------------------------------------------------------------------------
+25.5.11
+
+-------------------------------------------------------------------------------
+26.5.11
+
+-------------------------------------------------------------------------------
+27.5.11
+
+-------------------------------------------------------------------------------
+28.5.11
+
+-------------------------------------------------------------------------------
+29.5.11
+
+-------------------------------------------------------------------------------
+30.5.11
+
+-------------------------------------------------------------------------------
+31.5.11
+
+-------------------------------------------------------------------------------
+DEADLINE TO BETA RELEASE. HURRY UP MOTHERFUCKER!!!

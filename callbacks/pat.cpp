@@ -131,18 +131,18 @@ const Control PAT_CONTROLS[ CONTROL_PAT_MAX ] = {
 	{ 0x18  , 0x11 	, CTL( PATTERNS_F_0C  )	, CTL( PATTERNS_A_0D  ) , CTL( PATTERNS_F_0E  ) , CTL( PATTERNS_E_0D  ) , &CACHE_HEXADECIMAL_TWOTILES	, VAR( 5 , ORDER[ 13 ]  ) , &cb_patterns_5_0D	},  
 	{ 0x18  , 0x12 	, CTL( PATTERNS_F_0D  )	, CTL( PATTERNS_A_0E  ) , CTL( PATTERNS_F_0F  ) , CTL( PATTERNS_E_0E  ) , &CACHE_HEXADECIMAL_TWOTILES	, VAR( 5 , ORDER[ 14 ]  ) , &cb_patterns_5_0E	},  
 	{ 0x18  , 0x13 	, CTL( PATTERNS_F_0E  )	, CTL( PATTERNS_A_0F  ) , CTL( SOLO_RIGHT_00  ) , CTL( PATTERNS_E_0F  ) , &CACHE_HEXADECIMAL_TWOTILES	, VAR( 5 , ORDER[ 15 ]  ) , &cb_patterns_5_0F	},  
-	{ 0x0c  , 0x00 	, CTL( PATTERNS_C_0F  )	, CTL( MUTE_LEFT_00   ) , CTL( SOLO_LEFT_01   ) , CTL( SOLO_RIGHT_00  ) , &CACHE_ARROW_LEFT				, NULL						, &cb_pat_solo_0	},
-	{ 0x0c  , 0x01 	, CTL( SOLO_LEFT_00   )	, CTL( MUTE_LEFT_01   ) , CTL( SOLO_LEFT_02   ) , CTL( SOLO_RIGHT_01  ) , &CACHE_ARROW_LEFT				, NULL						, &cb_pat_solo_1	},
-	{ 0x0c  , 0x02 	, CTL( SOLO_LEFT_01   )	, CTL( MUTE_LEFT_02   ) , CTL( PATTERNS_C_00  ) , CTL( SOLO_RIGHT_02  ) , &CACHE_ARROW_LEFT				, NULL						, &cb_pat_solo_2	},
-	{ 0x0f  , 0x00 	, CTL( PATTERNS_D_0F  )	, CTL( MUTE_RIGHT_00  ) , CTL( MUTE_LEFT_01   ) , CTL( SOLO_LEFT_00   ) , &CACHE_ARROW_LEFT				, NULL						, &cb_pat_mute_0	},
-	{ 0x0f  , 0x01 	, CTL( MUTE_LEFT_00   )	, CTL( MUTE_RIGHT_01  ) , CTL( MUTE_LEFT_02   ) , CTL( SOLO_LEFT_01   ) , &CACHE_ARROW_LEFT				, NULL						, &cb_pat_mute_1	},
-	{ 0x0f  , 0x02 	, CTL( MUTE_LEFT_01   )	, CTL( MUTE_RIGHT_02  ) , CTL( PATTERNS_D_00  ) , CTL( SOLO_LEFT_02   ) , &CACHE_ARROW_LEFT				, NULL						, &cb_pat_mute_2	},
-	{ 0x16  , 0x00 	, CTL( PATTERNS_E_0F  )	, CTL( SOLO_RIGHT_00  ) , CTL( MUTE_RIGHT_01  ) , CTL( MUTE_LEFT_00   ) , &CACHE_ARROW_RIGHT			, NULL 						, &cb_pat_mute_3	},
-	{ 0x16  , 0x01 	, CTL( MUTE_RIGHT_00  )	, CTL( SOLO_RIGHT_01  ) , CTL( MUTE_RIGHT_02  ) , CTL( MUTE_LEFT_01   ) , &CACHE_ARROW_RIGHT			, NULL 						, &cb_pat_mute_4	},
-	{ 0x16  , 0x02 	, CTL( MUTE_RIGHT_01  )	, CTL( SOLO_RIGHT_02  ) , CTL( PATTERNS_E_00  ) , CTL( MUTE_LEFT_02   ) , &CACHE_ARROW_RIGHT			, NULL 						, &cb_pat_mute_5	},
-	{ 0x19  , 0x00 	, CTL( PATTERNS_F_0F  )	, CTL( SOLO_LEFT_00   ) , CTL( SOLO_RIGHT_01  ) , CTL( MUTE_RIGHT_00  ) , &CACHE_ARROW_RIGHT			, NULL 						, &cb_pat_solo_3	}, 
-	{ 0x19  , 0x01 	, CTL( SOLO_RIGHT_00  )	, CTL( SOLO_LEFT_01   ) , CTL( SOLO_RIGHT_02  ) , CTL( MUTE_RIGHT_01  ) , &CACHE_ARROW_RIGHT			, NULL 						, &cb_pat_solo_4	},
-	{ 0x19  , 0x02 	, CTL( SOLO_RIGHT_01  )	, CTL( SOLO_LEFT_02   ) , CTL( PATTERNS_F_00  ) , CTL( MUTE_RIGHT_02  ) , &CACHE_ARROW_RIGHT			, NULL 						, &cb_pat_solo_5	},
+	{ 0x0c  , 0x00 	, CTL( PATTERNS_C_0F  )	, CTL( MUTE_LEFT_00   ) , CTL( SOLO_LEFT_01   ) , CTL( SOLO_RIGHT_00  ) , &CACHE_ARROW_LEFT				, NULL					  , &cb_pat_solo_0		},
+	{ 0x0c  , 0x01 	, CTL( SOLO_LEFT_00   )	, CTL( MUTE_LEFT_01   ) , CTL( SOLO_LEFT_02   ) , CTL( SOLO_RIGHT_01  ) , &CACHE_ARROW_LEFT				, NULL					  , &cb_pat_solo_1		},
+	{ 0x0c  , 0x02 	, CTL( SOLO_LEFT_01   )	, CTL( MUTE_LEFT_02   ) , CTL( PATTERNS_C_00  ) , CTL( SOLO_RIGHT_02  ) , &CACHE_ARROW_LEFT				, NULL					  , &cb_pat_solo_2		},
+	{ 0x0f  , 0x00 	, CTL( PATTERNS_D_0F  )	, CTL( MUTE_RIGHT_00  ) , CTL( MUTE_LEFT_01   ) , CTL( SOLO_LEFT_00   ) , &CACHE_ARROW_LEFT				, NULL					  , &cb_pat_mute_0		},
+	{ 0x0f  , 0x01 	, CTL( MUTE_LEFT_00   )	, CTL( MUTE_RIGHT_01  ) , CTL( MUTE_LEFT_02   ) , CTL( SOLO_LEFT_01   ) , &CACHE_ARROW_LEFT				, NULL					  , &cb_pat_mute_1		},
+	{ 0x0f  , 0x02 	, CTL( MUTE_LEFT_01   )	, CTL( MUTE_RIGHT_02  ) , CTL( PATTERNS_D_00  ) , CTL( SOLO_LEFT_02   ) , &CACHE_ARROW_LEFT				, NULL					  , &cb_pat_mute_2		},
+	{ 0x16  , 0x00 	, CTL( PATTERNS_E_0F  )	, CTL( SOLO_RIGHT_00  ) , CTL( MUTE_RIGHT_01  ) , CTL( MUTE_LEFT_00   ) , &CACHE_ARROW_RIGHT			, NULL 					  , &cb_pat_mute_3		},
+	{ 0x16  , 0x01 	, CTL( MUTE_RIGHT_00  )	, CTL( SOLO_RIGHT_01  ) , CTL( MUTE_RIGHT_02  ) , CTL( MUTE_LEFT_01   ) , &CACHE_ARROW_RIGHT			, NULL 					  , &cb_pat_mute_4		},
+	{ 0x16  , 0x02 	, CTL( MUTE_RIGHT_01  )	, CTL( SOLO_RIGHT_02  ) , CTL( PATTERNS_E_00  ) , CTL( MUTE_LEFT_02   ) , &CACHE_ARROW_RIGHT			, NULL 		 			  , &cb_pat_mute_5		},
+	{ 0x19  , 0x00 	, CTL( PATTERNS_F_0F  )	, CTL( SOLO_LEFT_00   ) , CTL( SOLO_RIGHT_01  ) , CTL( MUTE_RIGHT_00  ) , &CACHE_ARROW_RIGHT			, NULL 					  , &cb_pat_solo_3		}, 
+	{ 0x19  , 0x01 	, CTL( SOLO_RIGHT_00  )	, CTL( SOLO_LEFT_01   ) , CTL( SOLO_RIGHT_02  ) , CTL( MUTE_RIGHT_01  ) , &CACHE_ARROW_RIGHT			, NULL 					  , &cb_pat_solo_4		},
+	{ 0x19  , 0x02 	, CTL( SOLO_RIGHT_01  )	, CTL( SOLO_LEFT_02   ) , CTL( PATTERNS_F_00  ) , CTL( MUTE_RIGHT_02  ) , &CACHE_ARROW_RIGHT			, NULL 					  , &cb_pat_solo_5		},
 	CONTROL_TERMINATOR
 };
 #undef CTL
@@ -359,7 +359,25 @@ void PatEdit::sync(){
 }
 
 void PatEdit::dispatchMessage(u32 msg){
+	u8 x, y;
 	switch(msg){
+		case MESSAGE_CANCEL: // Erase
+			// Clear Arrow on current channel 
+			y = VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ].POSITION - VAR_CFG.ORDERPOSITION;
+			x = arrow_position[ TRACKER_ACTIVE_CHANNEL ];
+			if( ( y <= 15 ) && ( y >=0 ) ) 
+				gpu.set( 2, x, 4 + y, 0x00FC);
+			regHnd.controlClear	( regHnd.control );
+			copy( TRACKER_ACTIVE_CHANNEL ); 			
+			VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ].LASTPOSITION = VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ].POSITION;
+			sync();
+			dispatchMessage		( MESSAGE_OTHER_REFRESH_DATA );
+			clean = false;
+			return;
+		
+		case MESSAGE_OTHER_REFRESH_DATA:
+			return sync();
+		
 		/* Scroll up */
 		case MESSAGE_OTHER_PREV:
 			if(VAR_CFG.ORDERPOSITION>0){

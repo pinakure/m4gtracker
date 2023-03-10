@@ -1,0 +1,80 @@
+<pre class="m4g"><br>
+                    <span style="font-weight: bold;">MAGEEK01 - HELP BYTECODE DOCUMENTATION</span>
+________________________________________________________________________________
+
+The following list is refered to HELP items as those contained in HELP/help.h
+along with a brief description of each one of them. The metacode associated to
+each is showed too. You may not need this information, but if you are working 
+in translation,I know your initial frustration when you said: ok, let's see the 
+header to change its data...hmmm...WTF is going on! Even me forgot, who did it.
+Most of the tags doesn't need a close tag, so keep an eye with those who need 1.
+
+                                   - o -
+
+<TABLE border="1" borderwidth="1" style="width: 560px; border-width:1px; border-padding: 0px; border-margin: 0px;">
+<tr align=center valign=center>
+<td width=15% style="font-weight: bold;">Code</td>
+<td width=25% style="font-weight: bold;">Tag Syntax</td>
+<td width=60% style="font-weight: bold;">Description</td>
+</tr>
+<tr align=center valign=center>
+<td width=15%>0x4$</td>
+<td width=25%>C$</td>
+<td width=60%>Changes color, being '$' the palette</td>
+</tr>
+<tr align=center valign=center>
+<td width=15%>0x51$$</td>
+<td width=25%>S$$</td>
+<td width=60%>Print Literal Char $$. Careful with index chosen</td>
+</tr>
+<tr align=center valign=center>
+<td width=15%>0x40</td>
+<td width=25%>B</td>
+<td width=60%>Line Break</td>
+</tr>
+<tr align=center valign=center>
+<td width=15%>0x52$$</td>
+<td width=25%>T$$</td>
+<td width=60%>Topic $$ Start Label tag</td>
+</tr>
+<tr align=center valign=center>
+<td width=15%>0x54</td>
+<td width=25%>Z</td>
+<td width=60%>Topic close tag.</td>
+</tr>
+<tr align=center valign=center>
+<td width=15%>0x50$$
+</td>
+<td width=25%>L$$
+</td>
+<td width=60%>Link to topic $$.
+</td>
+</tr>
+<tr align=center valign=center>
+<td width=15%>0x53</td>
+<td width=25%>N</td>
+<td width=60%>Link close tag.</td>
+</tr>
+<tr align=center valign=center>
+<td width=15%>0x</td>
+<td width=25%>E</td>
+<td width=60%>End Of File. (Necessary!)</td>
+</tr>
+<tr align=center valign=center>
+<td width=15%>other</td>
+<td width=25%>no tag</td>
+<td width=60%>Just write character whose index is me.</td>
+</tr>
+</TABLE>
+Note for dummies: Replace $ with desired values.
+
+                                   - o -
+
+                             <span style="font-weight: bold;">PROGRAMMING NOTE!</span>
+When writing the code, make sure you never surpass the 25 character limit when 
+writing characters (dont count tags unless they print something). You can use a 
+ruler to write help text, then insert code amongst the words. 
+
+
+
+</pre>

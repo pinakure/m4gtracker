@@ -445,6 +445,9 @@ void Debug::panic( const char *message, u32 *pointer){
 }
 
 void Debug::error( int error_code, bool recoverable ){
+
+	if( recoverable) while(KEY.press(KEY_B))KEY.update();
+
 	// Clear unused palette color
 	*(u32*)(BG_PALETTE+16) = 0x00000000;
 	

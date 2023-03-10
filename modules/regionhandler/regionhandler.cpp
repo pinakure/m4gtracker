@@ -239,14 +239,14 @@ void RegionHandler::dispatchMessages(){
 				break;
 			
 			/* Variable modification */
-			case MESSAGE_CANCEL			: 
+			case MESSAGE_CANCEL			:
 				if( Clip::visible ) 
 					Clip::hide(); 
 				else 
-					controlClear( ((Control*)pv) );
-				if(region == &REGION_MAP_3_TRK) Tracker::dispatchMessage( MESSAGE_OTHER_REFRESH_DATA ); else 
-				if(region == &REGION_MAP_2_PAT) PatEdit::dispatchMessage( MESSAGE_OTHER_REFRESH_DATA ); else 
-				if(region == &REGION_MAP_2_INS) InstEdit::dispatchMessage( MESSAGE_OTHER_REFRESH_DATA );				
+					if(region == &REGION_MAP_3_TRK) { Tracker::dispatchMessage ( m ); } else 
+					if(region == &REGION_MAP_2_PAT) { PatEdit::dispatchMessage ( m ); } else 
+					if(region == &REGION_MAP_2_INS) { InstEdit::dispatchMessage( m ); } else 
+					regHnd.controlClear	( (Control*)pv );
 				break;
 				
 			case MESSAGE_MODIFY_ADD		: controlModify	( ((Control*)pv) , true  , false ); break;
