@@ -9,8 +9,8 @@ class Synth {
 	
 	public:
 		static u8 	wav_adsr_position;
-		static u8 	smp_adsr_position;
-		static u8 	fmw_adsr_position;
+		static u16 	smp_adsr_position;
+		static u16 	fmw_adsr_position;
 		static u8 	wav_adsr_table[4][0x40];
 		static u8 	fmw_adsr_table[4][0x40];
 		static u8 	smp_adsr_table   [0x40];
@@ -26,7 +26,7 @@ class Synth {
 		static void noteOnSmp ( Channel* channel );
 		
 		static void loadWav( u8 data[ 16 ] );
-		static void loadFmw( u8 data[ 16 ] );
+		static void loadFmw( u8 data[ 16 ] , u8 mult );
 		static void loadSmp( u8 data[ 16 ] );
 		
 		static void renderWav( SETTINGS_WAV *settings, u8 vol );

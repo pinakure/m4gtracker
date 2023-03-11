@@ -57,7 +57,7 @@ typedef struct _SETTINGS_FMW {
 	u8 				WAVEDATA[16]; /*4x16*///just 16 bytes saved, the rest is for playback buffer
 }SETTINGS_FMW;
 
-#define FM_BUFFER_SIZE		256
+#define FM_BUFFER_SIZE		32
 extern u8 FMDATA[FM_BUFFER_SIZE];
 
 typedef struct _SETTINGS_SMP {

@@ -33,12 +33,17 @@ class InstEdit {
 		static void 		load 		( );
 		static void 		copy		( Instrument* s, Instrument* d );
 		
+		// Waveform visualizers
+		static void viewWaveFormFmw		( );
+		static void viewWaveFormSmp		( );
+		static void viewWaveFormWav		( );
+		
 		// Control Callbacks
 		static void index  		( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void wavPreset 	( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void smpPreset 	( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void type 		( Control *c, bool bigstep, bool add, u32 *pointer );
-		
+
 		// Value modifier wrappers
 		static void modBit		( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void mod2b		( Control *c, bool bigstep, bool add, u32 *pointer );

@@ -473,7 +473,10 @@ void PatEdit::dispatchMessage(u32 msg){
 			y = VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ].POSITION - VAR_CFG.ORDERPOSITION;
 			x = arrow_position[ TRACKER_ACTIVE_CHANNEL ];
 			if( y <= 15 ) gpu.set( 2, x, 4 + y, 0x00FC);
-			regHnd.controlClear	( regHnd.control );
+			// If target cell is empty, scroll all cells one position from this position up to the end and fill last cell with 0x00
+			if( VAR_PATTERN[ TRACKER_ACTIVE_CHANNEL ].ORDER[ (regHnd.control->y-4) + VAR_CFG.ORDERPOSITION] == 0){
+				HALT
+			} else regHnd.controlClear	( regHnd.control );
 			copy( TRACKER_ACTIVE_CHANNEL ); 			
 			VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ].LASTPOSITION = VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ].POSITION;
 			sync();

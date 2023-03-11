@@ -181,7 +181,6 @@ also know a second has elapsed, so it's time to calculate the CPS rate
 	SYS_QUERYKEY = true;	
 	/***************************************************************************/
 	R_IME=0x1;
-	
 	return Mixer::mix();
 }
 

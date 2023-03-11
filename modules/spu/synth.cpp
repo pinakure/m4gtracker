@@ -14,12 +14,14 @@
 
 static bool swap_bank = false;
 
+#define FM_ADSR_SCALE 	3
+
 u8 		Synth::wav_adsr_table[4][0x40];
 u8 		Synth::fmw_adsr_table[4][0x40];
 u8 		Synth::smp_adsr_table   [0x40];
 u8 		Synth::wav_adsr_position = 0;
-u8 		Synth::smp_adsr_position = 0;
-u8 		Synth::fmw_adsr_position = 0;
+u16		Synth::smp_adsr_position = 0;
+u16		Synth::fmw_adsr_position = 0;
 u16		Synth::lfo				 = 0;
 
 const u16 SMP_FREQ_TABLE[120]={ 
@@ -244,13 +246,13 @@ void Synth::renderFmw( SETTINGS_FMW *fmw, u8 vol){
 	static u8 operator_volume[4];
 	
 	// Get volume level for each of the 4 ADSR envelopes
-	operator_volume[ 0 ] = (fmw_adsr_table[ 0 ][ fmw_adsr_position ] * vol)>>4;
-	operator_volume[ 1 ] = (fmw_adsr_table[ 1 ][ fmw_adsr_position ] * vol)>>4;
-	operator_volume[ 2 ] = (fmw_adsr_table[ 2 ][ fmw_adsr_position ] * vol)>>4;
-	operator_volume[ 3 ] = (fmw_adsr_table[ 3 ][ fmw_adsr_position ] * vol)>>4;
+	operator_volume[ 0 ] = (fmw_adsr_table[ 0 ][ fmw_adsr_position >> FM_ADSR_SCALE ] * vol)>>4;
+	operator_volume[ 1 ] = (fmw_adsr_table[ 1 ][ fmw_adsr_position >> FM_ADSR_SCALE ] * vol)>>4;
+	operator_volume[ 2 ] = (fmw_adsr_table[ 2 ][ fmw_adsr_position >> FM_ADSR_SCALE ] * vol)>>4;
+	operator_volume[ 3 ] = (fmw_adsr_table[ 3 ][ fmw_adsr_position >> FM_ADSR_SCALE ] * vol)>>4;
 
 	// Advance adsr table common index
-	fmw_adsr_position = ( fmw_adsr_position < 0x3F) ? fmw_adsr_position+1 : 0x3F;
+	fmw_adsr_position = ( fmw_adsr_position < ( 0x3F << FM_ADSR_SCALE )) ? fmw_adsr_position+1 : 0x3F << FM_ADSR_SCALE;
 	
 	
 	u8 FB[16];
@@ -473,61 +475,39 @@ void Synth::renderFmw( SETTINGS_FMW *fmw, u8 vol){
 	FB[14] += fmw->WAVEDATA[14]>>1;
 	FB[15] += fmw->WAVEDATA[15]>>1;
 	
-	
-	
-	// #define OP1( a )	((u8)((u32)( operators[ fmw->OP1_TYPE ][ a ] * operator_volume[0] ) >> 4))
-	// #define OP2( a )	((u8)((u32)( operators[ fmw->OP2_TYPE ][ a ] * operator_volume[1] ) >> 4))
-	// #define OP3( a )	((u8)((u32)( operators[ fmw->OP3_TYPE ][ a ] * operator_volume[2] ) >> 4))
-	// #define OP4( a )	((u8)((u32)( operators[ fmw->OP4_TYPE ][ a ] * operator_volume[3] ) >> 4))
-	// Mix shapes
-	// fmw->WAVEDATA[ 0] = (u8)((u32)( OP1( 0x0 ) + OP2( 0x0 ) + OP3( 0x0 ) + OP4( 0x0 ) ) >> 2);
-	// fmw->WAVEDATA[ 1] = (u8)((u32)( OP1( 0x1 ) + OP2( 0x1 ) + OP3( 0x1 ) + OP4( 0x1 ) ) >> 2);
-	// fmw->WAVEDATA[ 2] = (u8)((u32)( OP1( 0x2 ) + OP2( 0x2 ) + OP3( 0x2 ) + OP4( 0x2 ) ) >> 2);
-	// fmw->WAVEDATA[ 3] = (u8)((u32)( OP1( 0x3 ) + OP2( 0x3 ) + OP3( 0x3 ) + OP4( 0x3 ) ) >> 2);
-	// fmw->WAVEDATA[ 4] = (u8)((u32)( OP1( 0x4 ) + OP2( 0x4 ) + OP3( 0x4 ) + OP4( 0x4 ) ) >> 2);
-	// fmw->WAVEDATA[ 5] = (u8)((u32)( OP1( 0x5 ) + OP2( 0x5 ) + OP3( 0x5 ) + OP4( 0x5 ) ) >> 2);
-	// fmw->WAVEDATA[ 6] = (u8)((u32)( OP1( 0x6 ) + OP2( 0x6 ) + OP3( 0x6 ) + OP4( 0x6 ) ) >> 2);
-	// fmw->WAVEDATA[ 7] = (u8)((u32)( OP1( 0x7 ) + OP2( 0x7 ) + OP3( 0x7 ) + OP4( 0x7 ) ) >> 2);
-	// fmw->WAVEDATA[ 8] = (u8)((u32)( OP1( 0x8 ) + OP2( 0x8 ) + OP3( 0x8 ) + OP4( 0x8 ) ) >> 2);
-	// fmw->WAVEDATA[ 9] = (u8)((u32)( OP1( 0x9 ) + OP2( 0x9 ) + OP3( 0x9 ) + OP4( 0x9 ) ) >> 2);
-	// fmw->WAVEDATA[10] = (u8)((u32)( OP1( 0xA ) + OP2( 0xA ) + OP3( 0xA ) + OP4( 0xA ) ) >> 2);
-	// fmw->WAVEDATA[11] = (u8)((u32)( OP1( 0xB ) + OP2( 0xB ) + OP3( 0xB ) + OP4( 0xB ) ) >> 2);
-	// fmw->WAVEDATA[12] = (u8)((u32)( OP1( 0xC ) + OP2( 0xC ) + OP3( 0xC ) + OP4( 0xC ) ) >> 2);
-	// fmw->WAVEDATA[13] = (u8)((u32)( OP1( 0xD ) + OP2( 0xD ) + OP3( 0xD ) + OP4( 0xD ) ) >> 2);
-	// fmw->WAVEDATA[14] = (u8)((u32)( OP1( 0xE ) + OP2( 0xE ) + OP3( 0xE ) + OP4( 0xE ) ) >> 2);
-	// fmw->WAVEDATA[15] = (u8)((u32)( OP1( 0xF ) + OP2( 0xF ) + OP3( 0xF ) + OP4( 0xF ) ) >> 2);
-	
-	#undef OPERATOR4
-	#undef OPERATOR3
-	#undef OPERATOR2
-	#undef OPERATOR1
-	
-	loadFmw( fmw->WAVEDATA );
+	loadFmw( fmw->WAVEDATA , 8 + (fmw->MULT>>1));
 }
 
 /*###########################################################################*/
 
 u8 FMDATA[ FM_BUFFER_SIZE ]; /*4x16*///just 16 bytes saved, the rest is for playback buffer
 
-void Synth::loadFmw( u8 data[16] ){
+void Synth::loadFmw( u8 data[16] , u8 mult ){
 	u8 *src = FMDATA;
+	
+	// Copy rendered sample to buffer to be displayed later
+	for(int i=0; i < 16; i++){
+		VAR_FMW.WAVEDATA[i] = data[i] * mult;
+	}
+	
+	// Create buffer upon new shape (this buffer is feeded directly to the sound fifo in the VBLANK interrupt call to Mixer::mix
 	for(int i=0; i < FM_BUFFER_SIZE; i+= 16, src+=16){
-		src[ 0] = data[ 0]*0x8;
-		src[ 1] = data[ 1]*0x8;
-		src[ 2] = data[ 2]*0x8;
-		src[ 3] = data[ 3]*0x8;
-		src[ 4] = data[ 4]*0x8;
-		src[ 5] = data[ 5]*0x8;
-		src[ 6] = data[ 6]*0x8;
-		src[ 7] = data[ 7]*0x8;
-		src[ 8] = data[ 8]*0x8;
-		src[ 9] = data[ 9]*0x8;
-		src[10] = data[10]*0x8;
-		src[11] = data[11]*0x8;
-		src[12] = data[12]*0x8;
-		src[13] = data[13]*0x8;
-		src[14] = data[14]*0x8;
-		src[15] = data[15]*0x8;
+		src[ 0] = data[ 0] * mult;
+		src[ 1] = data[ 1] * mult;
+		src[ 2] = data[ 2] * mult;
+		src[ 3] = data[ 3] * mult;
+		src[ 4] = data[ 4] * mult;
+		src[ 5] = data[ 5] * mult;
+		src[ 6] = data[ 6] * mult;
+		src[ 7] = data[ 7] * mult;
+		src[ 8] = data[ 8] * mult;
+		src[ 9] = data[ 9] * mult;
+		src[10] = data[10] * mult;
+		src[11] = data[11] * mult;
+		src[12] = data[12] * mult;
+		src[13] = data[13] * mult;
+		src[14] = data[14] * mult;
+		src[15] = data[15] * mult;
 	}
 }
 
@@ -596,7 +576,7 @@ void Synth::updateADSRFmw( SETTINGS_FMW *fmw ){
 	renderADSR( fmw->OP3_ADSR, fmw_adsr_table[2] );
 	renderADSR( fmw->OP4_ADSR, fmw_adsr_table[3] );
 	if(VAR_INSTRUMENT.TYPE != INSTRUMENT_TYPE_FMW) return;
-	InstEdit::viewQuadADSR( fmw_adsr_table, fmw_adsr_position );
+	InstEdit::viewQuadADSR( fmw_adsr_table, fmw_adsr_position >> FM_ADSR_SCALE );
 }
 
 void Synth::updateADSRSmp( SETTINGS_SMP *smp ){

@@ -6,6 +6,7 @@
 #include "../modules/regionhandler/regionhandler.hpp"
 #include "../modules/spu/synth.hpp"
 #include "../modules/gpu/gpu.hpp"
+#include "../modules/key/key.hpp"
 
 /* Global callbacks ---------------------------------------------------------------------------------------------------------- */
 const Callback cb_ins_index				 = { InstEdit::index		, EVENT_MODIFY_B 	, &VAR_CFG.CURRENTINSTRUMENT	, NULL };
@@ -603,7 +604,8 @@ void InstEdit::updateWav( RegionHandler* rh ){
 	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_WAV ].inst ) 
 	if( adsr_position != Synth::wav_adsr_position ){
 		adsr_position = Synth::wav_adsr_position;
-		viewQuadADSR( Synth::wav_adsr_table, adsr_position);
+		if(!KEY.press(KEY_SELECT)) viewQuadADSR( Synth::wav_adsr_table, adsr_position);
+		else viewWaveFormWav( );
 	}
 	
 	InstEdit::synchronize();
@@ -620,7 +622,8 @@ void InstEdit::updateFmw( RegionHandler* rh ){
 	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_FMW ].inst ) 
 	if( adsr_position != Synth::fmw_adsr_position ){
 		adsr_position = Synth::fmw_adsr_position;
-		viewQuadADSR( Synth::fmw_adsr_table, adsr_position);
+		if(!KEY.press(KEY_SELECT)) viewQuadADSR( Synth::fmw_adsr_table, adsr_position);
+		else viewWaveFormFmw();
 	}
 	
 	InstEdit::synchronize();
@@ -634,7 +637,8 @@ void InstEdit::updateSmp( RegionHandler* rh ){
 	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_SMP ].inst ) 
 	if( adsr_position != Synth::smp_adsr_position ){
 		adsr_position = Synth::smp_adsr_position;
-		viewADSR( Synth::smp_adsr_table, adsr_position);
+		if(!KEY.press(KEY_SELECT)) viewADSR( Synth::smp_adsr_table, adsr_position);
+		else viewWaveFormSmp();
 	}
 	
 	InstEdit::synchronize();
@@ -704,10 +708,30 @@ void InstEdit::smpPreset(Control *c, bool bigstep, bool add, u32 *pointer){
 	//BREAK
 }
 
-void InstEdit::viewQuadADSR( u8 adsr_tables[4][0x40] , u8 adsr_position ){
+void InstEdit::viewWaveFormFmw( ){
+	gpu.vs->clear();
+	for(int x=0; x < 0x40; x+=2){
+		gpu.vs->set( x>>1, 15 - ( VAR_FMW.WAVEDATA[ x>>2 ]>>2) );
+		gpu.vs->set( x>>1, 15 + ( VAR_FMW.WAVEDATA[ x>>2 ]>>2) );
+	}
+	gpu.vs->draw(14,6);
+}
 
-	if(regHnd.region != &REGION_MAP_2_INS ) return;
+void InstEdit::viewWaveFormSmp( ){
 	
+}
+
+void InstEdit::viewWaveFormWav( ){
+	
+}
+
+void InstEdit::viewQuadADSR( u8 adsr_tables[ 4 ][ 0x40 ] , u8 adsr_position ){
+
+	static u8 last_adsr_position;
+	
+	if(regHnd.region != &REGION_MAP_2_INS ) return;
+	if( last_adsr_position == adsr_position) return;
+	last_adsr_position = adsr_position;
 	gpu.vs->clear();
 	
 	for(int x=0,d=0;x<0x40; x+=2,d=x>>1){
@@ -718,7 +742,7 @@ void InstEdit::viewQuadADSR( u8 adsr_tables[4][0x40] , u8 adsr_position ){
 		
 	}
 	
-	DECIMAL_DOUBLE( 14,2, 7, adsr_position );
+	//DECIMAL_DOUBLE( 14,2, 7, adsr_position );
 
 	if( adsr_position < 0x3F ){
 		VISPOS1(14, 1,	0xFF, adsr_position>>2);
@@ -729,7 +753,11 @@ void InstEdit::viewQuadADSR( u8 adsr_tables[4][0x40] , u8 adsr_position ){
 
 void InstEdit::viewADSR ( u8 adsr_table[0x40] , u8 adsr_position ){
 
+	static u8 last_adsr_position;
+	
 	if(regHnd.region != &REGION_MAP_2_INS ) return;
+	if( last_adsr_position == adsr_position) return;
+	last_adsr_position = adsr_position;
 	
 	gpu.vs->clear();
 	
@@ -737,7 +765,7 @@ void InstEdit::viewADSR ( u8 adsr_table[0x40] , u8 adsr_position ){
 		gpu.vs->set( x >> 1, 31 - (( adsr_table[ x ]<<1) ) );
 	}
 	
-	DECIMAL_DOUBLE( 14,2, 7, adsr_position );
+	//DECIMAL_DOUBLE( 14,2, 7, adsr_position );
 
 	if( adsr_position < 0x3F ){
 		VISPOS1(14, 1,	0xFF, adsr_position>>2);
