@@ -7,6 +7,7 @@
 void STRING					( bool big, u8 x, u8 y, u8 *data );
 
 void HEXADECIMAL			( u8 x, u8 y, u16 color, u16 value );// Single 8x8 tile, 1 hexadecimal digit
+void HEXADECIMAL_DOUBLE_DASH( u8 x, u8 y, u16 color, u16 value );// Single 8x8 tile, 2 hexadecimal digits
 void HEXADECIMAL_DOUBLE		( u8 x, u8 y, u16 color, u16 value );// Single 8x8 tile, 2 hexadecimal digits
 void HEXADECIMAL_INSTRUMENT	( u8 x, u8 y, u16 color, u16 value );// Double 8x8 tile, 1 hexadecimal digit each
 void HEXADECIMAL_TWOTILES	( u8 x, u8 y, u16 color, u16 value );// Two 8x8 tiles, 1 hexadecimal digit each, different color on zero

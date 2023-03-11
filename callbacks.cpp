@@ -27,6 +27,33 @@ void HEXADECIMAL_DOUBLE(u8 x, u8 y, u16 color, u16 value) {
 	gpu.set(2,x,y,color | **(TABLE_HEXADECIMAL_DOUBLE+value));
 }
 
+static const u8 darker_color[16] = {
+	COLOR_NONE		 , //COLOR_NONE,// Black
+	COLOR_DARK_BLUE	 , //COLOR_DARK_CYAN,
+	COLOR_DARK_CYAN	 , //COLOR_CYAN,
+	COLOR_DARK_RED	 , //COLOR_RED,
+	COLOR_BROWN		 , //COLOR_ORANGE,
+	COLOR_DARK_RED	 , //COLOR_DARK_RED,
+	COLOR_GRAY		 , //COLOR_WHITE,
+	COLOR_OLIVE		 , //COLOR_YELLOW,
+	COLOR_NONE		 , //COLOR_BLACK,//Transparent...
+	COLOR_DARK_BLUE	 , //COLOR_DARK_BLUE,
+	COLOR_DARK_RED	 , //COLOR_BROWN,
+	COLOR_DARK_BLUE	 , //COLOR_OLIVE,
+	COLOR_DARK_GREEN , //COLOR_DARK_GREEN,
+	COLOR_DARK_BLUE	 , //COLOR_GRAY,
+	COLOR_DARK_CYAN	 , //COLOR_BLUE,
+	COLOR_DARK_GREEN , //COLOR_GREEN,
+};
+
+// Single 8x8 tile, 2 hexadecimal digits, but 0x00 is represented as a single '--' character
+void HEXADECIMAL_DOUBLE_DASH(u8 x, u8 y, u16 color, u16 value) {
+	value &=0xFF;
+	// if(!value) return gpu.set(2,x,y, (darker_color[ color ]<<12) | 0x00B1);
+	if(!value) return gpu.set(2,x,y, (COLOR_DARK_BLUE<<12) | 0x00B1);
+	gpu.set(2,x,y, (color<<12) | ((value>0)?**(TABLE_HEXADECIMAL_DOUBLE+value):0xB1));
+}
+
 // Double 8x8 tile, 1 hexadecimal digit each
 void HEXADECIMAL_INSTRUMENT(u8 x, u8 y, u16 color, u16 value) {
 	value &=0xFF;

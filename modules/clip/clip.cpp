@@ -144,7 +144,6 @@ void Clip::cut(){
 	if( AT_TRACKER_SCREEN ){
 		
 		for(int y = 0; y < Clipboard::rows; y++){
-			u16 rpos = ( y * 6 );
 			u8 wpos = (Clipboard::y + y) & 0xF;
 			if( Clipboard::content & CLIPDATA_VALUE 		) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VAL[ wpos ] = 0x00;
 			if( Clipboard::content & CLIPDATA_COMMAND 		) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].CMD[ wpos ] = 0x00;
@@ -340,9 +339,9 @@ void Clip::maskSizeHorz( bool increase ){
 	drawMask(0x00);
 	u8 max = ( AT_TRACKER_SCREEN ? 5 : 6 );
 	if(increase){
-		if( Clipboard::x + Clipboard::width  < max ) Clipboard::width++;
+		if( Clipboard::x + Clipboard::width < max ) Clipboard::width++;
 	} else if( Clipboard::width ) Clipboard::width--;
-	else Clipboard::width	= max;
+	else Clipboard::width = max-(Clipboard::x);
 }
 
 void Clip::setAction( ClipboardAction selected_action ){

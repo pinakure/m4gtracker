@@ -28,6 +28,7 @@ class SnakeGame {
 		static u8 			speed;
 		static SnakeDirs 	direction;
 		static SnakeDirs 	nextdirection;
+		static u16			sound_timer;
 		
 		static u8 			lives;
 		static u8 			level;
@@ -56,6 +57,7 @@ class SnakeGame {
 		static void drawHud();
 		static void move();
 		static void eat();
+		static void sound();
 		static void hit();
 		static void newFruit();
 		static void update( RegionHandler* rh );

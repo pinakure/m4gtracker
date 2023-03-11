@@ -70,3 +70,19 @@ Bugfixed pattern editor bug affecting correct scrolling  at rows 0xA ~ 0xF
 Swapped clipboard action and clipboard mask size buttons
 Channel shift up/down ( R + UP / DOWN )
 Channel transpose up/down ( R + LEFT/RIGHT )
+-------------------
+10-03-2023
+-------------------
+Redraw issues fixing
+SRAM code cleanup
+Documentation update
+Milestone clearance
+-------------------
+11-03-2023
+-------------------
+Pattern chain shift up/down using R + UP/DOWN
+Created HEXADECIMAL_DOUBLE_DASH cache and print function to allow 00 values to be represented as --
+Modified PatEdit screen to acommodate transpose per pattern 
+Tracker screen whole column value modification
+Fixed bug allowing clipboard mask being bigger than displayable room
+Snake eat sounds

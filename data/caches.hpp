@@ -25,6 +25,7 @@ extern const Cache CACHE_DECIMAL_TWOTILES;
 extern const Cache CACHE_HEXADECIMAL_TWOTILES; 	
 extern const Cache CACHE_HEXADECIMAL_INSTRUMENT;	
 extern const Cache CACHE_HEXADECIMAL_DOUBLE; 	
+extern const Cache CACHE_HEXADECIMAL_DOUBLE_DASH;
 extern const Cache CACHE_HEXADECIMAL; 			
 extern const Cache CACHE_DECIMAL; 				
 extern const Cache CACHE_DECIMAL_DOUBLE_TWOTILES; 

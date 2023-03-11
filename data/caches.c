@@ -22,6 +22,7 @@ const Cache CACHE_DECIMAL_TWOTILES = { 		/*e*/ DECIMAL_TWOTILES, 			/*m*/ 0xFF, 
 const Cache CACHE_HEXADECIMAL_TWOTILES= { 	/*e*/ HEXADECIMAL_TWOTILES,			/*m*/ 0xFF, /*x*/ 0x00, /*y*/ 0x04, /*w*/ 0x20, /*h*/ 0x10, /*iw*/ 0x02, /*ih*/ 0x01, /*pa*/ 0x02, /*pi*/ 0x06, 0xFFFF };
 const Cache CACHE_HEXADECIMAL_INSTRUMENT ={	/*e*/ HEXADECIMAL_INSTRUMENT,		/*m*/ 0xFF, /*x*/ 0x00, /*y*/ 0x04, /*w*/ 0x20, /*h*/ 0x10, /*iw*/ 0x02, /*ih*/ 0x01, /*pa*/ 0x06, /*pi*/ 0x07, 0xFFFF };
 const Cache CACHE_HEXADECIMAL_DOUBLE = { 	/*e*/ HEXADECIMAL_DOUBLE, 			/*m*/ 0xFF, /*x*/ 0x1E, /*y*/ 0x25, /*w*/ 0x10, /*h*/ 0x10, /*iw*/ 0x01, /*ih*/ 0x01, /*pa*/ 0x02, /*pi*/ 0x06, 0xFFFF };
+const Cache CACHE_HEXADECIMAL_DOUBLE_DASH={	/*e*/ HEXADECIMAL_DOUBLE_DASH,		/*m*/ 0xFF, /*x*/ 0x1E, /*y*/ 0x25, /*w*/ 0x10, /*h*/ 0x10, /*iw*/ 0x01, /*ih*/ 0x01, /*pa*/ 0x02, /*pi*/ 0x06, 0xFFFF };
 const Cache CACHE_HEXADECIMAL = { 			/*e*/ HEXADECIMAL, 					/*m*/ 0xFF, /*x*/ 0x2E, /*y*/ 0x25, /*w*/ 0x01, /*h*/ 0x10, /*iw*/ 0x01, /*ih*/ 0x01, /*pa*/ 0x02, /*pi*/ 0x06, 0xFFFF };
 const Cache CACHE_DECIMAL = { 				/*e*/ DECIMAL, 						/*m*/ 0xFF, /*x*/ 0x2E, /*y*/ 0x25, /*w*/ 0x01, /*h*/ 0x0A, /*iw*/ 0x01, /*ih*/ 0x01, /*pa*/ 0x02, /*pi*/ 0x06, 0xFFFF };
 const Cache CACHE_DECIMAL_DOUBLE_TWOTILES={ /*e*/ DECIMAL_DOUBLE_TWOTILES, 		/*m*/ 0xFF, /*x*/ 0x20, /*y*/ 0x00, /*w*/ 0x20, /*h*/ 0x14, /*iw*/ 0x02, /*ih*/ 0x01, /*pa*/ 0x02, /*pi*/ 0x06, 0xFFFF };

@@ -33,6 +33,9 @@ class Tracker{
 		static void processInput		(  );
 		static void shift				( int q );
 		static void transpose			( int q );
+
+		static void alterColumn			( u8 index, u8 min_value, u8 max_value, int q );
+	
 };
 
 extern const Control CHAN0_CONTROLS[ CONTROL_CHANNEL0_0_MAX ]; 

@@ -2,6 +2,9 @@
 #include "../modules/gpu/gpu.hpp"
 #include "../modules/key/key.hpp"
 #include "../data/helpers.hpp"
+#include "../modules/spu/sequencer.hpp"
+#include "../modules/spu/mixer.hpp"
+#include "../modules/spu/synth.hpp"
 
 bool 		SnakeGame::turbo;
 bool 		SnakeGame::redraw_game 	= true;
@@ -27,6 +30,7 @@ u32			SnakeGame::last_hiscore = 0xFFFFFFFF;
 u8			SnakeGame::last_length	= 0xFFFF;
 u32			SnakeGame::counter_a	= 0xFFFFFFFF;
 u32			SnakeGame::counter_b	= 0xFFFFFFFF;
+u16			SnakeGame::sound_timer  = 0x0;
 	
 #define PHI 0x9e3779b9
 static u32 q[32], rc=362436;
@@ -60,7 +64,8 @@ static u32 random(){
 	
 void SnakeGame::init(){
 	randomSeed(1024);
-	lives = 0;
+	lives 		= 0;
+	sound_timer = 0;
 }
 
 void SnakeGame::newFruit(){
@@ -155,7 +160,19 @@ void SnakeGame::drawHud(){
 	}
 }
 
+void SnakeGame::sound( ){
+	if( Sequencer::playing ) return;
+	Mixer::start();
+	*((volatile u16*)0x04000068) = 0x8181;
+	*((volatile u16*)0x0400006C) = 0xC000 | (((8 * length)*8)-8);
+	*((volatile u16*)0x04000062) = 0x8381;
+	*((volatile u16*)0x04000064) = 0xC000 | (((8 * length)*8)-10);
+
+	sound_timer = 0xFF;
+}
+
 void SnakeGame::eat(){
+	sound();
 	score += 100;
 	if(score > hiscore) hiscore = score;
 	redraw_hud = true;
@@ -233,13 +250,14 @@ void SnakeGame::move(){
 
 void SnakeGame::update( RegionHandler* rh){
 	
+	
 	// Process input 
 	if(KEYPRESS_LEFT  && ( direction !=SNAKE_RIGHT) ) nextdirection = SNAKE_LEFT  ; else
 	if(KEYPRESS_UP    && ( direction !=SNAKE_DOWN ) ) nextdirection = SNAKE_UP	  ; else
 	if(KEYPRESS_RIGHT && ( direction !=SNAKE_LEFT ) ) nextdirection = SNAKE_RIGHT ; else
 	if(KEYPRESS_DOWN  && ( direction !=SNAKE_UP   ) ) nextdirection = SNAKE_DOWN  ;
 	
-	//if(KEY.press( KEY_A )) grow = true;
+	if(KEY.press( KEY_A )) eat();
 	//if(KEY.press( KEY_A )) newFruit();
 	
 	turbo = KEYPRESS_B ? true : false;

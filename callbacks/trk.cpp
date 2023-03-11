@@ -5,6 +5,7 @@
 #include "../modules/key/key.hpp"
 #include "../modules/clip/clip.hpp"
 #include "../data/viewports.hpp"
+#include "debug.hpp"
 #include "../modules/spu/sequencer.hpp"
 #include "../macros.h"
 
@@ -429,7 +430,67 @@ void Tracker::shift( int q ){
 	if(!Sequencer::playing) Tracker::syncChannel( TRACKER_ACTIVE_CHANNEL );
 }
 
+void Tracker::alterColumn( u8 index, u8 min_value, u8 max_value, int q ){
+	u16 iconlist[5]    	= { 0xFC6D, 0x4A4B, 0xFC4C, 0xFC0C, 0xFC1F };
+	u8 	arrows[2] 		= { 0x008E, 0x008C }; 
+	
+	// Select icon from list upon requested column and unpack icon(s) 
+	u8  icons[2]		= { (iconlist[ index ]>>8), iconlist[ index ] & 0xFF };
+	u8  arrow 			= ( q > 0 ) ? arrows[ 1 ] : arrows[ 0 ];
+	
+	// Select which array will be modified
+	PatternCell *cell 	= &VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ];
+	u8 *array			= NULL;
+	switch( index ){
+		case 0: HALT;//array = &cell.KEY; break; // WHY THE HELL KEY has 2 BYTES WIDTH ? max value is 160!!!
+		case 1: array = &cell->INS[0]; break;
+		case 2: array = &cell->VOL[0]; break;
+		case 3: array = &cell->CMD[0]; break;
+		case 4: array = &cell->VAL[0]; break;
+	}
+	
+	// Pre-show failing status prior to check ( Assume fail then check if success )
+	Notifier::icon( 0x3000 | icons[0], 0x3000 | icons[1], 0x3000 | arrow );
+	
+	// Integrity checks
+	for(int i = 0; i<16; i++){
+		// Ignore cells which are on 'illegal' values
+		if(( min_value > 0)&&( array[i] < min_value )) continue;
+		// Abort operation if transformation would move the lowest note into a 'illegal' minimal value
+		if( ((s16)( array[i])) + ((s16)q) < ((s16)min_value) ) return;
+		// Abort operation if transformation would move the highest note into a 'illegal' maximal value
+		if( ((s16)( array[i])) + ((s16)q) > ((s16)max_value) ) return;
+	}
+	
+	// If we reach this point, it is safe to show a sucessfull icon
+	Notifier::icon( 0x7000 | icons[0], 0x7000 | icons[1], 0x4000  | ( ( q > 0 ) ? arrows[ 1 ] : arrows[ 0 ] ) );
+	
+	// Alter column values
+	for(int i = 0; i<16; i++){
+		// Don't transform cells which are on 'illegal' values
+		if( ( min_value > 0 ) && ( array[ i ] == 0 ) ) continue; 
+		// Alter value
+		array[ i ] += q;
+	}
+	
+	// Copy temporary data to pattern data
+	Tracker::copyChannel( TRACKER_ACTIVE_CHANNEL );
+	
+	// Reload data from pattern data to temporary AND REDRAW CURRENT CHANNEL (not needed if playing since it will be updated automatically and quickly)
+	if(!Sequencer::playing) Tracker::syncChannel( TRACKER_ACTIVE_CHANNEL );
+}
+
 void Tracker::transpose( int q ){
+	
+	switch( TRACKER_ACTIVE_COLUMN ){
+		case 1: return Tracker::alterColumn( 1, 0x1	, 0x3F, q );
+		case 2: return Tracker::alterColumn( 2, 0x0	, 0x0F, q );
+		case 3: return Tracker::alterColumn( 3, 0x0	,   26, q );
+		case 4: return Tracker::alterColumn( 4, 0x0	, 0xFF, q );
+		// case 0: return Tracker::alterColumn( 0, 0x1	,  160, q );
+		default: break;
+	}
+	
 	Notifier::icon( 0x306D, q > 0 ? 0x308C : 0x308E, 0x8A);
 	// Check first we dont destroy data 
 	for(int i = 0; i<16; i++){
