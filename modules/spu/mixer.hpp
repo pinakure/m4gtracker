@@ -59,7 +59,8 @@ class Mixer {
 
 	public:
 		static bool enable_metronome;
-	
+		static bool enabled;
+		
 		static int last_level[6];
 		static int level;
 		static int key_note[6];
@@ -87,5 +88,7 @@ class Mixer {
 		static void show 	( Control* c, bool bigstep, bool add, u32* pointer );
 		static void update  ( RegionHandler* rh );
 };
+
+extern const u16 DSOUND_FREQ_TABLE[];
 
 #endif

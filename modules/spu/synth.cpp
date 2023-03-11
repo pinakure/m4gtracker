@@ -1,5 +1,6 @@
 #include "synth.hpp"
 #include "mixer.hpp"
+#include "../../callbacks/debug.hpp"
 #include "../../data/channel.hpp"
 #include "../../data/config.hpp"
 #include "../../data/song.hpp"
@@ -152,7 +153,8 @@ void Synth::noteOnWav( Channel* channel ){
 }
 
 void Synth::noteOnFmw( Channel* channel ){
-	u16 freq 	= PWM_FREQ_TABLE[ 
+	// u16 freq 	= DSOUND_FREQ_TABLE[ 
+	u16 freq 	= DSOUND_FREQ_TABLE[ 
 					channel->key 
 					+ channel->transpose 
 					+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
@@ -160,7 +162,8 @@ void Synth::noteOnFmw( Channel* channel ){
 				  ] 
 				+ channel->fine_tune 
 				+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
-	DECIMAL_DOUBLE_TWOTILES(0,2,0xFF,freq);
+	//DECIMAL_DOUBLE_TWOTILES(0,2,0xFF,freq);
+		
 	Mixer::noteOn1( freq );
 	channel->retrig = false;
 }
@@ -249,28 +252,250 @@ void Synth::renderFmw( SETTINGS_FMW *fmw, u8 vol){
 	// Advance adsr table common index
 	fmw_adsr_position = ( fmw_adsr_position < 0x3F) ? fmw_adsr_position+1 : 0x3F;
 	
-	#define OPERATOR1( a )	((u8)((u32)( operators[ fmw->OP1_TYPE ][ a ] * operator_volume[0] ) >> 4))
-	#define OPERATOR2( a )	((u8)((u32)( operators[ fmw->OP2_TYPE ][ a ] * operator_volume[1] ) >> 4))
-	#define OPERATOR3( a )	((u8)((u32)( operators[ fmw->OP3_TYPE ][ a ] * operator_volume[2] ) >> 4))
-	#define OPERATOR4( a )	((u8)((u32)( operators[ fmw->OP4_TYPE ][ a ] * operator_volume[3] ) >> 4))
+	
+	u8 FB[16];
+	/*
+	
+	[ ] -> operator index modulator
+	{ } -> operator composing output waveform
+	< > -> operator with feedback
+	*/
+	
+	switch( fmw->ALGORITHM ){
+		/* ALGORITHM 0: 
+		
+		         /{2}\
+		<[1]> -->-{3}->-> OUT
+		  	     \{4}/
+				 
+		*/	case 0:
+			#define O1( a )	((u8)((u32)( operators[ fmw->OP1_TYPE ][ ( a + FB[a] ) & 0xF ] * operator_volume[0] ) >> 4))
+			#define O2( a )	((u8)((u32)( operators[ fmw->OP2_TYPE ][ ( a + O1(a) ) & 0xF ] * operator_volume[1] ) >> 4))
+			#define O3( a )	((u8)((u32)( operators[ fmw->OP3_TYPE ][ ( a + O1(a) ) & 0xF ] * operator_volume[2] ) >> 4))
+			#define O4( a )	((u8)((u32)( operators[ fmw->OP4_TYPE ][ ( a + O1(a) ) & 0xF ] * operator_volume[3] ) >> 4))
+			fmw->WAVEDATA[ 0] = (u8)((u32)( O2( 0x0 ) + O3( 0x0 ) + O4( 0x0 ) ) / 3);
+			fmw->WAVEDATA[ 1] = (u8)((u32)( O2( 0x1 ) + O3( 0x1 ) + O4( 0x1 ) ) / 3);
+			fmw->WAVEDATA[ 2] = (u8)((u32)( O2( 0x2 ) + O3( 0x2 ) + O4( 0x2 ) ) / 3);
+			fmw->WAVEDATA[ 3] = (u8)((u32)( O2( 0x3 ) + O3( 0x3 ) + O4( 0x3 ) ) / 3);
+			fmw->WAVEDATA[ 4] = (u8)((u32)( O2( 0x4 ) + O3( 0x4 ) + O4( 0x4 ) ) / 3);
+			fmw->WAVEDATA[ 5] = (u8)((u32)( O2( 0x5 ) + O3( 0x5 ) + O4( 0x5 ) ) / 3);
+			fmw->WAVEDATA[ 6] = (u8)((u32)( O2( 0x6 ) + O3( 0x6 ) + O4( 0x6 ) ) / 3);
+			fmw->WAVEDATA[ 7] = (u8)((u32)( O2( 0x7 ) + O3( 0x7 ) + O4( 0x7 ) ) / 3);
+			fmw->WAVEDATA[ 8] = (u8)((u32)( O2( 0x8 ) + O3( 0x8 ) + O4( 0x8 ) ) / 3);
+			fmw->WAVEDATA[ 9] = (u8)((u32)( O2( 0x9 ) + O3( 0x9 ) + O4( 0x9 ) ) / 3);
+			fmw->WAVEDATA[10] = (u8)((u32)( O2( 0xA ) + O3( 0xA ) + O4( 0xA ) ) / 3);
+			fmw->WAVEDATA[11] = (u8)((u32)( O2( 0xB ) + O3( 0xB ) + O4( 0xB ) ) / 3);
+			fmw->WAVEDATA[12] = (u8)((u32)( O2( 0xC ) + O3( 0xC ) + O4( 0xC ) ) / 3);
+			fmw->WAVEDATA[13] = (u8)((u32)( O2( 0xD ) + O3( 0xD ) + O4( 0xD ) ) / 3);
+			fmw->WAVEDATA[14] = (u8)((u32)( O2( 0xE ) + O3( 0xE ) + O4( 0xE ) ) / 3);
+			fmw->WAVEDATA[15] = (u8)((u32)( O2( 0xF ) + O3( 0xF ) + O4( 0xF ) ) / 3);
+			#undef O1
+			#undef O2
+			#undef O3
+			#undef O4
+			break;
+		/* ALGORITHM 1:
+		
+				    [1]
+		 	         V						 
+		<[3]>->[2]->{4}--> OUT
+					  
+		*/	case 1:
+			#define O1( a )	((u8)((u32)( operators[ fmw->OP1_TYPE ][ ( a 		 			) & 0xF ] * operator_volume[0] ) >> 4))
+			#define O3( a )	((u8)((u32)( operators[ fmw->OP3_TYPE ][ ( a + FB[a] 			) & 0xF ] * operator_volume[2] ) >> 4))
+			#define O2( a )	((u8)((u32)( operators[ fmw->OP2_TYPE ][ ( a + O3(a) 			) & 0xF ] * operator_volume[1] ) >> 4))
+			#define O4( a )	((u8)((u32)( operators[ fmw->OP4_TYPE ][ ( a + O2(a) + O1(a) 	) & 0xF ] * operator_volume[3] ) >> 4))
+			fmw->WAVEDATA[ 0] = (u8)((u32)( O4( 0x0 ) ));
+			fmw->WAVEDATA[ 1] = (u8)((u32)( O4( 0x1 ) ));
+			fmw->WAVEDATA[ 2] = (u8)((u32)( O4( 0x2 ) ));
+			fmw->WAVEDATA[ 3] = (u8)((u32)( O4( 0x3 ) ));
+			fmw->WAVEDATA[ 4] = (u8)((u32)( O4( 0x4 ) ));
+			fmw->WAVEDATA[ 5] = (u8)((u32)( O4( 0x5 ) ));
+			fmw->WAVEDATA[ 6] = (u8)((u32)( O4( 0x6 ) ));
+			fmw->WAVEDATA[ 7] = (u8)((u32)( O4( 0x7 ) ));
+			fmw->WAVEDATA[ 8] = (u8)((u32)( O4( 0x8 ) ));
+			fmw->WAVEDATA[ 9] = (u8)((u32)( O4( 0x9 ) ));
+			fmw->WAVEDATA[10] = (u8)((u32)( O4( 0xA ) ));
+			fmw->WAVEDATA[11] = (u8)((u32)( O4( 0xB ) ));
+			fmw->WAVEDATA[12] = (u8)((u32)( O4( 0xC ) ));
+			fmw->WAVEDATA[13] = (u8)((u32)( O4( 0xD ) ));
+			fmw->WAVEDATA[14] = (u8)((u32)( O4( 0xE ) ));
+			fmw->WAVEDATA[15] = (u8)((u32)( O4( 0xF ) ));
+			#undef O1
+			#undef O2
+			#undef O3
+			#undef O4
+			break;
+		/* ALGORITHM 2:
+		
+			<[1]>->{3}	   
+					  >--> OUT
+			 [2]-->{4}
+			 
+		*/	case 2:
+			#define O1( a )	((u8)((u32)( operators[ fmw->OP1_TYPE ][ ( a + FB[a] 	) & 0xF ] * operator_volume[0] ) >> 4))
+			#define O2( a )	((u8)((u32)( operators[ fmw->OP2_TYPE ][ ( a 			) & 0xF ] * operator_volume[1] ) >> 4))
+			#define O3( a )	((u8)((u32)( operators[ fmw->OP3_TYPE ][ ( a + O1(a) 	) & 0xF ] * operator_volume[2] ) >> 4))
+			#define O4( a )	((u8)((u32)( operators[ fmw->OP4_TYPE ][ ( a + O2(a) 	) & 0xF ] * operator_volume[3] ) >> 4))
+			fmw->WAVEDATA[ 0] = (u8)((u32)( O3( 0x0 ) + O4( 0x0 ) ) >> 1 );
+			fmw->WAVEDATA[ 1] = (u8)((u32)( O3( 0x1 ) + O4( 0x1 ) ) >> 1 );
+			fmw->WAVEDATA[ 2] = (u8)((u32)( O3( 0x2 ) + O4( 0x2 ) ) >> 1 );
+			fmw->WAVEDATA[ 3] = (u8)((u32)( O3( 0x3 ) + O4( 0x3 ) ) >> 1 );
+			fmw->WAVEDATA[ 4] = (u8)((u32)( O3( 0x4 ) + O4( 0x4 ) ) >> 1 );
+			fmw->WAVEDATA[ 5] = (u8)((u32)( O3( 0x5 ) + O4( 0x5 ) ) >> 1 );
+			fmw->WAVEDATA[ 6] = (u8)((u32)( O3( 0x6 ) + O4( 0x6 ) ) >> 1 );
+			fmw->WAVEDATA[ 7] = (u8)((u32)( O3( 0x7 ) + O4( 0x7 ) ) >> 1 );
+			fmw->WAVEDATA[ 8] = (u8)((u32)( O3( 0x8 ) + O4( 0x8 ) ) >> 1 );
+			fmw->WAVEDATA[ 9] = (u8)((u32)( O3( 0x9 ) + O4( 0x9 ) ) >> 1 );
+			fmw->WAVEDATA[10] = (u8)((u32)( O3( 0xA ) + O4( 0xA ) ) >> 1 );
+			fmw->WAVEDATA[11] = (u8)((u32)( O3( 0xB ) + O4( 0xB ) ) >> 1 );
+			fmw->WAVEDATA[12] = (u8)((u32)( O3( 0xC ) + O4( 0xC ) ) >> 1 );
+			fmw->WAVEDATA[13] = (u8)((u32)( O3( 0xD ) + O4( 0xD ) ) >> 1 );
+			fmw->WAVEDATA[14] = (u8)((u32)( O3( 0xE ) + O4( 0xE ) ) >> 1 );
+			fmw->WAVEDATA[15] = (u8)((u32)( O3( 0xF ) + O4( 0xF ) ) >> 1 );
+			#undef O1
+			#undef O2
+			#undef O3
+			#undef O4
+			break;
+		/* ALGORITHM 3:
+		
+			     <[1]>
+		 	       V						 
+		[3]->[2]->{4}--> OUT
+		
+		*/	case 3:
+			#define O1( a )	((u8)((u32)( operators[ fmw->OP1_TYPE ][ ( a + FB[a] 		) & 0xF ] * operator_volume[0] ) >> 4))
+			#define O3( a )	((u8)((u32)( operators[ fmw->OP3_TYPE ][ ( a 				) & 0xF ] * operator_volume[2] ) >> 4))
+			#define O2( a )	((u8)((u32)( operators[ fmw->OP2_TYPE ][ ( a + O3(a) 		) & 0xF ] * operator_volume[1] ) >> 4))
+			#define O4( a )	((u8)((u32)( operators[ fmw->OP4_TYPE ][ ( a + O2(a) + O1(a)) & 0xF ] * operator_volume[3] ) >> 4))
+			fmw->WAVEDATA[ 0] = (u8)((u32) O4( 0x0 ) );
+			fmw->WAVEDATA[ 1] = (u8)((u32) O4( 0x1 ) );
+			fmw->WAVEDATA[ 2] = (u8)((u32) O4( 0x2 ) );
+			fmw->WAVEDATA[ 3] = (u8)((u32) O4( 0x3 ) );
+			fmw->WAVEDATA[ 4] = (u8)((u32) O4( 0x4 ) );
+			fmw->WAVEDATA[ 5] = (u8)((u32) O4( 0x5 ) );
+			fmw->WAVEDATA[ 6] = (u8)((u32) O4( 0x6 ) );
+			fmw->WAVEDATA[ 7] = (u8)((u32) O4( 0x7 ) );
+			fmw->WAVEDATA[ 8] = (u8)((u32) O4( 0x8 ) );
+			fmw->WAVEDATA[ 9] = (u8)((u32) O4( 0x9 ) );
+			fmw->WAVEDATA[10] = (u8)((u32) O4( 0xA ) );
+			fmw->WAVEDATA[11] = (u8)((u32) O4( 0xB ) );
+			fmw->WAVEDATA[12] = (u8)((u32) O4( 0xC ) );
+			fmw->WAVEDATA[13] = (u8)((u32) O4( 0xD ) );
+			fmw->WAVEDATA[14] = (u8)((u32) O4( 0xE ) );
+			fmw->WAVEDATA[15] = (u8)((u32) O4( 0xF ) );
+			#undef O1
+			#undef O2
+			#undef O3
+			#undef O4
+			break;
+		/* ALGORITHM 4: 
+		
+		<[1]>\	     
+		 	  >->[2]->{4}-> OUT
+		 [3]-/   
+		 
+		*/	case 4:
+			#define O1( a )	((u8)((u32)( operators[ fmw->OP1_TYPE ][ ( a + FB[a] 		) & 0xF ] * operator_volume[0] ) >> 4))
+			#define O3( a )	((u8)((u32)( operators[ fmw->OP3_TYPE ][ ( a 		 		) & 0xF ] * operator_volume[2] ) >> 4))
+			#define O2( a )	((u8)((u32)( operators[ fmw->OP2_TYPE ][ ( a + O1(a) + O3(a)) & 0xF ] * operator_volume[1] ) >> 4))
+			#define O4( a )	((u8)((u32)( operators[ fmw->OP4_TYPE ][ ( a + O2(a) 		) & 0xF ] * operator_volume[3] ) >> 4))
+			fmw->WAVEDATA[ 0] = (u8)((u32) O4( 0x0 ) );
+			fmw->WAVEDATA[ 1] = (u8)((u32) O4( 0x1 ) );
+			fmw->WAVEDATA[ 2] = (u8)((u32) O4( 0x2 ) );
+			fmw->WAVEDATA[ 3] = (u8)((u32) O4( 0x3 ) );
+			fmw->WAVEDATA[ 4] = (u8)((u32) O4( 0x4 ) );
+			fmw->WAVEDATA[ 5] = (u8)((u32) O4( 0x5 ) );
+			fmw->WAVEDATA[ 6] = (u8)((u32) O4( 0x6 ) );
+			fmw->WAVEDATA[ 7] = (u8)((u32) O4( 0x7 ) );
+			fmw->WAVEDATA[ 8] = (u8)((u32) O4( 0x8 ) );
+			fmw->WAVEDATA[ 9] = (u8)((u32) O4( 0x9 ) );
+			fmw->WAVEDATA[10] = (u8)((u32) O4( 0xA ) );
+			fmw->WAVEDATA[11] = (u8)((u32) O4( 0xB ) );
+			fmw->WAVEDATA[12] = (u8)((u32) O4( 0xC ) );
+			fmw->WAVEDATA[13] = (u8)((u32) O4( 0xD ) );
+			fmw->WAVEDATA[14] = (u8)((u32) O4( 0xE ) );
+			fmw->WAVEDATA[15] = (u8)((u32) O4( 0xF ) );
+			#undef O1
+			#undef O2
+			#undef O3
+			#undef O4
+			break;
+		/* ALGORITHM 5: 
+		
+		<[1]>->[2]->[3]->{4}-> OUT
+		
+		*/	case 5:
+			#define O1( a )	((u8)((u32)( operators[ fmw->OP1_TYPE ][ ( a + FB[a] ) & 0xF ] * operator_volume[0] ) >> 4))
+			#define O2( a )	((u8)((u32)( operators[ fmw->OP2_TYPE ][ ( a + O1(a) ) & 0xF ] * operator_volume[1] ) >> 4))
+			#define O3( a )	((u8)((u32)( operators[ fmw->OP3_TYPE ][ ( a + O2(a) ) & 0xF ] * operator_volume[2] ) >> 4))
+			#define O4( a )	((u8)((u32)( operators[ fmw->OP4_TYPE ][ ( a + O3(a) ) & 0xF ] * operator_volume[3] ) >> 4))
+			fmw->WAVEDATA[ 0] = (u8)((u32) O4( 0x0 ) );
+			fmw->WAVEDATA[ 1] = (u8)((u32) O4( 0x1 ) );
+			fmw->WAVEDATA[ 2] = (u8)((u32) O4( 0x2 ) );
+			fmw->WAVEDATA[ 3] = (u8)((u32) O4( 0x3 ) );
+			fmw->WAVEDATA[ 4] = (u8)((u32) O4( 0x4 ) );
+			fmw->WAVEDATA[ 5] = (u8)((u32) O4( 0x5 ) );
+			fmw->WAVEDATA[ 6] = (u8)((u32) O4( 0x6 ) );
+			fmw->WAVEDATA[ 7] = (u8)((u32) O4( 0x7 ) );
+			fmw->WAVEDATA[ 8] = (u8)((u32) O4( 0x8 ) );
+			fmw->WAVEDATA[ 9] = (u8)((u32) O4( 0x9 ) );
+			fmw->WAVEDATA[10] = (u8)((u32) O4( 0xA ) );
+			fmw->WAVEDATA[11] = (u8)((u32) O4( 0xB ) );
+			fmw->WAVEDATA[12] = (u8)((u32) O4( 0xC ) );
+			fmw->WAVEDATA[13] = (u8)((u32) O4( 0xD ) );
+			fmw->WAVEDATA[14] = (u8)((u32) O4( 0xE ) );
+			fmw->WAVEDATA[15] = (u8)((u32) O4( 0xF ) );
+			#undef O1
+			#undef O2
+			#undef O3
+			#undef O4
+			break;
+	}
 	
 	// Mix shapes
-	fmw->WAVEDATA[ 0] = (u8)((u32)( OPERATOR1( 0x0 ) + OPERATOR2( 0x0 ) + OPERATOR3( 0x0 ) + OPERATOR4( 0x0 ) ) >> 2);
-	fmw->WAVEDATA[ 1] = (u8)((u32)( OPERATOR1( 0x1 ) + OPERATOR2( 0x1 ) + OPERATOR3( 0x1 ) + OPERATOR4( 0x1 ) ) >> 2);
-	fmw->WAVEDATA[ 2] = (u8)((u32)( OPERATOR1( 0x2 ) + OPERATOR2( 0x2 ) + OPERATOR3( 0x2 ) + OPERATOR4( 0x2 ) ) >> 2);
-	fmw->WAVEDATA[ 3] = (u8)((u32)( OPERATOR1( 0x3 ) + OPERATOR2( 0x3 ) + OPERATOR3( 0x3 ) + OPERATOR4( 0x3 ) ) >> 2);
-	fmw->WAVEDATA[ 4] = (u8)((u32)( OPERATOR1( 0x4 ) + OPERATOR2( 0x4 ) + OPERATOR3( 0x4 ) + OPERATOR4( 0x4 ) ) >> 2);
-	fmw->WAVEDATA[ 5] = (u8)((u32)( OPERATOR1( 0x5 ) + OPERATOR2( 0x5 ) + OPERATOR3( 0x5 ) + OPERATOR4( 0x5 ) ) >> 2);
-	fmw->WAVEDATA[ 6] = (u8)((u32)( OPERATOR1( 0x6 ) + OPERATOR2( 0x6 ) + OPERATOR3( 0x6 ) + OPERATOR4( 0x6 ) ) >> 2);
-	fmw->WAVEDATA[ 7] = (u8)((u32)( OPERATOR1( 0x7 ) + OPERATOR2( 0x7 ) + OPERATOR3( 0x7 ) + OPERATOR4( 0x7 ) ) >> 2);				
-	fmw->WAVEDATA[ 8] = (u8)((u32)( OPERATOR1( 0x8 ) + OPERATOR2( 0x8 ) + OPERATOR3( 0x8 ) + OPERATOR4( 0x8 ) ) >> 2);
-	fmw->WAVEDATA[ 9] = (u8)((u32)( OPERATOR1( 0x9 ) + OPERATOR2( 0x9 ) + OPERATOR3( 0x9 ) + OPERATOR4( 0x9 ) ) >> 2);
-	fmw->WAVEDATA[10] = (u8)((u32)( OPERATOR1( 0xA ) + OPERATOR2( 0xA ) + OPERATOR3( 0xA ) + OPERATOR4( 0xA ) ) >> 2);
-	fmw->WAVEDATA[11] = (u8)((u32)( OPERATOR1( 0xB ) + OPERATOR2( 0xB ) + OPERATOR3( 0xB ) + OPERATOR4( 0xB ) ) >> 2);
-	fmw->WAVEDATA[12] = (u8)((u32)( OPERATOR1( 0xC ) + OPERATOR2( 0xC ) + OPERATOR3( 0xC ) + OPERATOR4( 0xC ) ) >> 2);
-	fmw->WAVEDATA[13] = (u8)((u32)( OPERATOR1( 0xD ) + OPERATOR2( 0xD ) + OPERATOR3( 0xD ) + OPERATOR4( 0xD ) ) >> 2);
-	fmw->WAVEDATA[14] = (u8)((u32)( OPERATOR1( 0xE ) + OPERATOR2( 0xE ) + OPERATOR3( 0xE ) + OPERATOR4( 0xE ) ) >> 2);
-	fmw->WAVEDATA[15] = (u8)((u32)( OPERATOR1( 0xF ) + OPERATOR2( 0xF ) + OPERATOR3( 0xF ) + OPERATOR4( 0xF ) ) >> 2);
+	
+	FB[ 0] += fmw->WAVEDATA[ 0]>>1;
+	FB[ 1] += fmw->WAVEDATA[ 1]>>1;
+	FB[ 2] += fmw->WAVEDATA[ 2]>>1;
+	FB[ 3] += fmw->WAVEDATA[ 3]>>1;
+	FB[ 4] += fmw->WAVEDATA[ 4]>>1;
+	FB[ 5] += fmw->WAVEDATA[ 5]>>1;
+	FB[ 6] += fmw->WAVEDATA[ 6]>>1;
+	FB[ 7] += fmw->WAVEDATA[ 7]>>1;
+	FB[ 8] += fmw->WAVEDATA[ 8]>>1;
+	FB[ 9] += fmw->WAVEDATA[ 9]>>1;
+	FB[10] += fmw->WAVEDATA[10]>>1;
+	FB[11] += fmw->WAVEDATA[11]>>1;
+	FB[12] += fmw->WAVEDATA[12]>>1;
+	FB[13] += fmw->WAVEDATA[13]>>1;
+	FB[14] += fmw->WAVEDATA[14]>>1;
+	FB[15] += fmw->WAVEDATA[15]>>1;
+	
+	
+	
+	// #define OP1( a )	((u8)((u32)( operators[ fmw->OP1_TYPE ][ a ] * operator_volume[0] ) >> 4))
+	// #define OP2( a )	((u8)((u32)( operators[ fmw->OP2_TYPE ][ a ] * operator_volume[1] ) >> 4))
+	// #define OP3( a )	((u8)((u32)( operators[ fmw->OP3_TYPE ][ a ] * operator_volume[2] ) >> 4))
+	// #define OP4( a )	((u8)((u32)( operators[ fmw->OP4_TYPE ][ a ] * operator_volume[3] ) >> 4))
+	// Mix shapes
+	// fmw->WAVEDATA[ 0] = (u8)((u32)( OP1( 0x0 ) + OP2( 0x0 ) + OP3( 0x0 ) + OP4( 0x0 ) ) >> 2);
+	// fmw->WAVEDATA[ 1] = (u8)((u32)( OP1( 0x1 ) + OP2( 0x1 ) + OP3( 0x1 ) + OP4( 0x1 ) ) >> 2);
+	// fmw->WAVEDATA[ 2] = (u8)((u32)( OP1( 0x2 ) + OP2( 0x2 ) + OP3( 0x2 ) + OP4( 0x2 ) ) >> 2);
+	// fmw->WAVEDATA[ 3] = (u8)((u32)( OP1( 0x3 ) + OP2( 0x3 ) + OP3( 0x3 ) + OP4( 0x3 ) ) >> 2);
+	// fmw->WAVEDATA[ 4] = (u8)((u32)( OP1( 0x4 ) + OP2( 0x4 ) + OP3( 0x4 ) + OP4( 0x4 ) ) >> 2);
+	// fmw->WAVEDATA[ 5] = (u8)((u32)( OP1( 0x5 ) + OP2( 0x5 ) + OP3( 0x5 ) + OP4( 0x5 ) ) >> 2);
+	// fmw->WAVEDATA[ 6] = (u8)((u32)( OP1( 0x6 ) + OP2( 0x6 ) + OP3( 0x6 ) + OP4( 0x6 ) ) >> 2);
+	// fmw->WAVEDATA[ 7] = (u8)((u32)( OP1( 0x7 ) + OP2( 0x7 ) + OP3( 0x7 ) + OP4( 0x7 ) ) >> 2);
+	// fmw->WAVEDATA[ 8] = (u8)((u32)( OP1( 0x8 ) + OP2( 0x8 ) + OP3( 0x8 ) + OP4( 0x8 ) ) >> 2);
+	// fmw->WAVEDATA[ 9] = (u8)((u32)( OP1( 0x9 ) + OP2( 0x9 ) + OP3( 0x9 ) + OP4( 0x9 ) ) >> 2);
+	// fmw->WAVEDATA[10] = (u8)((u32)( OP1( 0xA ) + OP2( 0xA ) + OP3( 0xA ) + OP4( 0xA ) ) >> 2);
+	// fmw->WAVEDATA[11] = (u8)((u32)( OP1( 0xB ) + OP2( 0xB ) + OP3( 0xB ) + OP4( 0xB ) ) >> 2);
+	// fmw->WAVEDATA[12] = (u8)((u32)( OP1( 0xC ) + OP2( 0xC ) + OP3( 0xC ) + OP4( 0xC ) ) >> 2);
+	// fmw->WAVEDATA[13] = (u8)((u32)( OP1( 0xD ) + OP2( 0xD ) + OP3( 0xD ) + OP4( 0xD ) ) >> 2);
+	// fmw->WAVEDATA[14] = (u8)((u32)( OP1( 0xE ) + OP2( 0xE ) + OP3( 0xE ) + OP4( 0xE ) ) >> 2);
+	// fmw->WAVEDATA[15] = (u8)((u32)( OP1( 0xF ) + OP2( 0xF ) + OP3( 0xF ) + OP4( 0xF ) ) >> 2);
 	
 	#undef OPERATOR4
 	#undef OPERATOR3
@@ -282,8 +507,28 @@ void Synth::renderFmw( SETTINGS_FMW *fmw, u8 vol){
 
 /*###########################################################################*/
 
+u8 FMDATA[ FM_BUFFER_SIZE ]; /*4x16*///just 16 bytes saved, the rest is for playback buffer
+
 void Synth::loadFmw( u8 data[16] ){
-	// TODO
+	u8 *src = FMDATA;
+	for(int i=0; i < FM_BUFFER_SIZE; i+= 16, src+=16){
+		src[ 0] = data[ 0]*0x8;
+		src[ 1] = data[ 1]*0x8;
+		src[ 2] = data[ 2]*0x8;
+		src[ 3] = data[ 3]*0x8;
+		src[ 4] = data[ 4]*0x8;
+		src[ 5] = data[ 5]*0x8;
+		src[ 6] = data[ 6]*0x8;
+		src[ 7] = data[ 7]*0x8;
+		src[ 8] = data[ 8]*0x8;
+		src[ 9] = data[ 9]*0x8;
+		src[10] = data[10]*0x8;
+		src[11] = data[11]*0x8;
+		src[12] = data[12]*0x8;
+		src[13] = data[13]*0x8;
+		src[14] = data[14]*0x8;
+		src[15] = data[15]*0x8;
+	}
 }
 
 void Synth::loadSmp( u8 data[16] ){

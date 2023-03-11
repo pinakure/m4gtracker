@@ -54,8 +54,11 @@ typedef struct _SETTINGS_FMW {
 	u8 				OP3_ADSR[4] /*4*/;
 	u8 				OP4_TYPE /*3*/;
 	u8 				OP4_ADSR[4] /*4*/;
-	u8 				WAVEDATA[16] /*4x16*/;
+	u8 				WAVEDATA[16]; /*4x16*///just 16 bytes saved, the rest is for playback buffer
 }SETTINGS_FMW;
+
+#define FM_BUFFER_SIZE		256
+extern u8 FMDATA[FM_BUFFER_SIZE];
 
 typedef struct _SETTINGS_SMP {
 	u8 				START /*8*/;

@@ -1,5 +1,6 @@
 #include "debug.hpp"
 
+#include "sng.hpp"
 #include "../modules/gpu/gpu.hpp"
 #include "../modules/sys/sys.hpp"
 #include "../modules/key/key.hpp"
@@ -7,6 +8,10 @@
 #include "../data/helpers.hpp"
 #include "../callbacks/cfg.hpp"
 #include "../data/enum.h"
+#include "../modules/spu/mixer.hpp"
+#include "../modules/spu/synth.hpp"
+#include "../modules/spu/sequencer.hpp"
+
 
 
 #include "../modules/clip/clip.hpp"
@@ -27,6 +32,21 @@ static const u16 color_hex = COLOR_ORANGE;
 static const u16 color_dec = COLOR_WHITE;
 static const u16 color_bef = COLOR_RED;
 static const u16 color_aft = COLOR_GREEN;
+
+void Debug::runTests(){
+	SongEdit::load();
+	return;
+	Mixer::start();
+	Sequencer::playing = true;
+	clear();
+	
+	while(1){
+		Sequencer::update();	
+	}
+	//error(0xCAFECAFE, true);
+	//error(0xCAFECAFE, false);
+	//HALT
+}
 
 const u16 Debug::colors[16][2] = {
 	{ COLOR_NONE		<< 12 , COLOR_NONE 			<< 12 },
@@ -371,11 +391,6 @@ void Debug::watchUpdate( u8 index ){
 	}
 }	
 
-void Debug::runTests(){
-	//error(0xCAFECAFE, true);
-	//error(0xCAFECAFE, false);
-	//HALT
-}
 
 static void inverse_text(int y, const char *message, u8 fg, u8 bg){
 	size_t len = strlen(message)>>1;

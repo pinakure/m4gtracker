@@ -612,10 +612,9 @@ void InstEdit::updateWav( RegionHandler* rh ){
 void InstEdit::updateFmw( RegionHandler* rh ){
 	const Control *cname = &INS_FMW_CONTROLS[CONTROL_INS_FMW_NAME];
 	STRING(false, cname->x, cname->y, cname->var);
+	
+	
 	DECIMAL(6, 15, 0xAA, InstEdit::unpackFmw( &VAR_INSTRUMENT ).ALGORITHM );
-	static int recall = 0;
-	recall++;
-	HEXADECIMAL_DOUBLE(0,0,0xFF,recall);
 	
 	static int adsr_position;
 	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_FMW ].inst ) 

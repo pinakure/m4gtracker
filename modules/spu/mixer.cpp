@@ -1,8 +1,9 @@
 #include "mixer.hpp"
 #include "../../data/channel.hpp"
+#include "../../callbacks/debug.hpp"
+#include "../../data/settings.hpp"
 
-static const u16 DSOUND_FREQ_TABLE[] =
-{
+const u16 DSOUND_FREQ_TABLE[] = {
 		// Finetune 0
 	 2090,  2215,  2348,  2485,  2639,  2796,  2963,  3139,  3326,  3523,  3728,  3950, 	// C0-B0
 	 4181,  4430,  4697,  4971,  5279,  5593,  5926,  6279,  6653,  7046,  7457,  7901, 	// C1-B1
@@ -114,9 +115,23 @@ int 			Mixer::level;
 int 			Mixer::key_note[6];
 int 			Mixer::new_note[6];
 bool 			Mixer::enable_metronome = false;
+bool 			Mixer::enabled = false;
 
 
 void Mixer::init(){
+	
+	enabled = false;
+	
+	channel[0].pos 		= 0;
+	channel[0].inc 		= 0;
+	channel[0].data 	= (s8*) FMDATA;
+	channel[0].length 	= FM_BUFFER_SIZE << 12;
+	
+	channel[1].pos 		= 0;
+	channel[1].length 	= 0;
+	channel[1].inc 		= 0;
+	channel[1].data 	= NULL;
+	
 	sound_buffer.mixBufferBase = sound_mix_buffer;
 	
 	sound_buffer.mixBufferSize = SMP_BUFFER_SIZE;
@@ -133,41 +148,57 @@ void Mixer::init(){
 	
 	DMA1_CHI = 0; 			//Disable DMA1
 	DMA1_DST = (u32)&(*(volatile u32*)0x40000A0);
+
 }
+
+#include "../../data/instrument.hpp"
+#include "../../data/settings.hpp"
+#include "../../callbacks/ins.hpp"
 
 void Mixer::mix(){
    size_t i;
    s16 sample_a;
    s16 sample_b;
-   s16 vol_a = 0xF & 0x3;
-   s16 vol_b = 0xF & 0x3;
+   s16 vol_a = 0xF & 0xF;
+   s16 vol_b = 0xF & 0xF;
    
+   SoundChannel *fm = &channel[0];
+   
+   sample_a = 0x00;
+   sample_b = 0x00;
    for(i = 0; i < sound_buffer.mixBufferSize; i++){
 
 		// copy a sample
-		sample_a = 0x00;
-		sample_b = 0x00;
+		//sample_b = 0x00;
 		
-		if(channel[0].pos < channel[0].length){
-			sample_a = channel[0].data[ channel[0].pos>>12 ] * vol_a;
-			channel[0].pos += channel[0].inc;
-			sample_a >>= 2;
-		} else channel[0].pos = channel[0].length;
-		
-		if(channel[1].pos < channel[1].length){
-			sample_b = channel[1].data[ channel[1].pos>>12 ] * vol_b;
-			channel[1].pos += channel[1].inc;
-			sample_b >>= 2;
-		} else channel[1].pos = channel[1].length;
-			  
-		sound_buffer.curMixBuffer[i] = (sample_a + sample_b)>>1;
+		// Pick a sample from FMW buffer
+		if( fm->data ){
+			sample_a = ( fm->data[ fm->pos>>12 ] );
+			//sample_a = fm->data[ fm->pos & 0xF ];
+			fm->pos += fm->inc;
+			if(fm->pos >= fm->length ) fm->pos -= fm->length;// This sample loops when finished
+		}
+		// WORKAROUND
+		sound_buffer.curMixBuffer[i] = sample_a;
+		/*
+			// Pick a sample from SMP sample buffer
+			if(channel[1].pos < channel[1].length){
+				sample_b = channel[1].data[ channel[1].pos>>12 ] * vol_b;
+				channel[1].pos += channel[1].inc;
+				sample_b >>= 2;
+			} else channel[1].pos = channel[1].length;
+			// Sum both input sample bytes into a single output byte 
+			// sound_buffer.curMixBuffer[i] = ( sample_a + sample_b ) >> 1;
+		*/
 	}
+
 }
 
 void Mixer::noteOn1(u16 freq){
 	//if(new_note[4]){
-		channel[0].pos = 0;
-		//channel[0].inc = (DSOUND_FREQ_TABLE[key_note[4]]<<12) / 16000;//5734;	
+		//channel[0].pos = 0;
+		// channel[0].inc = (DSOUND_FREQ_TABLE[key_note[4]]<<12) / 16000;//5734;	
+		// channel[0].inc = (freq << 12) / 16000;	
 		channel[0].inc = freq;	
 	//}
 }
@@ -180,6 +211,7 @@ void Mixer::noteOn2(u16 freq){
 	//}
 }
 
+
 #define SAMPLE_COUNT 125
 void Mixer::load(size_t index, int chan){
 	/*//loadSample
@@ -187,13 +219,13 @@ void Mixer::load(size_t index, int chan){
 	const GBFS_FILE *dat= find_first_gbfs_file((const void*)find_first_gbfs_file);
 	smp_data = (u32*)gbfs_get_nth_obj(dat, index  , NULL, &smp_data_size);
 	smp_name = (char *)gbfs_get_nth_obj(dat, index+1, NULL, NULL);
-	
+	*/
 	// Update channel settings
-	channel[chan].data  = 0;
-	channel[chan].pos = 0;
-	channel[chan].length = smp_data_size<<12;
-	channel[chan].inc = (4000<<12)/5734;
-	
+	channel[chan].data  	= 0;
+	channel[chan].pos 		= 0;
+	channel[chan].length 	= smp_data_size<<12;
+	channel[chan].inc 		= (4000<<12)/5734;
+	/*
 	//channel[chan].length = smp_data_size - (smp_data_size &0XF); //remove last bytes from sample to ensure it is multiple of 16
 	
 	channel[chan].data = (s8*)smp_data;
@@ -208,8 +240,8 @@ void Mixer::enablePwm1(){ (*(vu16*)0x4000080)|= 0x1177; }
 void Mixer::enablePwm2(){ (*(vu16*)0x4000080)|= 0x2277; }
 void Mixer::enableWav (){ (*(vu16*)0x4000080)|= 0x4477; }
 void Mixer::enableNze (){ (*(vu16*)0x4000080)|= 0x8877; }
-void Mixer::enableFmw (){ }
-void Mixer::enableSmp (){ }
+void Mixer::enableFmw (){ (*(vu16*)0x4000082)|= 0x0B0E; } // 0x0800:FIFOA RESET | 0x0000:DSOUND0TIMER0 | 0x0200:DSOUND0LEFT | 0x0100:DSOUND0RIGHT | 0x0008:DSOUND1VOL100 | 0x0004:DSOUND0VOL100 | 0x0002:DMGSOUNDVOL100
+void Mixer::enableSmp (){ (*(vu16*)0x4000082)|= 0xB00E; } // 0x8000:FIFOB RESET | 0x4000:DSOUND1TIMER1 | 0x2000:DSOUND1LEFT | 0x1000:DSOUND1RIGHT | 0x0008:DSOUND1VOL100 | 0x0004:DSOUND0VOL100 | 0x0002:DMGSOUNDVOL100
 
 void Mixer::start(){
 	if( !VAR_CHANNEL[0].mute ) enablePwm1();
@@ -218,24 +250,18 @@ void Mixer::start(){
 	if( !VAR_CHANNEL[3].mute ) enableWav();
 	if( !VAR_CHANNEL[4].mute ) enableFmw();
 	if( !VAR_CHANNEL[5].mute ) enableSmp();
+	enabled = true;
 }
 
 void Mixer::disablePwm1(){ (*(vu16*)0x4000080) &= ~0x1100; }
 void Mixer::disablePwm2(){ (*(vu16*)0x4000080) &= ~0x2200; }
 void Mixer::disableWav (){ (*(vu16*)0x4000080) &= ~0x4400; }
 void Mixer::disableNze (){ (*(vu16*)0x4000080) &= ~0x8800; }
-void Mixer::disableSmp (){ }
-void Mixer::disableFmw (){
-	#ifdef SMP_DMA
-	*(u16*)0x4000102 = 0; /*REG_TM0CNT_H  */ // disable timer 0
-	*(u16*)0x40000C6 = 0; /*REG_DMA1CNT_H */ // stop DMA1
-	*(u16*)0x4000106 = 0; /*REG_TM1CNT_H  */ // disable timer 1
-	*(u16*)0x4000104 = 0; //Reset Timer 2 count value (sample count)
-	// Disable DSOUND 1
-	(*(vu16*)0x4000082) = 0x0002; 
-	#endif
+void Mixer::disableSmp (){ (*(vu16*)0x4000082) &= ~0xB000; }
+void Mixer::disableFmw (){ 
+	(*(vu16*)0x4000082) &= ~0x0B00; 
+	memset( (void*)FMDATA, 0, sizeof(u8)*FM_BUFFER_SIZE);
 }
-
 
 void Mixer::stop(){
 	disablePwm1();
@@ -244,6 +270,7 @@ void Mixer::stop(){
 	disableWav();
 	disableFmw();
 	disableSmp();
+	enabled = false;
 }
 
 void Mixer::disable( u8 channel ){
