@@ -718,11 +718,23 @@ void InstEdit::viewWaveFormFmw( ){
 }
 
 void InstEdit::viewWaveFormSmp( ){
-	
+	gpu.vs->clear();
+	/*
+	for(int x=0; x < 0x40; x+=2){
+		gpu.vs->set( x>>1, 15 - ( VAR_SMP.WAVEDATA[ x>>2 ]>>2) );
+		gpu.vs->set( x>>1, 15 + ( VAR_SMP.WAVEDATA[ x>>2 ]>>2) );
+	}
+	*/
+	gpu.vs->draw(14,6);
 }
 
 void InstEdit::viewWaveFormWav( ){
-	
+	gpu.vs->clear();
+	for(int x=0; x < 0x40; x+=2){
+		gpu.vs->set( x>>1, 15 - ( VAR_WAV.WAVEDATA[ x>>2 ]) );
+		gpu.vs->set( x>>1, 15 + ( VAR_WAV.WAVEDATA[ x>>2 ]) );
+	}
+	gpu.vs->draw(14,6);
 }
 
 void InstEdit::viewQuadADSR( u8 adsr_tables[ 4 ][ 0x40 ] , u8 adsr_position ){

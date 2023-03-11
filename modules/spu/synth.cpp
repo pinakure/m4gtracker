@@ -518,6 +518,12 @@ void Synth::loadSmp( u8 data[16] ){
 void Synth::loadWav( u8 data[16] ){
 	//select bank 0 for writing (bank 1 playing)
 	
+	// Copy rendered sample to buffer to be displayed later
+	for(int i=0; i < 16; i++){
+		VAR_WAV.WAVEDATA[i] = data[i];
+	}
+	
+	
 	swap_bank ^=1; 
 	REG_SOUND3CNT_L = SOUND3PLAY | SOUND3BANK32 | (swap_bank ? SOUND3SETBANK0 : SOUND3SETBANK1);
 	
