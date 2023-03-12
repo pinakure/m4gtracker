@@ -18,7 +18,6 @@ volatile bool SYS_QUERYKEY=false;
 
 
 MEM_IN_EWRAM Song			VAR_SONG;
-MEM_IN_EWRAM Song			VAR_SONGS[6];
 MEM_IN_EWRAM Input 			VAR_INPUT; 
 MEM_IN_EWRAM u8 			VAR_KEY[4];
 MEM_IN_EWRAM Pattern 		VAR_PATTERN[6];
@@ -60,7 +59,7 @@ int main(void){
 		gpu.vs = &VS;
 
 		Config::load();
-		SRAM.dataRevert( false );
+		//SRAM.dataRevert( false );
 		InstEdit::unpack( &VAR_INSTRUMENT );	
 
 		Debug::runTests();

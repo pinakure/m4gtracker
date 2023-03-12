@@ -6,10 +6,6 @@
 
 // Represents pattern data for a SINGLE channel
 
-// If this is defined, each pattern will not have individual transpose setting
-#define NSONGTRANSPOSE
-
-
 typedef struct sPattern{	
 	u8				ORDER[256];
 	#ifndef 		NSONGTRANSPOSE

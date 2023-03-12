@@ -33,6 +33,8 @@
 
 // Global callbacks and vars
 
+#include "timestamp.h"
+
 extern vu32 SYS_TIMER;						 //Global program timer
 extern volatile bool SYS_QUERYKEY;			 //True when a key is triggered
 extern int main(void);						 //Needed by INTERRUPTS!!!
@@ -66,8 +68,6 @@ void DEFAULTCONFIG(Control *c, bool bigstep, bool add, u32 *pointer);
 
 void ALPHA14(Control *c, bool bigstep, bool add, u32 *pointer);
 void ALPHA6(Control *c, bool bigstep, bool add, u32 *pointer);
-
-void BPMUPDATE(Control *c, bool bigstep, bool add, u32 *pointer);
 
 /* Variable Operator callbacks */
 void modify8BIT(Control*, bool bigstep, bool add, u32 *pointer);

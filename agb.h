@@ -4,6 +4,9 @@
 	needed to do all stuff, trying to not rely on HAM at all, so these common defines aren't but property of Nintendo,
 	so feel free to use this libary without giving credit to anybody but you ;) **/
 #ifndef AGBLIB_H
+
+	// If this is defined, each pattern will not have individual transpose setting
+	//#define NSONGTRANSPOSE
 	#include <stdarg.h>
 	#include <stdlib.h>
 	#include "string.h"

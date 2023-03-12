@@ -28,7 +28,10 @@ typedef struct sArrayWatch {
 	bool 		redraw;
 } ArrayWatch;
 
+
+
 #endif
+
 
 class Debug {
 	public:

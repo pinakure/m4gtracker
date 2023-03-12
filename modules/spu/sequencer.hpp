@@ -17,8 +17,8 @@ class Sequencer {
 	public:
 		static int  currentBeats;
 		static bool playing;		
-		static void init( int bpm );
-		static void setTempo( int bpm );
+		static void init( u8 bpm );
+		static void setTempo( u8 bpm );
 		
  inline static void setCmd(	Channel* channel, u8 cmd, u8 val );
  inline static void setIns( Channel* channel, u8 ins, u8 vol );

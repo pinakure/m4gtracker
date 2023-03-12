@@ -4,57 +4,60 @@
 #include "../agb.h"
 
 typedef struct _SETTINGS_PWM {	
-	u8				SWEEPDIR;		/*1*/	/*1*/
-	u8				ENVELOPEDIR;	/*1*/	/*2*/
-	u8				TSP_ENABLE;		/*1*/	/*3*/
-	u8				VOL_ENABLE;		/*1*/	/*4*/
-	u8				DUTYCYCLE;		/*2*/	/*6*/
-	u8				TSP_LOOP;		/*2*/	/*8*/
-	u8				VOL_LOOP;		/*2*/	/*10*/	
-	u8				LENGTH; 		/*4*/	/*14*/
-	u8				LEVEL;			/*4*/	/*18*/
-	u8				TSP_LENGTH;		/*4*/	/*22*/
-	u8				SWEEPSPEED; 	/*4*/	/*26*/
-	u8				SWEEPSTEPS; 	/*4*/	/*30*/
-	u8				VOLUMEFADE;		/*4*/	/*34*/
-	u8				TSP_POSITION;	/*4*/	/*38*/
-	u8				VOL_POSITION;	/*4*/	/*42*/
-	u8				VOL_LENGTH;		/*4*/	/*46*/
-	u8				VOL_ENVELOPE;	/*8*/	/*54*/
-	u8				TSP_ENVELOPE;	/*8*/	/*62*/
-	u8				TSP[16];		/*16x4*//*126*/
-	u8				VOL[16];		/*16x4*//*190*/
+	u8				SWEEPDIR;		// 	    1 : 1
+	u8				ENVELOPEDIR;	//      1 : 2
+	u8				TSP_ENABLE;		//      1 : 3
+	u8				VOL_ENABLE;		//      1 : 4 
+	u8				DUTYCYCLE;		//      2 : 5
+	u8				TSP_LOOP;		//      2 : 7
+	u8				VOL_LOOP;		//      2 : 9 	
+	u8				LENGTH; 		//      4 : 11
+	u8				LEVEL;			//      4 : 15
+	u8				TSP_LENGTH;		//      4 : 19
+	u8				SWEEPSPEED; 	//      4 : 23
+	u8				SWEEPSTEPS; 	//      4 : 27
+	u8				VOLUMEFADE;		//      4 : 31
+	u8				TSP_POSITION;	//      4 : 35
+	u8				VOL_POSITION;	//      4 : 39
+	u8				VOL_LENGTH;		//      4 : 43
+	u8				VOL_ENVELOPE;	//      8 : 47
+	u8				TSP_ENVELOPE;	//      8 : 53
+	u8				TSP[16];		// 4 x 16 : 61
+	u8				VOL[16];		// 4 X 16 : 125
+									//          189 BITS
 }SETTINGS_PWM;
 
 typedef struct _SETTINGS_WAV {
-	u8	 			PHASE;
-	u8	 			AM;
-	u8	 			MIXPERCENT /*4*/;
-	u8 				OP1_TYPE /*3*/;
-	u8 				OP1_ADSR[4] /*4*/;
-	u8 				OP2_TYPE /*3*/;
-	u8 				OP2_ADSR[4] /*4*/;
-	u8 				OP3_TYPE /*3*/;
-	u8 				OP3_ADSR[4] /*4*/;
-	u8 				OP4_TYPE /*3*/;
-	u8 				OP4_ADSR[4] /*4*/;
-	u8 				WAVEDATA[16] /*4x16*/;	
-	void 			*WAVPRESET[5] /*4x16*/;	
+	u8	 			PHASE			;//   	1 : 1
+	u8	 			AM 				;//   	1 : 2
+	u8	 			MIXPERCENT		;//   	4 : 3 
+	u8 				OP1_TYPE 		;//   	3 : 7
+	u8 				OP1_ADSR[4] 	;//   	4 : 20
+	u8 				OP2_TYPE 		;//   	3 : 24
+	u8 				OP2_ADSR[4] 	;//   	4 : 27
+	u8 				OP3_TYPE 		;//   	3 : 31
+	u8 				OP3_ADSR[4] 	;// 	4 : 34
+	u8 				OP4_TYPE 		;//   	3 : 38
+	u8 				OP4_ADSR[4] 	;//      4 : 41
+	u8 				WAVEDATA[16] 	;// 4 x 16 : 45;	
+	void 			*WAVPRESET[5] 	;// 4 x 16 : 109;
+											  //173 BITS
 	
 }SETTINGS_WAV;
 
 typedef struct _SETTINGS_FMW {
-	u8 				MULT /*4*/;
-	u8 				ALGORITHM /*3*/;
-	u8 				OP1_TYPE /*3*/;
-	u8 				OP1_ADSR[4] /*4*/;
-	u8 				OP2_TYPE /*3*/;
-	u8 				OP2_ADSR[4] /*4*/;
-	u8 				OP3_TYPE /*3*/;
-	u8 				OP3_ADSR[4] /*4*/;
-	u8 				OP4_TYPE /*3*/;
-	u8 				OP4_ADSR[4] /*4*/;
-	u8 				WAVEDATA[16]; /*4x16*///just 16 bytes saved, the rest is for playback buffer
+	u8 				MULT 			;//      4 : 1
+	u8 				ALGORITHM 		;//      3 : 5
+	u8 				OP1_TYPE 		;//      3 : 8
+	u8 				OP1_ADSR[4] 	;//      4 : 11
+	u8 				OP2_TYPE 		;//      3 : 15
+	u8 				OP2_ADSR[4] 	;//      4 : 18
+	u8 				OP3_TYPE 		;//      3 : 22
+	u8 				OP3_ADSR[4] 	;//      4 : 25
+	u8 				OP4_TYPE 		;//      3 : 29
+	u8 				OP4_ADSR[4] 	;//      4 : 32
+	u8 				WAVEDATA[16] 	;// 4 x 16 : 36
+									// 			100
 }SETTINGS_FMW;
 
 #define FM_BUFFER_SIZE		32

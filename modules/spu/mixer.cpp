@@ -195,12 +195,7 @@ void Mixer::mix(){
 }
 
 void Mixer::noteOn1(u16 freq){
-	//if(new_note[4]){
-		//channel[0].pos = 0;
-		// channel[0].inc = (DSOUND_FREQ_TABLE[key_note[4]]<<12) / 16000;//5734;	
-		// channel[0].inc = (freq << 12) / 16000;	
-		channel[0].inc = freq;	
-	//}
+	channel[0].inc = (freq << 12) / 16000;	
 }
 
 void Mixer::noteOn2(u16 freq){

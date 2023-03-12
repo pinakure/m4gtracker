@@ -33,8 +33,16 @@ static const u16 color_dec = COLOR_WHITE;
 static const u16 color_bef = COLOR_RED;
 static const u16 color_aft = COLOR_GREEN;
 
+#include "../data/song.hpp"
+
+#define assert( expr ) 			if( ! expr ) HALT;
+
 void Debug::runTests(){
-	SongEdit::load();
+
+	// SongEdit::load();
+
+	memoryTest( NULL, 0, 0, NULL);
+		
 	return;
 	Mixer::start();
 	Sequencer::playing = true;
@@ -426,13 +434,12 @@ void Debug::panic( const char *message, u32 *pointer){
 	HEXADECIMAL_DOUBLE( 10 , 11 , COLOR_WHITE, ((( unsigned ) pointer ) &0x0000FF00 ) >>  8	); 	
 	HEXADECIMAL_DOUBLE( 11 , 11 , COLOR_WHITE, ((( unsigned ) pointer ) &0x000000FF ) 	    );	
 	
-	Debug::ascii( 1,12, "    *U8 :  0x"								, COLOR_WHITE);
-	Debug::ascii( 1,13, "   *U16 :  0x"								, COLOR_WHITE);
-	Debug::ascii( 1,14, "   *U32 :  0x"								, COLOR_WHITE);
-	
 	if(!pointer){
 		Debug::ascii( 1,12, "No additional information was provided."	, COLOR_WHITE);
 	} else {
+		Debug::ascii( 1,12, "    *U8 :  0x"								, COLOR_WHITE);
+		Debug::ascii( 1,13, "   *U16 :  0x"								, COLOR_WHITE);
+		Debug::ascii( 1,14, "   *U32 :  0x"								, COLOR_WHITE);
 		// U8 interpretation
 		HEXADECIMAL_DOUBLE(  8 , 12 , COLOR_WHITE, (((u8)*pointer ) & 0x000000FF ) 	  );
 		// U16 Interpretation
@@ -657,21 +664,228 @@ void Debug::updateMemory( RegionHandler* rh ){
 void Debug::updateMemTest(RegionHandler* rh){
 }
 
-void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
-	u8 	a1,a2,a3;
-	int i;
-	
-	for( i = 0 ; i < 0x8000 ; i++ ){
-		SRAM.seek( i ); a1 = SRAM.read();
-		SRAM.seek( i ); a2 = SRAM.read();
-		SRAM.seek( i ); a3 = SRAM.read();
+class Console {
+	private:
+		void setTitle(const char *new_title, u16 color=COLOR_CYAN){
+			title = new_title;
+			title_color = COLOR_CYAN;
+		}
 		
-		if( ( ( a1 != a2 ) || ( a2 != a3 ) ) || a1 != a3 ){
-			SRAM.drawPosition( 27, 1, 7 );
-			return;
+	public:
+		u16 		cursor_color;
+		u16 	 	title_color;
+		u8 	 		cursor_x;
+		u8 	 		cursor_y;
+		const char* title;
+		
+		Console(const char *new_title=NULL){
+			cursor_x = 0;
+			cursor_y = 0;
+			if( new_title ) setTitle( new_title );
+			render();
+		}
+		
+		void percent( float q ){
+			if( q == 1.0f ) DECIMAL_DOUBLE_TWOTILES(27, cursor_y, COLOR_WHITE, 100);
+			else DECIMAL_DOUBLE_TWOTILES( 27, cursor_y, COLOR_CYAN, (u8)(q*100.0f) );
+			gpu.set(2, 29, cursor_y, (COLOR_RED<<12) | 0x6F);
+		}
+		
+		void print( const char *text, u16 color=COLOR_CYAN ){
+			gpu.set(2, cursor_x, cursor_y, 0x0100);
+			cursor_y++;
+			Debug::ascii( 0 , cursor_y , text , color );
+			cursor_x=strlen( text )/2;
+			if(cursor_x > 30){
+				cursor_y += (cursor_x / 30);
+				cursor_x = 0;
+			}
+			cursor_color = color;
+		}
+		
+		void setCursor( u8 x, u8 y){
+			cursor_x = x;
+			cursor_y = y;
+		}
+		
+		void render(){
+			Debug::clear( 0x10 | COLOR_DARK_BLUE );
+			if(title) 
+				Debug::bigString(29 - strlen(title), 0, title, title_color);
+		}
+		
+		void update(){		
+			static bool bm;
+			if(bm != gpu.blink){
+				bm = gpu.blink;
+				gpu.set(2, cursor_x, cursor_y, (cursor_color << 12) | (gpu.blink ? 0x0116 : 0x0100) );
+			}
+			gpu.blinkUpdate(8);
+		}
+		
+		void wait( u8 time ){
+			for(int i=0; i<0x7FF<<time; i++){
+				while( gpu.isVblank()){}
+				while(!gpu.isVblank()){}
+				while( gpu.isVblank()){}
+				while(!gpu.isVblank()){}
+				
+				update();
+			}
+		}
+};
+
+class ProgressBar {
+	public:
+		ProgressBar(){
+			redraw();
+		}
+		
+		void redraw(){
+			for(int s=0; s<0x30; s++){
+				gpu.set(0, s,19, 0x29);
+			}
+		}
+		
+		void render(float q, bool highlight ){
+			gpu.set(0, (u8)(q*30),19, highlight ? 0x25 : 0x23);
+		}
+};
+
+#define SRAM_SIZE 0x8000
+
+
+extern "C" {
+	u8 	 SRAM_ReadByte(u16 position);
+	void SRAM_WriteByte(u16 position, u8 byte);
+};
+
+void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
+
+	u16 p = 0;
+	
+	Console 	console("MEMORY TEST");
+	ProgressBar progressbar;
+
+	console.print("");
+	#define MSGMSG 
+	// Fill SRAM with known values 
+	console.print("Filling SRAM 0x0000 ~ 0x8000" );
+	SRAM.seek(0);
+	for( int i=0, p=0; i < SRAM_SIZE ; i++,p++){
+		//SRAM_WriteByte(i, 0x80 + (i&0xF));
+		SRAM.write(0x80 + (i&0xF));
+		if( (i &0xF) == 0){
+			float q = ( float( p ) / float( SRAM_SIZE ) );
+			progressbar.render( q, false );
+			console.percent(q);
+		}
+		console.update();
+	}
+	console.percent(1.0f);
+	
+	// Check values written persistence
+	console.print("Checking SRAM Integrity...");
+	SRAM.seek(0);
+	for( int i=0, p=0; i < SRAM_SIZE ; i++,p++){
+		assert(SRAM.read() == (0x80 + (i&0xF)));
+		if( (i &0xF) == 0){
+			float q = ( float( p ) / float( SRAM_SIZE ) );
+			progressbar.render( q, true );
+			console.percent(q);
+		}
+		console.update();
+	}
+	console.percent(1.0f);
+	progressbar.redraw();
+	
+	console.print("SRAM Integrity check OK", COLOR_GREEN);
+	console.wait( 1 );
+	
+	console.print("Filling song memory...");
+
+	Song *s = &VAR_SONG;
+
+	for( VAR_CFG.SLOT=0, p=0; VAR_CFG.SLOT<0x6; VAR_CFG.SLOT++){
+		
+		// Set title 
+		for(int a=0; a<14;a++){
+			s->TITLE	[ a ] = VAR_CFG.SLOT;
+			s->ARTIST	[ a ] = a;
+		}
+		
+		s->NOTEMPTY = true;
+		
+		// Write groove table
+		for(int i=0; i<0xF; i++){
+			s->GROOVE.STEP[ i ] = (0x80 + (i&0xF));
+		}
+		
+		for( int c=0; c<0x06; c++){
+			for(int i=0; i < 256; i++ ){
+				u8 val = 0x40 + (p & 0x3f);
+				s->PATTERNS[ c ].ORDER[ i ] = val;
+				#ifndef NSONGTRANSPOSE
+				s->PATTERNS[ c ].TRANSPOSE[ i ] = val;
+				#endif
+				console.update();
+				if( (p&0xF) == 0){
+					float q = ( float( p ) / float( 0xFF * 6 * 6 ) );
+					console.percent(q);
+					progressbar.render(q, false);
+				}
+				p++;
+			}
+		}		
+
+		SRAM.songSave(false);
+	}
+	console.percent(1.0f);
+	
+	console.print( "Reading song memory..." );
+	for( VAR_CFG.SLOT=0, p = 0; VAR_CFG.SLOT<0x6; VAR_CFG.SLOT++){
+		
+		SRAM.songLoad(false);
+		
+		for(int a=0; a < 14; a++){
+			assert( s->TITLE[a]==VAR_CFG.SLOT);
+			assert( s->ARTIST[a]==a);
+		}
+		
+		assert(s->NOTEMPTY);
+		
+		// Check groove table
+		for(int i=0; i<0xF; i++){
+			assert( s->GROOVE.STEP[ i ] == (0x80 + (i&0xF)));
+		}
+		
+		for( int c=0; c<0x06; c++){
+			for(int i=0; i<256; i++ ){
+				u8 val = 0x40 + (p & 0x3f);
+				assert( s->PATTERNS[c].ORDER[ i ] == val );
+				#ifndef NSONGTRANSPOSE
+				assert( s->PATTERNS[c].TRANSPOSE[i] == val);
+				#endif
+				console.update();
+				if( (p&0xF)==0){
+					float q = ( float( p ) / float( 0xFF * 6 * 6 ) );
+					console.percent( q );
+					progressbar.render(q, true);
+				}
+				p++;
+			}
 		}
 	}
-	SRAM.drawPosition( 27, 1, 0xF );
+	console.percent( 1.0f );
+
+	// Reset slot to first item
+	VAR_CFG.SLOT = 0;
+	
+	console.print("Checks passed successfully."	, COLOR_GREEN );
+	console.wait( 1 );
+	
+	console.print("Starting M4GEEK01..."		, COLOR_GREEN );
+	console.wait( 1 );
 }
 #else
 

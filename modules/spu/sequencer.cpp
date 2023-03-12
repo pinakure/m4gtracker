@@ -4,6 +4,7 @@
 #include "../../data/channel.hpp"
 #include "../../data/song.hpp"
 #include "../../data/helpers.hpp"
+#include "../../data/config.hpp"
 #include "../../callbacks/trk.hpp"
 
 extern "C" { int CheckBPMClock(int timerTarget); }; /* Since these are ASM instructions, we have to ensure CPP does not mangle them! */
@@ -18,7 +19,7 @@ bool	Sequencer::playing 			= false;
 	
 extern Song VAR_SONG;	
 
-void Sequencer::init( int bpm ){
+void Sequencer::init( u8 bpm ){
 	
 	/* Setup tempo timer */
 	/* Set timer 2 prescaler to F/256 and reset it */
@@ -27,9 +28,9 @@ void Sequencer::init( int bpm ){
 	*((volatile u16*)0x0400010A) = 0x82;   //Enable (bit 7)
 	
 	/* Set timer 3 prescaler to F/256 and reset it */
-	*((volatile u16*)0x0400010E) = 0x0;    //Disable (bit 7)
+	*((volatile u16*)0x0400010E) = 0x0000;    //Disable (bit 7)
 	*((volatile u16*)0x0400010C) = 0x0000; //Set counter to 0
-	*((volatile u16*)0x0400010E) = 0x82;   //Enable (bit 7)
+	*((volatile u16*)0x0400010E) = 0x0082;   //Enable (bit 7)
 	
 	/* Setup time measurement vars */ 
 	currentTicks 	= 0;
@@ -39,12 +40,12 @@ void Sequencer::init( int bpm ){
 	setTempo( bpm );
 }
 
-void Sequencer::setTempo(int bpm){
+void Sequencer::setTempo(u8 bpm){
 	timerTarget = (BPM_MAGIC / bpm)*10; 
 	VAR_SONG.BPM = bpm;
-	*((volatile u16*)0x0400010A) = 0x0; //Disable timer (bit 7)
+	*((volatile u16*)0x0400010A) = 0x0000; //Disable timer (bit 7)
 	*((volatile u16*)0x04000108) = 0x0000; //'reset' timer counter
-	*((volatile u16*)0x0400010A) = 0x82; //Enable (bit 7)		
+	*((volatile u16*)0x0400010A) = 0x0082; //Enable (bit 7)		
 }
 
 void Sequencer::jumpToPatternAsync( int pattern_index ){
@@ -156,11 +157,16 @@ void Sequencer::update(){
 	// Prepare analog sync to be written/read
 	Net::clear();// WARNING: This wont allow slave mode to work...
 	
+	if( !( (currentTicks*(VAR_CFG.LINKMODE.SYNCRATE+1)) & ((2<<VAR_CFG.LINKMODE.SYNCTICKS)-1) ) ){
+		Net::update();
+	}
+	
+	
 	// If current tick%4 == 0, time to trigger a note on every channel
 	if( !( currentTicks & 0x3 ) ){
 		
-		// Send Analog Master Sync signal or Receive Slave suync signal
-		Net::update();
+		// Send Analog Master Sync signal or Receive Slave sync signal
+		//Net::update();
 		
 		for(int i=0, s = 0; i<6; i++){
 			Channel *channel = &VAR_CHANNEL[ i ];

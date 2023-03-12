@@ -86,3 +86,8 @@ Modified PatEdit screen to acommodate transpose per pattern
 Tracker screen whole column value modification
 Fixed bug allowing clipboard mask being bigger than displayable room
 Snake eat sounds
+---------------
+12-03-2023
+---------------
+Add Transpose controls @ pattern screen
+Code cleanup (Remove VAR_SONGS[6] )

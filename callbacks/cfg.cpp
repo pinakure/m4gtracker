@@ -162,11 +162,12 @@ void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 }
 
 void Config::backup	(Control *c, bool bigstep, bool add, u32 *pointer){
-	SRAM.dataBackup( true );	
+	// DEPRECATED
+	Debug::panic("This option made no sense, so its now deprecated");
 }
 
 void Config::revert (Control *c, bool bigstep, bool add, u32 *pointer){
-	SRAM.dataRevert( true );
+	Debug::panic("This option made no sense, so its now deprecated");
 }
 
 void Config::save (Control *c, bool bigstep, bool add, u32 *pointer){

@@ -18,8 +18,6 @@ typedef struct sSong {
 	bool			NOTEMPTY;		// If true, song has data
 }Song;
 
-extern Song VAR_SONGS[6]; //Song data for 6 song slots
-extern Song VAR_SONG; //Current loaded song (copied from active one)
-
+extern Song VAR_SONG; //Current loaded song ( unpacked and copied from SRAM active slot )
 
 #endif 

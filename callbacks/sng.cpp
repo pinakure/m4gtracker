@@ -87,6 +87,8 @@ static int compstr(u8 *a, u8*b, u8 len){
 	return 0;
 }
 
+MEM_IN_EWRAM bool SongEdit::has_data[ SONG_SLOT_COUNT ] = { false, false, false, false, false, false };
+
 void SongEdit::update( RegionHandler* rh ){
 	const Control *ct = &SNG_CONTROLS[CONTROL_SNG_TITLE];
 	const Control *ca = &SNG_CONTROLS[CONTROL_SNG_ARTIST];
@@ -147,8 +149,10 @@ void SongEdit::erase( Control *c, bool bigstep, bool add, u32 *pointer ){
 /* Called each time BPM is changed by the control on SNG screen */
 void SongEdit::setTempo( Control *c, bool bigstep, bool add, u32 *pointer ){	
 	(*(u8*) c->var) = ((*(u8*) c->var) + ((bigstep?0x10:0x1)* (add?1:-1)) ) & 0xFF;
-	( (RegionHandler*)pointer )->sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)&SNG_CONTROLS[CONTROL_SNG_BPM]);
-	Sequencer::setTempo(*(c->var));
+	u8 val = *(c->var);
+	if(regHnd.control)
+		regHnd.sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)&SNG_CONTROLS[CONTROL_SNG_BPM]);
+	Sequencer::setTempo(val);
 }
 
 /* Calculates new a new BPM Values each 4th time user calls this function based on previous 3 calls */

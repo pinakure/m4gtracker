@@ -14,7 +14,7 @@ class PatEdit {
 		static 			bool 	clean;
 		static 			u16  	icon_time;
 
-		static void sync				( ); // sync pattern data
+		static void sync				( bool verbose = true ); // sync pattern data and optionally redraw controls 
 		static void syncPosition		( u8 position );
 		static void copy				( u8 channel );
 		static void globalUpdate		(RegionHandler *rh);
@@ -23,7 +23,7 @@ class PatEdit {
 		static void solo				( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void mute				( Control *c, bool bigstep, bool add, u32 *pointer );
 
-		static void shift				( int q );
+		static void shift				( int q , u8 starting_point = 0);
 		static void transpose			( int q );
 		static void processInput		( );
 };

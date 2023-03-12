@@ -155,7 +155,6 @@ void Synth::noteOnWav( Channel* channel ){
 }
 
 void Synth::noteOnFmw( Channel* channel ){
-	// u16 freq 	= DSOUND_FREQ_TABLE[ 
 	u16 freq 	= DSOUND_FREQ_TABLE[ 
 					channel->key 
 					+ channel->transpose 

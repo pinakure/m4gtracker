@@ -11,6 +11,13 @@
 #define DEVICE_SANYO_128	0x1362
 #define DEVICE_MACRONIX_128	0x09C2
 
+
+#define DATA_BASE_ADDRESS 	0x80
+#define SONG_DETAILS_SIZE	0x20
+#define GROOVE_TABLE_SIZE	0x10
+#define PATTERN_DATA_SIZE	(1536+256)
+
+
 typedef struct sBitField {
 	u8 *var;
 	u8 position;
@@ -42,8 +49,6 @@ class Sram {
 		void songDefaults	( bool verbose );
 		void sharedDataLoad	( bool verbose );
 		void sharedDataSave	( bool verbose );
-		void dataRevert		( bool verbose );
-		void dataBackup		( bool verbose );
 		
 		void drawPosition(u8 x, u8 y,u8 color);
 };

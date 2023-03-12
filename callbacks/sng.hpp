@@ -6,8 +6,11 @@
 #include "../modules/regionhandler/regionhandler.hpp"
 #include "../data/callback.hpp"
 
+#define SONG_SLOT_COUNT 	6
+
 class SongEdit {
 	public:
+		static MEM_IN_EWRAM bool has_data[ SONG_SLOT_COUNT ];
 		static void update( RegionHandler* rh );
 		static void load	( Control *c=NULL, bool bigstep=false, bool add=false, u32 *pointer=NULL );
 		static void save 	( Control *c=NULL, bool bigstep=false, bool add=false, u32 *pointer=NULL );

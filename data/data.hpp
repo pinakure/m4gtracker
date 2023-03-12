@@ -15,7 +15,6 @@
 #include "../callbacks/callbacks.h"
 
 extern MEM_IN_EWRAM Song			VAR_SONG;
-extern MEM_IN_EWRAM Song			VAR_SONGS[6];
 extern MEM_IN_EWRAM Input 			VAR_INPUT; 
 extern MEM_IN_EWRAM u8 				VAR_KEY[4];
 extern MEM_IN_EWRAM Pattern 		VAR_PATTERN[6];
