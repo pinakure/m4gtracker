@@ -105,7 +105,8 @@ void Synth::noteOnPwm1( Channel* channel ){
 	u16 freq 	= PWM_FREQ_TABLE[ 
 					channel->key 
 					+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
-					+ channel->transpose 
+					// + channel->transpose 
+					+ VAR_SONG.PATTERNS[0].TRANSPOSE[ channel->POSITION] 
 					+ VAR_SONG.TRANSPOSE 
 				  ] 
 				+ channel->fine_tune
@@ -117,7 +118,8 @@ void Synth::noteOnPwm1( Channel* channel ){
 void Synth::noteOnPwm2( Channel* channel ){
 	u16 freq 	= PWM_FREQ_TABLE[ 
 					channel->key 
-					+ channel->transpose 
+					//+ channel->transpose 
+					+ VAR_SONG.PATTERNS[1].TRANSPOSE[ channel->POSITION] 
 					+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
 					+ VAR_SONG.TRANSPOSE 
 				  ] 
@@ -130,7 +132,8 @@ void Synth::noteOnPwm2( Channel* channel ){
 void Synth::noteOnNze( Channel* channel ){
 	u16 freq 	= PWM_FREQ_TABLE[ 
 					channel->key 
-					+ channel->transpose 
+					//+ channel->transpose
+					+ VAR_SONG.PATTERNS[2].TRANSPOSE[ channel->POSITION] 
 					+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
 					+ VAR_SONG.TRANSPOSE 
 				  ] 
@@ -143,7 +146,8 @@ void Synth::noteOnNze( Channel* channel ){
 void Synth::noteOnWav( Channel* channel ){
 	u16 freq 	= PWM_FREQ_TABLE[ 
 					channel->key 
-					+ channel->transpose 
+					+ channel->transpose
+					+ VAR_SONG.PATTERNS[3].TRANSPOSE[ channel->POSITION] 
 					+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
 					+ VAR_SONG.TRANSPOSE 
 				  ]	
@@ -157,7 +161,8 @@ void Synth::noteOnWav( Channel* channel ){
 void Synth::noteOnFmw( Channel* channel ){
 	u16 freq 	= DSOUND_FREQ_TABLE[ 
 					channel->key 
-					+ channel->transpose 
+					//+ channel->transpose 
+					+ VAR_SONG.PATTERNS[4].TRANSPOSE[ channel->POSITION] 
 					+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
 					+ VAR_SONG.TRANSPOSE 
 				  ] 
@@ -172,7 +177,8 @@ void Synth::noteOnFmw( Channel* channel ){
 void Synth::noteOnSmp( Channel* channel ){
 	u16 freq 	= PWM_FREQ_TABLE[ 
 					channel->key 
-					+ channel->transpose 
+					// + channel->transpose
+					+ VAR_SONG.PATTERNS[5].TRANSPOSE[ channel->POSITION] 
 					+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
 					+ VAR_SONG.TRANSPOSE 
 				  ] 

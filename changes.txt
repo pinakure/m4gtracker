@@ -104,3 +104,4 @@ Fixed bug involving AlphaDialog spawning twice when invoked
 Made AlphaDialog and ReallyDialog static
 Reduced ROM size in 50KB
 Separated compilation of static dialogs (ReallyDialog, AlphaDialog, Progress)
+Pattern chain transpose is working ( To be tested during cold-load, replay, and more case scenarios)

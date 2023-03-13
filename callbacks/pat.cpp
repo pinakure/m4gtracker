@@ -410,12 +410,18 @@ void PatEdit::syncPosition( u8 position ){
 	// Called each time VAR_CFG.ORDERPOSITION CHANGES
 	for( int i=0, p; i < 16; i++ ){
 		p = i+position;
-		VAR_PATTERN[0].ORDER[i] = VAR_SONG.PATTERNS[0].ORDER[p];
-		VAR_PATTERN[1].ORDER[i] = VAR_SONG.PATTERNS[1].ORDER[p];
-		VAR_PATTERN[2].ORDER[i] = VAR_SONG.PATTERNS[2].ORDER[p];
-		VAR_PATTERN[3].ORDER[i] = VAR_SONG.PATTERNS[3].ORDER[p];
-		VAR_PATTERN[4].ORDER[i] = VAR_SONG.PATTERNS[4].ORDER[p];
-		VAR_PATTERN[5].ORDER[i] = VAR_SONG.PATTERNS[5].ORDER[p];
+		VAR_PATTERN[0].ORDER[i]  	= VAR_SONG.PATTERNS[0].ORDER[p];
+		VAR_PATTERN[1].ORDER[i]  	= VAR_SONG.PATTERNS[1].ORDER[p];
+		VAR_PATTERN[2].ORDER[i]  	= VAR_SONG.PATTERNS[2].ORDER[p];
+		VAR_PATTERN[3].ORDER[i]  	= VAR_SONG.PATTERNS[3].ORDER[p];
+		VAR_PATTERN[4].ORDER[i]  	= VAR_SONG.PATTERNS[4].ORDER[p];
+		VAR_PATTERN[5].ORDER[i]  	= VAR_SONG.PATTERNS[5].ORDER[p];
+		VAR_PATTERN[0].TRANSPOSE[i]  = VAR_SONG.PATTERNS[0].TRANSPOSE[p];
+		VAR_PATTERN[1].TRANSPOSE[i]  = VAR_SONG.PATTERNS[1].TRANSPOSE[p];
+		VAR_PATTERN[2].TRANSPOSE[i]  = VAR_SONG.PATTERNS[2].TRANSPOSE[p];
+		VAR_PATTERN[3].TRANSPOSE[i]  = VAR_SONG.PATTERNS[3].TRANSPOSE[p];
+		VAR_PATTERN[4].TRANSPOSE[i]  = VAR_SONG.PATTERNS[4].TRANSPOSE[p];
+		VAR_PATTERN[5].TRANSPOSE[i]  = VAR_SONG.PATTERNS[5].TRANSPOSE[p];
 	}
 }
 
@@ -605,19 +611,23 @@ void PatEdit::sync( bool verbose ){
 		for(u16 i=0; i<16;i++){
 			/* ------------------------------------------------------------
 			Copy data from VISIBLE CONTROL VARS -> Song Data Order Memory*/
-			VAR_PATTERN[ c ].ORDER[ i ] 	= VAR_SONG.PATTERNS[ c ].ORDER[ i + VAR_CFG.ORDERPOSITION ];
-			#ifndef NSONGTRANSPOSE
+			VAR_PATTERN[ c ].ORDER[ i ] 		= VAR_SONG.PATTERNS[ c ].ORDER[ i + VAR_CFG.ORDERPOSITION ];
+			//#ifndef NSONGTRANSPOSE
 			VAR_PATTERN[ c ].TRANSPOSE[ i ] = VAR_SONG.PATTERNS[ c ].TRANSPOSE[ i + VAR_CFG.ORDERPOSITION ];
-			#endif
+			//#endif
 			/* ------------------------------------------------------------
 			Manually draw the controls (good to avoid message overflow)  */
-			if( verbose ) regHnd.drawControl( ctl );
+			if( verbose ) {
+				regHnd.drawControl( ctl );			// Redraw pattern controls
+				regHnd.drawControl( ctl+( 16*6 ) ); // Redraw transpose controls
+			}
 			/* ------------------------------------------------------------
 			Ensure the pattern order tags at the sides get updated later */
 			PatEdit::clean = false;
 			// ------------------------------------------------------------
 			ctl++;
 		}
+		VAR_CHANNEL[ c ].transpose = VAR_SONG.PATTERNS[ c ].TRANSPOSE[ VAR_CHANNEL[c].POSITION ] ;
 	}
 }
 
@@ -649,6 +659,7 @@ void PatEdit::dispatchMessage(u32 msg){
 		/* Scroll up */
 		case MESSAGE_OTHER_PREV:
 			if(VAR_CFG.ORDERPOSITION>0){
+				//TODO: pagination using B + something + LEFT
 				/* ------------------------------------------------------------
 				Clear Arrows when pattern scrolls down 						 */
 				for(int c=0, x=0; c<6;c++){
@@ -671,6 +682,7 @@ void PatEdit::dispatchMessage(u32 msg){
 		case MESSAGE_OTHER_NEXT: 
 			/* about the 240 below, it is 256 patterns - 16 visible entries */
 			if(VAR_CFG.ORDERPOSITION < 240){ 
+				//TODO: pagination using B + something + RIGHT
 				/* ------------------------------------------------------------
 				Clear Arrows when pattern scrolls down 						 */
 				for(int c=0, x=0; c<6;c++){
