@@ -75,7 +75,4 @@ extern void modify6BIT 		( Control *c, bool bigstep, bool add, u32 *pointer );
 extern void modify7BIT 		( Control *c, bool bigstep, bool add, u32 *pointer );
 extern void modify8BIT 		( Control *c, bool bigstep, bool add, u32 *pointer );
 
-extern void ALPHA14			( Control *c, bool bigstep, bool add, u32 *pointer );
-extern void ALPHA6			( Control *c, bool bigstep, bool add, u32 *pointer );
-
 #endif

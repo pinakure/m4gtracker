@@ -42,19 +42,19 @@ const Control SNG_CONTROLS[ CONTROL_SNG_MAX ] = {
 #undef VAR
 #undef CTL
 
-const Callback cb_sng_load		= { SongEdit::load		, EVENT_KEYUP_B 	, NULL 						, NULL };
-const Callback cb_sng_save		= { SongEdit::save		, EVENT_KEYUP_B 	, NULL 						, NULL };
-const Callback cb_sng_purge		= { SongEdit::purge		, EVENT_KEYUP_B 	, NULL 						, NULL };
-const Callback cb_sng_copy		= { SongEdit::copy		, EVENT_KEYUP_B 	, NULL 						, NULL };
-const Callback cb_sng_erase		= { SongEdit::erase		, EVENT_KEYUP_B 	, NULL 						, NULL };
-const Callback cb_sng_slot		= { SongEdit::select	, EVENT_MODIFY_B	, &VAR_CFG.SLOT				, NULL };
-const Callback cb_sng_artist	= { ALPHA14				, EVENT_KEYDOWN_B	, &VAR_SONG.ARTIST			, NULL };
-const Callback cb_sng_title		= { ALPHA14				, EVENT_KEYDOWN_B	, &VAR_SONG.TITLE			, NULL };
-const Callback cb_sng_tempotap	= { SongEdit::tapTempo	, EVENT_KEYDOWN_B	, NULL						, NULL };
-const Callback cb_sng_patlength	= { modify4BIT			, EVENT_MODIFY_B	, &VAR_SONG.PATTERNLENGTH	, NULL };
-const Callback cb_sng_transpose	= { modify8BIT			, EVENT_MODIFY_B	, &VAR_SONG.TRANSPOSE		, NULL };
-const Callback cb_sng_bpm		= { SongEdit::setTempo	, EVENT_MODIFY_B	, &VAR_SONG.BPM				, NULL };
-const Callback cb_sng_groove	= { modify1BIT			, EVENT_KEYDOWN_B	, &VAR_SONG.GROOVE.ENABLE	, NULL };
+const Callback cb_sng_load		= { SongEdit::load				, EVENT_KEYUP_B 	, NULL 						, NULL };
+const Callback cb_sng_save		= { SongEdit::save				, EVENT_KEYUP_B 	, NULL 						, NULL };
+const Callback cb_sng_purge		= { SongEdit::purge				, EVENT_KEYUP_B 	, NULL 						, NULL };
+const Callback cb_sng_copy		= { SongEdit::copy				, EVENT_KEYUP_B 	, NULL 						, NULL };
+const Callback cb_sng_erase		= { SongEdit::erase				, EVENT_KEYUP_B 	, NULL 						, NULL };
+const Callback cb_sng_slot		= { SongEdit::select			, EVENT_MODIFY_B	, &VAR_CFG.SLOT				, NULL };
+const Callback cb_sng_artist	= { AlphaDialog::getBigString	, EVENT_KEYDOWN_B	, &VAR_SONG.ARTIST			, NULL };
+const Callback cb_sng_title		= { AlphaDialog::getBigString 	, EVENT_KEYDOWN_B	, &VAR_SONG.TITLE			, NULL };
+const Callback cb_sng_tempotap	= { SongEdit::tapTempo			, EVENT_KEYDOWN_B	, NULL						, NULL };
+const Callback cb_sng_patlength	= { modify4BIT					, EVENT_MODIFY_B	, &VAR_SONG.PATTERNLENGTH	, NULL };
+const Callback cb_sng_transpose	= { modify8BIT					, EVENT_MODIFY_B	, &VAR_SONG.TRANSPOSE		, NULL };
+const Callback cb_sng_bpm		= { SongEdit::setTempo			, EVENT_MODIFY_B	, &VAR_SONG.BPM				, NULL };
+const Callback cb_sng_groove	= { modify1BIT					, EVENT_KEYDOWN_B	, &VAR_SONG.GROOVE.ENABLE	, NULL };
 
 #define CALLBACK(n, c, t, v, nx)			const Callback n = { c , t , v, nx}
 #define CB_SNG_GROOVE(a)	CALLBACK(cb_sng_groove_0##a, modify4BIT	, EVENT_MODIFY_B, &VAR_SONG.GROOVE.STEP[0x##a],	NULL)
@@ -129,12 +129,12 @@ void SongEdit::select( Control *c, bool bigstep, bool add, u32 *pointer ){
 void SongEdit::copy( Control *c, bool bigstep, bool add, u32 *pointer ){
 	
 }
+#include "../modules/key/key.hpp"
+#include "debug.hpp"
 
 void SongEdit::erase( Control *c, bool bigstep, bool add, u32 *pointer ){
-	ReallyDialog r;
-	
-	r.enable();
-	if( r.result ){
+	ReallyDialog::enable();
+	if( ReallyDialog::result ){
 		VAR_CFG.loadCount = 0;		
 		// Clear SongData
 		SRAM.songDefaults( true );
@@ -142,7 +142,9 @@ void SongEdit::erase( Control *c, bool bigstep, bool add, u32 *pointer ){
 		SRAM.sharedDataLoad( true );
 		// Save empty song
 		SRAM.songSave( true );
+		/*HACK*/while(KEY.down(KEY_A)||KEY.up(KEY_A)||KEY.press(KEY_A)){ KEY.update(); }
 	}
+	/*HACK*/while(KEY.down(KEY_B)||KEY.up(KEY_B)||KEY.press(KEY_B)){ KEY.update(); }
 	regHnd.redraw=true;
 }
 

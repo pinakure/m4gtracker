@@ -626,7 +626,9 @@ void PatEdit::dispatchMessage(u32 msg){
 	switch(msg){
 		case MESSAGE_CANCEL: // Erase
 			// Clear Arrow on current channel 
-			y = VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ].POSITION - VAR_CFG.ORDERPOSITION;
+			// y = VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ].POSITION - VAR_CFG.ORDERPOSITION;
+			y = regHnd.control->y - VAR_CFG.ORDERPOSITION;
+			y-= 4;
 			x = arrow_position[ TRACKER_ACTIVE_CHANNEL ];
 			if( y <= 15 ) gpu.set( 2, x, 4 + y, 0x00FC);
 			// If target cell is empty, scroll all cells one position from this position up to the end and fill last cell with 0x00

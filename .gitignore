@@ -190,3 +190,11 @@ docs/Thumbs.db
 docs/Snaps/1.dia.autosave
 docs/mockup/HEXTILER.EXE
 docs/.~lock.todo.odt\#
+alpha.s
+dialogs/alpha.o
+dialogs/progress.o
+dialogs/really.o
+callbacks/console.o
+console.s
+progress.s
+really.s

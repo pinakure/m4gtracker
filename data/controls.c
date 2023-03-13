@@ -4,6 +4,7 @@
 #include "../modules/spu/sequencer.hpp"
 #include "../callbacks/trk.hpp"
 #include "../modules/spu/mixer.hpp"
+#include "../modules/key/key.hpp"
 #include "../macros.h"
 
 u8 sTransient::bit1;
@@ -145,34 +146,12 @@ void pasteValue	(Control *c, bool bigstep, bool add, u32 *pointer){
 	Transient::changed 	= true; 
 }
 
-/* Invokes AlphaNumeric input modal dialog, and sets its return var */
-// Also Sets regionHander in modal alphanumeric dialog mode, max string len 14
-void ALPHA14(Control *c, bool bigstep, bool add, u32 *pointer){
-
-	// TODO: Rename to getTitle and getArtist
-	AlphaDialog a;
-	a.enable(true, c->var, c->x, c->y);
-	
-	regHnd.redraw=true;
-}
-
-/* Invokes AlphaNumeric input modal dialog, and sets its return var */
-// Also Sets regionHander in modal alphanumeric dialog mode, max string len 6
-void ALPHA6(Control *c, bool bigstep, bool add, u32 *pointer){
-	
-	AlphaDialog a;
-	a.enable(false, c->var, c->x, c->y);
-	
-	regHnd.redraw=true;
-	
-}
-
 #undef CURRENT_PATTERN
 #undef VARIABLE
 
 /*
 
-DATA IN FILE FROM THIS POINT DEPRECATED:
+DATA IN FILE PAST THIS POINT DEPRECATED:
 This controls must reside in each correspondent callback/xxx file
 Use as example LinkMode class at Config screen 
 

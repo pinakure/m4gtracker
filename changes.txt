@@ -91,3 +91,16 @@ Snake eat sounds
 ---------------
 Add Transpose controls @ pattern screen
 Code cleanup (Remove VAR_SONGS[6] )
+
+
+---------------
+13-03-2023
+---------------
+Fixed bug involving ReallyDialog spawning twice when invoked
+Fixed bug making Bpm running wild when no song is loaded
+Fixed bug on empty pattern deletion
+Fixed mistyped PatternCell note size ( it should be u8 and it was u16! )
+Fixed bug involving AlphaDialog spawning twice when invoked
+Made AlphaDialog and ReallyDialog static
+Reduced ROM size in 50KB
+Separated compilation of static dialogs (ReallyDialog, AlphaDialog, Progress)

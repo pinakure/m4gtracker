@@ -246,7 +246,7 @@ void Sram::songDefaults( bool verbose ){
 		VAR_SONG.TITLE[i]  = 0xFF;
 		VAR_SONG.ARTIST[i] = 0xFF;
 	}
-	//Sequencer::setTempo(0x80);
+	Sequencer::setTempo(0x80);
 	VAR_SONG.BPM = 0x80;
 	VAR_SONG.PATTERNLENGTH = 0xF;
 	

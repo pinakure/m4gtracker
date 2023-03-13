@@ -49,7 +49,7 @@ void LookNFeel::logoFade(){
 	
 	while( freeze < 0xfff>>4 ){
 		regHnd.drawVerticalCache(8,7,&CACHE_LOGOTYPE,0,0);
-		sys.update();
+		//KEY.update();
 		MOSAIC_CNT = 0xFF - ((freeze )&0xFF);
 		if( VAR_CFG.LOOKNFEEL.STARTUPSFX ) {
 			Synth::polysynth( 0xffffffff - ((freeze>>4)+(freeze>>2)) );
@@ -89,12 +89,9 @@ void LookNFeel::logoWait(){
 	int freeze=0;
 	
 	gpu.loadPalette();
-	while( freeze < 2048 ){
+	while( (freeze < 2048) && !KEY.activity() ){
 		regHnd.drawVerticalCache(8,7,&CACHE_LOGOTYPE,0,0);
-		sys.update();
-		if( KEY.activity() ) {
-			break;
-		}
+		KEY.update();
 		rotateGfx(); 
 		freeze++;
 	}

@@ -1,3 +1,0 @@
-modules/spu/mixer.cpp: In function `static void Mixer::mix()':
-modules/spu/mixer.cpp:162: warning: unused variable `s16 vol_a'
-modules/spu/mixer.cpp:163: warning: unused variable `s16 vol_b'

@@ -28,9 +28,34 @@ typedef struct sArrayWatch {
 	bool 		redraw;
 } ArrayWatch;
 
-
-
 #endif
+
+class Console {
+	private:
+		void setTitle(const char *new_title, u16 color=COLOR_CYAN);
+		
+	public:
+		static u16 			cursor_color;
+		static u16 	 		title_color;
+		static u8 	 		cursor_x;
+		static u8 	 		cursor_y;
+		static const char* 	title;
+		
+		Console				( const char *new_title=NULL );
+		void percent		( float q );
+		void print			( const char *text, u16 color=COLOR_CYAN );
+		void setCursor		( u8 x, u8 y);
+		void render			( );
+		void update			( );
+		void wait			( u8 time );
+};
+
+class ProgressBar {
+	public:
+		ProgressBar();
+		void redraw();
+		void render(float q, bool highlight );
+};
 
 
 class Debug {
@@ -38,7 +63,6 @@ class Debug {
 		#ifndef NDEBUG
 		static int  				counter;
 //		static bool 				redraw;
-		static const u16 			colors[ 16 ][ 2 ];
 		
 		static bool 				step_by_step;
 		static bool 				watch_hex;
@@ -54,7 +78,8 @@ class Debug {
 	
 		static void benchmark		( RegionHandler &regHnd );
 		static void halt			( const char *filename, int line );
-		static void panic			( const char *filename, u32 *pointer=NULL);
+		static void bsod			( const char *title		, const char *message1, const char *message2, const char *message3, u32 *pointer=NULL);
+		static void panic			( const char *message	, u32 *pointer=NULL);
 		static void error			( int error_code , bool recoverable=false);
 		
 		static void watchUpdate		( u8 index );
@@ -72,13 +97,7 @@ class Debug {
 		static void watch			( const char *varname , size_t*	 var );
 		static void watch			( const char *varname , void*	 var , u8 size);
 		
-		static void string			( u8 x, u8 y, const char *filename	, u8 color=6 );
-		static void ascii			( u8 x, u8 y, const char *filename	, u8 color=6 );
-		static void number			( u8 x, u8 y, u32 number 			, u8 color=6 );
-		static void hexnum			( u8 x, u8 y, u32 number 			, u8 color=6 );
-		static void bigString		( u8 x, u8 y, const char *filename	, u8 color=6 );
 		static void runTests		( );
-		static void clear			( u8 color = 0x00 );
 		static void updateMemory	( RegionHandler* rh );
 		static void updateWatch		( );
 		static void updateMemTest   ( RegionHandler* rh );
@@ -89,21 +108,28 @@ class Debug {
 };
 
 #ifndef NDEBUG
-	#define HALT 					Debug::halt( __FILE__, __LINE__ );
+#define STRINGIZE(x)		STRINGIFY(x)
+	#define STRINGIFY(x)		#x
+	
+	#define ASSERT( expr ) 			if( ! expr ) Debug::bsod("Assertion "#expr" failed", " ", "FILE: "__FILE__ , "LINE: "STRINGIZE(__LINE__), 0 );
 	#define BREAK 					Debug::error(0x70CEBAD0, true	);
+	#define DEBUG_INIT()			Debug::init()
+	#define DEBUG_UPDATE()			Debug::updateWatch()
+	#define HALT 					Debug::bsod("HALT", "Program requested execution stop. ", "FILE: "__FILE__ , "LINE: "STRINGIZE(__LINE__), 0 );
 	#define WATCH(a) 				Debug::watch( #a, &a);
 	#define WATCH_U8_ARRAY(a) 		Debug::watchArray( #a, ( u8**)&a[0]);
 	#define WATCH_U16_ARRAY(a) 		Debug::watchArray( #a, (u16**)&a[0]);
 	#define WATCH_U32_ARRAY(a) 		Debug::watchArray( #a, (u32**)&a[0]);
-	#define DEBUG_UPDATE()			Debug::updateWatch()
-	#define DEBUG_INIT()			Debug::init()
 #else
-	#define HALT
+	#define ASSERT(a)
 	#define BREAK
-	#define WATCH(a)
-	#define WATCH_ARRAY(a)
-	#define DEBUG_UPDATE()
 	#define DEBUG_INIT()
+	#define DEBUG_UPDATE()
+	#define HALT
+	#define WATCH(a)
+	#define WATCH_U8_ARRAY(a)
+	#define WATCH_U16_ARRAY(a)
+	#define WATCH_U32_ARRAY(a)
 #endif
 	
 #endif

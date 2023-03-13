@@ -7,73 +7,14 @@
 #include "../../data/caches.hpp"
 #include "../../data/controls.hpp"
 #include "../../data/regions.hpp"
-
-class Progress {
-	private:
-	public:
-		u32 max;
-		u32 current;
-		u8 step;
-		u8 laststep;
-		E_StatusStrings upperLine;
-		E_StatusStrings lowerLine;
-		bool enabled;
-		u8 redraw;
-		u32 *var;
-	
-		void update();		
-		void set(u32 value, u32 maxvalue, E_StatusStrings uLine, E_StatusStrings lLine, u32 *var);
-};
-
-class AlphaDialog {
-	private:
-		u8 buffer[16];
-	public:	
-		u8 maxlen;		// Max length of string
-		u8 length;
-		u8 position;
-		u8 cursorX;
-		u8 cursorY;
-		u8 textX;
-		u8 textY;
-		u8 oldX;
-		u8 oldY;
-		u8 Y;
-		u16 oldvalue;
-		u8 *target;	// The string were to write buffered text at exit
-		bool enabled;
-		bool redraw;
-		
-		AlphaDialog();
-		void add();
-		void rem();
-		void draw();
-		void confirm();
-		void cancel();
-		void preview();
-		void update();
-		void enable(bool bigString, u8* targetVariable, u8 vx, u8 vy);
-};
-
-class ReallyDialog {
-	private:
-	public:
-		bool result;
-		bool enabled;
-		
-		ReallyDialog();		
-		void draw();
-		void confirm();
-		void cancel();
-		void enable();
-};
+#include "../../dialogs/progress.hpp"
+#include "../../dialogs/alpha.hpp"
+#include "../../dialogs/really.hpp"
 
 class RegionHandler {
 	private:
 		
 	public:
-		Progress 	progress;
-		
 		const unsigned short *map0;
 		const unsigned short *map1;
 		const unsigned short *map2;
@@ -107,7 +48,6 @@ class RegionHandler {
 		void controlTrigger(const Control *c, u16 q);
 		void controlClear(const Control *c);
 		void controlModify(const Control *c, bool big, bool add);
-		void updateProgress();
 		void update(u8 delta);
 };
 

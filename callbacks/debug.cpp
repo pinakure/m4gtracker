@@ -8,24 +8,13 @@
 #include "../data/helpers.hpp"
 #include "../callbacks/cfg.hpp"
 #include "../data/enum.h"
+#include "../data/data.hpp"
 #include "../modules/spu/mixer.hpp"
 #include "../modules/spu/synth.hpp"
 #include "../modules/spu/sequencer.hpp"
 
-
-
 #include "../modules/clip/clip.hpp"
-	
-void Debug::clear( u8 color ){
-	for(int x=0; x<30; x++){
-		for(int y=0; y<20; y++){
-			gpu.set( 0	, x	, y , color );
-			gpu.set( 1	, x	, y , 0x0000);
-			gpu.set( 2	, x	, y , 0x00FC);
-		}
-	}
-}	
-	
+
 #ifndef NDEBUG
 
 static const u16 color_hex = COLOR_ORANGE;
@@ -35,18 +24,17 @@ static const u16 color_aft = COLOR_GREEN;
 
 #include "../data/song.hpp"
 
-#define assert( expr ) 			if( ! expr ) HALT;
 
 void Debug::runTests(){
 
 	// SongEdit::load();
 
+	return;
 	memoryTest( NULL, 0, 0, NULL);
 		
-	return;
 	Mixer::start();
 	Sequencer::playing = true;
-	clear();
+	gpu.clear();
 	
 	while(1){
 		Sequencer::update();	
@@ -55,25 +43,6 @@ void Debug::runTests(){
 	//error(0xCAFECAFE, false);
 	//HALT
 }
-
-const u16 Debug::colors[16][2] = {
-	{ COLOR_NONE		<< 12 , COLOR_NONE 			<< 12 },
-	{ COLOR_DARK_CYAN	<< 12 , COLOR_CYAN 			<< 12 },
-	{ COLOR_CYAN		<< 12 , COLOR_DARK_CYAN 	<< 12 },
-	{ COLOR_RED			<< 12 , COLOR_DARK_RED 		<< 12 },
-	{ COLOR_ORANGE		<< 12 , COLOR_BROWN 		<< 12 },
-	{ COLOR_DARK_RED	<< 12 , COLOR_RED 			<< 12 },
-	{ COLOR_WHITE		<< 12 , COLOR_GRAY 			<< 12 },
-	{ COLOR_YELLOW		<< 12 , COLOR_OLIVE 		<< 12 },
-	{ COLOR_BLACK		<< 12 , COLOR_BLACK 		<< 12 },
-	{ COLOR_DARK_BLUE	<< 12 , COLOR_BLUE 			<< 12 },
-	{ COLOR_BROWN		<< 12 , COLOR_ORANGE 		<< 12 },
-	{ COLOR_OLIVE		<< 12 , COLOR_YELLOW 		<< 12 },
-	{ COLOR_DARK_GREEN	<< 12 , COLOR_GREEN 		<< 12 },
-	{ COLOR_GRAY		<< 12 , COLOR_WHITE 		<< 12 },
-	{ COLOR_BLUE		<< 12 , COLOR_DARK_BLUE 	<< 12 },
-	{ COLOR_GREEN		<< 12 , COLOR_DARK_GREEN  	<< 12 },
-};
 
 VariableWatch	Debug::variables[4];
 ArrayWatch		Debug::arrays[4];
@@ -205,14 +174,12 @@ void Debug::drawFrame( u8 pos_x, u8 pos_y, u8 width, u8 height, const char *titl
 	}
 
 		// Draw variable name and bit width
-	ascii ( 		pos_x - (( pos_x & 0x1 ) ? 6 : 5 )	, pos_y	+ height - 1, title						, COLOR_WHITE	);
-	DECIMAL_DOUBLE( pos_x + 1							, pos_y 			, COLOR_YELLOW				, size 			);
-	gpu.set( 2,		pos_x								, pos_y 			, (COLOR_CYAN<<12) | 0x175					);
-	if( step_by_step )                            
-		ascii( 		pos_x - (( pos_x & 0x1 ) ? 5 : 4 )	, pos_y 			, "Step"					, COLOR_RED 	);
+	Gpu::ascii 		( pos_x - (( pos_x & 0x1 ) ? 6 : 5 ), pos_y	+ height - 1, title			, COLOR_WHITE				);
+	DECIMAL_DOUBLE	( pos_x + 1							, pos_y 			, COLOR_YELLOW	, size 						);
+	gpu.set			( 2,		pos_x										, pos_y 		, (COLOR_CYAN<<12) | 0x175	);
+	if( step_by_step )                            		
+		Gpu::ascii	( pos_x - (( pos_x & 0x1 ) ? 5 : 4 ), pos_y				, "Step"		, COLOR_RED 				);
 }
-
-#include "../data/data.hpp"
 
 void Debug::watchUpdateArray( u8 index ){
 	ArrayWatch *aw = &arrays[ index ];
@@ -292,7 +259,7 @@ void Debug::watchUpdateArray( u8 index ){
 			} else if( aw->size == 16 ){
 				DECIMAL_DOUBLE(	pos_x + width - 2, pos_y + 1, alt_color ? color_aft : color_dec , u16value[i]	);
 			} else {
-				number( pos_x + width - 5 , pos_y + 1 , u32value[i]		, alt_color ? color_aft : color_dec );
+				Gpu::number( pos_x + width - 5 , pos_y + 1 , u32value[i]		, alt_color ? color_aft : color_dec );
 			}
 			
 		}
@@ -380,8 +347,8 @@ void Debug::watchUpdate( u8 index ){
 			DECIMAL_DOUBLE(	pos_x + width - 2, pos_y + 1, alt_color ? color_bef : color_dec , vw->last_value	);
 			DECIMAL_DOUBLE(	pos_x + width - 2, pos_y + 2, alt_color ? color_aft : color_dec , u16value			);
 		} else {
-			number( pos_x + width - 5 , pos_y + 1 , vw->last_value	, alt_color ? color_bef : color_dec );
-			number( pos_x + width - 5 , pos_y + 2 , u32value		, alt_color ? color_aft : color_dec );
+			Gpu::number( pos_x + width - 5 , pos_y + 1 , vw->last_value	, alt_color ? color_bef : color_dec );
+			Gpu::number( pos_x + width - 5 , pos_y + 2 , u32value		, alt_color ? color_aft : color_dec );
 		}
 	}
 	
@@ -405,54 +372,45 @@ static void inverse_text(int y, const char *message, u8 fg, u8 bg){
 	for(int i=1; i<29; i++){
 		gpu.set(0, i, y, 0x10 + fg );
 	}
-	Debug::ascii( 15-(len), y, message, bg);
+	Gpu::ascii( 30-len, y, message, bg);
 }
 
-void Debug::ascii( u8 x, u8 y, const char *data, u8 color ){
-	for(int i=x, l=x+strlen(data); i<l; i++){
-		char d = *data;
-		if(!( i & 0x1)) gpu.set(1, x + ( i>>1 ), y, (color << 12) |  (0x0100 + d) );
-		else gpu.set(2, x + ( i>>1 ), y, (color << 12) |  (0x0100 + d) );
-		data++;
-	}
-}
-
-void Debug::panic( const char *message, u32 *pointer){
-	clear( COLOR_BLUE );
-	Debug::bigString(9, 0, "KERNEL PANIC");
+void Debug::bsod( const char *title, const char *message1,const char *message2, const char *message3 , u32 *pointer){
+	Console console("KERNEL PANIC");
+	//Gpu::bigString(9, 0, "KERNEL PANIC");
+	inverse_text( 3, title, COLOR_WHITE, COLOR_BLUE );
 	
-	inverse_text( 3, message, COLOR_WHITE, COLOR_BLUE );
+	Gpu::ascii( 1, 5, message1 , COLOR_WHITE);
+	Gpu::ascii( 1, 6, message2 , COLOR_WHITE);
+	Gpu::ascii( 1, 7, message3 , COLOR_WHITE);
 	
-	Debug::ascii( 1, 5, "System has encountered a problem and has been halted." , COLOR_WHITE);
-	Debug::ascii( 1, 6, "Please report this error if it's not the first time  "	, COLOR_WHITE);
-	Debug::ascii( 1, 7, "and it can be replicated by following specific steps."	, COLOR_WHITE);
-	Debug::ascii( 1, 9, "There is some extra information:"			, COLOR_WHITE);
-	Debug::ascii( 1,11, "ADDRESS :  0x"								, COLOR_WHITE);
-	// Pointer address
-	HEXADECIMAL_DOUBLE(  8 , 11 , COLOR_WHITE, ((( unsigned ) pointer ) &0xFF000000 ) >> 24	); 	
-	HEXADECIMAL_DOUBLE(  9 , 11 , COLOR_WHITE, ((( unsigned ) pointer ) &0x00FF0000 ) >> 16	); 	
-	HEXADECIMAL_DOUBLE( 10 , 11 , COLOR_WHITE, ((( unsigned ) pointer ) &0x0000FF00 ) >>  8	); 	
-	HEXADECIMAL_DOUBLE( 11 , 11 , COLOR_WHITE, ((( unsigned ) pointer ) &0x000000FF ) 	    );	
-	
-	if(!pointer){
-		Debug::ascii( 1,12, "No additional information was provided."	, COLOR_WHITE);
-	} else {
-		Debug::ascii( 1,12, "    *U8 :  0x"								, COLOR_WHITE);
-		Debug::ascii( 1,13, "   *U16 :  0x"								, COLOR_WHITE);
-		Debug::ascii( 1,14, "   *U32 :  0x"								, COLOR_WHITE);
+	if( pointer > 0 ){	
+		Gpu::ascii( 1, 9, "There is some extra information:"			, COLOR_WHITE);
+		Gpu::ascii( 1,11, "  VALUE :  0x"								, COLOR_WHITE);
+		// Pointer address
+		HEXADECIMAL_DOUBLE	(  8 , 11 , COLOR_WHITE		, ( (unsigned)pointer &0xFF000000 ) >> 24	); 	
+		HEXADECIMAL_DOUBLE	(  9 , 11 , COLOR_WHITE		, ( (unsigned)pointer &0x00FF0000 ) >> 16	); 	
+		HEXADECIMAL_DOUBLE	( 10 , 11 , COLOR_WHITE		, ( (unsigned)pointer &0x0000FF00 ) >>  8	); 	
+		HEXADECIMAL_DOUBLE	( 11 , 11 , COLOR_WHITE		, ( (unsigned)pointer &0x000000FF ) 	    );	
+		Gpu::ascii		(  1 , 12 , "    *U8 :  0x"	, COLOR_WHITE					);
+		Gpu::ascii		(  1 , 13 , "   *U16 :  0x"	, COLOR_WHITE					);
+		Gpu::ascii		(  1 , 14 , "   *U32 :  0x"	, COLOR_WHITE					);
 		// U8 interpretation
-		HEXADECIMAL_DOUBLE(  8 , 12 , COLOR_WHITE, (((u8)*pointer ) & 0x000000FF ) 	  );
+		HEXADECIMAL_DOUBLE	(  8 , 12 , COLOR_WHITE		, ((( u8)*pointer ) & 0x000000FF ) 	  );
 		// U16 Interpretation
-		HEXADECIMAL_DOUBLE(  8 , 13 , COLOR_WHITE, (((u16)*pointer ) & 0x0000FF00 ) >>  8 );
-		HEXADECIMAL_DOUBLE(  9 , 13 , COLOR_WHITE, (((u16)*pointer ) & 0x000000FF ) 	  );
+		HEXADECIMAL_DOUBLE	(  8 , 13 , COLOR_WHITE		, (((u16)*pointer ) & 0x0000FF00 ) >>  8 );
+		HEXADECIMAL_DOUBLE	(  9 , 13 , COLOR_WHITE		, (((u16)*pointer ) & 0x000000FF ) 	  );
 		// U32 Interpretation
-		HEXADECIMAL_DOUBLE(  8 , 14 , COLOR_WHITE, (((u32)*pointer ) & 0xFF000000 ) >> 24 );
-		HEXADECIMAL_DOUBLE(  9 , 14 , COLOR_WHITE, (((u32)*pointer ) & 0x00FF0000 ) >> 16 );
-		HEXADECIMAL_DOUBLE( 10 , 14 , COLOR_WHITE, (((u32)*pointer ) & 0x0000FF00 ) >>  8 );
-		HEXADECIMAL_DOUBLE( 11 , 14 , COLOR_WHITE, (((u32)*pointer ) & 0x000000FF )       );
-	}
+		HEXADECIMAL_DOUBLE	(  8 , 14 , COLOR_WHITE		, (((u32)*pointer ) & 0xFF000000 ) >> 24 );
+		HEXADECIMAL_DOUBLE	(  9 , 14 , COLOR_WHITE		, (((u32)*pointer ) & 0x00FF0000 ) >> 16 );
+		HEXADECIMAL_DOUBLE	( 10 , 14 , COLOR_WHITE		, (((u32)*pointer ) & 0x0000FF00 ) >>  8 );
+		HEXADECIMAL_DOUBLE	( 11 , 14 , COLOR_WHITE		, (((u32)*pointer ) & 0x000000FF )       );
+		
+	} else Gpu::ascii( 1, 9, "No additional information was provided."	, COLOR_WHITE);
 	
-	Debug::ascii( 1,16, "Press START to reboot this unit.", COLOR_WHITE);
+	console.setCursor(1,15);
+	console.print(" Press START to reboot this unit.", COLOR_WHITE);
+	
 	while(1){
 		KEY.update();
 		if( KEY.down( KEY_START ) ) asm("swi 00");
@@ -460,10 +418,20 @@ void Debug::panic( const char *message, u32 *pointer){
 		static bool bm;
 		if(bm != gpu.blink){
 			bm = gpu.blink;
-			gpu.set(2, 17, 16, (COLOR_WHITE << 12) | (gpu.blink ? 0x0116 : 0x0100) );
+			gpu.set(2, 16, 16, (COLOR_WHITE << 12) | (gpu.blink ? 0x0116 : 0x0100) );
 		}
 		gpu.blinkUpdate(8);
 	}
+}
+
+void Debug::panic( const char *message, u32 *pointer){
+	bsod( 
+		message, 
+		"System has encountered a problem and has been halted.", 
+		"Please report this error if it's not the first time  ",  
+		"and it can be replicated by following specific steps.",
+		pointer
+	);
 }
 
 void Debug::error( int error_code, bool recoverable ){
@@ -505,10 +473,10 @@ void Debug::error( int error_code, bool recoverable ){
 	
 	// Draw error text
 	if(!recoverable)
-		ascii(  2, 2, "Software Failure.    Press START to restart GBA.", COLOR_CYAN );
+		Gpu::ascii(  2, 2, "Software Failure.    Press START to restart GBA.", COLOR_CYAN );
 	else 
-		ascii(  2, 2, "Breakpoint raised.   Press B button to continue.", COLOR_CYAN );
-	ascii(  5, 4, "Guru Meditation ", COLOR_CYAN );
+		Gpu::ascii(  2, 2, "Breakpoint raised.   Press B button to continue.", COLOR_CYAN );
+	Gpu::ascii(  5, 4, "Guru Meditation ", COLOR_CYAN );
 	gpu.set(2, 16, 4, (COLOR_CYAN <<12) | 0x2D );
 	HEXADECIMAL_DOUBLE( 17, 4, COLOR_CYAN , error_code>>24);
 	HEXADECIMAL_DOUBLE( 18, 4, COLOR_CYAN , error_code>>16);
@@ -549,7 +517,7 @@ void Debug::error( int error_code, bool recoverable ){
 }
 
 void Debug::halt( const char *filename, int line ){
-	clear();
+	gpu.clear();
 	int x;
 	
 	for(x=0; x<30; x++){
@@ -564,50 +532,13 @@ void Debug::halt( const char *filename, int line ){
 	static u16 counter=0;
 	while(1){
 		gpu.set( 2	,  5, 1 , (((counter+0x200)&0xfff) > 0x800 ?0x4000:0x7000) | (((counter+0x200)&0x7ff) > 0x400 ?0xb3:0xa2));
-		bigString	(  6 , 0 , "PROGRAM HALTED"	, (counter&0x7ff) > 0x400 ? COLOR_WHITE : COLOR_RED);
-		string		(  3 , 3 , "LINE"			, COLOR_YELLOW);
-		number 		(  8 , 3 , line				, COLOR_OLIVE);
-		string		(  3 , 5 , "FILE"			, COLOR_YELLOW);
-		ascii		(  5 , 5 , filename			, COLOR_OLIVE);
+		Gpu::bigString	(  6 , 0 , "PROGRAM HALTED"	, (counter&0x7ff) > 0x400 ? COLOR_WHITE : COLOR_RED);
+		Gpu::string		(  3 , 3 , "LINE"			, COLOR_YELLOW);
+		Gpu::number	(  8 , 3 , line				, COLOR_OLIVE);
+		Gpu::string		(  3 , 5 , "FILE"			, COLOR_YELLOW);
+		Gpu::ascii		(  5 , 5 , filename			, COLOR_OLIVE);
 		counter++;
 	};
-}
-
-void Debug::number( u8 x, u8 y, u32 num, u8 color ){
-	DECIMAL_DOUBLE( x  , y, color, (num/1000000	)%100 );// 16
-	DECIMAL_DOUBLE( x+1, y, color, (num/10000	)%100 );// 65
-	DECIMAL_DOUBLE( x+2, y, color, (num/100		)%100 );// 53
-	DECIMAL_DOUBLE( x+3, y, color, (num			)%100 );// 5
-}
-
-void Debug::hexnum( u8 x, u8 y, u32 num, u8 color ){
-	HEXADECIMAL_DOUBLE( x  , y, color, num>> 24 );// 16
-	HEXADECIMAL_DOUBLE( x+1, y, color, num>> 16 );// 65
-	HEXADECIMAL_DOUBLE( x+2, y, color, num>>  8 );// 53
-	HEXADECIMAL_DOUBLE( x+3, y, color, num      );// 5
-}
-
-void Debug::bigString( u8 x, u8 y, const char *data, u8 color ){
-	color = ((color&0xf) << 4 ) | (color&0xf);
-	for(int i=x, l=x+strlen(data); i<l; i++){
-		if( data[0] != ' ' ) BIGTEXT( i, y, color, data[0] - 0x41); 
-		data++;
-	}
-}
-
-void Debug::string( u8 x, u8 y, const char *data, u8 color ){
-	
-	const char OFFSET = 'a' - 'A';
-	
-	for(int i=x, l=x+strlen(data), c = 0; i<l; i++){
-		char d = ( ( *data >= 'a' ) && ( *data <= 'z' ) ) ? *data - OFFSET : *data;
-		if( ( d >= '0' ) && ( d <= '9' ) ) 
-			c = colors[ color&0xf][ 1 ] | ( d - 0x30);
-		else 
-			c = colors[ color&0xf ][ 0 ] | TABLE_TEXT[ d - 0x41 ][ 0 ];
-		if( data[0] != ' ' ) gpu.set(2, i, y, c );
-		data++;
-	}
 }
 
 // Stress test for GUI Display Functions
@@ -664,101 +595,19 @@ void Debug::updateMemory( RegionHandler* rh ){
 void Debug::updateMemTest(RegionHandler* rh){
 }
 
-class Console {
-	private:
-		void setTitle(const char *new_title, u16 color=COLOR_CYAN){
-			title = new_title;
-			title_color = COLOR_CYAN;
-		}
+ProgressBar::ProgressBar(){
+	redraw();
+}
 		
-	public:
-		u16 		cursor_color;
-		u16 	 	title_color;
-		u8 	 		cursor_x;
-		u8 	 		cursor_y;
-		const char* title;
-		
-		Console(const char *new_title=NULL){
-			cursor_x = 0;
-			cursor_y = 0;
-			if( new_title ) setTitle( new_title );
-			render();
-		}
-		
-		void percent( float q ){
-			if( q == 1.0f ) DECIMAL_DOUBLE_TWOTILES(27, cursor_y, COLOR_WHITE, 100);
-			else DECIMAL_DOUBLE_TWOTILES( 27, cursor_y, COLOR_CYAN, (u8)(q*100.0f) );
-			gpu.set(2, 29, cursor_y, (COLOR_RED<<12) | 0x6F);
-		}
-		
-		void print( const char *text, u16 color=COLOR_CYAN ){
-			gpu.set(2, cursor_x, cursor_y, 0x0100);
-			cursor_y++;
-			Debug::ascii( 0 , cursor_y , text , color );
-			cursor_x=strlen( text )/2;
-			if(cursor_x > 30){
-				cursor_y += (cursor_x / 30);
-				cursor_x = 0;
-			}
-			cursor_color = color;
-		}
-		
-		void setCursor( u8 x, u8 y){
-			cursor_x = x;
-			cursor_y = y;
-		}
-		
-		void render(){
-			Debug::clear( 0x10 | COLOR_DARK_BLUE );
-			if(title) 
-				Debug::bigString(29 - strlen(title), 0, title, title_color);
-		}
-		
-		void update(){		
-			static bool bm;
-			if(bm != gpu.blink){
-				bm = gpu.blink;
-				gpu.set(2, cursor_x, cursor_y, (cursor_color << 12) | (gpu.blink ? 0x0116 : 0x0100) );
-			}
-			gpu.blinkUpdate(8);
-		}
-		
-		void wait( u8 time ){
-			for(int i=0; i<0x7FF<<time; i++){
-				while( gpu.isVblank()){}
-				while(!gpu.isVblank()){}
-				while( gpu.isVblank()){}
-				while(!gpu.isVblank()){}
-				
-				update();
-			}
-		}
-};
+void ProgressBar::redraw(){
+	for(int s=0; s<0x30; s++){
+		gpu.set(0, s,19, 0x29);
+	}
+}
 
-class ProgressBar {
-	public:
-		ProgressBar(){
-			redraw();
-		}
-		
-		void redraw(){
-			for(int s=0; s<0x30; s++){
-				gpu.set(0, s,19, 0x29);
-			}
-		}
-		
-		void render(float q, bool highlight ){
-			gpu.set(0, (u8)(q*30),19, highlight ? 0x25 : 0x23);
-		}
-};
-
-#define SRAM_SIZE 0x8000
-
-
-extern "C" {
-	u8 	 SRAM_ReadByte(u16 position);
-	void SRAM_WriteByte(u16 position, u8 byte);
-};
+void ProgressBar::render(float q, bool highlight ){
+	gpu.set(0, (u8)(q*30),19, highlight ? 0x25 : 0x23);
+}
 
 void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 
@@ -768,12 +617,11 @@ void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 	ProgressBar progressbar;
 
 	console.print("");
-	#define MSGMSG 
+	
 	// Fill SRAM with known values 
-	console.print("Filling SRAM 0x0000 ~ 0x8000" );
+	console.print("Filling SRAM 0x0000 ~ "STRINGIFY( SRAM_SIZE ) );
 	SRAM.seek(0);
 	for( int i=0, p=0; i < SRAM_SIZE ; i++,p++){
-		//SRAM_WriteByte(i, 0x80 + (i&0xF));
 		SRAM.write(0x80 + (i&0xF));
 		if( (i &0xF) == 0){
 			float q = ( float( p ) / float( SRAM_SIZE ) );
@@ -788,7 +636,7 @@ void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 	console.print("Checking SRAM Integrity...");
 	SRAM.seek(0);
 	for( int i=0, p=0; i < SRAM_SIZE ; i++,p++){
-		assert(SRAM.read() == (0x80 + (i&0xF)));
+		ASSERT(SRAM.read() == (0x80 + (i&0xF)));
 		if( (i &0xF) == 0){
 			float q = ( float( p ) / float( SRAM_SIZE ) );
 			progressbar.render( q, true );
@@ -848,23 +696,23 @@ void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 		SRAM.songLoad(false);
 		
 		for(int a=0; a < 14; a++){
-			assert( s->TITLE[a]==VAR_CFG.SLOT);
-			assert( s->ARTIST[a]==a);
+			ASSERT( s->TITLE[a]==VAR_CFG.SLOT);
+			ASSERT( s->ARTIST[a]==a);
 		}
 		
-		assert(s->NOTEMPTY);
+		ASSERT(s->NOTEMPTY);
 		
 		// Check groove table
 		for(int i=0; i<0xF; i++){
-			assert( s->GROOVE.STEP[ i ] == (0x80 + (i&0xF)));
+			ASSERT( s->GROOVE.STEP[ i ] == (0x80 + (i&0xF)));
 		}
 		
 		for( int c=0; c<0x06; c++){
 			for(int i=0; i<256; i++ ){
 				u8 val = 0x40 + (p & 0x3f);
-				assert( s->PATTERNS[c].ORDER[ i ] == val );
+				ASSERT( s->PATTERNS[c].ORDER[ i ] == val );
 				#ifndef NSONGTRANSPOSE
-				assert( s->PATTERNS[c].TRANSPOSE[i] == val);
+				ASSERT( s->PATTERNS[c].TRANSPOSE[i] == val);
 				#endif
 				console.update();
 				if( (p&0xF)==0){
@@ -887,6 +735,7 @@ void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 	console.print("Starting M4GEEK01..."		, COLOR_GREEN );
 	console.wait( 1 );
 }
+
 #else
 
 void Debug::init			( 									 				){}
@@ -899,11 +748,6 @@ void Debug::watch			( const char *varname	, size_t var 				){}
 void Debug::watch			( const char *varname	, u32 var 	 				){}
 void Debug::watch			( const char *varname	, u16 var 	 				){}
 void Debug::watch			( const char *varname	, u32 var 	, u8 size		){}
-void Debug::string			( u8 x, u8 y, const char *filename	, u8 color 		){}
-void Debug::ascii			( u8 x, u8 y, const char *filename	, u8 color 		){}
-void Debug::number			( u8 x, u8 y, u32 number 			, u8 color 		){}
-void Debug::hexnum			( u8 x, u8 y, u32 number 			, u8 color 		){}
-void Debug::bigString		( u8 x, u8 y, const char *filename	, u8 color 		){}
 void Debug::runTests		( 													){}
 void Debug::updateMemory	( RegionHandler* rh 								){}
 void Debug::updateWatch		( 													){}

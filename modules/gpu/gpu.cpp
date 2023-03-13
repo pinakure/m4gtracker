@@ -2,6 +2,25 @@
 
 Gpu gpu;
 
+const u16 Gpu::colors[16][2] = {
+	{ COLOR_NONE		<< 12 , COLOR_NONE 			<< 12 },
+	{ COLOR_DARK_CYAN	<< 12 , COLOR_CYAN 			<< 12 },
+	{ COLOR_CYAN		<< 12 , COLOR_DARK_CYAN 	<< 12 },
+	{ COLOR_RED			<< 12 , COLOR_DARK_RED 		<< 12 },
+	{ COLOR_ORANGE		<< 12 , COLOR_BROWN 		<< 12 },
+	{ COLOR_DARK_RED	<< 12 , COLOR_RED 			<< 12 },
+	{ COLOR_WHITE		<< 12 , COLOR_GRAY 			<< 12 },
+	{ COLOR_YELLOW		<< 12 , COLOR_OLIVE 		<< 12 },
+	{ COLOR_BLACK		<< 12 , COLOR_BLACK 		<< 12 },
+	{ COLOR_DARK_BLUE	<< 12 , COLOR_BLUE 			<< 12 },
+	{ COLOR_BROWN		<< 12 , COLOR_ORANGE 		<< 12 },
+	{ COLOR_OLIVE		<< 12 , COLOR_YELLOW 		<< 12 },
+	{ COLOR_DARK_GREEN	<< 12 , COLOR_GREEN 		<< 12 },
+	{ COLOR_GRAY		<< 12 , COLOR_WHITE 		<< 12 },
+	{ COLOR_BLUE		<< 12 , COLOR_DARK_BLUE 	<< 12 },
+	{ COLOR_GREEN		<< 12 , COLOR_DARK_GREEN  	<< 12 },
+};
+
 const u32 LAYERS[3] = {
 	SCREEN_BASE0_ADDR,
 	SCREEN_BASE1_ADDR,
@@ -33,6 +52,16 @@ void Gpu::update(u8 delta) {
 		//redraw level = redraw value
 		redraw--;
 	} 
+}
+
+void Gpu::clear( u8 color ){
+	for(int x=0; x<30; x++){
+		for(int y=0; y<20; y++){
+			set( 0	, x	, y , color );
+			set( 1	, x	, y , 0x0000);
+			set( 2	, x	, y , 0x00FC);
+		}
+	}
 }
 
 bool Gpu::isVblank() {
@@ -152,3 +181,55 @@ void Gpu::otherBlit(const u16 *map_address, int startx, int starty, int x, int y
 	//R_DISPCNT = (DISP_BG0_ON | DISP_BG1_ON |  DISP_BG2_ON) &0x0f00;
 }
 
+/* ########################################################################## */
+/* DATA OUTPUT HELPERS 														  */
+/* ########################################################################## */
+
+void Gpu::ascii( u8 x, u8 y, const char *data, u8 color ){
+	for(int i=x, l=i + strlen(data), x=x%1; i<l; i++){
+		char d = *data;
+		
+		if(( i & 0x1)) 
+			gpu.set(2, x+( i>>1 ), y, (color << 12) |  (0x0100 + d) );
+		else 
+			gpu.set(1, x+( i>>1 ), y, (color << 12) |  (0x0100 + d) );
+		data++;
+	}
+}
+
+void Gpu::number( u8 x, u8 y, u32 num, u8 color ){
+	DECIMAL_DOUBLE( x  , y, color, (num/1000000	)%100 );// 16
+	DECIMAL_DOUBLE( x+1, y, color, (num/10000	)%100 );// 65
+	DECIMAL_DOUBLE( x+2, y, color, (num/100		)%100 );// 53
+	DECIMAL_DOUBLE( x+3, y, color, (num			)%100 );// 5
+}
+
+void Gpu::hexnum( u8 x, u8 y, u32 num, u8 color ){
+	HEXADECIMAL_DOUBLE( x  , y, color, num>> 24 );// 16
+	HEXADECIMAL_DOUBLE( x+1, y, color, num>> 16 );// 65
+	HEXADECIMAL_DOUBLE( x+2, y, color, num>>  8 );// 53
+	HEXADECIMAL_DOUBLE( x+3, y, color, num      );// 5
+}
+
+void Gpu::bigString( u8 x, u8 y, const char *data, u8 color ){
+	color = ((color&0xf) << 4 ) | (color&0xf);
+	for(int i=x, l=x+strlen(data); i<l; i++){
+		if( data[0] != ' ' ) BIGTEXT( i, y, color, data[0] - 0x41); 
+		data++;
+	}
+}
+
+void Gpu::string( u8 x, u8 y, const char *data, u8 color ){
+	
+	const char OFFSET = 'a' - 'A';
+	
+	for(int i=x, l=x+strlen(data), c = 0; i<l; i++){
+		char d = ( ( *data >= 'a' ) && ( *data <= 'z' ) ) ? *data - OFFSET : *data;
+		if( ( d >= '0' ) && ( d <= '9' ) ) 
+			c = colors[ color&0xf][ 1 ] | ( d - 0x30);
+		else 
+			c = colors[ color&0xf ][ 0 ] | TABLE_TEXT[ d - 0x41 ][ 0 ];
+		if( data[0] != ' ' ) gpu.set(2, i, y, c );
+		data++;
+	}
+}

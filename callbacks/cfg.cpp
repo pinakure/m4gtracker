@@ -157,7 +157,8 @@ void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 	
 	LookNFeel::update( &regHnd );
 		
-	regHnd.progress.enabled = false;
+	Progress::disable();
+	//regHnd.progress.enabled = false;
 	//regHnd.redraw = true;
 }
 
@@ -231,15 +232,15 @@ void Config::save (Control *c, bool bigstep, bool add, u32 *pointer){
 	//SRAM.drawPosition(27, 1, 7);
 	//0x6F
 
-	regHnd.progress.enabled = false;
+	Progress::disable();
+	//regHnd.progress.enabled = false;
 	//regHnd.redraw = true;
 }
 
 void Config::format (Control *c, bool bigstep, bool add, u32 *pointer){
 	if(c){
-		ReallyDialog r;	
-		r.enable();
-		if(!r.result)return;
+		ReallyDialog::enable();
+		if( !ReallyDialog::result ) return;
 	}
 	SRAM.erase();
 	Config::defaults(c, 0,0,pointer);
@@ -252,7 +253,8 @@ void Config::defaults (Control *c, bool bigstep, bool add, u32 *pointer){
 	#define SETTING(a, v)		{VAR_CFG.a = v; VAR_CFG.loadCount++;regHnd.update(1);}
 	VAR_CFG.loadCount = 0;
 
-	regHnd.progress.set(0, 233, STATUS_DEFAULTS, STATUS_SETTINGS, &VAR_CFG.loadCount);
+	// regHnd.progress.set(0, 233, STATUS_DEFAULTS, STATUS_SETTINGS, &VAR_CFG.loadCount);
+	Progress::enable(0, 233, STATUS_DEFAULTS, STATUS_SETTINGS, &VAR_CFG.loadCount);
 
 	for(i=0; i<16; i++) {
 		SETTING(PAL[i].R, 0x00);
@@ -323,7 +325,7 @@ void Config::defaults (Control *c, bool bigstep, bool add, u32 *pointer){
 	
 	SRAM.songDefaults( true );
 
-	regHnd.progress.enabled = false;
+	Progress::disable();
 	regHnd.redraw = true;
 }
 

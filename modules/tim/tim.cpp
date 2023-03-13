@@ -16,15 +16,13 @@ cTIM TIM3(3);
 
 
 
-
+#undef ASSERT
 #define GUARDC(a)
 #define UNGUARD()
-#define ASSERT(a,b)
 
 void cTIM::Init(u8 _index)
 {
 	GUARDC(cTIM::Init);
-	ASSERT(index<3, 03);
 	
 	index = _index;	
 	address_dst = 0x4000100+(index<<2);
@@ -36,7 +34,6 @@ void cTIM::Init(u8 _index)
 void cTIM::Reset(void)
 {
 	GUARDC(cTIM::Reset);
-	ASSERT(address_dst!=NULL, 01);ASSERT(address_cnt!=NULL, 02);
 	
 	TIM_DST=0;
     TIM_CNT=0;
@@ -47,7 +44,6 @@ void cTIM::Reset(void)
 void cTIM::Enable(void)
 {
 	GUARDC(cTIM::Enable);
-	ASSERT(address_dst!=NULL, 01);ASSERT(address_cnt!=NULL, 02);
 	 
 	TIM_CNT |=TIM_ENABLE;
 
@@ -57,7 +53,6 @@ void cTIM::Enable(void)
 void cTIM::Disable(void)
 {
 	GUARDC(cTIM::Disable);
-	ASSERT(address_dst!=NULL, 01);ASSERT(address_cnt!=NULL, 02);
 	
 	TIM_CNT &=0x7f;
 	
@@ -67,7 +62,6 @@ void cTIM::Disable(void)
 void cTIM::Setup(u16 flags, u8 freq)
 {
 	GUARDC(cTIM::Setup);
-	ASSERT(address_dst!=NULL, 01);ASSERT(address_cnt!=NULL, 02);
 	
 	TIM_DST = (0xFFFF - flags);
     TIM_CNT = freq;	

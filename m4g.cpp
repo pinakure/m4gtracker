@@ -63,15 +63,18 @@ int main(void){
 		InstEdit::unpack( &VAR_INSTRUMENT );	
 
 		Debug::runTests();
-		Debug::clear();
+		gpu.clear();
 		LookNFeel::init();
 		
 		// Start at Tracker screen
 		regHnd.load(&REGION_MAP_3_TRK);
-		
+		u32 cycles = 0;
 		while(!sys.var_reset){
-			if(!gpu.isVblank()) {lock= false; continue;}
-			if(!lock) { lock = true; continue; }							
+			/*
+				// IF SOMETHING GOES WRONG WITH TIMERS OR AUDIO, TRY ENABLING THIS:
+				if(!gpu.isVblank()) {lock= false; continue;}
+				if(!lock) { lock = true; continue; }							
+			*/
 			sys.update();			
 			regHnd.update(1);
 			DEBUG_UPDATE();

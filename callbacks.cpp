@@ -1,3 +1,4 @@
+#include "callbacks/cfg.hpp"
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 /*                                               SPECIFIC TYPE DISPLAY / INPUT METHODS													 */
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
@@ -322,4 +323,4 @@ void STATUS(u8 x, u8 y, u16 color, u16 value) {
 /* ------------------------------------------------------------------------------------------------------------------------------------- */
 
 const Callback cb_no_callback	= { NULL			, 0x0000 /* No key presses*/, NULL /* No var */		, NULL /* Last element */	};
-const Callback cb_reset			= { RESET			, EVENT_PANIC 				, NULL 					, NULL 						};
+const Callback cb_reset			= { Config::reset 	, EVENT_PANIC 				, NULL 					, NULL 						};

@@ -126,6 +126,8 @@ class Gpu {
 	vu8 redraw;
 
   public:
+  	static const u16 			colors[ 16 ][ 2 ];
+	
 	const unsigned short *MAP0;
 	const unsigned short *MAP1;
 	const unsigned short *MAP2;
@@ -134,20 +136,29 @@ class Gpu {
 	u16 	vcount;
 	bool 	blink;
 	
-	Gpu(void);
+	Gpu						( );
 	
-	bool 	isVblank	( );
-	void 	loadPalette	( );
-	void 	start		( );	
-	void 	safeblit	( E_Maps mapIndex, int startx, int starty, int x, int y, int width, int height);
-	void 	blit_0		( E_Maps mapIndex,  u8 startx, int starty,  u8 x,  u8 y,  u8 width,  u8 height);
-	void 	blit		( E_Maps mapIndex, int startx, int starty, int x, int y, int width, int height);
-	void 	otherBlit	( const u16 *map_address, int startx, int starty, int x, int y, int width, int height);
+	void    clear 			( u8 color = 0x10);
+		
+	bool 	isVblank		( );
+	void 	loadPalette		( );
+	void 	start			( );	
+	void 	safeblit		( E_Maps mapIndex, int startx, int starty, int x, int y, int width, int height);
+	void 	blit_0			( E_Maps mapIndex,  u8 startx, int starty,  u8 x,  u8 y,  u8 width,  u8 height);
+	void 	blit			( E_Maps mapIndex, int startx, int starty, int x, int y, int width, int height);
+	void 	otherBlit		( const u16 *map_address, int startx, int starty, int x, int y, int width, int height);
 
-	void 	set			( u8 layer, u8 x, u8 y, u16 index );
-	u16 	get			( u8 layer, u8 x, u8 y );
-	void 	blinkUpdate	( int speed = 0 );
-	void 	update		( u8 delta );
+	void 	set				( u8 layer, u8 x, u8 y, u16 index );
+	u16 	get				( u8 layer, u8 x, u8 y );
+	void 	blinkUpdate		( int speed = 0 );
+	void 	update			( u8 delta );
+	
+	// Data output helpers
+	static void string	 	( u8 x, u8 y, const char *filename	, u8 color=6 );
+	static void ascii	 	( u8 x, u8 y, const char *filename	, u8 color=6 );
+	static void number	 	( u8 x, u8 y, u32 number 			, u8 color=6 );
+	static void hexnum	 	( u8 x, u8 y, u32 number 			, u8 color=6 );
+	static void bigString	( u8 x, u8 y, const char *filename	, u8 color=6 );	
 };
 
 extern Gpu gpu;

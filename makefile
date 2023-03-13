@@ -18,6 +18,7 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 		callbacks/liv1.o \
 		callbacks/liv2.o \
 		callbacks/pat.o \
+		callbacks/console.o \
 		callbacks/debug.o \
 		callbacks/hlp.o \
 		callbacks/snk.o \
@@ -28,6 +29,9 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 		callbacks/looknfeel.o \
 		callbacks/behavior.o \
 		callbacks/coloreditor.o \
+		dialogs/really.o \
+		dialogs/alpha.o \
+		dialogs/progress.o \
 		m4g.o 
 
 HAM_VERSION_MAJOR = 2
@@ -109,4 +113,5 @@ clean:
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/sram/*.o *.i *.ii *.m4h	
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/key/*.o *.i *.ii *.m4h	
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/clip/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f dialogs/*.o *.i *.ii *.m4h	
 	

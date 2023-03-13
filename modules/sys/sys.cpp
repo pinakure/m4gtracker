@@ -1,6 +1,7 @@
 #include "sys.hpp"
 #include "../../data/input.hpp"
 #include "../../callbacks/snk.hpp"
+#include "../../callbacks/debug.hpp"
 
 Sys sys;
 
@@ -129,12 +130,13 @@ void Sys::updateInput(){
 		Control ACTIVATION 
 	---------------------------------------------------------------------------
 		A
+		B
 	-------------------------------------------------------------------------*/ 
-	if(KEY.down(KEY_A) && regHnd.control) {
-		regHnd.sendMessage(MESSAGE_ACTIVATE | (unsigned)regHnd.control);
-		return;		
+	if(regHnd.control){
+		if( ( KEY.up( KEY_A ) || KEY.down( KEY_A ) ) && ( !KEY.up( KEY_B ) && !KEY.press( KEY_B ) && !KEY.down( KEY_B ) ) ) {
+			regHnd.sendMessage(MESSAGE_ACTIVATE | (unsigned)regHnd.control);
+		}
 	}
-	
 	/* ------------------------------------------------------------------------
 		Play / Stop / Play from Start
 	---------------------------------------------------------------------------
@@ -192,6 +194,7 @@ void Sys::updateInput(){
 			regHnd.sendMessage(MESSAGE_CANCEL | (unsigned)regHnd.control);
 			return;
 		}
+		
 	}
 		
 	// Handle other arbitrary keypresses (MESSAGE_KEYPRESS)

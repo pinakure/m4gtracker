@@ -60,4 +60,6 @@ extern void readNibbles	( u8 &nibble1	, u8 &nibble2	, u8 mask = 0xF );
 extern void writeNibbles( u8  nibble1 	, u8  nibble2 	, u8 mask = 0xF );
 extern void readFields	( const BitField fields[ 8 ] );
 
+#define SRAM_SIZE 0x8000
+
 #endif

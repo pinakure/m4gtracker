@@ -3,192 +3,9 @@
 
 RegionHandler regHnd;
 
-void Progress::update(){
-	if(current != *var){
-		current = *var;
-		
-		step = (current * 0x24) / max;		
-		if(step != laststep){
-			laststep = step;
-			redraw = 1;
-		}
-		if(current >= max)enabled = false;
-	}
-}
-
-void Progress::set(u32 value, u32 maxvalue, E_StatusStrings uLine, E_StatusStrings lLine, u32 *var){
-	enabled = true;
-	this->var = var;
-	this->max = maxvalue;
-	upperLine = uLine;
-	lowerLine = lLine;
-	current = *var;
-	update();
-	redraw = 2;
-}
-
-AlphaDialog::AlphaDialog(){
-	enabled = false;
-	redraw = false;
-}
-	
-void AlphaDialog::add(){
-	u8 index = (cursorY * 6) + cursorX;
-	buffer[position] = index+1;
-	if(length<maxlen){
-		length++;
-		position++;
-	} else {
-		rem();
-		add();
-	}
-	preview();
-}
-
-void AlphaDialog::rem(){
-	if(length>0){
-		buffer[position-1] = 0;
-		preview();
-		
-		length--; 
-		position--;
-	}else cancel();
-}
-
-void AlphaDialog::draw(){
-	gpu.blit(MAP_CACHE, 0x0, 0x0, 0x0, Y, 0x08, 0x8);
-	
-	
-	redraw = false;
-}
-
-void AlphaDialog::confirm(){
-	if( (!KEYPRESS_B) && (!KEYUP_B) ){
-		enabled = false;
-		buffer[length] = 0;
-		for(int i=0; i<maxlen; i++){
-			target[i] = buffer[i]-1;
-		}
-	}
-}
-
-void AlphaDialog::cancel(){
-	enabled = false;
-}
-
-void AlphaDialog::preview(){
-	int i;
-	static u8 lastPosition;
-
-	gpu.set(0, textX+lastPosition, textY, 0x0);	
-	gpu.set(0, textX+(position>0?position-1:position), textY, 0x13);	
-
-	lastPosition=position-1;
-	
-	for(i=0; i<maxlen; i++){
-		if(buffer[i]==0) gpu.set(2, textX+i, textY, TABLE_TEXT[0x20][0] | 0xa000);
-		else gpu.set(2, textX+i, textY, ((TABLE_TEXT[buffer[i]][0])-1) | 0x4000);
-	}
-}
-
-void AlphaDialog::update(){
-	// If you want this to be multitask friendly, remove this while loop and put 'if(alphadialog->enabled)alphadialog->update();		
-	while(enabled){
-		if(redraw)draw();
-		
-		//KEY.Update();
-		sys.update();
-	
-		if(KEYDOWN_LEFT ) cursorX--; else
-		if(KEYDOWN_RIGHT) cursorX++; else 
-		if(KEYDOWN_DOWN ) cursorY++; else 
-		if(KEYDOWN_UP   ) cursorY--;
-		
-		if(KEYUP_START  ) confirm();
-		
-		if(KEYDOWN_A    ) add();				
-		if(KEYDOWN_B    ) rem();
-		
-		cursorX %= 6;
-		cursorY %= 6;
-	
-		// Redraw if cursor changed
-		if((oldX != cursorX)||(oldY != cursorY)){
-			u16 value = gpu.get(2, 1+cursorX, Y+1+cursorY)&0x0fff; 
-			gpu.set(2, 1+cursorX, Y+1+cursorY, value | 0x2000);
-			gpu.set(2, 1+oldX, Y+1+oldY, oldvalue | 0x9000);
-			oldvalue = value;
-			
-			oldX = cursorX;
-			oldY = cursorY;
-		}
-	}
-}
-
-void AlphaDialog::enable(bool bigString, u8* targetVariable, u8 vx, u8 vy){
-	textX = vx;
-	textY = vy;
-	cursorX = 0;
-	cursorY = 0;
-	oldX = 0x30;
-	oldY = 0x30;
-	memset(buffer, 0x0, 16);
-	length = 0;
-	position = 0;
-	enabled = true;
-	redraw = true;
-	maxlen = bigString?14:6;
-	Y = bigString?3:0xc;
-	target = targetVariable;
-	
-	// Read variable
-	for(int i=0; i<maxlen;i++){
-		buffer[i] = targetVariable[i]+1;
-		if(buffer[i]==0x0)break;
-		length++;
-		position++;
-	}
-	
-	preview();
-	
-	update();
-}
-
-ReallyDialog::ReallyDialog(void){
-	result = false;
-	enabled = false;
-}
-
-void ReallyDialog::draw(){
-	gpu.blit(MAP_CACHE, 0x13, 0x0, 12, 6, 0x09, 0x5);
-}
-
-void ReallyDialog::confirm(){
-	if( (!KEYPRESS_B) && (!KEYUP_B) ){
-		result = true;
-		enabled = false;
-	}
-}
-
-void ReallyDialog::cancel(){
-	result = false;
-	enabled = false;
-}
-
-void ReallyDialog::enable(){
-	enabled = true;
-	draw();
-	while(enabled){
-		
-		/*!*/
-		//KEY.Update();
-		sys.update();
-		/*!*/
-		
-		if(KEYUP_START) confirm();
-		if(KEYUP_B    ) cancel();		
-	}
-}
+bool ReallyDialog::result;
+bool ReallyDialog::enabled;
+bool ReallyDialog::highlight;
 
 void RegionHandler::dispatchCallback( const Callback *cb, const Control *ctl, u8 add, u8 bigstep, u16 msg, u32 *pointer ){
 	const Callback *c = cb;	
@@ -202,11 +19,11 @@ void RegionHandler::dispatchCallback( const Callback *cb, const Control *ctl, u8
 }
 
 RegionHandler::RegionHandler(){
-	region = NULL;
-	redraw = true;
 	memset(messages, 0, sizeof(u32)*1024);
-	messagecount = 0;
-	progress.enabled = false;
+	region 			= NULL;
+	redraw 			= true;
+	messagecount 		= 0;
+	Progress::disable();
 }
 
 void RegionHandler::dispatchMessages(){
@@ -522,17 +339,34 @@ void RegionHandler::jumpToControl(const Control *c){
 }
 
 void RegionHandler::controlTrigger(const Control *c, u16 q){
-	if( !c->callback ) return;
-	dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_B, (u32*)this);
-	dispatchCallback(c->callback, c, true, true, EVENT_KEYUP_B, (u32*)this);
+	ASSERT( c );
+	ASSERT( c->callback );
+		
+	switch( c->callback->msg ){
+		default					: //Debug::error(c->callback->msg);
+								  break;
+		
+		case EVENT_KEY_A		: dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_A	, (u32*)this);
+								  break;
+		case EVENT_KEY_B		: dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_B	, (u32*)this);
+								  break;
+		
+		case EVENT_KEYUP_A		: KEY.forceNoInput(); dispatchCallback(c->callback, c, true, true, EVENT_KEYUP_A  	, (u32*)this); KEY.forceNoInput(); break;
+		case EVENT_KEYUP_B		: KEY.forceNoInput(); dispatchCallback(c->callback, c, true, true, EVENT_KEYUP_B  	, (u32*)this); KEY.forceNoInput(); break;
+		case EVENT_KEYDOWN_A	: KEY.forceNoInput(); dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_A	, (u32*)this); break;
+		case EVENT_KEYDOWN_B	: KEY.forceNoInput(); dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_B, (u32*)this); break;
+	}
+	
 	/*control->callback(control, true, true, (u32*)this); */
 	sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)c);
-	
 	
 }
 
 void RegionHandler::controlClear(const Control *c){
+	ASSERT( c );
 	if( !c->callback || Clip::visible ) return;
+	if( ! c->var ) return;
+	ASSERT( c->callback );
 	(*(u8*) c->var) = 0;
 	sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)c);
 }
@@ -543,26 +377,10 @@ void RegionHandler::controlModify(const Control *c, bool big, bool add){
 	sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)c);
 }
 
-void RegionHandler::updateProgress(){
-	if(progress.redraw){
-		if(progress.redraw>1){
-			drawCache(10, 5, &CACHE_DLG_PROGRESS_SMALL, 0, 0);
-			STATUS(11, 6, 6, progress.upperLine);
-			STATUS(11, 8, 7, progress.lowerLine);
-		}
-		PROGRESS(11, 11, 0, progress.step);
-		progress.redraw = 0;
-	}			
-	progress.update();
-}
-
 void RegionHandler::update( u8 delta ){
 	if(redraw) draw();
 	// Handle modal progress dialog, if enableds
-	if(progress.enabled){
-		updateProgress();
-		return;
-	}
+	if(Progress::update()) return;
 	
 	if(region->updater)region->updater(this);
 	

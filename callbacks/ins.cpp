@@ -10,7 +10,7 @@
 
 /* Global callbacks ---------------------------------------------------------------------------------------------------------- */
 const Callback cb_ins_index				 = { InstEdit::index		, EVENT_MODIFY_B 	, &VAR_CFG.CURRENTINSTRUMENT	, NULL };
-const Callback cb_ins_name				 = { ALPHA6					, EVENT_KEYDOWN_B 	, &VAR_INSTRUMENT.NAME			, NULL };
+const Callback cb_ins_name				 = { AlphaDialog::getString , EVENT_KEYUP_A 	, &VAR_INSTRUMENT.NAME			, NULL };
 const Callback cb_ins_type				 = { InstEdit::type			, EVENT_MODIFY_B 	, &VAR_INSTRUMENT.TYPE			, NULL };
 /* PWM instrument settings --------------------------------------------------------------------------------------------------- */            	
 const Callback cb_ins_volumefade		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_PWM.VOLUMEFADE			, NULL };

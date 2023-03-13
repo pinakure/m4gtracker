@@ -58,10 +58,7 @@ typedef struct _CFG {
 	CFG_MEMORY		MEMORY;
 	u8 				SLOT /*3*/;//Currently selected song
 	u8				MENUSLOT /*3*/;	
-	u8	 			REALLYRETURN;
-	char			ALPHARETURN[14];
-	u8	 			CLIPRETURN /*2*/;
-	u8	 			PROGRESS /*6*/;
+	//u8	 			PROGRESS /*6*/;
 	u8	 			INSTRUMENTVISTYPE;
 	GrooveTable		GROOVE; 			// Pointer to the table being edited/displayed on INS screeen
 	TableCell 		INSTRUMENTTABLE; 	// Pointer to the table being edited/displayed on INS screeen

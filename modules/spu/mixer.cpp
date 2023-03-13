@@ -159,8 +159,8 @@ void Mixer::mix(){
    size_t i;
    s16 sample_a;
    s16 sample_b;
-   s16 vol_a = 0xF & 0xF;
-   s16 vol_b = 0xF & 0xF;
+//  s16 vol_a = 0xF & 0xF;
+//   s16 vol_b = 0xF & 0xF;
    
    SoundChannel *fm = &channel[0];
    
@@ -350,4 +350,3 @@ void Mixer::show( Control *c, bool bigstep, bool add, u32 *pointer ){
 
 void Mixer::update( RegionHandler *rh ){
 }
-
