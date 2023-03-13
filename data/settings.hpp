@@ -3,6 +3,19 @@
 
 #include "../agb.h"
 
+
+//#define FM_ADSR_SCALE 				3
+//#define ADSR_LENGTH_SCALE 		0
+//#define ADSR_RANGE_SCALE 			0
+
+#define FM_ADSR_SCALE 				2
+#define ADSR_LENGTH_SCALE 			1
+#define ADSR_RANGE_SCALE 			1
+
+#define ADSR_TABLE_SIZE				0x40 // DO NOT CHANGE THIS VALUE, CHANGE SCALE INSTEAD
+#define ADSR_TABLE_RANGE 			( 0xF << ADSR_RANGE_SCALE )
+#define ADSR_TABLE_LENGTH 			( ADSR_TABLE_SIZE << ADSR_LENGTH_SCALE )
+
 typedef struct _SETTINGS_PWM {	
 	u8				SWEEPDIR;		// 	    1 : 1
 	u8				ENVELOPEDIR;	//      1 : 2

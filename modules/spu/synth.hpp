@@ -11,9 +11,9 @@ class Synth {
 		static u8 	wav_adsr_position;
 		static u16 	smp_adsr_position;
 		static u16 	fmw_adsr_position;
-		static u8 	wav_adsr_table[4][0x40];
-		static u8 	fmw_adsr_table[4][0x40];
-		static u8 	smp_adsr_table   [0x40];
+		static u8 	wav_adsr_table[4][ ADSR_TABLE_LENGTH ];
+		static u8 	fmw_adsr_table[4][ ADSR_TABLE_LENGTH ];
+		static u8 	smp_adsr_table    [ ADSR_TABLE_LENGTH ];
 		static u16 	lfo;
 		
 		static void init();
@@ -45,7 +45,7 @@ class Synth {
 		static void updateADSRWav( SETTINGS_WAV *wav );
 		static void updateADSRSmp( SETTINGS_SMP *smp );
 		static void updateADSRFmw( SETTINGS_FMW *fmw );
-		static void renderADSR( u8 adsr[ 4 ], u8 adsr_table[0x40] );
+		static void renderADSR( u8 adsr[ 4 ], u8 adsr_table[ ADSR_TABLE_LENGTH ] );
 };
 
 #endif

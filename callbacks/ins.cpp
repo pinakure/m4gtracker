@@ -737,34 +737,33 @@ void InstEdit::viewWaveFormWav( ){
 	gpu.vs->draw(14,6);
 }
 
-void InstEdit::viewQuadADSR( u8 adsr_tables[ 4 ][ 0x40 ] , u8 adsr_position ){
+void InstEdit::viewQuadADSR( u8 adsr_tables[ 4 ][ ADSR_TABLE_LENGTH ] , u8 adsr_position ){
 
 	static u8 last_adsr_position;
 	
 	if(regHnd.region != &REGION_MAP_2_INS ) return;
-	if( last_adsr_position == adsr_position) return;
-	last_adsr_position = adsr_position;
+	if( last_adsr_position == (adsr_position>>(1+ADSR_LENGTH_SCALE))) return;
+	last_adsr_position = (adsr_position>>(1+ADSR_LENGTH_SCALE));
 	gpu.vs->clear();
 	
-	for(int x=0,d=0;x<0x40; x+=2,d=x>>1){
-		gpu.vs->set( d,  7 - ( adsr_tables[ 0 ][ x ] >> 1 ) );
-		gpu.vs->set( d, 15 - ( adsr_tables[ 1 ][ x ] >> 1 ) );
-		gpu.vs->set( d, 23 - ( adsr_tables[ 2 ][ x ] >> 1 ) );
-		gpu.vs->set( d, 31 - ( adsr_tables[ 3 ][ x ] >> 1 ) );
-		
+	for(int x=0,d=0;x<ADSR_TABLE_LENGTH; x+=(2<<ADSR_LENGTH_SCALE),d=x>>(1+ADSR_LENGTH_SCALE) ){
+		gpu.vs->set( d,  7 - ( adsr_tables[ 0 ][ x >> ADSR_LENGTH_SCALE ] >> (1 << ADSR_RANGE_SCALE ) ) );
+		gpu.vs->set( d, 15 - ( adsr_tables[ 1 ][ x >> ADSR_LENGTH_SCALE ] >> (1 << ADSR_RANGE_SCALE ) ) );
+		gpu.vs->set( d, 23 - ( adsr_tables[ 2 ][ x >> ADSR_LENGTH_SCALE ] >> (1 << ADSR_RANGE_SCALE ) ) );
+		gpu.vs->set( d, 31 - ( adsr_tables[ 3 ][ x >> ADSR_LENGTH_SCALE ] >> (1 << ADSR_RANGE_SCALE ) ) );
 	}
 	
-	//DECIMAL_DOUBLE( 14,2, 7, adsr_position );
+	gpu.number(14, 1, adsr_position,  adsr_position < (ADSR_TABLE_LENGTH-1)?COLOR_YELLOW:COLOR_ORANGE );
+	//gpu.number(26, 1, ADSR_TABLE_LENGTH, COLOR_RED);
 
-	if( adsr_position < 0x3F ){
-		VISPOS1(14, 1,	0xFF, adsr_position>>2);
-		VISPOS2(14, 18, 0xFF, adsr_position>>2);
-	}
+	if( adsr_position < (ADSR_TABLE_LENGTH-2) ){
+		VISPOS2(14, 18, 0xFF, adsr_position>>(2+ADSR_LENGTH_SCALE));
+	} 
 	gpu.vs->draw(14,6);
 }
 
-void InstEdit::viewADSR ( u8 adsr_table[0x40] , u8 adsr_position ){
-
+void InstEdit::viewADSR ( u8 adsr_table[ ADSR_TABLE_LENGTH ] , u8 adsr_position ){
+	//REWRITE AGAIN scaling values, TAKING viewQuadADSR as example
 	static u8 last_adsr_position;
 	
 	if(regHnd.region != &REGION_MAP_2_INS ) return;
@@ -773,13 +772,13 @@ void InstEdit::viewADSR ( u8 adsr_table[0x40] , u8 adsr_position ){
 	
 	gpu.vs->clear();
 	
-	for(int x=0;x<0x40; x+=2){
+	for(int x=0;x<ADSR_TABLE_LENGTH; x+=2){
 		gpu.vs->set( x >> 1, 31 - (( adsr_table[ x ]<<1) ) );
 	}
 	
 	//DECIMAL_DOUBLE( 14,2, 7, adsr_position );
 
-	if( adsr_position < 0x3F ){
+	if( adsr_position < (ADSR_TABLE_LENGTH-1) ){
 		VISPOS1(14, 1,	0xFF, adsr_position>>2);
 		VISPOS2(14, 18, 0xFF, adsr_position>>2);
 	}
