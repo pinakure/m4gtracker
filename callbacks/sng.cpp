@@ -49,7 +49,7 @@ const Control SNG_CONTROLS[ CONTROL_SNG_MAX ] = {
 const Callback cb_sng_artist			= { AlphaDialog::getBigString	, EVENT_KEYDOWN_B	, &VAR_SONG.ARTIST			 , NULL };
 const Callback cb_sng_bpm				= { SongEdit::setTempo			, EVENT_MODIFY_B	, &VAR_SONG.BPM				 , NULL };
 const Callback cb_sng_erase			= { SongEdit::erase				, EVENT_KEYUP_B 	, NULL 						 , NULL };
-const Callback cb_sng_groove			= { modify1BIT						, EVENT_KEYDOWN_B	, &VAR_SONG.GROOVE.ENABLE , NULL };
+const Callback cb_sng_groove			= { SongEdit::toggleGroove		, EVENT_KEYDOWN_B	, &VAR_SONG.GROOVE.ENABLE , NULL };
 const Callback cb_sng_load			= { SongEdit::load					, EVENT_KEYUP_B 	, NULL 						 , NULL };
 const Callback cb_sng_patlength		= { modify4BIT						, EVENT_MODIFY_B	, &VAR_SONG.PATTERNLENGTH , NULL };
 const Callback cb_sng_purge			= { SongEdit::purge				, EVENT_KEYUP_B 	, NULL 						 , NULL };
@@ -58,6 +58,18 @@ const Callback cb_sng_slot			= { SongEdit::select				, EVENT_MODIFY_B	, &VAR_CFG
 const Callback cb_sng_tempotap		= { SongEdit::tapTempo			, EVENT_KEYDOWN_B	, NULL							 , NULL };
 const Callback cb_sng_title			= { AlphaDialog::getBigString 	, EVENT_KEYDOWN_B	, &VAR_SONG.TITLE			 , NULL };
 const Callback cb_sng_transpose		= { modify8BIT						, EVENT_MODIFY_B	, &VAR_SONG.TRANSPOSE		 , NULL };
+
+void SongEdit::toggleGroove(Control *a, bool b, bool c, u32 *d){	
+	modify1BIT( a, b, c, d);
+	if( VAR_SONG.GROOVE.ENABLE ) return;
+	// Erase target ticks so the sequencer can continue playing back
+	Channel *ch = &VAR_CHANNEL[ 0 ];
+	for(int i=0; i<6; i++){
+		ch->target_tick = 0;
+		ch++;
+	}
+}
+
 
 void SongEdit::redrawCtl(eSngControl control){
 	regHnd.drawControl( &SNG_CONTROLS[ control ] );
