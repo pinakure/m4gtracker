@@ -173,7 +173,7 @@ void Sram::songLoad( bool verbose ){
 	u8 h;
 	
 	
-	seek	( DATA_BASE_ADDRESS );
+	seek		( DATA_BASE_ADDRESS );
 	forward	( SONG_DETAILS_SIZE * VAR_CFG.SLOT);
 	
 	// Song details

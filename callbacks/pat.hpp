@@ -19,13 +19,14 @@ class PatEdit {
 		static void copy				( u8 channel );
 		static void globalUpdate		(RegionHandler *rh);
 		static void update				(RegionHandler *rh);
-		static void dispatchMessage		(u32 msg);
+		static void dispatchMessage	(u32 msg);
 		static void solo				( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void mute				( Control *c, bool bigstep, bool add, u32 *pointer );
 
 		static void shift				( int q , u8 starting_point = 0);
 		static void transpose			( int q );
 		static void processInput		( );
+		static void clear				( u8 pattern_index );// Delete pattern from pattern shared data
 };
 
 extern const Control PAT_CONTROLS[ CONTROL_PAT_MAX ];

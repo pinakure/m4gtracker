@@ -4,7 +4,7 @@
 #include "../agb.h"
 
 typedef struct sPatternCell {
-	u8 /*u16*/		KEY[16] /*7*/;
+	u8 				KEY[16] /*7*/;
 	u8				INS[16] /*6*/;
 	u8				VOL[16] /*4*/;
 	u8				CMD[16] /*5*/;

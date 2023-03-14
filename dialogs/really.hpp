@@ -5,14 +5,15 @@
 
 class ReallyDialog {
 	private:
-		static bool enabled;
-		static bool highlight;		
-		static void draw		();
-		static void confirm	();
-		static void cancel	();
+		static bool 	enabled;
+		static bool 	highlight;		
+		static u16 	background;
+		static void 	draw		();
+		static void 	confirm	();
+		static void 	cancel	();
 	public:
-		static bool result;
-		static void enable	();
+		static bool 	result;
+		static void 	enable	();
 };
 
 #endif

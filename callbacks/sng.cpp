@@ -1,14 +1,16 @@
 #include "sng.hpp"
+#include "ins.hpp"
+#include "pat.hpp"
 #include "debug.hpp"
 #include "../data/data.hpp"
 #include "../data/helpers.hpp"
 #include "../modules/sram/sram.hpp"
 #include "../modules/spu/sequencer.hpp"
 #include "../modules/gpu/gpu.hpp"
+#include "../modules/key/key.hpp"
 
 #define CTL(a) &SNG_CONTROLS[CONTROL_SNG_##a]
 #define VAR(a) ((u8*)&(VAR_SONG.a))
-
 
 const Control SNG_CONTROLS[ CONTROL_SNG_MAX ] = { 
 //	{ x		, y	, up					  		, right						, down				     , left				     , cache								   , var					  	  			, callback				},
@@ -54,7 +56,7 @@ const Callback cb_sng_load			= { SongEdit::load					, EVENT_KEYUP_B 	, NULL 				
 const Callback cb_sng_patlength		= { modify4BIT						, EVENT_MODIFY_B	, &VAR_SONG.PATTERNLENGTH , NULL };
 const Callback cb_sng_purge			= { SongEdit::purge				, EVENT_KEYUP_B 	, NULL 						 , NULL };
 const Callback cb_sng_save			= { SongEdit::save					, EVENT_KEYUP_B 	, NULL 						 , NULL };
-const Callback cb_sng_slot			= { SongEdit::select				, EVENT_MODIFY_B	, &VAR_CFG.SLOT				 , NULL  };
+const Callback cb_sng_slot			= { SongEdit::select				, EVENT_MODIFY_B	, &VAR_CFG.SLOT				 , NULL };
 const Callback cb_sng_tempotap		= { SongEdit::tapTempo			, EVENT_KEYDOWN_B	, NULL							 , NULL };
 const Callback cb_sng_title			= { AlphaDialog::getBigString 	, EVENT_KEYDOWN_B	, &VAR_SONG.TITLE			 , NULL };
 const Callback cb_sng_transpose		= { modify8BIT						, EVENT_MODIFY_B	, &VAR_SONG.TRANSPOSE		 , NULL };
@@ -155,7 +157,130 @@ void SongEdit::save( Control *c, bool bigstep, bool add, u32 *pointer ){
 }
 
 void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
+	#define INSTRUMENT_COUNT 		0x40
+	#define PATTERN_COUNT				0x80
+	#define PATTERN_TOTAL 			9216 // 6 SONGS * 6 CHANNELS * 256 places to check 256*6*6
+	#define INSTRUMENT_TOTAL 		128016.0f	
 	
+	float inc								= 0;
+	bool 	used_instruments			[ INSTRUMENT_COUNT ];
+	bool 	used_patterns				[ PATTERN_COUNT		];
+	u8 		unused_instrument_count 	= INSTRUMENT_COUNT;
+	u8 		unused_pattern_count 		= PATTERN_COUNT;
+	u8 		previous_slot 				= VAR_CFG.SLOT;
+	
+	ReallyDialog::enable();
+	if(!ReallyDialog::result) {
+		regHnd.redraw=true;
+		return;
+	}
+	regHnd.redraw=true;
+	regHnd.update(0);
+	gpu.clear( 0x9010);
+	Console console("PLEASE  WAIT", 0x9010);
+	
+	Gpu::drawDialog( 7 , 6 , 16, 8, " Data Purge ");
+	
+	KEY.forceNoInput();
+	
+	SRAM.songSave( false );
+	
+	// Set all items as unused 
+	for(int i=1/*ignore first index*/; i<INSTRUMENT_COUNT; i++){
+		used_instruments[i]=false;
+	}
+	
+	for(int i=1/*ignore first index*/; i<PATTERN_COUNT; i++){
+		used_patterns[i] =false;
+	}
+
+	// Check for unused instruments
+	Gpu::ascii( 8 << 1 ,	 7	, " Lookup Instruments       %" , COLOR_DARK_CYAN );
+	float q = 100.0f / float(PATTERN_COUNT);
+	for( int pattern = 0; pattern < PATTERN_COUNT ; pattern++ ){
+		DECIMAL_DOUBLE( 20	, 7	, COLOR_CYAN, (u8)( float(pattern) * q  ) );
+		for( int instrument = 0 ; instrument < INSTRUMENT_COUNT ; instrument++ ){
+			u8 *cell = VAR_DATA[pattern].INS;
+			for( u8 *cend = cell + 16; cell < cend; cell++ ){ 
+				// dont care about instruments already declared as used
+				if( used_instruments[ instrument ] ) continue;
+				used_instruments[ *cell] = true;
+			}
+		}
+	}
+	/*HACK*/gpu.set(2, 19	, 7	, (COLOR_CYAN<<12) | 0x91);// put 1 on 100...
+	/*HACK*/gpu.set(2, 20	, 7	, (COLOR_CYAN<<12) | 0x300);// put 1 on 100...
+	
+	// Check for unused patterns	
+	Gpu::ascii( 8 << 1 ,	 8	, " Lookup Patterns          %" , COLOR_DARK_CYAN );
+	inc 	= 0;
+	q 		= 100.0f / float(PATTERN_TOTAL);
+	
+	// FOR EACH SONG
+	for( VAR_CFG.SLOT=0; VAR_CFG.SLOT < SONG_SLOT_COUNT; VAR_CFG.SLOT++){
+		SRAM.songLoad( false );
+		
+		// FOR EACH CHANNEL IN SONG
+		Pattern*	p_channel 		= VAR_SONG.PATTERNS;
+		for( Pattern* p_channel_end = p_channel + 6 ; p_channel < p_channel_end ; p_channel++ ){
+			
+			// FOR EACH ORDER (PATTERNPOS)
+			u8* p_order 		= p_channel->ORDER;			
+			for( u8* p_order_end = p_order + 256; p_order < p_order_end ; p_order++){
+				DECIMAL_DOUBLE( 20	, 8	, COLOR_CYAN, (u8)( q * inc));
+				inc++;
+				if( used_patterns[ *p_order ] ) continue;
+				used_patterns[ *p_order ] = true;
+			}
+		}		
+	}
+	/*HACK*/gpu.set(2, 19	, 8	, (COLOR_CYAN<<12) | 0x91);// put 1 on 100...
+	/*HACK*/gpu.set(2, 20	, 8	, (COLOR_CYAN<<12) | 0x300);// put 1 on 100...
+	
+	// Erase unused instruments
+	Gpu::ascii( 8 << 1 ,	 9	, " Erasing Instruments      %" , COLOR_DARK_CYAN );
+	for(int i=1; i<INSTRUMENT_COUNT; i++){
+		DECIMAL_DOUBLE( 20	, 9	, COLOR_CYAN, (u8)((float(i) / float(INSTRUMENT_COUNT-1)) * 100.0f));
+		if( !used_instruments[ i ] ) continue;
+		InstEdit::clear( i ); 
+		unused_instrument_count--;
+	}
+	/*HACK*/gpu.set(2, 19	, 9	, (COLOR_CYAN<<12) | 0x91);// put 1 on 100...
+	/*HACK*/gpu.set(2, 20	, 9	, (COLOR_CYAN<<12) | 0x300);// put 1 on 100...
+	
+	// Erase unused patterns
+	Gpu::ascii( 8 << 1 ,	10	, " Erasing Patterns         %" , COLOR_DARK_CYAN );
+	for(int p=1; p<PATTERN_COUNT; p++){
+		DECIMAL_DOUBLE( 20	, 10,COLOR_CYAN, (u8)((float(p) / float(PATTERN_COUNT-1)) * 100.0f));
+		if( !used_patterns[ p ] ) continue;
+		PatEdit::clear( p ); 
+		unused_pattern_count--;
+	}
+	/*HACK*/gpu.set(2, 19	,10, (COLOR_CYAN<<12) | 0x91);// put 1 on 100...
+	/*HACK*/gpu.set(2, 20	,10, (COLOR_CYAN<<12) | 0x300);// put 1 on 100...
+	
+
+	Gpu::ascii( 8 << 1 	, 11	, " Avail. Instruments" 	, COLOR_WHITE 	);
+	Gpu::ascii( 8 << 1 	, 12	, " Avail. Patterns" 		, COLOR_WHITE 	);
+	DECIMAL_DOUBLE( 20	, 11	, COLOR_CYAN, unused_instrument_count	  	);
+	gpu.set(2, 19 , 12	, (COLOR_CYAN<<12) | 0x90 + (unused_pattern_count / 100)	);
+	DECIMAL_DOUBLE( 20	, 12	, COLOR_CYAN, unused_pattern_count		  	);
+	// Save shared data (Instruments and Patterns)
+	
+	
+	SRAM.sharedDataSave( false );
+	VAR_CFG.SLOT = previous_slot;
+	SRAM.songLoad( false );
+
+	Gpu::bigString( 7, 15, "PRESS ANY BUTTON");
+	
+	while(!KEY.activity()){ KEY.update(); };
+	regHnd.redraw = 1;
+	regHnd.update(1);
+	#undef PATTERN_TOTAL
+	#undef PATTERN_COUNT
+	#undef INSTRUMENT_TOTAL
+	#undef INSTRUMENT_COUNT
 }
 
 void SongEdit::select( Control *c, bool bigstep, bool add, u32 *pointer ){
@@ -164,9 +289,6 @@ void SongEdit::select( Control *c, bool bigstep, bool add, u32 *pointer ){
 	SongEdit::focusCtl		( CONTROL_SNG_SONGSELECTOR 	);
 	SongEdit::redrawCtl	( CONTROL_SNG_SLOT				);
 }
-
-#include "../modules/key/key.hpp"
-#include "debug.hpp"
 
 void SongEdit::erase( Control *c, bool bigstep, bool add, u32 *pointer ){
 	ReallyDialog::enable();
@@ -235,4 +357,3 @@ void SongEdit::runGroove(){
 		last_x = x;
 	}
 }
-

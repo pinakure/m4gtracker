@@ -1,4 +1,5 @@
 #include "linkmode.hpp" 
+#include "../data/enum.h" 
 #include "../data/data.hpp" 
 #include "../modules/gpu/gpu.hpp" 
 				
@@ -21,6 +22,18 @@ const Control LINKMODE_CONTROLS[ CONTROL_LINKMODE_MAX ] = {
 void LinkMode::update( RegionHandler* rh ){
 	const Region *c = &REGION_MAP_4_LINKSTATUS;	
 	gpu.otherBlit(MAPDATA + ((MAP_CFG * 3) << 12), c->x, c->y, 0xb, 0xf, c->width, c->height);
+	switch( VAR_CFG.LINKMODE.LINKMODE ){
+		case LINKMODE_GBA: /*! let the user decide !*/break;
+		case LINKMODE_IBM			: VAR_CFG.LINKMODE.MASTERCLOCK = true; break;
+		case LINKMODE_SYNC_SLAVE	: VAR_CFG.LINKMODE.MASTERCLOCK = false; break;
+		case LINKMODE_SYNC_MASTER: VAR_CFG.LINKMODE.MASTERCLOCK = true; break;
+	}
+}
+
+void LinkMode::toggleMaster(Control *c, bool bigstep, bool add, u32 *pointer){
+	modify1BIT( c, bigstep, add, pointer);
+	LinkMode::update(&regHnd);
+	regHnd.drawControl(&LINKMODE_CONTROLS[ CONTROL_LINKMODE_MASTER]);
 }
 
 void LinkMode::songRecv( Control *c, bool bigstep, bool add, u32 *pointer ){

@@ -5,15 +5,17 @@
 
 #ifndef NDEBUG
 
+u16 		Console::background_color;
 u16 		Console::cursor_color;
 u16 	 	Console::title_color;
 u8 	 		Console::cursor_x;
 u8 	 		Console::cursor_y;
 const char* Console::title;
 
-Console::Console(const char *new_title){
+Console::Console(const char *new_title, u16 color ){
 	cursor_x = 0;
 	cursor_y = 0;
+	background_color = color;
 	if( new_title ) setTitle( new_title );
 	render();
 }
@@ -48,7 +50,7 @@ void Console::setCursor( u8 x, u8 y){
 
 void Console::render(){
 	//gpu.clear( 0x10 | COLOR_DARK_BLUE );
-	gpu.clear( 0x00 | COLOR_BLUE );
+	gpu.clear( background_color );
 	if(title) 
 		Gpu::bigString(15 - (strlen(title)>>1), 0, title, title_color);
 }

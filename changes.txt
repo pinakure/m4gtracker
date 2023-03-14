@@ -114,4 +114,5 @@ ADSR routines Rewritten
 SNG screen now indicates which slot is currently loaded, if any
 Removed useless option 'COPY' from SNG screen
 Added secondary SLOT control on SNG Screen, for the dummies.
-
+Several small Bugfixes
+Pattern pagination ( B+SELECT+ LEFT/RIGHT )

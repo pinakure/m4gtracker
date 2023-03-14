@@ -33,6 +33,8 @@ class InstEdit {
 		static void 		synchronize		( );
 		static void 		load 				( );
 		static void 		copy				( Instrument* s, Instrument* d );
+
+		static void clear					( u8 index );
 		
 		// Waveform visualizers
 		static void viewWaveFormFmw		( );

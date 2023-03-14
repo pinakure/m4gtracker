@@ -108,7 +108,7 @@ const Control PAT_CONTROLS[ CONTROL_PAT_MAX ] = {
 	{ COLUMN00 	, 0x11 	, CTL( PATTERNS_A_0C  )	, CTL( PATTERNS_B_0D  ) , CTL( PATTERNS_A_0E  ) , CTL( PATTERNS_F_0D  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[ 13 ]  ) , &cb_patterns_0_0D	},
 	{ COLUMN00 	, 0x12 	, CTL( PATTERNS_A_0D  )	, CTL( PATTERNS_B_0E  ) , CTL( PATTERNS_A_0F  ) , CTL( PATTERNS_F_0E  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[ 14 ]  ) , &cb_patterns_0_0E	},
 	{ COLUMN00 	, 0x13 	, CTL( PATTERNS_A_0E  )	, CTL( PATTERNS_B_0F  ) , CTL( SOLO_LEFT_00   ) , CTL( PATTERNS_F_0F  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[ 15 ]  ) , &cb_patterns_0_0F	},
-	{ COLUMN01 	, 0x04 	, CTL( SOLO_LEFT_02   ) , CTL( PATTERNS_C_00  ) , CTL( PATTERNS_B_01  ) , CTL( PATTERNS_A_00  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[  0 ]  ) , &cb_patterns_1_00	},
+	{ COLUMN01 	, 0x04 	, CTL( SOLO_LEFT_02   ) 	, CTL( PATTERNS_C_00  ) , CTL( PATTERNS_B_01  ) , CTL( PATTERNS_A_00  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[  0 ]  ) , &cb_patterns_1_00	},
 	{ COLUMN01 	, 0x05 	, CTL( PATTERNS_B_00  )	, CTL( PATTERNS_C_01  ) , CTL( PATTERNS_B_02  ) , CTL( PATTERNS_A_01  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[  1 ]  ) , &cb_patterns_1_01	},
 	{ COLUMN01 	, 0x06 	, CTL( PATTERNS_B_01  )	, CTL( PATTERNS_C_02  ) , CTL( PATTERNS_B_03  ) , CTL( PATTERNS_A_02  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[  2 ]  ) , &cb_patterns_1_02	},
 	{ COLUMN01 	, 0x07 	, CTL( PATTERNS_B_02  )	, CTL( PATTERNS_C_03  ) , CTL( PATTERNS_B_04  ) , CTL( PATTERNS_A_03  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[  3 ]  ) , &cb_patterns_1_03	},
@@ -124,7 +124,7 @@ const Control PAT_CONTROLS[ CONTROL_PAT_MAX ] = {
 	{ COLUMN01 	, 0x11 	, CTL( PATTERNS_B_0C  )	, CTL( PATTERNS_C_0D  ) , CTL( PATTERNS_B_0E  ) , CTL( PATTERNS_A_0D  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[ 13 ]  ) , &cb_patterns_1_0D	},
 	{ COLUMN01 	, 0x12 	, CTL( PATTERNS_B_0D  )	, CTL( PATTERNS_C_0E  ) , CTL( PATTERNS_B_0F  ) , CTL( PATTERNS_A_0E  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[ 14 ]  ) , &cb_patterns_1_0E	},
 	{ COLUMN01 	, 0x13 	, CTL( PATTERNS_B_0E  )	, CTL( PATTERNS_C_0F  ) , CTL( SOLO_LEFT_00   ) , CTL( PATTERNS_A_0F  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[ 15 ]  ) , &cb_patterns_1_0F	},
-	{ COLUMN02 	, 0x04 	, CTL( SOLO_LEFT_02   ) , CTL( PATTERNS_D_00  ) , CTL( PATTERNS_C_01  ) , CTL( PATTERNS_B_00  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[  0 ]  ) , &cb_patterns_2_00	}, 
+	{ COLUMN02 	, 0x04 	, CTL( SOLO_LEFT_02   ) 	, CTL( PATTERNS_D_00  ) , CTL( PATTERNS_C_01  ) , CTL( PATTERNS_B_00  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[  0 ]  ) , &cb_patterns_2_00	}, 
 	{ COLUMN02 	, 0x05 	, CTL( PATTERNS_C_00  )	, CTL( PATTERNS_D_01  ) , CTL( PATTERNS_C_02  ) , CTL( PATTERNS_B_01  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[  1 ]  ) , &cb_patterns_2_01	}, 
 	{ COLUMN02 	, 0x06 	, CTL( PATTERNS_C_01  )	, CTL( PATTERNS_D_02  ) , CTL( PATTERNS_C_03  ) , CTL( PATTERNS_B_02  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[  2 ]  ) , &cb_patterns_2_02	}, 
 	{ COLUMN02 	, 0x07 	, CTL( PATTERNS_C_02  )	, CTL( PATTERNS_D_03  ) , CTL( PATTERNS_C_04  ) , CTL( PATTERNS_B_03  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[  3 ]  ) , &cb_patterns_2_03	}, 
@@ -140,7 +140,7 @@ const Control PAT_CONTROLS[ CONTROL_PAT_MAX ] = {
 	{ COLUMN02 	, 0x11 	, CTL( PATTERNS_C_0C  )	, CTL( PATTERNS_D_0D  ) , CTL( PATTERNS_C_0E  ) , CTL( PATTERNS_B_0D  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[ 13 ]  ) , &cb_patterns_2_0D	}, 
 	{ COLUMN02 	, 0x12 	, CTL( PATTERNS_C_0D  )	, CTL( PATTERNS_D_0E  ) , CTL( PATTERNS_C_0F  ) , CTL( PATTERNS_B_0E  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[ 14 ]  ) , &cb_patterns_2_0E	}, 
 	{ COLUMN02 	, 0x13 	, CTL( PATTERNS_C_0E  )	, CTL( PATTERNS_D_0F  ) , CTL( SOLO_LEFT_00   ) , CTL( PATTERNS_B_0F  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[ 15 ]  ) , &cb_patterns_2_0F	}, 
-	{ COLUMN03 	, 0x04 	, CTL( MUTE_LEFT_02   ) , CTL( PATTERNS_E_00  ) , CTL( PATTERNS_D_01  ) , CTL( PATTERNS_C_00  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[  0 ]  ) , &cb_patterns_3_00	},  
+	{ COLUMN03 	, 0x04 	, CTL( MUTE_LEFT_02   ) 	, CTL( PATTERNS_E_00  ) , CTL( PATTERNS_D_01  ) , CTL( PATTERNS_C_00  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[  0 ]  ) , &cb_patterns_3_00	},  
 	{ COLUMN03 	, 0x05 	, CTL( PATTERNS_D_00  )	, CTL( PATTERNS_E_01  ) , CTL( PATTERNS_D_02  ) , CTL( PATTERNS_C_01  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[  1 ]  ) , &cb_patterns_3_01	},  
 	{ COLUMN03 	, 0x06 	, CTL( PATTERNS_D_01  )	, CTL( PATTERNS_E_02  ) , CTL( PATTERNS_D_03  ) , CTL( PATTERNS_C_02  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[  2 ]  ) , &cb_patterns_3_02	},  
 	{ COLUMN03 	, 0x07 	, CTL( PATTERNS_D_02  )	, CTL( PATTERNS_E_03  ) , CTL( PATTERNS_D_04  ) , CTL( PATTERNS_C_03  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[  3 ]  ) , &cb_patterns_3_03	},  
@@ -506,7 +506,64 @@ void PatEdit::update(RegionHandler* rh){
 	static int last_position=0xFFFF;
 	
 	Clip::update( rh );
+	/*
+	static u8 last_peak[6] = { 0, 0, 0, 0, 0, 0 };
 	
+	static int cooldown = 0;
+	
+	
+	u8 level[6] = {
+		(VAR_CHANNEL[0].VOLUME?VAR_CHANNEL[0].VOLUME:VAR_CHANNEL[0].volume)>>1, 
+		(VAR_CHANNEL[1].VOLUME?VAR_CHANNEL[1].VOLUME:VAR_CHANNEL[1].volume)>>1, 
+		(VAR_CHANNEL[2].VOLUME?VAR_CHANNEL[2].VOLUME:VAR_CHANNEL[2].volume)>>1, 
+		(VAR_CHANNEL[3].VOLUME?VAR_CHANNEL[3].VOLUME:VAR_CHANNEL[3].volume)>>1, 
+		(VAR_CHANNEL[4].VOLUME?VAR_CHANNEL[4].VOLUME:VAR_CHANNEL[4].volume)>>1, 
+		(VAR_CHANNEL[5].VOLUME?VAR_CHANNEL[5].VOLUME:VAR_CHANNEL[5].volume)>>1, 
+	};
+	
+	static u8 peak[6] = {
+		last_peak[0] < level[0] ? level[0] : last_peak[0]>0 ? last_peak[0]-1 : last_peak[0],
+		last_peak[1] < level[1] ? level[1] : last_peak[1]>0 ? last_peak[1]-1 : last_peak[1],
+		last_peak[2] < level[2] ? level[2] : last_peak[2]>0 ? last_peak[2]-1 : last_peak[2],
+		last_peak[3] < level[3] ? level[3] : last_peak[3]>0 ? last_peak[3]-1 : last_peak[3],
+		last_peak[4] < level[4] ? level[4] : last_peak[4]>0 ? last_peak[4]-1 : last_peak[4],
+		last_peak[5] < level[5] ? level[5] : last_peak[5]>0 ? last_peak[5]-1 : last_peak[5]
+	};
+	
+	const u8 coords[6][2]={
+		{ 16, 0 },
+		{ 16, 1 },
+		{ 16, 2 },
+		{ 21, 0 },
+		{ 21, 1 },
+		{ 21, 2 }
+	};
+
+	if((last_peak[0] != level[0]) || (last_peak[3] != level[3] )) {
+		last_peak[0]  = level[0] > last_peak[0] ? level[0] : last_peak[0]>0 ? last_peak[0]-1 : last_peak[0];
+		last_peak[3]  = level[3] > last_peak[3] ? level[3] : last_peak[3]>0 ? last_peak[3]-1 : last_peak[3];
+		VUMETER_V1	(coords[0][0]	 	, coords[0][1] ,0 , level		[0] );
+		VUMETER_V1	(coords[3][0]	 	, coords[3][1] ,0 , level		[3] );
+		VUMETER_V1	(coords[0][0] - 8 	, coords[0][1] ,0 , level		[0] );
+		VUMETER_V1	(coords[3][0] + 8 	, coords[3][1] ,0 , level		[3] );
+	}
+	if((last_peak[1] != level[1]) || (last_peak[4] !=level[4] )) {
+		last_peak[1]  = level[1] > last_peak[1] ? level[1] : last_peak[1]>0 ? last_peak[1]-1 : last_peak[1];
+		last_peak[4]  = level[4] > last_peak[4] ? level[4] : last_peak[4]>0 ? last_peak[4]-1 : last_peak[4];
+		VUMETER_V1	(coords[1][0]	  	, coords[1][1] ,0 , level		[1] );
+		VUMETER_V1	(coords[4][0]	  	, coords[4][1] ,0 , level		[4] );
+		VUMETER_V1   (coords[1][0] - 8 	, coords[1][1] ,0 , level		[1] );
+		VUMETER_V1	(coords[4][0] + 8 	, coords[4][1] ,0 , level		[4] );
+	}
+	if((last_peak[2] != level[2]) || (last_peak[5] != level[5] )) {
+		last_peak[2]  = level[2] > last_peak[2] ? level[2] : last_peak[2]>0 ? last_peak[2]-1 : last_peak[2];
+		last_peak[5]  = level[5] > last_peak[5] ? level[5] : last_peak[5]>0 ? last_peak[5]-1 : last_peak[5];
+		VUMETER_V1	(coords[2][0]	  	, coords[2][1] ,0 , level		[2] );
+		VUMETER_V1	(coords[5][0]	  	, coords[5][1] ,0 , level		[5] );
+		VUMETER_V1	(coords[2][0] - 8 	, coords[2][1] ,0 , last_peak[2] );
+		VUMETER_V1	(coords[5][0] + 8 	, coords[5][1] ,0 , last_peak[5] );
+	}
+	*/
 	PatEdit::globalUpdate( rh );
 	
 	// Draw position arrows
@@ -633,6 +690,9 @@ void PatEdit::sync( bool verbose ){
 
 void PatEdit::dispatchMessage(u32 msg){
 	u8 x, y;
+	
+	bool modifier = KEY.press(KEY_SELECT);
+	
 	switch(msg){
 		case MESSAGE_CANCEL: // Erase
 			// Clear Arrow on current channel 
@@ -658,7 +718,7 @@ void PatEdit::dispatchMessage(u32 msg){
 		
 		/* Scroll up */
 		case MESSAGE_OTHER_PREV:
-			if(VAR_CFG.ORDERPOSITION>0){
+			if(VAR_CFG.ORDERPOSITION > modifier ? 16 : 0 ){
 				//TODO: pagination using B + something + LEFT
 				/* ------------------------------------------------------------
 				Clear Arrows when pattern scrolls down 						 */
@@ -667,7 +727,7 @@ void PatEdit::dispatchMessage(u32 msg){
 					if((x<=15)&&(x>=0))gpu.set(2, PatEdit::arrow_position[c], 4+x, 0x00FC);
 				}
 				// ------------------------------------------------------------
-				VAR_CFG.ORDERPOSITION--;
+				VAR_CFG.ORDERPOSITION -= modifier ? 16 : 1;
 				/* ------------------------------------------------------------
 				Copy cells from VAR_DATA(Memory)->VAR_PATTERN (Visible Vars) */
 				PatEdit::sync();
@@ -681,7 +741,7 @@ void PatEdit::dispatchMessage(u32 msg){
 		/* Scroll down */
 		case MESSAGE_OTHER_NEXT: 
 			/* about the 240 below, it is 256 patterns - 16 visible entries */
-			if(VAR_CFG.ORDERPOSITION < 240){ 
+			if(VAR_CFG.ORDERPOSITION < modifier ? 240 : 224 ){ 
 				//TODO: pagination using B + something + RIGHT
 				/* ------------------------------------------------------------
 				Clear Arrows when pattern scrolls down 						 */
@@ -690,7 +750,7 @@ void PatEdit::dispatchMessage(u32 msg){
 					if((x<=15)&&(x>=0))gpu.set(2, PatEdit::arrow_position[c], 4+x, 0x00FC);
 				}
 				// ------------------------------------------------------------
-				VAR_CFG.ORDERPOSITION++;
+				VAR_CFG.ORDERPOSITION += modifier ? 16 : 1;
 				/* ------------------------------------------------------------
 				Copy cells from VAR_DATA(Memory)->VAR_PATTERN (Visible Vars) */
 				PatEdit::sync();
@@ -742,4 +802,25 @@ void PatEdit::processInput( ){
 	else if	( KEY.down( KEY_RIGHT ) ) transpose(  1 );
 	if		( KEY.down( KEY_UP    ) ) shift( -1 );
 	else if	( KEY.down( KEY_DOWN  ) ) shift(  1 );
+}
+
+/* Delete pattern from pattern shared data */
+void PatEdit::clear( u8 pattern_index ){
+	
+	PatternCell* cell = &VAR_DATA[ pattern_index ];
+	PatternCell* cend = cell + 16;
+	
+	u8* k = cell->KEY;
+	u8* i = cell->INS;
+	u8* v = cell->VOL;
+	u8* c = cell->CMD;
+	u8* p = cell->VAL;
+	
+	for(; cell < cend; cell++, k++, i++, v++, c++, p++ ){
+		*k = 0x00;
+		*i = 0x00;
+		*v = 0x00;
+		*c = 0x00;
+		*p = 0x00;
+	}
 }

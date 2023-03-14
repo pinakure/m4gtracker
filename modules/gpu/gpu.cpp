@@ -3,10 +3,10 @@
 Gpu gpu;
 
 const u16 Gpu::colors[16][2] = {
-	{ COLOR_NONE		<< 12 , COLOR_NONE 			<< 12 },
+	{ COLOR_NONE			<< 12 , COLOR_NONE 			<< 12 },
 	{ COLOR_DARK_CYAN	<< 12 , COLOR_CYAN 			<< 12 },
-	{ COLOR_CYAN		<< 12 , COLOR_DARK_CYAN 	<< 12 },
-	{ COLOR_RED			<< 12 , COLOR_DARK_RED 		<< 12 },
+	{ COLOR_CYAN			<< 12 , COLOR_DARK_CYAN 	<< 12 },
+	{ COLOR_RED			<< 12 , COLOR_DARK_RED 	<< 12 },
 	{ COLOR_ORANGE		<< 12 , COLOR_BROWN 		<< 12 },
 	{ COLOR_DARK_RED	<< 12 , COLOR_RED 			<< 12 },
 	{ COLOR_WHITE		<< 12 , COLOR_GRAY 			<< 12 },
@@ -16,9 +16,9 @@ const u16 Gpu::colors[16][2] = {
 	{ COLOR_BROWN		<< 12 , COLOR_ORANGE 		<< 12 },
 	{ COLOR_OLIVE		<< 12 , COLOR_YELLOW 		<< 12 },
 	{ COLOR_DARK_GREEN	<< 12 , COLOR_GREEN 		<< 12 },
-	{ COLOR_GRAY		<< 12 , COLOR_WHITE 		<< 12 },
-	{ COLOR_BLUE		<< 12 , COLOR_DARK_BLUE 	<< 12 },
-	{ COLOR_GREEN		<< 12 , COLOR_DARK_GREEN  	<< 12 },
+	{ COLOR_GRAY			<< 12 , COLOR_WHITE 		<< 12 },
+	{ COLOR_BLUE			<< 12 , COLOR_DARK_BLUE 	<< 12 },
+	{ COLOR_GREEN		<< 12 , COLOR_DARK_GREEN 	<< 12 },
 };
 
 const u32 LAYERS[3] = {
@@ -54,12 +54,12 @@ void Gpu::update(u8 delta) {
 	} 
 }
 
-void Gpu::clear( u8 color ){
+void Gpu::clear( u16 color, u16 foreground ){
 	for(int x=0; x<30; x++){
 		for(int y=0; y<20; y++){
 			set( 0	, x	, y , color );
 			set( 1	, x	, y , 0x0000);
-			set( 2	, x	, y , 0x00FC);
+			set( 2	, x	, y , foreground);
 		}
 	}
 }
@@ -231,5 +231,37 @@ void Gpu::string( u8 x, u8 y, const char *data, u8 color ){
 			c = colors[ color&0xf ][ 0 ] | TABLE_TEXT[ d - 0x41 ][ 0 ];
 		if( data[0] != ' ' ) gpu.set(2, i, y, c );
 		data++;
+	}
+}
+
+void Gpu::drawDialog( u8 x, u8 y, u8 width, u8 height, const char *caption ){
+	for(int dx = x, ldx=width+x; dx<ldx; dx++){
+		for(int dy = y, ldy=height+y; dy<ldy; dy++){
+			gpu.set(0, dx, dy, 0x0019	);
+			gpu.set(1, dx, dy, 0x0000	);
+			gpu.set(2, dx, dy, 0x0100	);
+			if( dx == x){
+				if( dy == ldy - 1 	) { gpu.set( 1, dx, dy, 0x08 ); continue; }//LOW LEFT
+				if( dy == y			) { gpu.set( 1, dx, dy, 0x06 ); continue; }//TOP LEFT
+				gpu.set( 1, dx, dy, 0x0A );
+				continue;
+			}
+			if( dx == ldx - 1 ){
+				if( dy == ldy - 1	) { gpu.set( 1, dx, dy, 0x07 ); continue; }//LOW RIGHT
+				if( dy == y			) { gpu.set( 1, dx, dy, 0x05 ); continue; }//TOP RIGHT
+				gpu.set( 1, dx, dy, 0x0A );
+				continue;
+			}
+			if(( dy == ldy - 1 )||( dy == y )){
+				gpu.set( 1, dx, dy, 0x09 );
+				continue;
+			}
+			//gpu.set(0, dx, dy, 0x0);
+		}
+	}
+	if(!caption) return;
+	ascii( (x<<1) + 2, y, caption, COLOR_CYAN );
+	for(int i=0; i<(u8)(strlen(caption)>>1); i++){
+		gpu.set(0, x+1+i, y, 0x11);
 	}
 }

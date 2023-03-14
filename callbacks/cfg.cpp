@@ -12,42 +12,42 @@
 #include "../data/data.hpp"
 
 /*---------------------------------------------------------------------------------------------------------------------*/
-const Callback cb_cfg_menuindex		= { modify5VAL			, EVENT_MODIFY_B	, &VAR_CFG.MENUSLOT				, NULL };
-// LookNFeel Submenu
-const Callback cb_cfg_interface		= { modify1BIT			, EVENT_MODIFY_B	, &VAR_CFG.LOOKNFEEL.INTERFACE	, NULL };
-const Callback cb_cfg_font			= { modify2BIT			, EVENT_MODIFY_B	, &VAR_CFG.LOOKNFEEL.FONT		, NULL };
-const Callback cb_cfg_border		= { modify2BIT			, EVENT_MODIFY_B	, &VAR_CFG.LOOKNFEEL.BORDER		, NULL };
-const Callback cb_cfg_showlogo		= { modify1BIT			, EVENT_KEYDOWN_B	, &VAR_CFG.LOOKNFEEL.SHOWLOGO	, NULL };
-const Callback cb_cfg_startupsfx	= { modify1BIT			, EVENT_KEYDOWN_B	, &VAR_CFG.LOOKNFEEL.STARTUPSFX	, NULL };
-const Callback cb_cfg_coloreditor	= { ColorEditor::show 	, EVENT_KEYUP_B		, NULL							, NULL };
+const Callback cb_cfg_menuindex		= { modify5VAL					, EVENT_MODIFY_B	, &VAR_CFG.MENUSLOT				, NULL };
+// LookNFeel Submenu		
+const Callback cb_cfg_interface		= { modify1BIT					, EVENT_MODIFY_B	, &VAR_CFG.LOOKNFEEL.INTERFACE	, NULL };
+const Callback cb_cfg_font			= { modify2BIT					, EVENT_MODIFY_B	, &VAR_CFG.LOOKNFEEL.FONT		, NULL };
+const Callback cb_cfg_border			= { modify2BIT					, EVENT_MODIFY_B	, &VAR_CFG.LOOKNFEEL.BORDER		, NULL };
+const Callback cb_cfg_showlogo		= { modify1BIT					, EVENT_KEYDOWN_B	, &VAR_CFG.LOOKNFEEL.SHOWLOGO	, NULL };
+const Callback cb_cfg_startupsfx	= { modify1BIT					, EVENT_KEYDOWN_B	, &VAR_CFG.LOOKNFEEL.STARTUPSFX	, NULL };
+const Callback cb_cfg_coloreditor	= { ColorEditor::show 			, EVENT_KEYUP_B		, NULL									, NULL };
 // LinkMode Submenu
-const Callback cb_cfg_linkmode		= { Net::alterMode		, EVENT_MODIFY_B	, &VAR_CFG.LINKMODE.LINKMODE	, NULL };
-const Callback cb_cfg_masterclock	= { modify1BIT			, EVENT_KEYDOWN_B	, &VAR_CFG.LINKMODE.MASTERCLOCK	, NULL };
-const Callback cb_cfg_syncrate		= { modify4BIT			, EVENT_MODIFY_B	, &VAR_CFG.LINKMODE.SYNCRATE	, NULL };
-const Callback cb_cfg_syncticks  	= { modify8BIT			, EVENT_MODIFY_B	, &VAR_CFG.LINKMODE.SYNCTICKS	, NULL };
-const Callback cb_cfg_receivesong	= { LinkMode::songRecv  , EVENT_KEYUP_B		, NULL 							, NULL };
-const Callback cb_cfg_sendsong		= { LinkMode::songSend  , EVENT_KEYUP_B		, NULL 							, NULL };
+const Callback cb_cfg_linkmode		= { Net::alterMode				, EVENT_MODIFY_B	, &VAR_CFG.LINKMODE.LINKMODE	, NULL };
+const Callback cb_cfg_masterclock	= { LinkMode::toggleMaster	, EVENT_KEYDOWN_B	, &VAR_CFG.LINKMODE.MASTERCLOCK	, NULL };
+const Callback cb_cfg_syncrate		= { modify4BIT					, EVENT_MODIFY_B	, &VAR_CFG.LINKMODE.SYNCRATE	, NULL };
+const Callback cb_cfg_syncticks  	= { modify8BIT					, EVENT_MODIFY_B	, &VAR_CFG.LINKMODE.SYNCTICKS	, NULL };
+const Callback cb_cfg_receivesong	= { LinkMode::songRecv		, EVENT_KEYUP_B		, NULL 								, NULL };
+const Callback cb_cfg_sendsong		= { LinkMode::songSend		, EVENT_KEYUP_B		, NULL 								, NULL };
 // Behavior SubMenu
-const Callback cb_cfg_autoload		= { modify1BIT			, EVENT_KEYDOWN_B	, &VAR_CFG.BEHAVIOR.AUTOLOAD	, NULL };
-const Callback cb_cfg_keyrate		= { modify4BIT			, EVENT_MODIFY_B	, &VAR_CFG.BEHAVIOR.KEYRATE		, NULL };
-const Callback cb_cfg_buttonset		= { modify2BIT			, EVENT_MODIFY_B	, &VAR_CFG.BEHAVIOR.BUTTONSET	, NULL };
-const Callback cb_cfg_saveconfig	= { Config::save		, EVENT_KEYUP_B		, NULL 							, NULL };
-const Callback cb_cfg_loadconfig	= { Config::load		, EVENT_KEYUP_B		, NULL 							, NULL };
-const Callback cb_cfg_initconfig	= { Config::defaults	, EVENT_KEYUP_B		, NULL 							, NULL };
+const Callback cb_cfg_autoload		= { modify1BIT					, EVENT_KEYDOWN_B	, &VAR_CFG.BEHAVIOR.AUTOLOAD	, NULL };
+const Callback cb_cfg_keyrate		= { modify4BIT					, EVENT_MODIFY_B	, &VAR_CFG.BEHAVIOR.KEYRATE		, NULL };
+const Callback cb_cfg_buttonset		= { modify2BIT					, EVENT_MODIFY_B	, &VAR_CFG.BEHAVIOR.BUTTONSET	, NULL };
+const Callback cb_cfg_saveconfig	= { Config::save				, EVENT_KEYUP_B		, NULL 								, NULL };
+const Callback cb_cfg_loadconfig	= { Config::load				, EVENT_KEYUP_B		, NULL 								, NULL };
+const Callback cb_cfg_initconfig	= { Config::defaults			, EVENT_KEYUP_B		, NULL 								, NULL };
 // Tracker SubMenu
-const Callback cb_cfg_finetune		= { modify4BIT			, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.FINETUNE		, NULL };
-const Callback cb_cfg_prelisten		= { modify1BIT			, EVENT_KEYDOWN_B	, &VAR_CFG.TRACKER.PRELISTEN	, NULL };
-const Callback cb_cfg_transpose		= { modify8BIT			, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.TRANSPOSE	, NULL };
-const Callback cb_cfg_inputmode		= { modify1BIT			, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.INPUTMODE	, NULL };
-const Callback cb_cfg_soundbias		= { modify8BIT			, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.SOUNDBIAS	, NULL };
-const Callback cb_cfg_mixer			= { Mixer::show			, EVENT_KEYUP_B		, NULL 							, NULL };
-//	Memory Submenu
-const Callback cb_cfg_prefetch		= { modify1BIT			, EVENT_KEYDOWN_B	, &VAR_CFG.MEMORY.PREF	 		, NULL };
-const Callback cb_cfg_backup		= { Config::backup		, EVENT_KEYUP_B		, NULL 							, NULL };
-const Callback cb_cfg_revert		= { Config::revert		, EVENT_KEYUP_B		, NULL 							, NULL };
-const Callback cb_cfg_memorytest	= { Debug::memoryTest	, EVENT_KEYUP_B		, NULL 							, NULL };
-const Callback cb_cfg_format		= { Config::format 		, EVENT_KEYUP_B		, NULL 							, NULL };
-const Callback cb_cfg_reset			= { Config::reset		, EVENT_KEYUP_B		, NULL 							, NULL };
+const Callback cb_cfg_finetune		= { modify4BIT					, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.FINETUNE		, NULL };
+const Callback cb_cfg_prelisten		= { modify1BIT					, EVENT_KEYDOWN_B	, &VAR_CFG.TRACKER.PRELISTEN	, NULL };
+const Callback cb_cfg_transpose		= { modify8BIT					, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.TRANSPOSE	, NULL };
+const Callback cb_cfg_inputmode		= { modify1BIT					, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.INPUTMODE	, NULL };
+const Callback cb_cfg_soundbias		= { modify8BIT					, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.SOUNDBIAS	, NULL };
+const Callback cb_cfg_mixer			= { Mixer::show					, EVENT_KEYUP_B		, NULL 								, NULL };
+//	Memory Submenu		
+const Callback cb_cfg_prefetch		= { modify1BIT					, EVENT_KEYDOWN_B	, &VAR_CFG.MEMORY.PREF	 		, NULL };
+const Callback cb_cfg_backup			= { Config::backup				, EVENT_KEYUP_B		, NULL 								, NULL };
+const Callback cb_cfg_revert			= { Config::revert				, EVENT_KEYUP_B		, NULL 								, NULL };
+const Callback cb_cfg_memorytest	= { Debug::memoryTest			, EVENT_KEYUP_B		, NULL 								, NULL };
+const Callback cb_cfg_format			= { Config::format 				, EVENT_KEYUP_B		, NULL 								, NULL };
+const Callback cb_cfg_reset			= { Config::reset				, EVENT_KEYUP_B		, NULL 								, NULL };
 /*---------------------------------------------------------------------------------------------------------------------*/
 
 void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){

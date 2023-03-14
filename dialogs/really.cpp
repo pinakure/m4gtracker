@@ -1,19 +1,33 @@
 #include "really.hpp"
 #include "../modules/gpu/gpu.hpp"
+#include "../callbacks/debug.hpp"
 #include "../modules/key/key.hpp"
 #include "../modules/spu/sequencer.hpp"
 
+u16 ReallyDialog::background = 0x19;
+
 void ReallyDialog::draw(){
 	gpu.blit(MAP_CACHE, 0x13, 0x0, 12, 6, 0x09, 0x5);
-	gpu.set(1, 12, 6, 0x6);
-	gpu.set(1, 12, 7, 0xA);
-	gpu.set(1, 12, 8, 0xA);
-	gpu.set(1, 12, 9, 0xA);
-	gpu.set(1, 12,10, 0x8);
-	
-	gpu.set(0, 14, 9, 0x00);
-	gpu.set(0, 16, 9, 0x00);
-	gpu.set(0, 14 + (!result?3:0), 9, 0x15 );
+	// Remove 2 black Arrows
+	/*! HACK */	gpu.set( 2, 13, 9, 0x100);
+	/*! HACK */	gpu.set( 2, 15, 9, 0x100);
+	// Fix dialog borders 
+	/*! HACK */	gpu.set( 1, 12, 6, 0x6);
+	/*! HACK */ 	gpu.set( 1, 12, 7, 0xA);
+	/*! HACK */ 	gpu.set( 1, 12, 8, 0xA);
+	/*! HACK */ 	gpu.set( 1, 12, 9, 0xA);
+	/*! HACK */ 	gpu.set( 1, 12,10, 0x8);
+	// Change background color
+	for( int y = 0 ; y < 5 ; y++ ){
+		for( int x = 0 ; x < 8 ; x++ ){
+			gpu.set( 0, 12 + x , 6 + y , background );
+		}
+	}
+	// Erase old cursor
+	gpu.set( 0, 14, 9, background );
+	gpu.set( 0, 16, 9, background );
+	// Draw cursor
+	gpu.set( 0, 14 + (!result?3:0), 9, ((!result? COLOR_ORANGE : COLOR_YELLOW )<<12)|0x18);
 }
 
 void ReallyDialog::confirm(){
@@ -31,22 +45,21 @@ void ReallyDialog::cancel(){
 }
 
 void ReallyDialog::enable(){
-	result    = false;
-	enabled   = true;
-	highlight = false;
-	
+	result  	= false;
+	enabled 	= true;
+	highlight	= false;
+	background = 0x19;
 	draw();
 	
 	while(enabled){		
 		
-		Sequencer::update();	
+		Sequencer::update();
 		KEY.update();
 		
-		if(KEY.down( KEY_LEFT  ) ) { result = 1; draw(); };
-		if(KEY.down( KEY_RIGHT ) ) { result = 0; draw(); };
-		if(KEY.up(KEY_A) ) { if( result ) confirm(); else cancel();}
-		if(KEY.up(KEY_B) ) cancel();		
+		if( KEY.down	( KEY_LEFT  	) ) { result = 1; draw(); };
+		if( KEY.down	( KEY_RIGHT 	) ) { result = 0; draw(); };
+		if( KEY.up	( KEY_A		) ) { if( result ) confirm(); else cancel(); }
+		if( KEY.up	( KEY_B		) ) cancel();
 	}
 	KEY.update();
 }
-

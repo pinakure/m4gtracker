@@ -581,6 +581,7 @@ void InstEdit::dispatchMessage(u32 msg) {
 			break;
 		
 		case MESSAGE_OTHER_PREV:// B + <-
+			repack();
 			VAR_CFG.CURRENTINSTRUMENT--;
 			VAR_CFG.CURRENTINSTRUMENT &= 0x3f;
 			if(VAR_CFG.CURRENTINSTRUMENT == 0) VAR_CFG.CURRENTINSTRUMENT=1;
@@ -588,6 +589,7 @@ void InstEdit::dispatchMessage(u32 msg) {
 			return;
 		
 		case MESSAGE_OTHER_NEXT:// B + ->	
+			repack();
 			VAR_CFG.CURRENTINSTRUMENT++;
 			VAR_CFG.CURRENTINSTRUMENT &= 0x3f;
 			if(VAR_CFG.CURRENTINSTRUMENT == 0) VAR_CFG.CURRENTINSTRUMENT=1;
@@ -735,4 +737,8 @@ void InstEdit::viewWaveFormWav( ){
 		gpu.vs->set( x>>1, 15 + ( VAR_WAV.WAVEDATA[ x>>2 ]) );
 	}
 	gpu.vs->draw(14,6);
+}
+
+void InstEdit::clear( u8 index ){
+	// TODO: set settings to zero values and update screen
 }
