@@ -5,10 +5,12 @@
 #include "../../data/settings.hpp"
 #include "../../data/channel.hpp"
 
+#include "adsr.hpp"
+
 class Synth {
 	
 	public:
-		static u8 	wav_adsr_position;
+		static u16 	wav_adsr_position;
 		static u16 	smp_adsr_position;
 		static u16 	fmw_adsr_position;
 		static u8 	wav_adsr_table[4][ ADSR_TABLE_LENGTH ];
@@ -45,7 +47,7 @@ class Synth {
 		static void updateADSRWav( SETTINGS_WAV *wav );
 		static void updateADSRSmp( SETTINGS_SMP *smp );
 		static void updateADSRFmw( SETTINGS_FMW *fmw );
-		static void renderADSR( u8 adsr[ 4 ], u8 adsr_table[ ADSR_TABLE_LENGTH ] );
+		static void renderADSR( u8 adsr[ 4 ], u8 adsr_table[ ADSR_TABLE_LENGTH ], u8 gate=0x80 );
 };
 
 #endif

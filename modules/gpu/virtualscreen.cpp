@@ -34,6 +34,9 @@ const bool circledata[32*32] = { 	0,0,0,0,0,0,0,0, 0,0,0,0,0,1,1,1, 1,1,1,0,0,0,
 									0,0,0,0,0,0,0,0, 0,0,1,1,1,0,0,0, 0,0,0,1,1,1,0,0, 0,0,0,0,0,0,0,0,
 									0,0,0,0,0,0,0,0, 0,0,0,0,0,1,1,1, 1,1,1,0,0,0,0,0, 0,0,0,0,0,0,0,0 };
 
+					
+#define VIRTUALSCREEN_WIDTH 	32					
+					
 class VirtualScreen {
 	private:
 	public:
@@ -49,7 +52,7 @@ class VirtualScreen {
 		void load(const bool *dat) {
 			i=-1;
 			for(;++i<1024;){
-				if(*dat) set(i%32,i>>5);
+				if(*dat) set(i&31,i>>5);
 				dat++;
 			}
 		}

@@ -7,6 +7,7 @@
 #include "../data/settings.hpp"
 #include "../data/instrument.hpp"
 #include "../data/controls.hpp"
+#include "../modules/spu/adsr.hpp"
 
 class RegionHandler;
 
@@ -65,10 +66,6 @@ class InstEdit {
 		static void modAdsrWav			( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void modAdsrFmw 			( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void modAdsrSmp			( Control *c, bool bigstep, bool add, u32 *pointer );
-
-		static void viewADSR 				( u8 adsr_table     [ ADSR_TABLE_LENGTH ] , u8 adsr_position );
-		static void viewQuadADSR			( u8 adsr_tables[4][ ADSR_TABLE_LENGTH ] , u8 adsr_position );
-
 };
 
 

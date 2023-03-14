@@ -17,10 +17,10 @@ static bool swap_bank = false;
 u8 		Synth::wav_adsr_table[4][ ADSR_TABLE_LENGTH ];
 u8 		Synth::fmw_adsr_table[4][ ADSR_TABLE_LENGTH ];
 u8 		Synth::smp_adsr_table    [ ADSR_TABLE_LENGTH ];
-u8 		Synth::wav_adsr_position 	= 0;
-u16		Synth::smp_adsr_position = 0;
-u16		Synth::fmw_adsr_position = 0;
-u16		Synth::lfo					= 0;
+u16 	Synth::wav_adsr_position	= 0;
+u16	Synth::smp_adsr_position = 0;
+u16	Synth::fmw_adsr_position = 0;
+u16	Synth::lfo					= 0;
 
 const u16 SMP_FREQ_TABLE[120]={ 
 	0xF8DD	,0xF917	,0xF94F ,0xF995	,0xF9D7	,0xFA22	,0xFA68	,0xFAB2	,0xFAF8	,0xFB3E	,0xFB80, 0xFBC0,
@@ -192,10 +192,13 @@ void Synth::renderSmp( SETTINGS_SMP *smp, u8 vol){
 	static u8 operator_volume;
 	
 	// Get volume level for each of the 4 ADSR envelopes
-	operator_volume = ( smp_adsr_table[ smp_adsr_position ] * vol)>>4;
+	operator_volume = ( (smp_adsr_table[ SMP_ADSR_POSITION] >> 4) * vol)>>4;
 
 	// Advance adsr table common index
-	smp_adsr_position = ( smp_adsr_position < (ADSR_TABLE_LENGTH-1)) ? smp_adsr_position+1 : (ADSR_TABLE_LENGTH-1);
+	smp_adsr_position 	= ( smp_adsr_position < ( ( ADSR_TABLE_LENGTH - 1 )<<1 ) ) 
+							? smp_adsr_position + 1 
+							: (ADSR_TABLE_LENGTH-1);
+	
 	
 	#define OPERATOR( a )	((u8)((u32)( operators[ smp->OP1_TYPE ][ a ] * operator_volume ) >> 4))
 	#undef OPERATOR
@@ -206,13 +209,49 @@ void Synth::renderWav( SETTINGS_WAV *wav, u8 vol){
 	static u8 operator_volume[4];
 	
 	// Get volume level for each of the 4 ADSR envelopes
-	operator_volume[ 0 ] = ((wav_adsr_table[ 0 ][ wav_adsr_position ]<<ADSR_RANGE_SCALE) * vol)>>4;
-	operator_volume[ 1 ] = ((wav_adsr_table[ 1 ][ wav_adsr_position ]<<ADSR_RANGE_SCALE) * vol)>>4;
-	operator_volume[ 2 ] = ((wav_adsr_table[ 2 ][ wav_adsr_position ]<<ADSR_RANGE_SCALE) * vol)>>4;
-	operator_volume[ 3 ] = ((wav_adsr_table[ 3 ][ wav_adsr_position ]<<ADSR_RANGE_SCALE) * vol)>>4;
+	operator_volume[ 0 ] = ((wav_adsr_table[ 0 ][ WAV_ADSR_POSITION ] >> 4 ) * vol)>>4;
+	operator_volume[ 1 ] = ((wav_adsr_table[ 1 ][ WAV_ADSR_POSITION ] >> 4 ) * vol)>>4;
+	operator_volume[ 2 ] = ((wav_adsr_table[ 2 ][ WAV_ADSR_POSITION ] >> 4 ) * vol)>>4;
+	operator_volume[ 3 ] = ((wav_adsr_table[ 3 ][ WAV_ADSR_POSITION ] >> 4 ) * vol)>>4;
 
+	// Normalize operator volumes
+	u8 output[4] = {
+		operator_volume[ 0 ] 
+		+ (0xF - operator_volume[1]) 
+		+ (0xF - operator_volume[2]) 
+		+ (0xF - operator_volume[3]),
+		operator_volume[ 1 ] 
+		+ (0xF - operator_volume[0]) 
+		+ (0xF - operator_volume[2]) 
+		+ (0xF - operator_volume[3]),
+		operator_volume[ 2 ] 
+		+ (0xF - operator_volume[0]) 
+		+ (0xF - operator_volume[1]) 
+		+ (0xF - operator_volume[3]),
+		operator_volume[ 3 ] 
+		+ (0xF - operator_volume[0]) 
+		+ (0xF - operator_volume[1]) 
+		+ (0xF - operator_volume[2])
+	};
+	/*
+	// Overwrite with normalized values
+	operator_volume[0] = output[0]>>2;
+	operator_volume[1] = output[1]>>2;
+	operator_volume[2] = output[2]>>2;
+	operator_volume[3] = output[3]>>2;
+	*/
+	#ifndef NDISTORTION
+	operator_volume[ 0 ] = operator_volume[ 0 ] > 0xF ? operator_volume[ 0 ] : 0xF;
+	operator_volume[ 1 ] = operator_volume[ 1 ] > 0xF ? operator_volume[ 1 ] : 0xF;
+	operator_volume[ 2 ] = operator_volume[ 2 ] > 0xF ? operator_volume[ 2 ] : 0xF;
+	operator_volume[ 3 ] = operator_volume[ 3 ] > 0xF ? operator_volume[ 3 ] : 0xF;
+	#endif 
+	
 	// Advance adsr table common index
-	wav_adsr_position = ( wav_adsr_position < (ADSR_TABLE_LENGTH-1)) ? wav_adsr_position+1 : (ADSR_TABLE_LENGTH-1);
+	wav_adsr_position 	= ( wav_adsr_position < ( ( ADSR_TABLE_LENGTH - 1 )<<1 ) ) 
+							? wav_adsr_position + 1 
+							: (ADSR_TABLE_LENGTH-1);
+	
 	
 	#define OPERATOR1( a )	((u8)((u32)( operators[ wav->OP1_TYPE ][ a ] * operator_volume[0] ) >> 4))
 	#define OPERATOR2( a )	((u8)((u32)( operators[ wav->OP2_TYPE ][ a ] * operator_volume[1] ) >> 4))
@@ -249,15 +288,50 @@ void Synth::renderFmw( SETTINGS_FMW *fmw, u8 vol){
 	static u8 operator_volume[4];
 	
 	// Get volume level for each of the 4 ADSR envelopes
-	operator_volume[ 0 ] = ((fmw_adsr_table[ 0 ][ fmw_adsr_position >> FM_ADSR_SCALE ]>>ADSR_RANGE_SCALE) * vol)>>4;
-	operator_volume[ 1 ] = ((fmw_adsr_table[ 1 ][ fmw_adsr_position >> FM_ADSR_SCALE ]>>ADSR_RANGE_SCALE) * vol)>>4;
-	operator_volume[ 2 ] = ((fmw_adsr_table[ 2 ][ fmw_adsr_position >> FM_ADSR_SCALE ]>>ADSR_RANGE_SCALE) * vol)>>4;
-	operator_volume[ 3 ] = ((fmw_adsr_table[ 3 ][ fmw_adsr_position >> FM_ADSR_SCALE ]>>ADSR_RANGE_SCALE) * vol)>>4;
+	operator_volume[ 0 ] = ( ( fmw_adsr_table[ 0 ][ FMW_ADSR_POSITION ] >> 4 ) * vol ) >> 4;
+	operator_volume[ 1 ] = ( ( fmw_adsr_table[ 1 ][ FMW_ADSR_POSITION ] >> 4 ) * vol ) >> 4;
+	operator_volume[ 2 ] = ( ( fmw_adsr_table[ 2 ][ FMW_ADSR_POSITION ] >> 4 ) * vol ) >> 4;
+	operator_volume[ 3 ] = ( ( fmw_adsr_table[ 3 ][ FMW_ADSR_POSITION ] >> 4 ) * vol ) >> 4;
 
+	
+	// Normalize operator volumes
+	u8 output[4] = {
+		operator_volume[ 0 ] 
+		+ (0xF - operator_volume[1]) 
+		+ (0xF - operator_volume[2]) 
+		+ (0xF - operator_volume[3]),
+		operator_volume[ 1 ] 
+		+ (0xF - operator_volume[0]) 
+		+ (0xF - operator_volume[2]) 
+		+ (0xF - operator_volume[3]),
+		operator_volume[ 2 ] 
+		+ (0xF - operator_volume[0]) 
+		+ (0xF - operator_volume[1]) 
+		+ (0xF - operator_volume[3]),
+		operator_volume[ 3 ] 
+		+ (0xF - operator_volume[0]) 
+		+ (0xF - operator_volume[1]) 
+		+ (0xF - operator_volume[2])
+	};
+	/*
+	// Overwrite with normalized values
+	operator_volume[ 0 ] = output[ 0 ] >> 2;
+	operator_volume[ 1 ] = output[ 1 ] >> 2;
+	operator_volume[ 2 ] = output[ 2 ] >> 2;
+	operator_volume[ 3 ] = output[ 3 ] >> 2;
+	#ifndef NDISTORTION
+	operator_volume[ 0 ] = operator_volume[ 0 ] > 0xF ? operator_volume[ 0 ] : 0xF;
+	operator_volume[ 1 ] = operator_volume[ 1 ] > 0xF ? operator_volume[ 1 ] : 0xF;
+	operator_volume[ 2 ] = operator_volume[ 2 ] > 0xF ? operator_volume[ 2 ] : 0xF;
+	operator_volume[ 3 ] = operator_volume[ 3 ] > 0xF ? operator_volume[ 3 ] : 0xF;
+	#endif 
+	*/
+	
+	
 	// Advance adsr table common index
-	fmw_adsr_position 	= ( fmw_adsr_position < ( (ADSR_TABLE_LENGTH-1) << FM_ADSR_SCALE )) 
+	fmw_adsr_position 	= ( fmw_adsr_position < ( ( ADSR_TABLE_LENGTH - 1 )<<1 ) ) 
 							? fmw_adsr_position + 1 
-							: (ADSR_TABLE_LENGTH-1) << FM_ADSR_SCALE;
+							: (ADSR_TABLE_LENGTH-1);
 	
 	
 	u8 FB[16];
@@ -463,22 +537,22 @@ void Synth::renderFmw( SETTINGS_FMW *fmw, u8 vol){
 	
 	// Mix shapes
 	
-	FB[ 0] += fmw->WAVEDATA[ 0]>>1;
-	FB[ 1] += fmw->WAVEDATA[ 1]>>1;
-	FB[ 2] += fmw->WAVEDATA[ 2]>>1;
-	FB[ 3] += fmw->WAVEDATA[ 3]>>1;
-	FB[ 4] += fmw->WAVEDATA[ 4]>>1;
-	FB[ 5] += fmw->WAVEDATA[ 5]>>1;
-	FB[ 6] += fmw->WAVEDATA[ 6]>>1;
-	FB[ 7] += fmw->WAVEDATA[ 7]>>1;
-	FB[ 8] += fmw->WAVEDATA[ 8]>>1;
-	FB[ 9] += fmw->WAVEDATA[ 9]>>1;
-	FB[10] += fmw->WAVEDATA[10]>>1;
-	FB[11] += fmw->WAVEDATA[11]>>1;
-	FB[12] += fmw->WAVEDATA[12]>>1;
-	FB[13] += fmw->WAVEDATA[13]>>1;
-	FB[14] += fmw->WAVEDATA[14]>>1;
-	FB[15] += fmw->WAVEDATA[15]>>1;
+	FB[ 0] += fmw->WAVEDATA[ 0];//>>1;
+	FB[ 1] += fmw->WAVEDATA[ 1];//>>1;
+	FB[ 2] += fmw->WAVEDATA[ 2];//>>1;
+	FB[ 3] += fmw->WAVEDATA[ 3];//>>1;
+	FB[ 4] += fmw->WAVEDATA[ 4];//>>1;
+	FB[ 5] += fmw->WAVEDATA[ 5];//>>1;
+	FB[ 6] += fmw->WAVEDATA[ 6];//>>1;
+	FB[ 7] += fmw->WAVEDATA[ 7];//>>1;
+	FB[ 8] += fmw->WAVEDATA[ 8];//>>1;
+	FB[ 9] += fmw->WAVEDATA[ 9];//>>1;
+	FB[10] += fmw->WAVEDATA[10];//>>1;
+	FB[11] += fmw->WAVEDATA[11];//>>1;
+	FB[12] += fmw->WAVEDATA[12];//>>1;
+	FB[13] += fmw->WAVEDATA[13];//>>1;
+	FB[14] += fmw->WAVEDATA[14];//>>1;
+	FB[15] += fmw->WAVEDATA[15];//>>1;
 	
 	loadFmw( fmw->WAVEDATA , 8 + (fmw->MULT>>1));
 }
@@ -578,7 +652,7 @@ void Synth::updateADSRWav( SETTINGS_WAV *wav ){
 	renderADSR( wav->OP3_ADSR, wav_adsr_table[2] );
 	renderADSR( wav->OP4_ADSR, wav_adsr_table[3] );
 	if(VAR_INSTRUMENT.TYPE != INSTRUMENT_TYPE_WAV) return;
-	InstEdit::viewQuadADSR( wav_adsr_table, wav_adsr_position );
+	Adsr::drawX4( wav_adsr_table, WAV_ADSR_POSITION );
 }
 
 void Synth::updateADSRFmw( SETTINGS_FMW *fmw ){
@@ -587,58 +661,80 @@ void Synth::updateADSRFmw( SETTINGS_FMW *fmw ){
 	renderADSR( fmw->OP3_ADSR, fmw_adsr_table[2] );
 	renderADSR( fmw->OP4_ADSR, fmw_adsr_table[3] );
 	if(VAR_INSTRUMENT.TYPE != INSTRUMENT_TYPE_FMW) return;
-	InstEdit::viewQuadADSR( fmw_adsr_table, fmw_adsr_position >> FM_ADSR_SCALE );
+	Adsr::drawX4( fmw_adsr_table, FMW_ADSR_POSITION );
 }
 
 void Synth::updateADSRSmp( SETTINGS_SMP *smp ){
 	renderADSR( smp->ADSR, smp_adsr_table );
 	if(VAR_INSTRUMENT.TYPE != INSTRUMENT_TYPE_SMP) return;
-	InstEdit::viewADSR( smp_adsr_table, smp_adsr_position );
+	Adsr::draw( smp_adsr_table, smp_adsr_position );
 }
 
-void Synth::renderADSR( u8 adsr[ 4 ], u8 adsr_table[ ADSR_TABLE_LENGTH ] ){
-	#define ATTACK 			adsr[0] 
-	#define DECAY  			adsr[1] 
-	#define SUSTAIN 		adsr[2] 
-	#define RELEASE 		adsr[3] 
+void Synth::renderADSR( u8 adsr[ 4 ], u8 adsr_table[ ADSR_TABLE_LENGTH ] , u8 gate){
+	// Scale ADSR values from         
+	// 								0x0 ~ 0xF       to       0x00 ~ 0xFF
+	#define ATTACK 			( adsr[0] << 2 )  
+	#define DECAY  			( adsr[1] << 2 )
+	#define SUSTAIN 		( adsr[2] << 2 )
+	#define RELEASE 		( adsr[3] << 2 )
 	#define TABLE			adsr_table[ position ]
 	for( int position=0; position < ADSR_TABLE_LENGTH; position++){
-		TABLE = 0;
+		TABLE = SUSTAIN<<4;
 	}
 	
-	u8 len 	= ( ATTACK 	<<	ADSR_LENGTH_SCALE )
-				+ ( DECAY		<<	ADSR_LENGTH_SCALE )
-				+ ( SUSTAIN	<<	ADSR_LENGTH_SCALE ) 
-				+ ( RELEASE	<<	ADSR_LENGTH_SCALE );
-		
+	u8 len 	= ( ATTACK   )
+				+ ( DECAY	   )
+				+ ( SUSTAIN ) 
+				+ ( RELEASE );
 	u8 quantum;
-	u8 level = ATTACK > 0 ? 0 : (0xF<<ADSR_RANGE_SCALE);
+	u16 level = ATTACK > 0 ? 0 : ADSR_RANGE-1;
 	
-	for( int position = 0, index = 0; position < len ; position++ ){
-			
+	int release_time = ADSR_TABLE_LENGTH - gate;// how many samples are available to render release
+	int adsr_quantum 	= (release_time<<2) / (adsr[3]);
+	
+	for( int position = 0, index = 0; position < ADSR_TABLE_LENGTH; position++ ){
+
 		if( position < ATTACK ){
 			// Attack Phase
-			quantum = (0xF<<2<<ADSR_LENGTH_SCALE) / (ATTACK); // Attack will never be 0 here, so no zerodiv danger.
-			index	= position+1;
-			level 	= (quantum>>2) * index;		
-		} else if(position < (ATTACK+DECAY)){
+			quantum   = (ADSR_RANGE<<2) / ATTACK;// Attack will never be 0 here, so no zerodiv danger.
+			index		= position<<4;
+			level 		= (( quantum * index )>>6) ;	
+			
+		} else if( position <= ( ATTACK + DECAY ) ){
+			
 			// Decay Phase
-			//index	= position - ATTACK;
-			quantum = (level<<1<<ADSR_LENGTH_SCALE) / (DECAY+SUSTAIN);
-			level  -= (quantum>>2);
-		} else if(position < (ATTACK+DECAY+SUSTAIN)){
-			// Sustain Phase
-			//index	= position - (ATTACK+DECAY);
-			// Sustain..do nothing
+			if(level<0xFF){
+				if(level > (gate?(SUSTAIN<<2):0x00)){
+					quantum 	= (ADSR_RANGE<<2) / DECAY;
+					level -=(quantum>>2);
+					// Avoid overflow
+					if(level>0xFF)
+						level = gate?(SUSTAIN<<2):0x00;
+				} else {
+					level   = gate?(SUSTAIN<<2):0x00;
+				}
+			}
+			
+		}  
+		
+		if(gate){
+			gate--;
 		} else {
 			// Release Phase
-			//index	= position - (ATTACK+DECAY+SUSTAIN);
-			quantum = ( ((SUSTAIN>0)?SUSTAIN:0xF)<<2<<ADSR_LENGTH_SCALE) / RELEASE;
-			if((quantum>>2) > level)level = 0;
-			else level  -= (quantum>>2);
-		}
+			if( level < 0xFF ){
+				if( level > 0 ){
+					// level -= (0xF-adsr[3])<<1;//= ( quantum >> 2 );
+					level -= (adsr_quantum/(0xF-adsr[3])) >> 2;//(0xF-adsr[3])<<1;//= ( quantum >> 2 );
+					// Avoid overflow
+					if( level > 0xFF )
+						level = 0x00;
+				}
+			}
+		} 
 		TABLE = level;
 	}
+	
+	
 	#undef ATTACK
 	#undef DECAY
 	#undef SUSTAIN

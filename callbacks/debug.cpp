@@ -27,7 +27,7 @@ static const u16 color_aft = COLOR_GREEN;
 
 void Debug::runTests(){
 
-	// SongEdit::load();
+	SongEdit::load();
 
 	return;
 	memoryTest( NULL, 0, 0, NULL);

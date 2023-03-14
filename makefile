@@ -5,6 +5,7 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 		modules/spu/mixer.o \
 		modules/spu/sequencer.o \
 		modules/spu/synth.o \
+		modules/spu/adsr.o \
 		data/tables.o \
 		data/layers.o \
 		data/tileset.o \

@@ -198,3 +198,5 @@ callbacks/console.o
 console.s
 progress.s
 really.s
+adsr.s
+modules/spu/adsr.o
