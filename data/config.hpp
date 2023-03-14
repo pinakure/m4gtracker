@@ -31,6 +31,7 @@ typedef struct _CFG_BEHAVIOR {
 	u8				KEYRATE /*4*/;
 	u8				BUTTONSET /*2*/;
 	u8				VISTYPE;
+	u8 				AUTOSAVE;
 }CFG_BEHAVIOR;
 
 typedef struct _CFG_TRACKER {
@@ -60,8 +61,8 @@ typedef struct _CFG {
 	u8				MENUSLOT /*3*/;	
 	//u8	 			PROGRESS /*6*/;
 	u8	 			INSTRUMENTVISTYPE;
-	GrooveTable		GROOVE; 			// Pointer to the table being edited/displayed on INS screeen
-	TableCell 		INSTRUMENTTABLE; 	// Pointer to the table being edited/displayed on INS screeen
+	GrooveTable	GROOVE; 			// Pointer to the table being edited/displayed on INS screeen // DEPRECATED
+	TableCell 	INSTRUMENTTABLE; 	// Pointer to the table being edited/displayed on INS screeen
 	u8 				CURRENTCHANNEL /*3*/;
 	u8 				CURRENTINSTRUMENT 	/*6*/;
 	u8 				ORDERPOSITION; 		// Index where the PAT screen begins to display pattern orders

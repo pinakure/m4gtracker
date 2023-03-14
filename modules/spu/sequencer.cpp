@@ -1,6 +1,7 @@
 #include "sequencer.hpp"
 #include "mixer.hpp"
 #include "../net/net.hpp"
+#include "../../callbacks/sng.hpp"
 #include "../../data/channel.hpp"
 #include "../../data/song.hpp"
 #include "../../data/helpers.hpp"
@@ -91,38 +92,45 @@ bool Sequencer::stop(){
 	bool was_playing = playing;
 	playing = false;
 	Mixer::stop();
-	//if( VAR_CFG.BEHAVIOR.AUTOSAVE) SRAM.songSave();
+	if( VAR_CFG.BEHAVIOR.AUTOSAVE) SongEdit::save();
+	VAR_SONG.GROOVE.position = 0;	
 	return was_playing;
 }
 
 bool Sequencer::updateChannel( u8 chan ){
+	Channel *ch = &VAR_CHANNEL[ chan ];
+	
+	// If groove is enabled, update position
+	if( VAR_SONG.GROOVE.ENABLE )
+	ch->target_tick = VAR_SONG.GROOVE.STEP[ VAR_SONG.GROOVE.position ];
+	
 	// DONT UPDATE CHANNELS WHEN THEY ARE ON PATTERN 0 (this is empty)
-	if(VAR_SONG.PATTERNS[chan].ORDER[VAR_CHANNEL[chan].POSITION] == 0x00){			
+	if( VAR_SONG.PATTERNS[chan].ORDER[ch->POSITION] == 0x00){			
 		// Rewind until a pattern break (0x00) is found, or the beginning of the chain is reach
-		while(VAR_CHANNEL[chan].POSITION > 0){
+		while( ch->POSITION > 0){
 		
-			VAR_CHANNEL[chan].POSITION--;
+			ch->POSITION--;
 			
-			if(VAR_SONG.PATTERNS[chan].ORDER[VAR_CHANNEL[chan].POSITION] == 0x00) {
-				VAR_CHANNEL[chan].POSITION++;
+			if(VAR_SONG.PATTERNS[chan].ORDER[ch->POSITION] == 0x00) {
+				ch->POSITION++;
 				return true;
 			}
 		}
 		// If after rewind, first pattern is still 0, stop this channel
-		if(VAR_SONG.PATTERNS[chan].ORDER[0] == 0x00) return VAR_CHANNEL[chan].PLAYING = false;
+		if(VAR_SONG.PATTERNS[chan].ORDER[0] == 0x00) return ch->PLAYING = false;
 		return true;
 	}
-	VAR_CHANNEL[chan].PLAYING = true;
+	ch->PLAYING = true;
 		
-	VAR_CHANNEL[chan].LASTSTEP =  VAR_CHANNEL[chan].STEP;
-	VAR_CHANNEL[chan].STEP++;
+	ch->LASTSTEP =  ch->STEP;
+	ch->STEP++;
 	
-	if(VAR_CHANNEL[chan].STEP == 16 /*VAR_CHANNEL[chan].LENGTH*/){
-		VAR_CHANNEL[chan].STEP = 0;
-		VAR_CHANNEL[chan].LASTPOSITION = VAR_CHANNEL[chan].POSITION;
-		VAR_CHANNEL[chan].POSITION++;
+	if(ch->STEP == 16 /*ch->LENGTH*/){
+		ch->STEP = 0;
+		ch->LASTPOSITION = ch->POSITION;
+		ch->POSITION++;
 		Sequencer::currentBeats=-1;
-		if(VAR_SONG.PATTERNS[chan].ORDER[VAR_CHANNEL[chan].POSITION] == 0x00) return updateChannel(chan);
+		if(VAR_SONG.PATTERNS[chan].ORDER[ch->POSITION] == 0x00) return updateChannel(chan);
 	}
 	return true;
 }
@@ -139,6 +147,7 @@ void Sequencer::update(){
 	
 	//Jump to next pattern, or find previous loop entry			     
 	if( !( currentTicks % ( beatsPerBar << 2 ) ) ){
+		VAR_SONG.GROOVE.position=VAR_SONG.GROOVE.position<0XF?VAR_SONG.GROOVE.position+1:0X0;
 		if( updateChannel( 0 ) ) Tracker::syncChannel( 0 ); 
 		if( updateChannel( 1 ) ) Tracker::syncChannel( 1 );
 		if( updateChannel( 2 ) ) Tracker::syncChannel( 2 );
@@ -182,9 +191,10 @@ void Sequencer::update(){
 			// ...
 			
 			// Handle Groove Table
-			channel->target_tick = 0;
+			//channel->target_tick = 0;
 			
 			if( ( currentTicks & 0x3 ) == channel->target_tick ){
+				
 				// trigger sound settings
 				channel->trigger( channel );
 				channel->target_tick = 0;
@@ -192,7 +202,7 @@ void Sequencer::update(){
 		}
 	}
 	
-	currentTicks++;		
+	currentTicks++;	
 
 	/* Debug output
 		gpu.set(1,0,0, ((Sequencer::currentTicks>>2)&1) == 0?0x6F : 0x60);

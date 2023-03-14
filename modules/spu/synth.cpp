@@ -14,12 +14,6 @@
 
 static bool swap_bank = false;
 
-u8 		Synth::wav_adsr_table[4][ ADSR_TABLE_LENGTH ];
-u8 		Synth::fmw_adsr_table[4][ ADSR_TABLE_LENGTH ];
-u8 		Synth::smp_adsr_table    [ ADSR_TABLE_LENGTH ];
-u16 	Synth::wav_adsr_position	= 0;
-u16	Synth::smp_adsr_position = 0;
-u16	Synth::fmw_adsr_position = 0;
 u16	Synth::lfo					= 0;
 
 const u16 SMP_FREQ_TABLE[120]={ 
@@ -192,12 +186,12 @@ void Synth::renderSmp( SETTINGS_SMP *smp, u8 vol){
 	static u8 operator_volume;
 	
 	// Get volume level for each of the 4 ADSR envelopes
-	operator_volume = ( (smp_adsr_table[ SMP_ADSR_POSITION] >> 4) * vol)>>4;
+	operator_volume = ( ( Adsr::smp_table[ SMP_ADSR_POSITION] >> 4) * vol)>>4;
 
 	// Advance adsr table common index
-	smp_adsr_position 	= ( smp_adsr_position < ( ( ADSR_TABLE_LENGTH - 1 )<<1 ) ) 
-							? smp_adsr_position + 1 
-							: (ADSR_TABLE_LENGTH-1);
+	Adsr::smp_position	= ( Adsr::smp_position < ( ( ADSR_TABLE_LENGTH - 1 ) << 1 ) ) 
+							?	Adsr::smp_position + 1 
+							: ( ADSR_TABLE_LENGTH - 1 );
 	
 	
 	#define OPERATOR( a )	((u8)((u32)( operators[ smp->OP1_TYPE ][ a ] * operator_volume ) >> 4))
@@ -209,12 +203,13 @@ void Synth::renderWav( SETTINGS_WAV *wav, u8 vol){
 	static u8 operator_volume[4];
 	
 	// Get volume level for each of the 4 ADSR envelopes
-	operator_volume[ 0 ] = ((wav_adsr_table[ 0 ][ WAV_ADSR_POSITION ] >> 4 ) * vol)>>4;
-	operator_volume[ 1 ] = ((wav_adsr_table[ 1 ][ WAV_ADSR_POSITION ] >> 4 ) * vol)>>4;
-	operator_volume[ 2 ] = ((wav_adsr_table[ 2 ][ WAV_ADSR_POSITION ] >> 4 ) * vol)>>4;
-	operator_volume[ 3 ] = ((wav_adsr_table[ 3 ][ WAV_ADSR_POSITION ] >> 4 ) * vol)>>4;
+	operator_volume[ 0 ] = (( Adsr::wav_table[ 0 ][ WAV_ADSR_POSITION ] >> 4 ) * vol)>>4;
+	operator_volume[ 1 ] = (( Adsr::wav_table[ 1 ][ WAV_ADSR_POSITION ] >> 4 ) * vol)>>4;
+	operator_volume[ 2 ] = (( Adsr::wav_table[ 2 ][ WAV_ADSR_POSITION ] >> 4 ) * vol)>>4;
+	operator_volume[ 3 ] = (( Adsr::wav_table[ 3 ][ WAV_ADSR_POSITION ] >> 4 ) * vol)>>4;
 
 	// Normalize operator volumes
+	/*
 	u8 output[4] = {
 		operator_volume[ 0 ] 
 		+ (0xF - operator_volume[1]) 
@@ -233,14 +228,13 @@ void Synth::renderWav( SETTINGS_WAV *wav, u8 vol){
 		+ (0xF - operator_volume[1]) 
 		+ (0xF - operator_volume[2])
 	};
-	/*
 	// Overwrite with normalized values
 	operator_volume[0] = output[0]>>2;
 	operator_volume[1] = output[1]>>2;
 	operator_volume[2] = output[2]>>2;
 	operator_volume[3] = output[3]>>2;
 	*/
-	#ifndef NDISTORTION
+	#ifndef DISTORTION
 	operator_volume[ 0 ] = operator_volume[ 0 ] > 0xF ? operator_volume[ 0 ] : 0xF;
 	operator_volume[ 1 ] = operator_volume[ 1 ] > 0xF ? operator_volume[ 1 ] : 0xF;
 	operator_volume[ 2 ] = operator_volume[ 2 ] > 0xF ? operator_volume[ 2 ] : 0xF;
@@ -248,9 +242,9 @@ void Synth::renderWav( SETTINGS_WAV *wav, u8 vol){
 	#endif 
 	
 	// Advance adsr table common index
-	wav_adsr_position 	= ( wav_adsr_position < ( ( ADSR_TABLE_LENGTH - 1 )<<1 ) ) 
-							? wav_adsr_position + 1 
-							: (ADSR_TABLE_LENGTH-1);
+	Adsr::wav_position	= ( Adsr::wav_position < ( ( ADSR_TABLE_LENGTH - 1 ) << 1 ) ) 
+							?	Adsr::wav_position + 1 
+							: ( ADSR_TABLE_LENGTH - 1 );
 	
 	
 	#define OPERATOR1( a )	((u8)((u32)( operators[ wav->OP1_TYPE ][ a ] * operator_volume[0] ) >> 4))
@@ -288,12 +282,13 @@ void Synth::renderFmw( SETTINGS_FMW *fmw, u8 vol){
 	static u8 operator_volume[4];
 	
 	// Get volume level for each of the 4 ADSR envelopes
-	operator_volume[ 0 ] = ( ( fmw_adsr_table[ 0 ][ FMW_ADSR_POSITION ] >> 4 ) * vol ) >> 4;
-	operator_volume[ 1 ] = ( ( fmw_adsr_table[ 1 ][ FMW_ADSR_POSITION ] >> 4 ) * vol ) >> 4;
-	operator_volume[ 2 ] = ( ( fmw_adsr_table[ 2 ][ FMW_ADSR_POSITION ] >> 4 ) * vol ) >> 4;
-	operator_volume[ 3 ] = ( ( fmw_adsr_table[ 3 ][ FMW_ADSR_POSITION ] >> 4 ) * vol ) >> 4;
+	operator_volume[ 0 ] = ( ( Adsr::fmw_table[ 0 ][ FMW_ADSR_POSITION ] >> 4 ) * vol ) >> 4;
+	operator_volume[ 1 ] = ( ( Adsr::fmw_table[ 1 ][ FMW_ADSR_POSITION ] >> 4 ) * vol ) >> 4;
+	operator_volume[ 2 ] = ( ( Adsr::fmw_table[ 2 ][ FMW_ADSR_POSITION ] >> 4 ) * vol ) >> 4;
+	operator_volume[ 3 ] = ( ( Adsr::fmw_table[ 3 ][ FMW_ADSR_POSITION ] >> 4 ) * vol ) >> 4;
 
 	
+	/*
 	// Normalize operator volumes
 	u8 output[4] = {
 		operator_volume[ 0 ] 
@@ -313,13 +308,12 @@ void Synth::renderFmw( SETTINGS_FMW *fmw, u8 vol){
 		+ (0xF - operator_volume[1]) 
 		+ (0xF - operator_volume[2])
 	};
-	/*
 	// Overwrite with normalized values
 	operator_volume[ 0 ] = output[ 0 ] >> 2;
 	operator_volume[ 1 ] = output[ 1 ] >> 2;
 	operator_volume[ 2 ] = output[ 2 ] >> 2;
 	operator_volume[ 3 ] = output[ 3 ] >> 2;
-	#ifndef NDISTORTION
+	#ifndef DISTORTION
 	operator_volume[ 0 ] = operator_volume[ 0 ] > 0xF ? operator_volume[ 0 ] : 0xF;
 	operator_volume[ 1 ] = operator_volume[ 1 ] > 0xF ? operator_volume[ 1 ] : 0xF;
 	operator_volume[ 2 ] = operator_volume[ 2 ] > 0xF ? operator_volume[ 2 ] : 0xF;
@@ -329,9 +323,9 @@ void Synth::renderFmw( SETTINGS_FMW *fmw, u8 vol){
 	
 	
 	// Advance adsr table common index
-	fmw_adsr_position 	= ( fmw_adsr_position < ( ( ADSR_TABLE_LENGTH - 1 )<<1 ) ) 
-							? fmw_adsr_position + 1 
-							: (ADSR_TABLE_LENGTH-1);
+	Adsr::fmw_position	= ( Adsr::fmw_position < ( ( ADSR_TABLE_LENGTH - 1 ) << 1 ) ) 
+							?	Adsr::fmw_position + 1 
+							: ( ADSR_TABLE_LENGTH - 1 );
 	
 	
 	u8 FB[16];
@@ -646,102 +640,6 @@ void Synth::loadWav( u8 data[16] ){
 
 /*###########################################################################*/
 
-void Synth::updateADSRWav( SETTINGS_WAV *wav ){
-	renderADSR( wav->OP1_ADSR, wav_adsr_table[0] );
-	renderADSR( wav->OP2_ADSR, wav_adsr_table[1] );
-	renderADSR( wav->OP3_ADSR, wav_adsr_table[2] );
-	renderADSR( wav->OP4_ADSR, wav_adsr_table[3] );
-	if(VAR_INSTRUMENT.TYPE != INSTRUMENT_TYPE_WAV) return;
-	Adsr::drawX4( wav_adsr_table, WAV_ADSR_POSITION );
-}
-
-void Synth::updateADSRFmw( SETTINGS_FMW *fmw ){
-	renderADSR( fmw->OP1_ADSR, fmw_adsr_table[0] );
-	renderADSR( fmw->OP2_ADSR, fmw_adsr_table[1] );
-	renderADSR( fmw->OP3_ADSR, fmw_adsr_table[2] );
-	renderADSR( fmw->OP4_ADSR, fmw_adsr_table[3] );
-	if(VAR_INSTRUMENT.TYPE != INSTRUMENT_TYPE_FMW) return;
-	Adsr::drawX4( fmw_adsr_table, FMW_ADSR_POSITION );
-}
-
-void Synth::updateADSRSmp( SETTINGS_SMP *smp ){
-	renderADSR( smp->ADSR, smp_adsr_table );
-	if(VAR_INSTRUMENT.TYPE != INSTRUMENT_TYPE_SMP) return;
-	Adsr::draw( smp_adsr_table, smp_adsr_position );
-}
-
-void Synth::renderADSR( u8 adsr[ 4 ], u8 adsr_table[ ADSR_TABLE_LENGTH ] , u8 gate){
-	// Scale ADSR values from         
-	// 								0x0 ~ 0xF       to       0x00 ~ 0xFF
-	#define ATTACK 			( adsr[0] << 2 )  
-	#define DECAY  			( adsr[1] << 2 )
-	#define SUSTAIN 		( adsr[2] << 2 )
-	#define RELEASE 		( adsr[3] << 2 )
-	#define TABLE			adsr_table[ position ]
-	for( int position=0; position < ADSR_TABLE_LENGTH; position++){
-		TABLE = SUSTAIN<<4;
-	}
-	
-	u8 len 	= ( ATTACK   )
-				+ ( DECAY	   )
-				+ ( SUSTAIN ) 
-				+ ( RELEASE );
-	u8 quantum;
-	u16 level = ATTACK > 0 ? 0 : ADSR_RANGE-1;
-	
-	int release_time = ADSR_TABLE_LENGTH - gate;// how many samples are available to render release
-	int adsr_quantum 	= (release_time<<2) / (adsr[3]);
-	
-	for( int position = 0, index = 0; position < ADSR_TABLE_LENGTH; position++ ){
-
-		if( position < ATTACK ){
-			// Attack Phase
-			quantum   = (ADSR_RANGE<<2) / ATTACK;// Attack will never be 0 here, so no zerodiv danger.
-			index		= position<<4;
-			level 		= (( quantum * index )>>6) ;	
-			
-		} else if( position <= ( ATTACK + DECAY ) ){
-			
-			// Decay Phase
-			if(level<0xFF){
-				if(level > (gate?(SUSTAIN<<2):0x00)){
-					quantum 	= (ADSR_RANGE<<2) / DECAY;
-					level -=(quantum>>2);
-					// Avoid overflow
-					if(level>0xFF)
-						level = gate?(SUSTAIN<<2):0x00;
-				} else {
-					level   = gate?(SUSTAIN<<2):0x00;
-				}
-			}
-			
-		}  
-		
-		if(gate){
-			gate--;
-		} else {
-			// Release Phase
-			if( level < 0xFF ){
-				if( level > 0 ){
-					// level -= (0xF-adsr[3])<<1;//= ( quantum >> 2 );
-					level -= (adsr_quantum/(0xF-adsr[3])) >> 2;//(0xF-adsr[3])<<1;//= ( quantum >> 2 );
-					// Avoid overflow
-					if( level > 0xFF )
-						level = 0x00;
-				}
-			}
-		} 
-		TABLE = level;
-	}
-	
-	
-	#undef ATTACK
-	#undef DECAY
-	#undef SUSTAIN
-	#undef RELEASE
-	#undef TABLE
-}
-
 void Synth::triggerPwm1( Channel *channel ){
 	u8 vol 			 = channel->volume;
 	Instrument *i 	 = &VAR_INSTRUMENTS[ channel->inst ];
@@ -845,13 +743,12 @@ void Synth::triggerWav( Channel* channel ){
 		channel->tsp_position 	= 0;				
 		channel->vol_position 	= 0;
 		channel->transpose 		= 0;
-		channel->reset	 		= false;				
+		channel->reset	 			= false;				
 	}
 	
 	if( channel->retrig ){
 		// Regenerate WAV ADSR Tables
-		wav_adsr_position 		= 0;
-		updateADSRWav( &wav );
+		Adsr::updateWav( &wav );
 	} 
 	// Regenerate WAVE shape (scaled to channel volume)
 	renderWav( &wav , vol );
@@ -872,8 +769,7 @@ void Synth::triggerFmw( Channel* channel ){
 	
 	if( channel->retrig ){
 		// Regenerate FM ADSR Tables
-		fmw_adsr_position 		= 0;
-		updateADSRFmw( &fmw );
+		Adsr::updateFmw( &fmw );
 	}
 	// Regenerate FMW shape (scaled to channel volume)
 	renderFmw( &fmw, vol );
@@ -894,8 +790,7 @@ void Synth::triggerSmp( Channel* channel ){
 	
 	if( channel->retrig ){
 		// Regenerate SMP ADSR Table
-		smp_adsr_position 		= 0;
-		updateADSRSmp( &smp );
+		Adsr::updateSmp( &smp );
 	}
 	// Regenerate FMW shape (scaled to channel volume)
 	renderSmp( &smp, vol );

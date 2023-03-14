@@ -105,3 +105,13 @@ Made AlphaDialog and ReallyDialog static
 Reduced ROM size in 50KB
 Separated compilation of static dialogs (ReallyDialog, AlphaDialog, Progress)
 Pattern chain transpose is working ( To be tested during cold-load, replay, and more case scenarios)
+
+---------------
+14-03-2023
+---------------
+Groove Table position drawing
+ADSR routines Rewritten
+SNG screen now indicates which slot is currently loaded, if any
+Removed useless option 'COPY' from SNG screen
+Added secondary SLOT control on SNG Screen, for the dummies.
+

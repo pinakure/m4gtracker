@@ -51,8 +51,10 @@ int main(void){
 		TIM0.Enable();
 
 		sys.init();
-				
+		
+		#ifdef VSYNC
 		bool lock = false;
+		#endif
 		
 		// Create and bind virtual screen to this instance
 		VirtualScreen VS;
@@ -68,13 +70,14 @@ int main(void){
 		
 		// Start at Tracker screen
 		regHnd.load(&REGION_MAP_3_TRK);
-		u32 cycles = 0;
+		
 		while(!sys.var_reset){
-			/*
+			#ifdef VSYNC
 				// IF SOMETHING GOES WRONG WITH TIMERS OR AUDIO, TRY ENABLING THIS:
-				if(!gpu.isVblank()) {lock= false; continue;}
-				if(!lock) { lock = true; continue; }							
-			*/
+				if(!gpu.isVblank()	) { lock = false; continue; }
+	 			if(!lock				) { lock =  true; continue; }
+				adsadas
+			#endif
 			sys.update();			
 			regHnd.update(1);
 			DEBUG_UPDATE();

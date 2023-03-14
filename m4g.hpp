@@ -44,6 +44,8 @@ extern vu32 SYS_PROFILETIMER;			 //Profiling timer (Debug Only)
 extern vu32 SYS_FPS;						 //Frames(program cycles) / sec
 extern vu32 SYS_FRAMES;					 //Current framecount	
 
+// #define VSYNC
+		
 #include "data/enum.h"
 #include "data/helpers.hpp"
 #include "macros.h"

@@ -604,7 +604,7 @@ void InstEdit::updateWav( RegionHandler* rh ){
 	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_WAV ].inst ) 
 	if( adsr_position != WAV_ADSR_POSITION ){
 		adsr_position = WAV_ADSR_POSITION;
-		if(!KEY.press(KEY_SELECT)) Adsr::drawX4( Synth::wav_adsr_table, adsr_position);
+		if(!KEY.press(KEY_SELECT)) Adsr::drawX4( Adsr::wav_table, adsr_position);
 		else viewWaveFormWav( );
 	}
 	
@@ -622,7 +622,7 @@ void InstEdit::updateFmw( RegionHandler* rh ){
 	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_FMW ].inst ) 
 	if( adsr_position != FMW_ADSR_POSITION ){
 		adsr_position = FMW_ADSR_POSITION;
-		if( !KEY.press( KEY_SELECT ) ) Adsr::drawX4( Synth::fmw_adsr_table, adsr_position);
+		if( !KEY.press( KEY_SELECT ) ) Adsr::drawX4( Adsr::fmw_table, adsr_position);
 		else viewWaveFormFmw();
 	}
 	
@@ -637,7 +637,7 @@ void InstEdit::updateSmp( RegionHandler* rh ){
 	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_SMP ].inst ) 
 	if( adsr_position != SMP_ADSR_POSITION ){
 		adsr_position = SMP_ADSR_POSITION;
-		if( !KEY.press( KEY_SELECT ) ) Adsr::draw( Synth::smp_adsr_table, adsr_position );
+		if( !KEY.press( KEY_SELECT ) ) Adsr::draw( Adsr::smp_table, adsr_position );
 		else viewWaveFormSmp();
 	}
 	
@@ -658,21 +658,21 @@ void InstEdit::modAdsrWav( Control *c, bool bigstep, bool add, u32 *pointer ){
 	modify4BIT( c, bigstep, add, pointer ); 
 	InstEdit::repack(); 
 	SETTINGS_WAV wav = unpackWav( &VAR_INSTRUMENT ); 
-	Synth::updateADSRWav( &wav ); 
+	Adsr::updateWav( &wav ); 
 }
 
 void InstEdit::modAdsrFmw( Control *c, bool bigstep, bool add, u32 *pointer ){ 
 	modify4BIT(c,bigstep, add, pointer); 
 	InstEdit::repack(); 
 	SETTINGS_FMW fmw = unpackFmw( &VAR_INSTRUMENT ); 
-	Synth::updateADSRFmw( &fmw );
+	Adsr::updateFmw( &fmw );
 }
 
 void InstEdit::modAdsrSmp( Control *c, bool bigstep, bool add, u32 *pointer ){ 
 	modify4BIT(c,bigstep, add, pointer); 
 	InstEdit::repack(); 
 	SETTINGS_SMP smp = unpackSmp( &VAR_INSTRUMENT ); 
-	Synth::updateADSRSmp( &smp ); 
+	Adsr::updateSmp( &smp ); 
 }
 
 void InstEdit::wavPreset(Control *c, bool bigstep, bool add, u32 *pointer){
