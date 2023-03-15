@@ -3,6 +3,7 @@
 #include "../../callbacks/snk.hpp"
 #include "../../callbacks/debug.hpp"
 #include "../../callbacks/trk.hpp"
+#include "../../callbacks/sng.hpp"
 #include "../../callbacks/pat.hpp"
 #include "../spu/sequencer.hpp"
 #include "../spu/synth.hpp"
@@ -111,6 +112,11 @@ void Sys::init(){
 	
 	// Start at Tracker screen	
 	setScreen( SCREEN_TRK );
+	
+	if( VAR_CFG.BEHAVIOR.AUTOLOAD ){
+		Sram::songLoad(false);
+		SongEdit::has_data[ 0 ] = true;	
+	}
 }
 
 #define BUTTON_A			(kb & 0x0001)

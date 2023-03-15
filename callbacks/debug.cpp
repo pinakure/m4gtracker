@@ -27,8 +27,6 @@ static const u16 color_aft = COLOR_GREEN;
 
 void Debug::runTests(){
 
-	SongEdit::load();
-
 	return;
 	memoryTest( NULL, 0, 0, NULL);
 		
@@ -610,7 +608,7 @@ void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 
 	u16 p = 0;
 	
-	Console 	console("MEMORY TEST");
+	Console 	console("MEMORY TEST", 0x0010 + COLOR_DARK_CYAN);
 	ProgressBar progressbar;
 
 	console.print("");
@@ -728,9 +726,8 @@ void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 	
 	console.print("Checks passed successfully."	, COLOR_GREEN );
 	console.wait( 1 );
-	
-	console.print("Starting M4GEEK01..."		, COLOR_GREEN );
-	console.wait( 1 );
+	regHnd.redraw = true;
+	regHnd.update(0);
 }
 
 #else

@@ -23,23 +23,23 @@ class InstEdit {
 		static void updatePwm				( RegionHandler* rh );
 		
 		// Visible instrument modifiers
-		static SETTINGS_PWM unpackPwm	( Instrument* i );
-		static SETTINGS_WAV unpackWav	( Instrument* i );
-		static SETTINGS_FMW unpackFmw	( Instrument* i );
-		static SETTINGS_SMP unpackSmp	( Instrument* i );
+		static SETTINGS_PWM unpackPwm		( Instrument* i );
+		static SETTINGS_WAV unpackWav		( Instrument* i );
+		static SETTINGS_FMW unpackFmw		( Instrument* i );
+		static SETTINGS_SMP unpackSmp		( Instrument* i );
 		static void 		unpack			( Instrument* i );
-		static void 		pack				( Instrument* i);
+		static void 		pack			( Instrument* i );
 		static void 		repack			( );
 		static void 		synchronize		( );
-		static void 		load 				( );
-		static void 		copy				( Instrument* s, Instrument* d );
+		static void 		load 			( );
+		static void 		copy			( Instrument* s, Instrument* d );
 
 		static void clear					( u8 index );
 		
 		// Waveform visualizers
-		static void viewWaveFormFmw		( );
-		static void viewWaveFormSmp		( );
-		static void viewWaveFormWav		( );
+		static void viewWaveFormFmw			( );
+		static void viewWaveFormSmp			( );
+		static void viewWaveFormWav			( );
 		
 		// Control Callbacks
 		static void index  					( Control *c, bool bigstep, bool add, u32 *pointer );

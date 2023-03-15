@@ -227,7 +227,7 @@ CALLBACK(cfg_receivesong);
 CALLBACK(cfg_sendsong	);
 CALLBACK(cfg_autoload	);
 CALLBACK(cfg_keyrate	);
-CALLBACK(cfg_buttonset	);
+CALLBACK(cfg_autosave	);
 CALLBACK(cfg_saveconfig	);
 CALLBACK(cfg_loadconfig	);
 CALLBACK(cfg_initconfig	);

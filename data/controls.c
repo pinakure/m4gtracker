@@ -177,21 +177,21 @@ const Control LOOKNFEEL_CONTROLS[CONTROL_LOOKNFEEL_MAX] = {
 #undef THISVAR
 #undef THIS
 
-#define THIS(a) &BEHAVIOR_CONTROLS[CONTROL_BEHAVIOR_##a]
-#define THISVAR(a) ((u8*)&(VAR_CFG.BEHAVIOR.a))
+#define CTL(a) &BEHAVIOR_CONTROLS[CONTROL_BEHAVIOR_##a]
+#define VAR(a) ((u8*)&(VAR_CFG.BEHAVIOR.a))
 const Control BEHAVIOR_CONTROLS[CONTROL_BEHAVIOR_MAX] = { 
-	//  x    y     	up						right					down					left					cache						var							callback
-	{	0x04 , 0x04 , NULL					, THIS(AUTOLOAD)		, NULL					, NULL					, NULL						, (u8*)&(VAR_CFG.MENUSLOT)	, &cb_cfg_menuindex		}, /*MENU3*/ 
-	{	0x1b , 0x06 , THIS(DEFAULTS)		, THIS(AUTOLOAD)		, THIS(KEYRATE)			, THIS(MENU3)			, &CACHE_CHECK				, THISVAR(AUTOLOAD)			, &cb_cfg_autoload	 	}, /*AUTOLOAD*/
-	{	0x1b , 0x07 , THIS(AUTOLOAD)		, THIS(KEYRATE)			, THIS(BUTTONSET)		, THIS(MENU3)			, &CACHE_HEXADECIMAL		, THISVAR(KEYRATE)			, &cb_cfg_keyrate		}, /*keyrate*/
-	{	0x19 , 0x08 , THIS(KEYRATE)			, THIS(BUTTONSET)		, THIS(SAVE)			, THIS(MENU3)			, &CACHE_BUTTON_SET			, THISVAR(BUTTONSET)		, &cb_cfg_buttonset		}, /*buttonset*/
-	{	0x1b , 0x09 , THIS(BUTTONSET)		, THIS(SAVE)			, THIS(LOAD)			, THIS(MENU3)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_saveconfig		}, /*save*/
-	{	0x1b , 0x0a , THIS(SAVE)			, THIS(LOAD)			, THIS(DEFAULTS)		, THIS(MENU3)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_loadconfig		}, /*load*/
-	{	0x1b , 0x0b , THIS(LOAD)			, THIS(DEFAULTS)		, THIS(AUTOLOAD)		, THIS(MENU3)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_initconfig		}, /*defaults*/
-	CONTROL_TERMINATOR
+//				{	x	 , y     , up					 , right				 , down					 , left					 , cache				, var						 , callback
+/* MENU3	*/ 	{	0x04 , 0x04	, NULL					 , CTL( AUTOLOAD		), NULL					 , NULL					 , NULL					, (u8*)&(VAR_CFG.MENUSLOT	), &cb_cfg_menuindex	}, 
+/* AUTOLOAD	*/	{	0x1b , 0x06	, CTL( DEFAULTS			), CTL( AUTOLOAD		), CTL( AUTOSAVE		), CTL( MENU3			), &CACHE_CHECK			, VAR( AUTOLOAD				), &cb_cfg_autoload	 	}, 
+/* autosave	*/	{	0x1b , 0x07	, CTL( AUTOLOAD			), CTL( AUTOSAVE		), CTL( KEYRATE			), CTL( MENU3			), &CACHE_CHECK			, VAR( AUTOSAVE				), &cb_cfg_autosave		}, 
+/* keyrate	*/	{	0x1b , 0x08	, CTL( AUTOSAVE			), CTL( KEYRATE			), CTL( SAVE			), CTL( MENU3			), &CACHE_HEXADECIMAL	, VAR( KEYRATE				), &cb_cfg_keyrate		}, 
+/* save		*/	{	0x1b , 0x09	, CTL( KEYRATE			), CTL( SAVE			), CTL( LOAD			), CTL( MENU3			), &CACHE_ARROW_LEFT	, NULL						 , &cb_cfg_saveconfig	}, 
+/* load		*/	{	0x1b , 0x0a	, CTL( SAVE 			), CTL( LOAD			), CTL( DEFAULTS		), CTL( MENU3			), &CACHE_ARROW_LEFT	, NULL						 , &cb_cfg_loadconfig	}, 
+/* defaults	*/	{	0x1b , 0x0b	, CTL( LOAD 			), CTL( DEFAULTS		), CTL( AUTOLOAD		), CTL( MENU3			), &CACHE_ARROW_LEFT	, NULL						 , &cb_cfg_initconfig	}, 
+				CONTROL_TERMINATOR
 };
-#undef THISVAR
-#undef THIS
+#undef VAR
+#undef CTL
 	
 #define THIS(a) &TRACKER_CONTROLS[CONTROL_TRACKER_##a]
 #define THISVAR(a) ((u8*)&(VAR_CFG.TRACKER.a))

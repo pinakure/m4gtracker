@@ -1,6 +1,7 @@
 #include "sequencer.hpp"
 #include "mixer.hpp"
 #include "../net/net.hpp"
+#include "../sram/sram.hpp"
 #include "../../callbacks/sng.hpp"
 #include "../../data/channel.hpp"
 #include "../../data/song.hpp"
@@ -92,7 +93,7 @@ bool Sequencer::stop(){
 	bool was_playing = playing;
 	playing = false;
 	Mixer::stop();
-	if( VAR_CFG.BEHAVIOR.AUTOSAVE) SongEdit::save();
+	if( VAR_CFG.BEHAVIOR.AUTOSAVE ) Sram::songSave(false);
 	VAR_SONG.GROOVE.position = 0;	
 	return was_playing;
 }

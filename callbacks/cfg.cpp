@@ -30,8 +30,8 @@ const Callback cb_cfg_receivesong	= { LinkMode::songRecv			, EVENT_KEYUP_B		, NU
 const Callback cb_cfg_sendsong		= { LinkMode::songSend			, EVENT_KEYUP_B		, NULL 							, NULL };
 // Behavior SubMenu
 const Callback cb_cfg_autoload		= { modify1BIT					, EVENT_KEYDOWN_B	, &VAR_CFG.BEHAVIOR.AUTOLOAD	, NULL };
+const Callback cb_cfg_autosave		= { modify1BIT					, EVENT_KEYDOWN_B	, &VAR_CFG.BEHAVIOR.AUTOSAVE	, NULL };
 const Callback cb_cfg_keyrate		= { modify4BIT					, EVENT_MODIFY_B	, &VAR_CFG.BEHAVIOR.KEYRATE		, NULL };
-const Callback cb_cfg_buttonset		= { modify2BIT					, EVENT_MODIFY_B	, &VAR_CFG.BEHAVIOR.BUTTONSET	, NULL };
 const Callback cb_cfg_saveconfig	= { Config::save				, EVENT_KEYUP_B		, NULL 							, NULL };
 const Callback cb_cfg_loadconfig	= { Config::load				, EVENT_KEYUP_B		, NULL 							, NULL };
 const Callback cb_cfg_initconfig	= { Config::defaults			, EVENT_KEYUP_B		, NULL 							, NULL };
@@ -62,9 +62,9 @@ void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 		{ &VAR_CFG.TRACKER.HEADERTYPE		, 4 , 	1 },
 		{ &VAR_CFG.TRACKER.INPUTMODE		, 3 , 	1 },
 		{ &VAR_CFG.TRACKER.PRELISTEN		, 2 , 	1 },
-		{ &VAR_CFG.BEHAVIOR.BUTTONSET		, 0 , 	2 },
-		{ NULL								, 0 ,  0 }, 
-		{ NULL								, 0 ,  0 }, 
+		{ &VAR_CFG.BEHAVIOR.AUTOSAVE		, 0 , 	1 },
+		{ NULL								, 0 ,   0 }, 
+		{ NULL								, 0 ,   0 }, 
 	};
 		
 	static const BitField look_n_feel[8] = {
@@ -197,7 +197,7 @@ void Config::save (Control *c, bool bigstep, bool add, u32 *pointer){
 	
 	// Behavior
 	SRAM.write(VAR_CFG.BEHAVIOR.KEYRATE);
-	SRAM.write(  (VAR_LIVE.PERFORM.RETRIG<<6) | (VAR_CFG.MEMORY.PREF<<5)  | (VAR_CFG.TRACKER.HEADERTYPE<<4) | (VAR_CFG.TRACKER.INPUTMODE<<3) | (VAR_CFG.TRACKER.PRELISTEN<<2) | VAR_CFG.BEHAVIOR.BUTTONSET);
+	SRAM.write(  (VAR_LIVE.PERFORM.RETRIG<<6) | (VAR_CFG.MEMORY.PREF<<5)  | (VAR_CFG.TRACKER.HEADERTYPE<<4) | (VAR_CFG.TRACKER.INPUTMODE<<3) | (VAR_CFG.TRACKER.PRELISTEN<<2) | VAR_CFG.BEHAVIOR.AUTOSAVE );/* 1 EXTRA BIT LEFT */
 	
 	// Tracker
 	SRAM.write(VAR_CFG.TRACKER.TRANSPOSE);
@@ -290,7 +290,7 @@ void Config::defaults (Control *c, bool bigstep, bool add, u32 *pointer){
 	//176
 	SETTING(BEHAVIOR.AUTOLOAD, 0x01);
 	SETTING(BEHAVIOR.KEYRATE, 0x08);
-	SETTING(BEHAVIOR.BUTTONSET, 0x00);
+	SETTING(BEHAVIOR.AUTOSAVE, 0x00);
 	SETTING(BEHAVIOR.VISTYPE, 0); //0 vis - 1 table
 	//180
 	SETTING(TRACKER.FINETUNE, 0x0);

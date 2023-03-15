@@ -741,5 +741,41 @@ void InstEdit::viewWaveFormWav( ){
 }
 
 void InstEdit::clear( u8 index ){
-	// TODO: set settings to zero values and update screen
+	Instrument *instrument = &VAR_INSTRUMENTS[ index ];
+	instrument->VISPOSITION	[0] = 0;
+	instrument->VISPOSITION	[1] = 0;
+	instrument->NAME		[0] = 0;
+	instrument->NAME		[1] = 0;
+	instrument->NAME		[2] = 0;
+	instrument->NAME		[3] = 0;
+	instrument->NAME		[4] = 0;
+	instrument->NAME		[5] = 0;
+	instrument->TYPE			= INSTRUMENT_TYPE_PWM;
+	u8 *settings = instrument->SETTINGS;
+	for(u8* target=settings+32; settings<target; settings++){
+		*settings = 0x00;
+	}
+	TableCell *table = &instrument->TABLE;
+	u8 *t 	= table->TRANSPOSE;
+	u8 *v 	= table->VOLUME;
+	u8 *c1	= table->COMMAND[0];
+	u8 *a1	= table->VALUE[0];
+	u8 *c2	= table->COMMAND[1];
+	u8 *a2	= table->VALUE[1];
+	for(int i=0; i<16; i++, t++, v++, c1++, a1++, c2++, a2++){
+		t 		= 0x00;
+		v 		= 0x00;
+		c1		= 0x00;
+		c2	 	= 0x00;
+		a1		= 0x00;
+		a2	 	= 0x00;
+	}
+	table->PLAYING		= false;
+	table->JUMP[ 0 ]	= 0x0;
+	table->JUMP[ 1 ]	= 0x0;
+	table->POSITION[ 0 ]= 0x0;
+	table->POSITION[ 1 ]= 0x0;
+	
+	InstEdit::pack( instrument );
+	InstEdit::copy( instrument, &VAR_INSTRUMENT );
 }

@@ -29,9 +29,8 @@ typedef struct _CFG_LINKMODE {
 typedef struct _CFG_BEHAVIOR {
 	u8				AUTOLOAD;
 	u8				KEYRATE /*4*/;
-	u8				BUTTONSET /*2*/;
+	u8				AUTOSAVE /*1*/;
 	u8				VISTYPE;
-	u8 				AUTOSAVE;
 }CFG_BEHAVIOR;
 
 typedef struct _CFG_TRACKER {
