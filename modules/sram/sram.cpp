@@ -7,6 +7,10 @@ Sram SRAM;
 #include "../../callbacks/trk.hpp"
 #include "../../callbacks/debug.hpp"
 
+u8* Sram::sram;
+int Sram::position;
+u16 Sram::waitstateBackup;
+
 extern "C" {
 	u8 	 SRAM_ReadByte(u16 position);
 	void SRAM_WriteByte(u16 position, u8 byte);
@@ -34,7 +38,7 @@ void readFields( const BitField fields[8] ) {
 	}	
 }
 
-void Sram::Init(void){
+void Sram::init(){
 	// Set WAITCNT (Waitstate controller) to 8 wait cycle mode	
 	
 	waitstateBackup = PORT(0x4000204);
@@ -55,7 +59,7 @@ void Sram::forward(int p){
 	position += p;	
 }
 
-void Sram::erase(void){
+void Sram::erase(){
 	int i;
 	seek(0);
 	for(i=0; i<0x8000; i++){

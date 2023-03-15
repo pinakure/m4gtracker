@@ -120,4 +120,5 @@ Pattern pagination ( B+SELECT+ LEFT/RIGHT )
 ----------------------
 15-03-2023
 ----------------------
-Made Sys class static, keeping rom speed (or increasing it at best)
+Made Sys class static
+Made VirtualScreen static

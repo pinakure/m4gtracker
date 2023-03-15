@@ -1,5 +1,6 @@
 #include "snk.hpp" 
 #include "../modules/gpu/gpu.hpp"
+#include "../modules/gpu/virtualscreen.hpp"
 #include "../modules/key/key.hpp"
 #include "../data/helpers.hpp"
 #include "../modules/spu/sequencer.hpp"
@@ -188,19 +189,19 @@ void SnakeGame::hit(){
 		lives--;
 		// Hit sound?
 	}
-	gpu.vs->clear();
+	VirtualScreen::clear();
 	resetPosition();
 	redraw_game = true;
 }
 
 void SnakeGame::drawGame(){
-	gpu.vs->clear();
+	VirtualScreen::clear();
 	
-	gpu.vs->set( fruit.x, fruit.y );
+	VirtualScreen::set( fruit.x, fruit.y );
 
 	int i,o;
 	for(i=0;i < length-1; i++){
-		gpu.vs->set(cells[i].x, cells[i].y);
+		VirtualScreen::set(cells[i].x, cells[i].y);
 		for( o=0; o < length-1; o++){
 			if(i == o)continue;
 			if( (cells[i].x == cells[o].x) && (cells[i].y == cells[o].y) ) hit();
@@ -208,7 +209,7 @@ void SnakeGame::drawGame(){
 	}
 	if( (cells[0].x == fruit.x) && (cells[0].y == fruit.y) ) eat();
 	
-	gpu.vs->draw(11,6);
+	VirtualScreen::draw(11,6);
 	redraw_game = false;			
 }
 

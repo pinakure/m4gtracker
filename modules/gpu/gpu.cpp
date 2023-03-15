@@ -1,4 +1,5 @@
 #include "gpu.hpp"
+#include "virtualscreen.hpp"
 #include "../../callbacks/debug.hpp"
 #include "../../data/helpers.hpp"
 #include "../../data/caches.hpp"
@@ -93,6 +94,7 @@ void Gpu::start(){
 	
 	R_DISPCNT = (DISP_BG0_ON | DISP_BG1_ON |  DISP_BG2_ON) &0x0f00;			
 	
+	VirtualScreen::init();
 }
 
 void Gpu::safeblit(E_Maps mapIndex, int startx, int starty, int x, int y, int width, int height){

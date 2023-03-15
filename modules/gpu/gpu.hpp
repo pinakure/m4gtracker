@@ -106,8 +106,6 @@
 #define R_BG3Y_L      (REG_BASE + 0x3c)
 #define R_BG3Y_H      (REG_BASE + 0x3e)
 
-class VirtualScreen;
-
 enum E_Maps {
 	MAP_HLP = 0,
 	MAP_INS,
@@ -132,7 +130,6 @@ class Gpu {
 	const unsigned short *MAP1;
 	const unsigned short *MAP2;
 
-	VirtualScreen *vs;
 	u16 	vcount;
 	bool 	blink;
 	
@@ -163,7 +160,5 @@ class Gpu {
 };
 
 extern Gpu gpu;
-
-#include "virtualscreen.cpp"
 
 #endif 

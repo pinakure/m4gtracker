@@ -6,6 +6,7 @@
 #include "../modules/regionhandler/regionhandler.hpp"
 #include "../modules/spu/synth.hpp"
 #include "../modules/gpu/gpu.hpp"
+#include "../modules/gpu/virtualscreen.hpp"
 #include "../modules/key/key.hpp"
 
 /* Global callbacks ---------------------------------------------------------------------------------------------------------- */
@@ -711,32 +712,32 @@ void InstEdit::smpPreset(Control *c, bool bigstep, bool add, u32 *pointer){
 }
 
 void InstEdit::viewWaveFormFmw( ){
-	gpu.vs->clear();
+	VirtualScreen::clear();
 	for(int x=0; x < 0x40; x+=2){
-		gpu.vs->set( x>>1, 15 - ( VAR_FMW.WAVEDATA[ x>>2 ]>>2) );
-		gpu.vs->set( x>>1, 15 + ( VAR_FMW.WAVEDATA[ x>>2 ]>>2) );
+		VirtualScreen::set( x>>1, 15 - ( VAR_FMW.WAVEDATA[ x>>2 ]>>2) );
+		VirtualScreen::set( x>>1, 15 + ( VAR_FMW.WAVEDATA[ x>>2 ]>>2) );
 	}
-	gpu.vs->draw(14,6);
+	VirtualScreen::draw(14,6);
 }
 
 void InstEdit::viewWaveFormSmp( ){
-	gpu.vs->clear();
+	VirtualScreen::clear();
 	/*
 	for(int x=0; x < 0x40; x+=2){
-		gpu.vs->set( x>>1, 15 - ( VAR_SMP.WAVEDATA[ x>>2 ]>>2) );
-		gpu.vs->set( x>>1, 15 + ( VAR_SMP.WAVEDATA[ x>>2 ]>>2) );
+		VirtualScreen::set( x>>1, 15 - ( VAR_SMP.WAVEDATA[ x>>2 ]>>2) );
+		VirtualScreen::set( x>>1, 15 + ( VAR_SMP.WAVEDATA[ x>>2 ]>>2) );
 	}
 	*/
-	gpu.vs->draw(14,6);
+	VirtualScreen::draw(14,6);
 }
 
 void InstEdit::viewWaveFormWav( ){
-	gpu.vs->clear();
+	VirtualScreen::clear();
 	for(int x=0; x < 0x40; x+=2){
-		gpu.vs->set( x>>1, 15 - ( VAR_WAV.WAVEDATA[ x>>2 ]) );
-		gpu.vs->set( x>>1, 15 + ( VAR_WAV.WAVEDATA[ x>>2 ]) );
+		VirtualScreen::set( x>>1, 15 - ( VAR_WAV.WAVEDATA[ x>>2 ]) );
+		VirtualScreen::set( x>>1, 15 + ( VAR_WAV.WAVEDATA[ x>>2 ]) );
 	}
-	gpu.vs->draw(14,6);
+	VirtualScreen::draw(14,6);
 }
 
 void InstEdit::clear( u8 index ){

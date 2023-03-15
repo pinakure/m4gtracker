@@ -242,6 +242,6 @@ void Sys::update(){
 	updateInput();	
 	
 	//if( KEYPRESS_L ) overloadTest(regHnd);
-	//if( KEYPRESS_R ) gpu.vs->draw(14,2);
+	//if( KEYPRESS_R ) VirtualScreen::draw(14,2);
 }
 

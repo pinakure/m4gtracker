@@ -1,6 +1,7 @@
 #include "adsr.hpp"
 #include "../../data/tileset.hpp"
 #include "../gpu/gpu.hpp"
+#include "../gpu/virtualscreen.hpp"
 #include "../regionhandler/regionhandler.hpp"
 #include "../../callbacks/debug.hpp"
 #include "../../data/instrument.hpp"
@@ -27,16 +28,16 @@ void Adsr::drawX4( u8 adsr_tables[ 4 ][ ADSR_TABLE_LENGTH ] , u8 adsr_position )
 
 	if( adsr_position < (ADSR_TABLE_LENGTH-2) ){
 		
-		gpu.vs->clear();
+		VirtualScreen::clear();
 		
 		for( int x = 0 , half = 0, quad = 0	
 			; x < ( VIRTUALSCREEN_WIDTH << 1 ) 
 			; x+=2 , quad = x << 2, half = x >> 1
 		){
-			gpu.vs->set( half ,  7 - ( adsr_tables[ 0 ][ quad ] >> 5  ) );
-			gpu.vs->set( half , 15 - ( adsr_tables[ 1 ][ quad ] >> 5  ) );
-			gpu.vs->set( half , 23 - ( adsr_tables[ 2 ][ quad ] >> 5  ) );
-			gpu.vs->set( half , 31 - ( adsr_tables[ 3 ][ quad ] >> 5  ) );
+			VirtualScreen::set( half ,  7 - ( adsr_tables[ 0 ][ quad ] >> 5  ) );
+			VirtualScreen::set( half , 15 - ( adsr_tables[ 1 ][ quad ] >> 5  ) );
+			VirtualScreen::set( half , 23 - ( adsr_tables[ 2 ][ quad ] >> 5  ) );
+			VirtualScreen::set( half , 31 - ( adsr_tables[ 3 ][ quad ] >> 5  ) );
 		}
 		//gpu.number(26, 1, ADSR_TABLE_LENGTH, COLOR_RED);
 
@@ -47,7 +48,7 @@ void Adsr::drawX4( u8 adsr_tables[ 4 ][ ADSR_TABLE_LENGTH ] , u8 adsr_position )
 		//DECIMAL_DOUBLE(28,1,adsr_position < (ADSR_TABLE_LENGTH-1)?COLOR_YELLOW:COLOR_ORANGE ,adsr_position/100);
 		//DECIMAL_DOUBLE(29,1,adsr_position < (ADSR_TABLE_LENGTH-1)?COLOR_YELLOW:COLOR_ORANGE ,adsr_position);
 		
-		gpu.vs->draw(14,6);
+		VirtualScreen::draw(14,6);
 		
 	} 
 	
@@ -64,13 +65,13 @@ void Adsr::draw( u8 adsr_table[ ADSR_TABLE_LENGTH ] , u8 adsr_position ){
 
 	if( adsr_position < (ADSR_TABLE_LENGTH-2) ){
 
-		gpu.vs->clear();
+		VirtualScreen::clear();
 		
 		for( int x = 0 , half = 0, quad = 0	
 			; x < ( VIRTUALSCREEN_WIDTH << 1 ) 
 			; x+=2 , quad = x << 2, half = x >> 1
 		){
-			gpu.vs->set( half ,  31 - ( adsr_table[ quad ] >> 3  ) );
+			VirtualScreen::set( half ,  31 - ( adsr_table[ quad ] >> 3  ) );
 		}
 		//gpu.number(26, 1, ADSR_TABLE_LENGTH, COLOR_RED);
 
@@ -81,7 +82,7 @@ void Adsr::draw( u8 adsr_table[ ADSR_TABLE_LENGTH ] , u8 adsr_position ){
 		//DECIMAL_DOUBLE(28,1,adsr_position < (ADSR_TABLE_LENGTH-1)?COLOR_YELLOW:COLOR_ORANGE ,adsr_position/100);
 		//DECIMAL_DOUBLE(29,1,adsr_position < (ADSR_TABLE_LENGTH-1)?COLOR_YELLOW:COLOR_ORANGE ,adsr_position);
 		
-		gpu.vs->draw(14,6);
+		VirtualScreen::draw(14,6);
 		
 	} 
 	

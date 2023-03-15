@@ -36,13 +36,15 @@ MEM_IN_EWRAM PatternCell 		VAR_DATA[128];
 
 int main(void){
 	
-	while(1){
-		PREFETCH
+	PREFETCH
+
+	for(;;){
 		
-		INT.Init();	
-		Mem::init();
-		Sys::init();
-		SRAM.Init();
+		INT.Init();	// Move to sys init
+		Mem::init();// Move to sys init
+//		Sys::init();
+		// Move this to sys init
+		Sram::init();
 		gpu.start();
 		INT.Enable(IRQ_VBLANK);
 		INT.Enable(IRQ_HBLANK);
@@ -58,9 +60,6 @@ int main(void){
 		#endif
 		
 		// Create and bind virtual screen to this instance
-		VirtualScreen VS;
-		gpu.vs = &VS;
-
 		Config::load();
 		//SRAM.dataRevert( false );
 		InstEdit::unpack( &VAR_INSTRUMENT );	
@@ -75,8 +74,8 @@ int main(void){
 		for(;;){
 			#ifdef VSYNC
 				// IF SOMETHING GOES WRONG WITH TIMERS OR AUDIO, TRY ENABLING THIS:
-				if(!gpu.isVblank()	) { lock = false; continue; }
-	 			if(!lock				) { lock =  true; continue; }
+				if(!gpu.isVblank()	) { lock = false	; continue; }
+	 			if(!lock				) { lock = true	; continue; }
 				adsadas
 			#endif
 			Sys::update();			
