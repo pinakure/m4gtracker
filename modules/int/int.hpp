@@ -32,24 +32,19 @@
 #define STAT_HBLANK_IE  0x0010		// H Blank Interrupt Request, Enable
 #define STAT_VCOUNT_IE  0x0020		// V Counter Corresponding 
 	
-class cINT {	
-	private:
+class Interrupt {	
 	public:
-		cINT(){}
-		~cINT(){}
-		void Init(void);
-		void Disable(u8 value);
-		void Enable(u8 value);
+		static void init		();
+		static void disable	( u8 value );
+		static void enable		( u8 value );
 };
 
-extern volatile bool SYS_QUERYKEY;		 //True when a key is triggered
-extern int main(void);					 //Needed by INTERRUPTS!!!
-extern u32	SYS_PROFILEDTIME;				 //Profiled time (Debug Only)
-extern volatile bool SYS_SOUNDTIME;		 //Sound processing flag
-extern vu32 SYS_PROFILETIMER;			 //Profiling timer (Debug Only)
-extern vu32 SYS_FPS;						 //Frames(program cycles) / sec
-extern vu32 SYS_FRAMES;					 //Current framecount	
-extern vu32 SYS_TIMER;					 //Global program timer
-extern cINT INT;
+extern volatile bool 	SYS_QUERYKEY;		 //True when a key is triggered
+extern u32				SYS_PROFILEDTIME;				 //Profiled time (Debug Only)
+extern volatile bool 	SYS_SOUNDTIME;		 //Sound processing flag
+extern vu32 				SYS_PROFILETIMER;			 //Profiling timer (Debug Only)
+extern vu32 				SYS_FPS;						 //Frames(program cycles) / sec
+extern vu32 				SYS_FRAMES;					 //Current framecount	
+extern vu32 				SYS_TIMER;					 //Global program timer
 
 #endif 

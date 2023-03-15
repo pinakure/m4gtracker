@@ -1,6 +1,8 @@
 #include "int.hpp"
 #include "../dma/dma.h"
 
+extern int main(); //Needed by INTERRUPTS!!!
+
 /*------------------------------------------------------------------------------
                             Interrupt Class & Handler
 --------------------------------------------------------------------------------
@@ -9,7 +11,7 @@
  Assembler routine to do this task for obvious speed reasons, but let's try out
  this approach, maybe it can work as good as in assembler.					 
 ------------------------------------------------------------------------------*/
-cINT INT;
+
 /* ISR Predeclarations */
 static void INT_Dummy();
 static void INT_VBlank();
@@ -28,17 +30,17 @@ static void INT_AGBPak();
  interrupt system for a specific IRQ you'll have to modify the table below 
  manually. Sorry for the inconvenience, but this makes things A LOT faster.	 
  ------------------------------------------------------------------------------*/
-#define STAT_VBLANK    		0x0001		// During V Blank
+#define STAT_VBLANK    	0x0001		// During V Blank
 #define STAT_HBLANK     	0x0002		// During H Blank
 #define STAT_VCOUNT     	0x0004		// Matching with V Counter
-#define STAT_VCOUNT_CM 		0xff00		// VCounter Compare Mask
+#define STAT_VCOUNT_CM	0xff00		// VCounter Compare Mask
 #define STAT_VCOUNT_CS  	8			// VCounter Compare Shift
 #define STAT_VBLANK_IE  	0x0008		// V Blank Interrupt Request, Enable
 #define STAT_HBLANK_IE  	0x0010		// H Blank Interrupt Request, Enable
 #define STAT_VCOUNT_IE  	0x0020		// V Counter Corresponding 
 #define TIM_IRQ				0x0040
 
-#define SENDER_BASE			0x04000000
+#define SENDER_BASE		0x04000000
 
 #define VIDEO_IE			0x0004
 #define TIME0_IE			0x0102
@@ -52,58 +54,60 @@ static void INT_AGBPak();
 #define DMA3_IE				0x00DE
 #define KEY_IE				0x0132
 
-const u16	IntrSender[28] =  {	VIDEO_IE,	STAT_VBLANK_IE, 
-								VIDEO_IE,	STAT_VBLANK_IE,
-								VIDEO_IE,	STAT_VCOUNT_IE,
-								TIME0_IE,	TIM_IRQ,
-								TIME1_IE,	TIM_IRQ,
-								TIME2_IE,	TIM_IRQ,
-								TIME3_IE,	TIM_IRQ,
-								SIO_IE,		0x4000,
-								DMA0_IE,	0x4000,
-								DMA1_IE,	0x4000,
-								DMA2_IE,	0x4000,
-								DMA3_IE,	0x4000,
-								KEY_IE,		0x4000,
-								0x0000,		0x0000
-							  };
+const u16	IntrSender[28] = {	
+	VIDEO_IE	, STAT_VBLANK_IE	, 
+	VIDEO_IE	, STAT_VBLANK_IE	,
+	VIDEO_IE	, STAT_VCOUNT_IE	,
+	TIME0_IE	, TIM_IRQ				,
+	TIME1_IE	, TIM_IRQ				,
+	TIME2_IE	, TIM_IRQ				,
+	TIME3_IE	, TIM_IRQ				,
+	SIO_IE	, 0x4000				,
+	DMA0_IE	, 0x4000				,
+	DMA1_IE	, 0x4000				,
+	DMA2_IE	, 0x4000				,
+	DMA3_IE	, 0x4000				,
+	KEY_IE	, 0x4000				,
+	0x0000	, 0x0000
+};
      
 
-const u16	  IntrFlags[14] = {	VBLANK_IF, // IF 0x0001 VBLANK
-								HBLANK_IF, // IF 0x0002 HBLANK
-								VCOUNT_IF, // IF 0x0004 VCOUNT
-								TIMER0_IF, // IF 0x0008 TIMER0
-								TIMER1_IF, // IF 0x0010 TIMER1
-								TIMER2_IF, // IF 0x0020 TIMER2
-								TIMER3_IF, // IF 0x0040 TIMER3
-								SIO_IF,	   // IF 0x0080 SIO
-								DMA0_IF,   // IF 0x0100 DMA0 
-								DMA1_IF,   // IF 0x0200 DMA1 
-								DMA2_IF,   // IF 0x0400 DMA2 
-								DMA3_IF,   // IF 0x0800 DMA3 
-								KEYPAD_IF, // IF 0x1000 KEY 
-								AGBPAK_IF  // IF 0x2000 GAMEPA
-							  };
+const u16	  IntrFlags[14] = {	
+	VBLANK_IF	, // IF 0x0001 VBLANK
+	HBLANK_IF	, // IF 0x0002 HBLANK
+	VCOUNT_IF	, // IF 0x0004 VCOUNT
+	TIMER0_IF	, // IF 0x0008 TIMER0
+	TIMER1_IF	, // IF 0x0010 TIMER1
+	TIMER2_IF	, // IF 0x0020 TIMER2
+	TIMER3_IF	, // IF 0x0040 TIMER3
+	SIO_IF	, // IF 0x0080 SIO
+	DMA0_IF	, // IF 0x0100 DMA0 
+	DMA1_IF	, // IF 0x0200 DMA1 
+	DMA2_IF	, // IF 0x0400 DMA2 
+	DMA3_IF	, // IF 0x0800 DMA3 
+	KEYPAD_IF	, // IF 0x1000 KEY 
+	AGBPAK_IF	, // IF 0x2000 GAMEPA
+};
 
-const voidptr IntrTable[14] = {	INT_VBlank,	// VBLANK ISR
-								INT_HBlank,	// HBLANK ISR 
-								INT_VCount, // VCOUNT ISR
-								INT_Timer0, // TIMER0 ISR
-								INT_Timer1, // TIMER1 ISR
-								INT_Timer2, // TIMER2 ISR
-								INT_Timer3, // TIMER3 ISR
-								INT_Dummy,  // SIO ISR
-								INT_Dummy,  // DMA0 ISR
-								INT_Dummy,  // DMA1 ISR
-								INT_Dummy,  // DMA2 ISR
-								INT_Dummy,  // DMA3 ISR
-								INT_Dummy, //INT_KeyPad, // KEY ISR
-								INT_AGBPak  // GAMEPAK ISR
-							  };
-int Toggle=0;
+const voidptr IntrTable[14] = {	
+	INT_VBlank	, // VBLANK ISR
+	INT_HBlank	, // HBLANK ISR 
+	INT_VCount	, // VCOUNT ISR
+	INT_Timer0	, // TIMER0 ISR
+	INT_Timer1	, // TIMER1 ISR
+	INT_Timer2	, // TIMER2 ISR
+	INT_Timer3	, // TIMER3 ISR
+	INT_Dummy		, // SIO ISR
+	INT_Dummy		, // DMA0 ISR
+	INT_Dummy		, // DMA1 ISR
+	INT_Dummy		, // DMA2 ISR
+	INT_Dummy		, // DMA3 ISR
+	INT_Dummy		, //INT_KeyPad, // KEY ISR
+	INT_AGBPak   , // GAMEPAK ISR
+};
 
 voidptr	IntrTableBuf[14];
-u32     IntrMainBuf[0x1000]; 
+u32     	IntrMainBuf[0x1000]; 
 
 extern "C" void int_main();
 
@@ -149,8 +153,7 @@ also know a second has elapsed, so it's time to calculate the CPS rate
 */
     R_IME=0x0;
 	SYS_TIMER++;
-	if(SYS_TIMER==60)
-	{
+	if(SYS_TIMER==60){
 		SYS_FPS=SYS_FRAMES;
 		SYS_FRAMES = 0;
 		SYS_TIMER=0;		
@@ -249,7 +252,7 @@ static void INT_AGBPak(){
 /*------------------------------------------------------------------------------
                             Interrupt Class Methods
  ------------------------------------------------------------------------------*/
-void cINT::Init(){	
+void Interrupt::init(){	
   //DmaClear(3,	0			, XWRAM			, XWRAM_SIZE			, 32); //Clear XWRAM
   //DmaClear(3,	0			, IWRAM			, IWRAM_SIZE - 0x200	, 32); //Clear IWRAM
 	DmaClear(3,	0			, VRAM			, VRAM_SIZE				, 32); //Clear VRAM
@@ -260,7 +263,7 @@ void cINT::Init(){
 	*(vu32 *)INTR_VECTOR_BUF = (vu32 )IntrMainBuf;
 }
 
-void cINT::Disable(u8 value){
+void Interrupt::disable(u8 value){
 // Disable specific interrupts	
 	R_IME=0;
 	R_IE	&=	~IntrFlags[value];	
@@ -272,7 +275,7 @@ void cINT::Disable(u8 value){
 	R_IME=1;
 }
 
-void cINT::Enable(u8 value){	
+void Interrupt::enable(u8 value){	
 // Enable Specific interrupts
 	R_IME=0;
 	R_IE	|=	IntrFlags[value];

@@ -11,21 +11,21 @@
 #ifndef NDEBUG
 	
 typedef struct sVariableWatch {
-	u8 			size;
-	void*		variable;
-	const char* name;
-	u16 		timer;
-	u32 		last_value;
-	bool 		redraw;
+	u8 				size;
+	void*			variable;
+	const char* 	name;
+	u16 			timer;
+	u32 			last_value;
+	bool 			redraw;
 } VariableWatch;
 
 typedef struct sArrayWatch {
-	u8 			size;
-	void**		array;
-	u32 		last_value[16];
-	const char* name;
-	u16 		timer;
-	bool 		redraw;
+	u8 				size;
+	void**			array;
+	u32 			last_value[16];
+	const char* 	name;
+	u16 			timer;
+	bool 			redraw;
 } ArrayWatch;
 
 #endif
@@ -43,19 +43,19 @@ class Console {
 	public:
 		
 		Console				( const char *new_title=NULL, u16 color = COLOR_BLUE );
-		void percent			( float q );
+		void percent		( float q );
 		void print			( const char *text, u16 color = COLOR_CYAN );
 		void setCursor		( u8 x, u8 y);
 		void render			( );
 		void update			( );
-		void wait				( u8 time );
+		void wait			( u8 time );
 };
 
 class ProgressBar {
 	public:
-		ProgressBar();
-		void redraw();
-		void render(float q, bool highlight );
+		ProgressBar			( );
+		void redraw			( );
+		void render			(float q, bool highlight );
 };
 
 
@@ -99,7 +99,6 @@ class Debug {
 		static void watch			( const char *varname , void*	 var , u8 size);
 		
 		static void runTests		( );
-		static void updateMemory	( RegionHandler* rh );
 		static void updateWatch		( );
 		static void updateMemTest   ( RegionHandler* rh );
 		static void memoryTest		( Control* c, bool bigstep, bool add, u32* pointer );
@@ -109,22 +108,20 @@ class Debug {
 };
 
 #ifndef NDEBUG
-#define STRINGIZE(x)		STRINGIFY(x)
-	#define STRINGIFY(x)		#x
+	#define STRINGIZE(x)				STRINGIFY(x)
+	#define STRINGIFY(x)				#x
 	
 	#define ASSERT( expr ) 			if( ! expr ) Debug::bsod("Assertion "#expr" failed", " ", "FILE: "__FILE__ , "LINE: "STRINGIZE(__LINE__), 0 );
-	#define BREAK 					Debug::error(0x70CEBAD0, true	);
-	#define DEBUG_INIT()			Debug::init()
+	#define BREAK 						Debug::error(0x70CEBAD0, true	);
 	#define DEBUG_UPDATE()			Debug::updateWatch()
-	#define HALT 					Debug::bsod("HALT", "Program requested execution stop. ", "FILE: "__FILE__ , "LINE: "STRINGIZE(__LINE__), 0 );
-	#define WATCH(a) 				Debug::watch( #a, &a);
+	#define HALT 						Debug::bsod("HALT", "Program requested execution stop. ", "FILE: "__FILE__ , "LINE: "STRINGIZE(__LINE__), 0 );
+	#define WATCH(a) 					Debug::watch( #a, &a);
 	#define WATCH_U8_ARRAY(a) 		Debug::watchArray( #a, ( u8**)&a[0]);
 	#define WATCH_U16_ARRAY(a) 		Debug::watchArray( #a, (u16**)&a[0]);
 	#define WATCH_U32_ARRAY(a) 		Debug::watchArray( #a, (u32**)&a[0]);
 #else
 	#define ASSERT(a)
 	#define BREAK
-	#define DEBUG_INIT()
 	#define DEBUG_UPDATE()
 	#define HALT
 	#define WATCH(a)

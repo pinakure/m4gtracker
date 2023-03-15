@@ -589,9 +589,6 @@ void Debug::benchmark( RegionHandler &regHnd ){
 	o++;
 }
 
-void Debug::updateMemory( RegionHandler* rh ){
-}
-
 void Debug::updateMemTest(RegionHandler* rh){
 }
 
@@ -749,7 +746,6 @@ void Debug::watch			( const char *varname	, u32 var 	 				){}
 void Debug::watch			( const char *varname	, u16 var 	 				){}
 void Debug::watch			( const char *varname	, u32 var 	, u8 size		){}
 void Debug::runTests		( 													){}
-void Debug::updateMemory	( RegionHandler* rh 								){}
 void Debug::updateWatch		( 													){}
 void Debug::updateMemTest  	( RegionHandler* rh 								){}
 void Debug::memoryTest		( Control* c, bool bigstep, bool add, u32* pointer 	){}

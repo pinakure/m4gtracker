@@ -8,6 +8,7 @@ This regions must reside in each correspondent callback/xxx file
 #include "data.hpp"
 #include "viewports.hpp"
 #include "../modules/spu/mixer.hpp"
+#include "../modules/mem/mem.hpp"
 
 
 void updateCHANNEL0(RegionHandler* rh);
@@ -93,13 +94,13 @@ const Region REGION_MAP_3_CHANNEL2 		= { 0x09 , 0x04	, 0x14	, 0x14	, 0x0a	, 0x11
 const Region REGION_MAP_3_CHANNEL3 		= { 0x0D , 0x04	, 0x1e	, 0x14	, 0x0a	, 0x11	, NULL					, NULL					, NULL					, NULL					, 0x02	, NULL					, CHAN3_CONTROLS		, CHAN3_DISPLAYS	, ( Control* ) &( CHAN3_CONTROLS		[ CONTROL_CHANNEL3_0_CHAN3KEY_00] ) , VARS_CHAN3 		, Tracker::globalUpdate	, NULL			}; /*CHANNEL3*/
 const Region REGION_MAP_3_CHANNEL4 		= { 0x11 , 0x04	, 0x28	, 0x14	, 0x0a	, 0x11	, NULL					, NULL					, NULL					, NULL					, 0x02	, NULL					, CHAN4_CONTROLS		, CHAN4_DISPLAYS	, ( Control* ) &( CHAN4_CONTROLS		[ CONTROL_CHANNEL4_0_CHAN4KEY_00] ) , VARS_CHAN4 		, Tracker::globalUpdate	, NULL			}; /*CHANNEL4*/
 const Region REGION_MAP_3_CHANNEL5 		= { 0x15 , 0x04	, 0x32	, 0x14	, 0x0a	, 0x11	, NULL					, NULL					, NULL					, NULL					, 0x02	, NULL					, CHAN5_CONTROLS		, CHAN5_DISPLAYS	, ( Control* ) &( CHAN5_CONTROLS		[ CONTROL_CHANNEL5_0_CHAN5KEY_00] ) , VARS_CHAN5 		, Tracker::globalUpdate	, NULL			}; /*CHANNEL5*/
-const Region REGION_MAP_4_CFG 			= { 0xFF , 0xFF	, 0x00	, 0x00	, 0x1e	, 0x14	, &REGION_MAP_3_TRK		, &REGION_MAP_4_SNK		, &REGION_MAP_1_LIVE2	, &REGION_MAP_2_SNG		, 0x03	, &CACHE_DIRTY_MAP_4	, NULL					, NULL				, NULL 																		, VARS_CFG 			, NULL					, &VIEWPORT_CFG	}; /*CFG*/
+const Region REGION_MAP_4_CFG 			= { 0xFF , 0xFF	, 0x00	, 0x00	, 0x1e	, 0x14	, &REGION_MAP_3_TRK		, &REGION_MAP_4_SNK		, &REGION_MAP_1_LIVE2	, &REGION_MAP_2_SNG		, 0x03	, &CACHE_DIRTY_MAP_4	, NULL					, NULL				, NULL 																		, VARS_CFG 			, Config::update		, &VIEWPORT_CFG	}; /*CFG*/
 const Region REGION_MAP_4_SNK 			= { 0xFF , 0xFF	, 0x00	, 0x14	, 0x1e	, 0x14	, &REGION_MAP_2_INS		, &REGION_MAP_2_SNG		, &REGION_MAP_1_HLP		, &REGION_MAP_4_CFG		, 0x03	, NULL					, NULL					, NULL				, NULL 																		, VARS_SNK 			, SnakeGame::update		, NULL			}; /*SNK*/
 const Region REGION_MAP_4_LOOKNFEEL 	= { 0xFF , 0xFF	, 0x1e	, 0x00	, 0x19	, 0x0a	, NULL					, NULL					, NULL					, NULL					, 0x03	, &CACHE_DIRTY_MAP_4	, LOOKNFEEL_CONTROLS	, NULL				, ( Control* ) &( LOOKNFEEL_CONTROLS	[ 							0x0 ] ) , VARS_LOOKNFEEL 	, LookNFeel::update		, NULL			}; /*LOOKNFEEL*/
 const Region REGION_MAP_4_LINKMODE 		= { 0xFF , 0xFF	, 0x1e	, 0x0a	, 0x19	, 0x0a	, NULL					, NULL					, NULL					, NULL					, 0x03	, &CACHE_DIRTY_MAP_4	, LINKMODE_CONTROLS		, NULL				, ( Control* ) &( LINKMODE_CONTROLS		[ 							0x0 ] ) , VARS_LINKMODE 	, LinkMode::update 		, NULL			}; /*LINKMODE*/
 const Region REGION_MAP_4_BEHAVIOR 		= { 0xFF , 0xFF	, 0x1e	, 0x14	, 0x19	, 0x0a	, NULL					, NULL					, NULL					, NULL					, 0x03	, &CACHE_DIRTY_MAP_4	, BEHAVIOR_CONTROLS		, NULL				, ( Control* ) &( BEHAVIOR_CONTROLS		[ 							0x0 ] ) , VARS_BEHAVIOR 	, Behavior::update		, NULL			}; /*BEHAVIOR*/
 const Region REGION_MAP_4_TRACKER 		= { 0xFF , 0xFF	, 0x1e	, 0x1e	, 0x19	, 0x0a	, NULL					, NULL					, NULL					, NULL					, 0x03	, &CACHE_DIRTY_MAP_4	, TRACKER_CONTROLS		, NULL				, ( Control* ) &( TRACKER_CONTROLS		[ 							0x0 ] ) , VARS_TRACKER 		, Tracker::update		, NULL			}; /*TRACKER*/
-const Region REGION_MAP_4_MEMORY 		= { 0xFF , 0xFF	, 0x1e	, 0x28	, 0x19	, 0x0a	, NULL					, NULL					, NULL					, NULL					, 0x03	, &CACHE_DIRTY_MAP_4	, MEMORY_CONTROLS		, NULL				, ( Control* ) &( MEMORY_CONTROLS		[ 							0x0 ] ) , VARS_MEMORY 		, Debug::updateMemory	, NULL			}; /*MEMORY*/
+const Region REGION_MAP_4_MEMORY 		= { 0xFF , 0xFF	, 0x1e	, 0x28	, 0x19	, 0x0a	, NULL					, NULL					, NULL					, NULL					, 0x03	, &CACHE_DIRTY_MAP_4	, MEMORY_CONTROLS		, NULL				, ( Control* ) &( MEMORY_CONTROLS		[ 							0x0 ] ) , VARS_MEMORY 		, Mem::update			, NULL			}; /*MEMORY*/
 const Region REGION_MAP_4_COLOREDITOR 	= { 0xFF , 0xFF	, 0x00	, 0x28	, 0x12	, 0x04	, NULL					, NULL					, NULL					, NULL					, 0x03	, &CACHE_DIRTY_MAP_4	, NULL					, NULL				, NULL  																	, VARS_COLOREDITOR	, ColorEditor::update	, NULL			}; /*COLOREDITOR*/
 const Region REGION_MAP_4_CHANNELMIXER 	= { 0xFF , 0xFF	, 0x00	, 0x34	, 0x12	, 0x04	, NULL					, NULL					, NULL					, NULL					, 0x03	, &CACHE_DIRTY_MAP_4	, NULL					, NULL				, NULL  																	, VARS_CHANNELMIXER , Mixer::update			, NULL			}; /*CHANNELMIXER*/
 const Region REGION_MAP_4_MEMORYSONGMAP	= {	0xFF , 0xFF	, 0x00	, 0x38	, 0x12	, 0x04	, NULL					, NULL					, NULL					, NULL					, 0x03	, &CACHE_DIRTY_MAP_4	, NULL					, NULL				, NULL  																	, VARS_MEMORYSONGMAP, Config::memMap		, NULL			}; /*MEMORYSONGMAP*/

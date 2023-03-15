@@ -2,6 +2,7 @@
 #define SYS_HPP
 
 #include "../../agb.h"
+#include "../../data/enum.h"
 
 class Sys {
 	private:
@@ -13,6 +14,7 @@ class Sys {
 		static void reset();
 		static void update();
 		static void updateInput();
+		static void setScreen( eScreens screen );
 };
 
 extern Sys sys;

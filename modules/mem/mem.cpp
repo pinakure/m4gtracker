@@ -1,4 +1,5 @@
 #include "mem.hpp"
+#include "../../callbacks/debug.hpp"
 
 typedef struct
 {
@@ -38,4 +39,9 @@ void Mem::get(u8 blocks){
 }
 
 void Mem::free(u16 addr){
+}
+
+void Mem::update( RegionHandler* rh ){
+	// REGION Callback for Memory Submenu in CFG Screen
+	
 }

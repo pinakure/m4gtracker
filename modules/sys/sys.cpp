@@ -8,6 +8,11 @@
 #include "../spu/synth.hpp"
 #include "../spu/mixer.hpp"
 #include "../net/net.hpp"
+#include "../int/int.hpp"
+#include "../mem/mem.hpp"
+#include "../sram/sram.hpp"
+#include "../tim/tim.hpp"
+#include "../../callbacks/cfg.hpp"
 #include "../clip/clip.hpp"
 #include "../key/key.hpp"
 #include "../../data/data.hpp"
@@ -22,16 +27,62 @@ void Sys::reset(){
 	asm("swi 00");
 }
 
+void Sys::setScreen( eScreens screen ){
+	switch( screen ){
+		case SCREEN_LIV1	: return regHnd.load( &REGION_MAP_1_LIVE1 	);
+		case SCREEN_LIV2	: return regHnd.load( &REGION_MAP_1_LIVE2 	);
+		case SCREEN_HLP		: return regHnd.load( &REGION_MAP_1_HLP 		);
+		case SCREEN_PAT		: return regHnd.load( &REGION_MAP_2_PAT		);
+		case SCREEN_TRK		: return regHnd.load( &REGION_MAP_3_TRK 		);
+		case SCREEN_INS		: return regHnd.load( &REGION_MAP_2_INS		);
+		case SCREEN_SNG		: return regHnd.load( &REGION_MAP_2_SNG		);
+		case SCREEN_CFG		: return regHnd.load( &REGION_MAP_4_CFG		);
+		case SCREEN_SNK		: return regHnd.load( &REGION_MAP_4_SNK		);
+	}		
+}
+
 void Sys::init(){
+	
+	/*!-----------------------------------------------*/
+	/* Low level initialization								*/
+	/*!-----------------------------------------------*/
+	Interrupt::init();	
+	Mem::init();
+	Sram::init();
+	Gpu::init();
+	
+	// Enable interrupts
+	Interrupt::enable( IRQ_VBLANK );
+	Interrupt::enable( IRQ_HBLANK );
+	//Interrupt::enable(IRQ_KEYPAD); // We poll the keyboard every call to KEY.update, so no input keyboard is used
+	
+	// Initialize timers
+	timer0.init(0);
+	timer0.setup(0x0004, 1);
+	timer0.enable();
+
+	/*!-----------------------------------------------*/
+	/* High level initialization							*/
+	/*!-----------------------------------------------*/
 	cursor		= 0x00; 
-	keyboard 		= 0x0000;
+	keyboard 		= 0x0000; // Clear Keypress, down and up buffer (AB, SL, ST, arrows)
+	//keyrate  	 = 40;
+	//retrig    	= false;
 	
-	DEBUG_INIT();
+	#ifndef NDEBUG
+	Debug::init();
+	#endif
 	
+	// First of all load config
+	Config::load();
+	
+	// Initialize Input registers
 	KEYINIT();
 	
+	// Cleanup clipboard dirt
 	Clip::init();
 	
+	// Default restore SPU Subclasses
 	Sequencer::init( VAR_SONG.BPM );
 	Synth::init();
 	Mixer::init();
@@ -44,15 +95,22 @@ void Sys::init(){
 	
 	Net::init();
 	
-	//keyrate  = 40;
-	//retrig   = false;
-	keyboard = 0x0000; // Clear Keypress, down and up buffer (AB, SL, ST, arrows)
-	cursor = 0x00; 
-	
 	SnakeGame::init();
-	/*for(int i=0; i<6; i++){
-		VAR_PATTERN[i].POINTER = VAR_PATTERN[i].ORDER;
-	}*/
+	
+	// Load first instrument
+	InstEdit::unpack( &VAR_INSTRUMENT );	
+
+	// Finally, if in debug build, run prioritary tests (prototypes), then continue
+	#ifndef NDEBUG
+	Debug::runTests();
+	#endif
+	
+	// Start SYS
+	Gpu::clear();
+	LookNFeel::init();
+	
+	// Start at Tracker screen	
+	setScreen( SCREEN_TRK );
 }
 
 #define BUTTON_A			(kb & 0x0001)

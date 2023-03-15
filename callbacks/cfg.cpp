@@ -1,6 +1,7 @@
 #include "cfg.hpp"
 
 #include "../macros.h"
+#include "../timestamp.h"
 #include "../modules/sys/sys.hpp"
 #include "../modules/net/net.hpp"
 #include "../modules/sram/sram.hpp"
@@ -16,38 +17,38 @@ const Callback cb_cfg_menuindex		= { modify5VAL					, EVENT_MODIFY_B	, &VAR_CFG.
 // LookNFeel Submenu		
 const Callback cb_cfg_interface		= { modify1BIT					, EVENT_MODIFY_B	, &VAR_CFG.LOOKNFEEL.INTERFACE	, NULL };
 const Callback cb_cfg_font			= { modify2BIT					, EVENT_MODIFY_B	, &VAR_CFG.LOOKNFEEL.FONT		, NULL };
-const Callback cb_cfg_border			= { modify2BIT					, EVENT_MODIFY_B	, &VAR_CFG.LOOKNFEEL.BORDER		, NULL };
+const Callback cb_cfg_border		= { modify2BIT					, EVENT_MODIFY_B	, &VAR_CFG.LOOKNFEEL.BORDER		, NULL };
 const Callback cb_cfg_showlogo		= { modify1BIT					, EVENT_KEYDOWN_B	, &VAR_CFG.LOOKNFEEL.SHOWLOGO	, NULL };
 const Callback cb_cfg_startupsfx	= { modify1BIT					, EVENT_KEYDOWN_B	, &VAR_CFG.LOOKNFEEL.STARTUPSFX	, NULL };
-const Callback cb_cfg_coloreditor	= { ColorEditor::show 			, EVENT_KEYUP_B		, NULL									, NULL };
+const Callback cb_cfg_coloreditor	= { ColorEditor::show 			, EVENT_KEYUP_B		, NULL							, NULL };
 // LinkMode Submenu
 const Callback cb_cfg_linkmode		= { Net::alterMode				, EVENT_MODIFY_B	, &VAR_CFG.LINKMODE.LINKMODE	, NULL };
-const Callback cb_cfg_masterclock	= { LinkMode::toggleMaster	, EVENT_KEYDOWN_B	, &VAR_CFG.LINKMODE.MASTERCLOCK	, NULL };
+const Callback cb_cfg_masterclock	= { LinkMode::toggleMaster		, EVENT_KEYDOWN_B	, &VAR_CFG.LINKMODE.MASTERCLOCK	, NULL };
 const Callback cb_cfg_syncrate		= { modify4BIT					, EVENT_MODIFY_B	, &VAR_CFG.LINKMODE.SYNCRATE	, NULL };
 const Callback cb_cfg_syncticks  	= { modify8BIT					, EVENT_MODIFY_B	, &VAR_CFG.LINKMODE.SYNCTICKS	, NULL };
-const Callback cb_cfg_receivesong	= { LinkMode::songRecv		, EVENT_KEYUP_B		, NULL 								, NULL };
-const Callback cb_cfg_sendsong		= { LinkMode::songSend		, EVENT_KEYUP_B		, NULL 								, NULL };
+const Callback cb_cfg_receivesong	= { LinkMode::songRecv			, EVENT_KEYUP_B		, NULL 							, NULL };
+const Callback cb_cfg_sendsong		= { LinkMode::songSend			, EVENT_KEYUP_B		, NULL 							, NULL };
 // Behavior SubMenu
 const Callback cb_cfg_autoload		= { modify1BIT					, EVENT_KEYDOWN_B	, &VAR_CFG.BEHAVIOR.AUTOLOAD	, NULL };
 const Callback cb_cfg_keyrate		= { modify4BIT					, EVENT_MODIFY_B	, &VAR_CFG.BEHAVIOR.KEYRATE		, NULL };
 const Callback cb_cfg_buttonset		= { modify2BIT					, EVENT_MODIFY_B	, &VAR_CFG.BEHAVIOR.BUTTONSET	, NULL };
-const Callback cb_cfg_saveconfig	= { Config::save				, EVENT_KEYUP_B		, NULL 								, NULL };
-const Callback cb_cfg_loadconfig	= { Config::load				, EVENT_KEYUP_B		, NULL 								, NULL };
-const Callback cb_cfg_initconfig	= { Config::defaults			, EVENT_KEYUP_B		, NULL 								, NULL };
+const Callback cb_cfg_saveconfig	= { Config::save				, EVENT_KEYUP_B		, NULL 							, NULL };
+const Callback cb_cfg_loadconfig	= { Config::load				, EVENT_KEYUP_B		, NULL 							, NULL };
+const Callback cb_cfg_initconfig	= { Config::defaults			, EVENT_KEYUP_B		, NULL 							, NULL };
 // Tracker SubMenu
 const Callback cb_cfg_finetune		= { modify4BIT					, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.FINETUNE		, NULL };
 const Callback cb_cfg_prelisten		= { modify1BIT					, EVENT_KEYDOWN_B	, &VAR_CFG.TRACKER.PRELISTEN	, NULL };
 const Callback cb_cfg_transpose		= { modify8BIT					, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.TRANSPOSE	, NULL };
 const Callback cb_cfg_inputmode		= { modify1BIT					, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.INPUTMODE	, NULL };
 const Callback cb_cfg_soundbias		= { modify8BIT					, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.SOUNDBIAS	, NULL };
-const Callback cb_cfg_mixer			= { Mixer::show					, EVENT_KEYUP_B		, NULL 								, NULL };
+const Callback cb_cfg_mixer			= { Mixer::show					, EVENT_KEYUP_B		, NULL 							, NULL };
 //	Memory Submenu		
 const Callback cb_cfg_prefetch		= { modify1BIT					, EVENT_KEYDOWN_B	, &VAR_CFG.MEMORY.PREF	 		, NULL };
-const Callback cb_cfg_backup			= { Config::backup				, EVENT_KEYUP_B		, NULL 								, NULL };
-const Callback cb_cfg_revert			= { Config::revert				, EVENT_KEYUP_B		, NULL 								, NULL };
-const Callback cb_cfg_memorytest	= { Debug::memoryTest			, EVENT_KEYUP_B		, NULL 								, NULL };
-const Callback cb_cfg_format			= { Config::format 				, EVENT_KEYUP_B		, NULL 								, NULL };
-const Callback cb_cfg_reset			= { Config::reset				, EVENT_KEYUP_B		, NULL 								, NULL };
+const Callback cb_cfg_backup		= { Config::backup				, EVENT_KEYUP_B		, NULL 							, NULL };
+const Callback cb_cfg_revert		= { Config::revert				, EVENT_KEYUP_B		, NULL 							, NULL };
+const Callback cb_cfg_memorytest	= { Debug::memoryTest			, EVENT_KEYUP_B		, NULL 							, NULL };
+const Callback cb_cfg_format		= { Config::format 				, EVENT_KEYUP_B		, NULL 							, NULL };
+const Callback cb_cfg_reset			= { Config::reset				, EVENT_KEYUP_B		, NULL 							, NULL };
 /*---------------------------------------------------------------------------------------------------------------------*/
 
 void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
@@ -56,25 +57,25 @@ void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 	u8 h;
 
 	static const BitField tracker_settings[8] = {
-		{ &VAR_LIVE.PERFORM.RETRIG		, 6 , 	1 },
-		{ &VAR_CFG.MEMORY.PREF			, 5 , 	1 },
-		{ &VAR_CFG.TRACKER.HEADERTYPE	, 4 , 	1 },
-		{ &VAR_CFG.TRACKER.INPUTMODE	, 3 , 	1 },
-		{ &VAR_CFG.TRACKER.PRELISTEN	, 2 , 	1 },
-		{ &VAR_CFG.BEHAVIOR.BUTTONSET	, 0 , 	2 },
-		{ NULL							, 0 ,   0 }, 
-		{ NULL							, 0 ,   0 }, 
+		{ &VAR_LIVE.PERFORM.RETRIG			, 6 , 	1 },
+		{ &VAR_CFG.MEMORY.PREF				, 5 , 	1 },
+		{ &VAR_CFG.TRACKER.HEADERTYPE		, 4 , 	1 },
+		{ &VAR_CFG.TRACKER.INPUTMODE		, 3 , 	1 },
+		{ &VAR_CFG.TRACKER.PRELISTEN		, 2 , 	1 },
+		{ &VAR_CFG.BEHAVIOR.BUTTONSET		, 0 , 	2 },
+		{ NULL								, 0 ,  0 }, 
+		{ NULL								, 0 ,  0 }, 
 	};
 		
 	static const BitField look_n_feel[8] = {
-		{ &VAR_CFG.BEHAVIOR.AUTOLOAD	, 7 , 	1 },
-		{ &VAR_CFG.LOOKNFEEL.STARTUPSFX , 6 , 	1 },
-		{ &VAR_CFG.LOOKNFEEL.SHOWLOGO   , 5 , 	1 },
-		{ &VAR_CFG.LOOKNFEEL.INTERFACE  , 4 , 	1 },
-		{ &VAR_CFG.LOOKNFEEL.FONT		, 2 , 	2 },
-		{ &VAR_CFG.LOOKNFEEL.BORDER 	, 0 , 	2 },
-		{ NULL							, 0 ,   0 }, 
-		{ NULL							, 0 ,   0 }, 
+		{ &VAR_CFG.BEHAVIOR.AUTOLOAD		, 7 , 	1 },
+		{ &VAR_CFG.LOOKNFEEL.STARTUPSFX	 	, 6 , 	1 },
+		{ &VAR_CFG.LOOKNFEEL.SHOWLOGO   	, 5 , 	1 },
+		{ &VAR_CFG.LOOKNFEEL.INTERFACE  	, 4 , 	1 },
+		{ &VAR_CFG.LOOKNFEEL.FONT			, 2 , 	2 },
+		{ &VAR_CFG.LOOKNFEEL.BORDER 		, 0 , 	2 },
+		{ NULL								, 0 ,  0 }, 
+		{ NULL								, 0 ,  0 }, 
 	};
 
 	EXPECT(10, SAVING, SETTINGS);
@@ -92,58 +93,54 @@ void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 		readNibbles( VAR_CFG.PAL[di+1].G, VAR_CFG.PAL[di+1].B);
 	}	
 		
-	// Look And Feel
-	readFields	( look_n_feel );
-
-	// Link mode
-	readByte	( VAR_CFG.LINKMODE.LINKMODE 									);
-	readByte	( VAR_CFG.LINKMODE.MASTERCLOCK									);
-	readByte	( VAR_CFG.LINKMODE.SYNCRATE 									);
-	readByte	( VAR_CFG.LINKMODE.SYNCTICKS									);
-	
-	// Behavior, live and tracker
-	readByte	( VAR_CFG.BEHAVIOR.KEYRATE 		);
-
-	// Tracker settings
-	readFields	( tracker_settings );
-	
-	readByte	( VAR_CFG.TRACKER.TRANSPOSE 									);
-	readByte	( VAR_CFG.TRACKER.SOUNDBIAS 									);
-	readNibbles	( VAR_LIVE.PERFORM.SPEED	, VAR_CFG.TRACKER.FINETUNE	, 0xF	);
-	readNibbles	( VAR_LIVE.PERFORM.QUANTIZE	, VAR_LIVE.PIANO.QUANTIZE	, 0x3	);
-	readNibbles	( VAR_LIVE.PIANO.OCTAVE		, VAR_LIVE.PIANO.MODE 		, 0xF	);
+	/*! Look And Feel																*/
+	readFields	( look_n_feel 														);
+	/*! Link mode																	*/
+	readByte	( VAR_CFG.LINKMODE.LINKMODE 										);
+	readByte	( VAR_CFG.LINKMODE.MASTERCLOCK										);
+	readByte	( VAR_CFG.LINKMODE.SYNCRATE 										);
+	readByte	( VAR_CFG.LINKMODE.SYNCTICKS										);	
+	/*! Behavior, live and tracker													*/
+	readByte	( VAR_CFG.BEHAVIOR.KEYRATE 											);
+	/*! Tracker settings 															*/
+	readFields	( tracker_settings 													);	
+	readByte	( VAR_CFG.TRACKER.TRANSPOSE 										);
+	readByte	( VAR_CFG.TRACKER.SOUNDBIAS 										);
+	readNibbles	( VAR_LIVE.PERFORM.SPEED		, VAR_CFG.TRACKER.FINETUNE	, 0xF	);
+	readNibbles	( VAR_LIVE.PERFORM.QUANTIZE		, VAR_LIVE.PIANO.QUANTIZE	, 0x3	);
+	readNibbles	( VAR_LIVE.PIANO.OCTAVE			, VAR_LIVE.PIANO.MODE 		, 0xF	);
 	readByte	( VAR_LIVE.PIANO.TRANSPOSE);
 	
 	for(i=0; i<2; i++){
-		readByte( VAR_LIVE.PIANO.CHANNEL[i]  );
-		readByte( VAR_LIVE.PIANO.MIDICHAN[i] );
+		readByte( VAR_LIVE.PIANO.CHANNEL	[i] );
+		readByte( VAR_LIVE.PIANO.MIDICHAN	[i] );
 	}
 	
 	//46dec
 	
 	// Live Settings and tables
 	SRAM.seek(47);
-	for(i=0;i<8;i++){		
+	for( i=0 ; i < 8 ; i++ ){
 		w = SRAM.read16();
-		VAR_LIVE.PERFORM.LEFT.KEY[i] = EXTRACT( w, 9, 0x7F);
-		VAR_LIVE.PERFORM.LEFT.INS[i] = EXTRACT( w, 5, 0x3F);
-		VAR_LIVE.PERFORM.LEFT.CMD[i] = w & 0x1F;
+		VAR_LIVE.PERFORM.LEFT.KEY	[i] = EXTRACT( w, 9, 0x7F);
+		VAR_LIVE.PERFORM.LEFT.INS	[i] = EXTRACT( w, 5, 0x3F);
+		VAR_LIVE.PERFORM.LEFT.CMD	[i] = w & 0x1F;
 
 		w = SRAM.read16();
-		VAR_LIVE.PERFORM.RIGHT.KEY[i] = EXTRACT( w, 9, 0x7F);
-		VAR_LIVE.PERFORM.RIGHT.INS[i] = EXTRACT( w, 5, 0x3F);
-		VAR_LIVE.PERFORM.RIGHT.CMD[i] = w & 0x1F;
+		VAR_LIVE.PERFORM.RIGHT.KEY	[i] = EXTRACT( w, 9, 0x7F);
+		VAR_LIVE.PERFORM.RIGHT.INS	[i] = EXTRACT( w, 5, 0x3F);
+		VAR_LIVE.PERFORM.RIGHT.CMD	[i] = w & 0x1F;
 		
 		h = SRAM.read();
-		VAR_LIVE.PERFORM.LEFT.CHAN[i] = EXTRACT( h, 4, 0xF);
-		VAR_LIVE.PERFORM.LEFT.VOL[i] = h & 0xF;
+		VAR_LIVE.PERFORM.LEFT.CHAN	[i] = EXTRACT( h, 4, 0xF);
+		VAR_LIVE.PERFORM.LEFT.VOL	[i] = h & 0xF;
 		
 		h = SRAM.read();
-		VAR_LIVE.PERFORM.RIGHT.CHAN[i] = EXTRACT( h, 4, 0xF);
-		VAR_LIVE.PERFORM.RIGHT.VOL[i] = h & 0xF;
+		VAR_LIVE.PERFORM.RIGHT.CHAN	[i] = EXTRACT( h, 4, 0xF);
+		VAR_LIVE.PERFORM.RIGHT.VOL	[i] = h & 0xF;
 		
-		VAR_LIVE.PERFORM.LEFT.VAL[i] = SRAM.read();
-		VAR_LIVE.PERFORM.RIGHT.VAL[i] = SRAM.read();
+		VAR_LIVE.PERFORM.LEFT.VAL	[i] = SRAM.read();
+		VAR_LIVE.PERFORM.RIGHT.VAL	[i] = SRAM.read();
 	}
 	
 	//0x6F
@@ -330,7 +327,11 @@ void Config::defaults (Control *c, bool bigstep, bool add, u32 *pointer){
 }
 
 void Config::reset (Control *c, bool bigstep, bool add, u32 *pointer){
-	Sys::reset();
+	ReallyDialog::enable();
+	if( ReallyDialog::result ) 
+		Sys::reset();
+	regHnd.redraw = true;
+	regHnd.update(0);
 }
 
 void Config::reinit (Control *c, bool bigstep, bool add, u32 *pointer){
@@ -340,4 +341,12 @@ void Config::reinit (Control *c, bool bigstep, bool add, u32 *pointer){
 
 void Config::memMap( RegionHandler* rh ){
 
+}
+
+void Config::update( RegionHandler* rh ){
+	if( regHnd.redraw ){
+		Gpu::ascii( 34, 1, "Build date", COLOR_DARK_BLUE);
+		Gpu::ascii( 34, 2, TIMESTAMP, COLOR_DARK_CYAN 	);
+		regHnd.redraw = false;
+	}
 }
