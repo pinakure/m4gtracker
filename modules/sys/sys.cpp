@@ -2,6 +2,16 @@
 #include "../../data/input.hpp"
 #include "../../callbacks/snk.hpp"
 #include "../../callbacks/debug.hpp"
+#include "../../callbacks/trk.hpp"
+#include "../../callbacks/pat.hpp"
+#include "../spu/sequencer.hpp"
+#include "../spu/synth.hpp"
+#include "../spu/mixer.hpp"
+#include "../net/net.hpp"
+#include "../clip/clip.hpp"
+#include "../key/key.hpp"
+#include "../../data/data.hpp"
+#include "../../macros.h"
 
 Sys sys;
 
@@ -42,26 +52,26 @@ void Sys::init(){
 	}*/
 }
 
-#define BUTTON_A		(kb & 0x0001)
-#define BUTTON_B		(kb & 0x0002)
-#define BUTTON_SELECT	(kb & 0x0004)
-#define BUTTON_START	(kb & 0x0008)
-#define BUTTON_R		(kb & 0x0100)
-#define BUTTON_L		(kb & 0x0200)
-#define BUTTON_RIGHT	(kb & 0x0010)
+#define BUTTON_A			(kb & 0x0001)
+#define BUTTON_B			(kb & 0x0002)
+#define BUTTON_SELECT		(kb & 0x0004)
+#define BUTTON_START		(kb & 0x0008)
+#define BUTTON_R			(kb & 0x0100)
+#define BUTTON_L			(kb & 0x0200)
+#define BUTTON_RIGHT		(kb & 0x0010)
 #define BUTTON_LEFT		(kb & 0x0020)
-#define BUTTON_UP		(kb & 0x0040)
+#define BUTTON_UP			(kb & 0x0040)
 #define BUTTON_DOWN		(kb & 0x0080)
 
-#define KEYBOARD_A		0x0001
-#define KEYBOARD_B		0x0004
+#define KEYBOARD_A			0x0001
+#define KEYBOARD_B			0x0004
 #define KEYBOARD_SELECT	0x0010
 #define KEYBOARD_START	0x0040
-#define KEYBOARD_R		0x0100
-#define KEYBOARD_L		0x0400
-#define CURSOR_RIGHT	0x01
+#define KEYBOARD_R			0x0100
+#define KEYBOARD_L			0x0400
+#define CURSOR_RIGHT		0x01
 #define CURSOR_LEFT		0x04
-#define CURSOR_UP		0x10
+#define CURSOR_UP			0x10
 #define CURSOR_DOWN		0x40
 
 void Sys::updateInput(){
@@ -222,8 +232,7 @@ void Sys::update(){
 	
 	Sequencer::update();	
 	KEY.update();
-	updateInput();
-	
+	updateInput();	
 	
 	//if(KEY.press(KEY_L)) overloadTest(regHnd);
 	// if(KEY.Press(KEY_R))gpu.vs->draw(14,2);

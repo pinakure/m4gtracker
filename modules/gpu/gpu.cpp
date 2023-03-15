@@ -1,4 +1,7 @@
 #include "gpu.hpp"
+#include "../../callbacks/debug.hpp"
+#include "../../data/helpers.hpp"
+#include "../../data/caches.hpp"
 
 Gpu gpu;
 

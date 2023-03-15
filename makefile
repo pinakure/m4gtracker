@@ -2,6 +2,15 @@ PROGNAME=m4g
 #rm C:/agb/BATTERY/*.SAV
 # NOTE: REMOVE DEBUG.O FROM OFILES WHEN RELEASING TO STRIP 5 KB OF USELESS DATA
 OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
+		modules/int/int.o \
+		modules/tim/tim.o \
+		modules/sys/sys.o \
+		modules/sram/sram.o \
+		modules/clip/clip.o \
+		modules/key/key.o \
+		modules/mem/mem.o \
+		modules/gpu/gpu.o \
+		modules/net/net.o \
 		modules/spu/mixer.o \
 		modules/spu/sequencer.o \
 		modules/spu/synth.o \
@@ -86,6 +95,9 @@ $(PROGNAME).gba : $(PROGNAME).elf
 	$(AS) -o $@ $(ASFLAGS) $<
 
 $(PROGNAME).elf : $(OFILES)
+	@echo -------------------------------------------------------------------------------
+	@echo Linking
+	@echo -------------------------------------------------------------------------------
 	$(LD) $(LDFLAGS) -o $(PROGNAME).elf $(OFILES) $(LDLIBS)
 
 index.m4h: index.hml
@@ -98,6 +110,9 @@ all : $(PROGNAME).gba
 help: index.m4h
 
 vba : all fixheader
+	@echo -------------------------------------------------------------------------------
+	@echo Patching ROM
+	@echo -------------------------------------------------------------------------------
 	$(HAMDIR)/tools/win32/vbawin.exe $(PROGNAME).gba
 
 gba : clean vba
@@ -105,14 +120,45 @@ gba : clean vba
 fixheader:
 	$(HAMDIR)/tools/win32/gbafix$(EXEC_POSTFIX) $(PROGNAME).gba -t$(PROGNAME)
 
-clean:
-	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f *.o *.i *.ii *.m4h	
-	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f data/*.o *.i *.ii *.m4h	
-	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f callbacks/*.o *.i *.ii *.m4h	
+clean-modules: 
+	@echo -------------------------------------------------------------------------------
+	@echo Cleaning up modules
+	@echo -------------------------------------------------------------------------------
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/int/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/tim/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/sys/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/clip/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/key/*.o *.i *.ii *.m4h	
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/gpu/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/net/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/mem/*.o *.i *.ii *.m4h	
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/spu/*.o *.i *.ii *.m4h	
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/sram/*.o *.i *.ii *.m4h	
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/key/*.o *.i *.ii *.m4h	
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/clip/*.o *.i *.ii *.m4h	
+
+clean-callbacks: clean-modules
+	@echo -------------------------------------------------------------------------------
+	@echo Cleaning callbacks
+	@echo -------------------------------------------------------------------------------
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f callbacks/*.o *.i *.ii *.m4h	
+
+clean-data: clean-callbacks
+	@echo -------------------------------------------------------------------------------
+	@echo Cleaning data
+	@echo -------------------------------------------------------------------------------
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f data/*.o *.i *.ii *.m4h	
+
+clean-dialogs: clean-data
+	@echo -------------------------------------------------------------------------------
+	@echo Cleaning dialogs
+	@echo -------------------------------------------------------------------------------
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f dialogs/*.o *.i *.ii *.m4h	
-	
+
+clean: clean-dialogs
+	@echo -------------------------------------------------------------------------------
+	@echo Cleaning program code
+	@echo -------------------------------------------------------------------------------
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f *.o *.i *.ii *.m4h	
+	@echo --------------------------------------------------------------------------------------------------------------------------------------------------------------
+

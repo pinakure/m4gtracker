@@ -101,4 +101,6 @@ class cKEY
 
 extern cKEY KEY;
 
+extern volatile bool SYS_QUERYKEY;		 //True when a key is triggered
+
 #endif

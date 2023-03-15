@@ -2,6 +2,14 @@
 #define SRAM_HPP 
 
 #include "../../agb.h"
+#include "../../macros.h"
+#include "../../data/helpers.hpp"
+#include "../gpu/gpu.hpp"
+#include "../spu/sequencer.hpp"
+#include "../../callbacks/trk.hpp"
+#include "../../callbacks/pat.hpp"
+#include "../../callbacks/ins.hpp"
+#include "../../data/data.hpp"
 
 #define DEVICE_EEPROM		0x0000
 #define DEVICE_SST			0xD4BF

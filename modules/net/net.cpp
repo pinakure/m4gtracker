@@ -1,6 +1,9 @@
+#include "net.hpp"
+#include "../../data/data.hpp"
+
 /*
 
-n this mode, the SIO is 'misused' as a 4bit bi-directional parallel port, each
+In this mode, the SIO is 'misused' as a 4bit bi-directional parallel port, each
 of the SI,SO,SC,SD pins may be directly controlled, each can be separately
 declared as input (with internal pull-up) or as output signal.
 

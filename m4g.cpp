@@ -39,7 +39,7 @@ int main(void){
 		PREFETCH
 		
 		INT.Init();	
-		MEM.Init();
+		Mem::init();
 		sys.init();
 		SRAM.Init();
 		gpu.start();

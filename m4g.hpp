@@ -35,15 +35,6 @@
 
 #include "timestamp.h"
 
-extern vu32 SYS_TIMER;					 //Global program timer
-extern volatile bool SYS_QUERYKEY;		 //True when a key is triggered
-extern int main(void);					 //Needed by INTERRUPTS!!!
-extern u32	SYS_PROFILEDTIME;				 //Profiled time (Debug Only)
-extern volatile bool SYS_SOUNDTIME;		 //Sound processing flag
-extern vu32 SYS_PROFILETIMER;			 //Profiling timer (Debug Only)
-extern vu32 SYS_FPS;						 //Frames(program cycles) / sec
-extern vu32 SYS_FRAMES;					 //Current framecount	
-
 // #define VSYNC
 		
 #include "data/enum.h"

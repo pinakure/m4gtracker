@@ -1,12 +1,3 @@
 #include "modules.hpp"
 
-#include "int/int.cpp"
-#include "tim/tim.cpp"
-#include "net/net.cpp"
-#include "gpu/gpu.cpp"
-#include "mem/mem.cpp"
-#include "key/key.cpp"
-#include "sram/sram.cpp"
 #include "regionhandler/regionhandler.cpp"
-#include "clip/clip.cpp"
-#include "sys/sys.cpp"

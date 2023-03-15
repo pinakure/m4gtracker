@@ -1,16 +1,16 @@
+#include "mem.hpp"
+
 typedef struct
 {
 
 }t_chunk;
 
 
-void cMEM::Init(void)
-{
+void Mem::init(){
 	
 }
 
-void cMEM::Test(void)
-{
+void Mem::test(){
 	u8* test8=(u8*)malloc(sizeof(u8)*256);
 	u16* test16=(u16*)malloc(sizeof(u16)*256);
 	u32* test32=(u32*)malloc(sizeof(u32)*256);
@@ -27,10 +27,15 @@ void cMEM::Test(void)
 		//GPU.PrintF(0,0, " ADDR8=%p  ADDR16=%p      ADDR32=%p  ",test8, test16, test32);
 		//GPU.SetTile(BG_TEXT, TILESET_HEXADECIMAL + test8[x], x%30, 2+(x/30), 0x6); 
 	}
-	free(test8);
-	free(test16);
-	free(test32);
+	/*
+	Mem::free(test8);
+	Mem::free(test16);
+	Mem::free(test32);
+	*/
 }
 
-cMEM MEM;
+void Mem::get(u8 blocks){
+}
 
+void Mem::free(u16 addr){
+}

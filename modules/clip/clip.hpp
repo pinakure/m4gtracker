@@ -2,6 +2,7 @@
 #define CLIP_HPP
 
 #include "../../agb.h"
+#include "../regionhandler/regionhandler.hpp"
 
 typedef enum eClipboardAction {
 	CLIP_NONE,

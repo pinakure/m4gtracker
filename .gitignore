@@ -200,3 +200,7 @@ progress.s
 really.s
 adsr.s
 modules/spu/adsr.o
+clip.s
+modules/clip/clip.o
+modules/net/net.o
+net.s

@@ -1,5 +1,10 @@
 #include "clip.hpp"
 #include "../../callbacks/debug.hpp"
+#include "../gpu/gpu.hpp"
+#include "../../data/data.hpp"
+#include "../../callbacks/trk.hpp"
+#include "../../callbacks/pat.hpp"
+#include "../key/key.hpp"
 
 u16 Clipboard::data[16*6];	// 16 rows, 6 channels / 5 fields. If copying patterns, values are lost and viceversa
 u16 Clipboard::len;			// length of the block used currently (0 by default)

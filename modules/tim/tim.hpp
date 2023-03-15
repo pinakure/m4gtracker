@@ -1,4 +1,8 @@
 #ifndef TIM_HPP
+#define TIM_HPP
+	
+	#include "../../agb.h" 
+
 	#define TIM_HPP
 	#define TIM_ENABLE			0x80
 	#define TIM_CASCADE			0x04
