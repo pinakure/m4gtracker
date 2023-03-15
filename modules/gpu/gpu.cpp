@@ -4,9 +4,13 @@
 #include "../../data/helpers.hpp"
 #include "../../data/caches.hpp"
 
-Gpu gpu;
-
-const u16 Gpu::colors[16][2] = {
+const unsigned short*	Gpu::MAP0;
+const unsigned short*	Gpu::MAP1;
+const unsigned short*	Gpu::MAP2;
+vu8  						Gpu::redraw;
+bool 						Gpu::blink;
+u16 						Gpu::vcount;
+const	u16				Gpu::colors[16][2] = {
 	{ COLOR_NONE			<< 12 , COLOR_NONE 			<< 12 },
 	{ COLOR_DARK_CYAN	<< 12 , COLOR_CYAN 			<< 12 },
 	{ COLOR_CYAN			<< 12 , COLOR_DARK_CYAN 	<< 12 },
@@ -30,12 +34,6 @@ const u32 LAYERS[3] = {
 	SCREEN_BASE1_ADDR,
 	SCREEN_BASE2_ADDR
 };
-
-Gpu::Gpu(){
-	redraw = 0;
-	vcount = 0;
-	blink  = false;
-}
 	
 void Gpu::loadPalette(){
 	// Load palette
@@ -72,7 +70,12 @@ bool Gpu::isVblank() {
 	return (R_VCOUNT&0x00FF >=160);
 }
 
-void Gpu::start(){
+void Gpu::init(){
+
+	redraw = 0;
+	vcount = 0;
+	blink  = false;
+
 	// Force HBLANK to access VRAM
 	R_DISPCNT = DISP_FORCE_HBLANK; 
 	
@@ -97,11 +100,11 @@ void Gpu::start(){
 	VirtualScreen::init();
 }
 
-void Gpu::safeblit(E_Maps mapIndex, int startx, int starty, int x, int y, int width, int height){
+void Gpu::blitSafe(E_Maps mapIndex, int startx, int starty, int x, int y, int width, int height){
 	//copy area being to be written to a safe place first (safe place would be defined dirty area)
 }
 
-void Gpu::blit_0(E_Maps mapIndex, u8 startx, int starty, u8 x, u8 y, u8 width, u8 height){
+void Gpu::blitBg(E_Maps mapIndex, u8 startx, int starty, u8 x, u8 y, u8 width, u8 height){
 	static int offsetSrc;
 	static int offsetDst;
 	
@@ -165,7 +168,7 @@ void Gpu::blinkUpdate( int speed){
 	blink = (vcount & 0xFFFF>>speed) > (0x8000>>speed);
 }
 
-void Gpu::otherBlit(const u16 *map_address, int startx, int starty, int x, int y, int width, int height){
+void Gpu::blitAlt(const u16 *map_address, int startx, int starty, int x, int y, int width, int height){
 	int offsetSrc;
 	int offsetDst;
 	
@@ -195,9 +198,9 @@ void Gpu::ascii( u8 x, u8 y, const char *data, u8 color ){
 		char d = *data;
 		
 		if(( i & 0x1)) 
-			gpu.set(2, x+( i>>1 ), y, (color << 12) |  (0x0100 + d) );
+			Gpu::set(2, x+( i>>1 ), y, (color << 12) |  (0x0100 + d) );
 		else 
-			gpu.set(1, x+( i>>1 ), y, (color << 12) |  (0x0100 + d) );
+			Gpu::set(1, x+( i>>1 ), y, (color << 12) |  (0x0100 + d) );
 		data++;
 	}
 }
@@ -234,7 +237,7 @@ void Gpu::string( u8 x, u8 y, const char *data, u8 color ){
 			c = colors[ color&0xf][ 1 ] | ( d - 0x30);
 		else 
 			c = colors[ color&0xf ][ 0 ] | TABLE_TEXT[ d - 0x41 ][ 0 ];
-		if( data[0] != ' ' ) gpu.set(2, i, y, c );
+		if( data[0] != ' ' ) Gpu::set(2, i, y, c );
 		data++;
 	}
 }
@@ -242,31 +245,31 @@ void Gpu::string( u8 x, u8 y, const char *data, u8 color ){
 void Gpu::drawDialog( u8 x, u8 y, u8 width, u8 height, const char *caption ){
 	for(int dx = x, ldx=width+x; dx<ldx; dx++){
 		for(int dy = y, ldy=height+y; dy<ldy; dy++){
-			gpu.set(0, dx, dy, 0x0019	);
-			gpu.set(1, dx, dy, 0x0000	);
-			gpu.set(2, dx, dy, 0x0100	);
+			Gpu::set(0, dx, dy, 0x0019	);
+			Gpu::set(1, dx, dy, 0x0000	);
+			Gpu::set(2, dx, dy, 0x0100	);
 			if( dx == x){
-				if( dy == ldy - 1 	) { gpu.set( 1, dx, dy, 0x08 ); continue; }//LOW LEFT
-				if( dy == y			) { gpu.set( 1, dx, dy, 0x06 ); continue; }//TOP LEFT
-				gpu.set( 1, dx, dy, 0x0A );
+				if( dy == ldy - 1 	) { Gpu::set( 1, dx, dy, 0x08 ); continue; }//LOW LEFT
+				if( dy == y			) { Gpu::set( 1, dx, dy, 0x06 ); continue; }//TOP LEFT
+				Gpu::set( 1, dx, dy, 0x0A );
 				continue;
 			}
 			if( dx == ldx - 1 ){
-				if( dy == ldy - 1	) { gpu.set( 1, dx, dy, 0x07 ); continue; }//LOW RIGHT
-				if( dy == y			) { gpu.set( 1, dx, dy, 0x05 ); continue; }//TOP RIGHT
-				gpu.set( 1, dx, dy, 0x0A );
+				if( dy == ldy - 1	) { Gpu::set( 1, dx, dy, 0x07 ); continue; }//LOW RIGHT
+				if( dy == y			) { Gpu::set( 1, dx, dy, 0x05 ); continue; }//TOP RIGHT
+				Gpu::set( 1, dx, dy, 0x0A );
 				continue;
 			}
 			if(( dy == ldy - 1 )||( dy == y )){
-				gpu.set( 1, dx, dy, 0x09 );
+				Gpu::set( 1, dx, dy, 0x09 );
 				continue;
 			}
-			//gpu.set(0, dx, dy, 0x0);
+			//Gpu::set(0, dx, dy, 0x0);
 		}
 	}
 	if(!caption) return;
 	ascii( (x<<1) + 2, y, caption, COLOR_CYAN );
 	for(int i=0; i<(u8)(strlen(caption)>>1); i++){
-		gpu.set(0, x+1+i, y, 0x11);
+		Gpu::set(0, x+1+i, y, 0x11);
 	}
 }

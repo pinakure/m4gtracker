@@ -166,7 +166,7 @@ void Tracker::drawTransientInfo(){
 
 void Tracker::drawPosition( int i ){
 	bool hl = i==VAR_CFG.CURRENTCHANNEL;
-	gpu.set( 2 , 			Tracker::positions_x[ i ]		, Tracker::positions_y[ i ] , Tracker::channel_symbols[ VAR_CFG.CURRENTCHANNEL ][ i ] );
+	Gpu::set( 2 , 			Tracker::positions_x[ i ]		, Tracker::positions_y[ i ] , Tracker::channel_symbols[ VAR_CFG.CURRENTCHANNEL ][ i ] );
 	HEXADECIMAL( 			Tracker::positions_x[ i ] + 1	, Tracker::positions_y[ i ] , 0x1 + hl 		, VAR_CHANNEL[ i ].POSITION >>  4 );
 	HEXADECIMAL( 			Tracker::positions_x[ i ] + 2	, Tracker::positions_y[ i ] , 0x1 + hl 		, VAR_CHANNEL[ i ].POSITION & 0xf );
 	HEXADECIMAL_TWOTILES( 	Tracker::positions_x[ i ] + 3 	, Tracker::positions_y[ i ] , hl ? 0x6 : 0xD 	, VAR_SONG.PATTERNS[ i ].ORDER[ VAR_CHANNEL[ i ].POSITION ] );
@@ -177,8 +177,8 @@ void Tracker::drawLine( int channel ){
 	int y = 4 + VAR_CHANNEL[ channel ].STEP;
 	int x = Tracker::columns[ VAR_CFG.CURRENTCHANNEL ][ channel ];
 	for(int i=0, li=( channel==VAR_CFG.CURRENTCHANNEL ? 9 : 3 ); i<li; i++){
-		gpu.set(0, x+i, 4 + VAR_CHANNEL[ channel ].LASTSTEP , 0x0);
-		gpu.set(0, x+i, y									, 0x15);
+		Gpu::set(0, x+i, 4 + VAR_CHANNEL[ channel ].LASTSTEP , 0x0);
+		Gpu::set(0, x+i, y									, 0x15);
 	}	
 	VAR_CHANNEL[ channel ].LASTSTEP = VAR_CHANNEL[ channel ].STEP;	
 }
@@ -222,8 +222,8 @@ void Tracker::globalUpdate( RegionHandler* rh ){
 
 	Clip::update( rh );
 	
-	gpu.set(2,0,1, Sequencer::playing ? 0xF08D  : 0x31FE );
-	gpu.set(1,0,0, Sequencer::playing ? ((Sequencer::currentBeats) == 0?0x32 : ((Sequencer::currentBeats&3) == 0?0x34 : 0x33)):0x33);
+	Gpu::set(2,0,1, Sequencer::playing ? 0xF08D  : 0x31FE );
+	Gpu::set(1,0,0, Sequencer::playing ? ((Sequencer::currentBeats) == 0?0x32 : ((Sequencer::currentBeats&3) == 0?0x34 : 0x33)):0x33);
 		
 	if( Transient::changed || rh->redraw) Tracker::drawTransientInfo();
 
@@ -259,7 +259,7 @@ void Tracker::globalUpdate( RegionHandler* rh ){
 	if( !Tracker::clean ) {
 		for(int y=4; y<20;y++){
 			for(int i=1; i<30; i++){
-				gpu.set(0, i, y, 0x0);
+				Gpu::set(0, i, y, 0x0);
 			}
 		}
 		regHnd.sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)(regHnd.control)&0x0fffffff);
@@ -403,7 +403,7 @@ CB_CHAN_VAL(5, F);	CB_CHAN_CMD(5, F);	CB_CHAN_VOL(5, F);	CB_CHAN_INS(5, F);	CB_C
 
 void Tracker::update( RegionHandler* rh ){
 	const Region *c = &REGION_MAP_4_CHANNELMIXER;	
-	gpu.otherBlit(MAPDATA + ((MAP_CFG * 3) << 12), c->x, c->y, 0xb, 0xf, c->width, c->height);
+	Gpu::blitAlt(MAPDATA + ((MAP_CFG * 3) << 12), c->x, c->y, 0xb, 0xf, c->width, c->height);
 }
 
 void Tracker::shift( int q ){

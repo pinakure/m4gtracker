@@ -7,27 +7,27 @@
 u16 ReallyDialog::background = 0x19;
 
 void ReallyDialog::draw(){
-	gpu.blit(MAP_CACHE, 0x13, 0x0, 12, 6, 0x09, 0x5);
+	Gpu::blit(MAP_CACHE, 0x13, 0x0, 12, 6, 0x09, 0x5);
 	// Remove 2 black Arrows
-	/*! HACK */	gpu.set( 2, 13, 9, 0x100);
-	/*! HACK */	gpu.set( 2, 15, 9, 0x100);
+	/*! HACK */	Gpu::set( 2, 13, 9, 0x100);
+	/*! HACK */	Gpu::set( 2, 15, 9, 0x100);
 	// Fix dialog borders 
-	/*! HACK */	gpu.set( 1, 12, 6, 0x6);
-	/*! HACK */ 	gpu.set( 1, 12, 7, 0xA);
-	/*! HACK */ 	gpu.set( 1, 12, 8, 0xA);
-	/*! HACK */ 	gpu.set( 1, 12, 9, 0xA);
-	/*! HACK */ 	gpu.set( 1, 12,10, 0x8);
+	/*! HACK */	Gpu::set( 1, 12, 6, 0x6);
+	/*! HACK */ 	Gpu::set( 1, 12, 7, 0xA);
+	/*! HACK */ 	Gpu::set( 1, 12, 8, 0xA);
+	/*! HACK */ 	Gpu::set( 1, 12, 9, 0xA);
+	/*! HACK */ 	Gpu::set( 1, 12,10, 0x8);
 	// Change background color
 	for( int y = 0 ; y < 5 ; y++ ){
 		for( int x = 0 ; x < 8 ; x++ ){
-			gpu.set( 0, 12 + x , 6 + y , background );
+			Gpu::set( 0, 12 + x , 6 + y , background );
 		}
 	}
 	// Erase old cursor
-	gpu.set( 0, 14, 9, background );
-	gpu.set( 0, 16, 9, background );
+	Gpu::set( 0, 14, 9, background );
+	Gpu::set( 0, 16, 9, background );
 	// Draw cursor
-	gpu.set( 0, 14 + (!result?3:0), 9, ((!result? COLOR_ORANGE : COLOR_YELLOW )<<12)|0x18);
+	Gpu::set( 0, 14 + (!result?3:0), 9, ((!result? COLOR_ORANGE : COLOR_YELLOW )<<12)|0x18);
 }
 
 void ReallyDialog::confirm(){

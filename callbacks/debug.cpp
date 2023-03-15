@@ -34,7 +34,7 @@ void Debug::runTests(){
 		
 	Mixer::start();
 	Sequencer::playing = true;
-	gpu.clear();
+	Gpu::clear();
 	
 	while(1){
 		Sequencer::update();	
@@ -162,21 +162,21 @@ void Debug::drawFrame( u8 pos_x, u8 pos_y, u8 width, u8 height, const char *titl
 	for(int y=0; y < height; y++){
 		for(int x=0; x < width; x++){
 			
-			if( (y > 0) && (y<height-1)) gpu.set( 0, pos_x + x, pos_y + y, primary  	| 0x0D );
+			if( (y > 0) && (y<height-1)) Gpu::set( 0, pos_x + x, pos_y + y, primary  	| 0x0D );
 			
-			gpu.set( 1, pos_x + x, pos_y + y, 0x100);
-			gpu.set( 2, pos_x + x, pos_y + y, 0x100);
+			Gpu::set( 1, pos_x + x, pos_y + y, 0x100);
+			Gpu::set( 2, pos_x + x, pos_y + y, 0x100);
 			if( ( x != 0 ) && ( y != 0 ) && ( x != width - 1 ) && ( y != height - 1 ) ) continue;
-			gpu.set( 0, pos_x + x, pos_y + y, border | 0x10);
-			gpu.set( 1, pos_x + x, pos_y + y, 0x100);
-			gpu.set( 2, pos_x + x, pos_y + y, 0x100);
+			Gpu::set( 0, pos_x + x, pos_y + y, border | 0x10);
+			Gpu::set( 1, pos_x + x, pos_y + y, 0x100);
+			Gpu::set( 2, pos_x + x, pos_y + y, 0x100);
 		}		
 	}
 
 		// Draw variable name and bit width
 	Gpu::ascii 		( pos_x - (( pos_x & 0x1 ) ? 6 : 5 ), pos_y	+ height - 1, title			, COLOR_WHITE				);
 	DECIMAL_DOUBLE	( pos_x + 1							, pos_y 			, COLOR_YELLOW	, size 						);
-	gpu.set			( 2,		pos_x										, pos_y 		, (COLOR_CYAN<<12) | 0x175	);
+	Gpu::set			( 2,		pos_x										, pos_y 		, (COLOR_CYAN<<12) | 0x175	);
 	if( step_by_step )                            		
 		Gpu::ascii	( pos_x - (( pos_x & 0x1 ) ? 5 : 4 ), pos_y				, "Step"		, COLOR_RED 				);
 }
@@ -230,13 +230,13 @@ void Debug::watchUpdateArray( u8 index ){
 			switch( aw->size ){
 				case 8:
 					// Print 0x
-					gpu.set( 2, 		pos_x + width-3 , pos_y+1 	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
+					Gpu::set( 2, 		pos_x + width-3 , pos_y+1 	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
 					// Print Hexadecimal representation 
 					HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+1	,  	alt_color ? color_aft : color_hex 	, u8value[i]		);
 					break;
 				case 16:
 					// Print 0x
-					gpu.set( 2, 		pos_x + width-4	, pos_y+1	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
+					Gpu::set( 2, 		pos_x + width-4	, pos_y+1	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
 					// Print Hexadecimal representation 
 					HEXADECIMAL_DOUBLE(	pos_x + width-3	, pos_y+1	,   alt_color ? color_aft : color_hex 	, u16value[i] >> 8	);
 					HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+1	,   alt_color ? color_aft : color_hex 	, u16value[i]		);
@@ -244,7 +244,7 @@ void Debug::watchUpdateArray( u8 index ){
 				case 32:
 				case 64:
 					// Print 0x
-					gpu.set( 2, 		pos_x + width-6	, pos_y+1	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
+					Gpu::set( 2, 		pos_x + width-6	, pos_y+1	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
 					// Print Hexadecimal representation 
 					HEXADECIMAL_DOUBLE(	pos_x + width-5	, pos_y+1	,   alt_color ? color_aft : color_hex 	, u32value[i] >> 24	);
 					HEXADECIMAL_DOUBLE(	pos_x + width-4	, pos_y+1	,   alt_color ? color_aft : color_hex 	, u32value[i] >> 16	);
@@ -307,16 +307,16 @@ void Debug::watchUpdate( u8 index ){
 				NIBBLE(				pos_x + 1		, pos_y+2	,  	alt_color ? color_aft : color_hex 	, u8value >> 4		);
 				NIBBLE(				pos_x + 3		, pos_y+2	,  	alt_color ? color_aft : color_hex 	, u8value			);
 				// Print 0x
-				gpu.set( 2, 		pos_x + width-3 , pos_y+1 	,((	alt_color ? color_bef : color_hex 	) << 12 ) | 0xB4	);
-				gpu.set( 2, 		pos_x + width-3 , pos_y+2 	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
+				Gpu::set( 2, 		pos_x + width-3 , pos_y+1 	,((	alt_color ? color_bef : color_hex 	) << 12 ) | 0xB4	);
+				Gpu::set( 2, 		pos_x + width-3 , pos_y+2 	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
 				// Print Hexadecimal representation 
 				HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+1	,  	alt_color ? color_bef : color_hex 	, last_value		);
 				HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+2	,  	alt_color ? color_aft : color_hex 	, u8value			);
 				break;
 			case 16:
 				// Print 0x
-				gpu.set( 2, 		pos_x + width-4	, pos_y+1	,((	alt_color ? color_bef : color_hex 	) << 12 ) | 0xB4	);
-				gpu.set( 2, 		pos_x + width-4	, pos_y+2	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
+				Gpu::set( 2, 		pos_x + width-4	, pos_y+1	,((	alt_color ? color_bef : color_hex 	) << 12 ) | 0xB4	);
+				Gpu::set( 2, 		pos_x + width-4	, pos_y+2	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
 				// Print Hexadecimal representation 
 				HEXADECIMAL_DOUBLE(	pos_x + width-3	, pos_y+1	,   alt_color ? color_bef : color_hex 	, last_value >> 8	);
 				HEXADECIMAL_DOUBLE(	pos_x + width-2	, pos_y+1	,   alt_color ? color_bef : color_hex 	, last_value		);
@@ -326,8 +326,8 @@ void Debug::watchUpdate( u8 index ){
 			case 32:
 			case 64:
 				// Print 0x
-				gpu.set( 2, 		pos_x + width-6	, pos_y+1	,((	alt_color ? color_bef : color_hex 	) << 12 ) | 0xB4	);
-				gpu.set( 2, 		pos_x + width-6	, pos_y+2	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
+				Gpu::set( 2, 		pos_x + width-6	, pos_y+1	,((	alt_color ? color_bef : color_hex 	) << 12 ) | 0xB4	);
+				Gpu::set( 2, 		pos_x + width-6	, pos_y+2	,((	alt_color ? color_aft : color_hex 	) << 12 ) | 0xB4	);
 				// Print Hexadecimal representation 
 				HEXADECIMAL_DOUBLE(	pos_x + width-5	, pos_y+1	,   alt_color ? color_bef : color_hex 	, last_value >> 24	);
 				HEXADECIMAL_DOUBLE(	pos_x + width-4	, pos_y+1	,   alt_color ? color_bef : color_hex 	, last_value >> 16	);
@@ -370,7 +370,7 @@ void Debug::watchUpdate( u8 index ){
 static void inverse_text(int y, const char *message, u8 fg, u8 bg){
 	size_t len = strlen(message)>>1;
 	for(int i=1; i<29; i++){
-		gpu.set(0, i, y, 0x10 + fg );
+		Gpu::set(0, i, y, 0x10 + fg );
 	}
 	Gpu::ascii( 30-len, y, message, bg);
 }
@@ -416,11 +416,11 @@ void Debug::bsod( const char *title, const char *message1,const char *message2, 
 		if( KEYDOWN_START ) asm("swi 00");
 		
 		static bool bm;
-		if(bm != gpu.blink){
-			bm = gpu.blink;
-			gpu.set(2, 16, 16, (COLOR_WHITE << 12) | (gpu.blink ? 0x0116 : 0x0100) );
+		if(bm != Gpu::blink){
+			bm = Gpu::blink;
+			Gpu::set(2, 16, 16, (COLOR_WHITE << 12) | (Gpu::blink ? 0x0116 : 0x0100) );
 		}
-		gpu.blinkUpdate(8);
+		Gpu::blinkUpdate(8);
 	}
 }
 
@@ -444,9 +444,9 @@ void Debug::error( int error_code, bool recoverable ){
 	// Clear screen
 	for(int x=0; x<30; x++){
 		for(int y=0; y<6; y++){
-			gpu.set( 0	, x	, y , 0 );
-			gpu.set( 1	, x	, y , 0x0000);
-			gpu.set( 2	, x	, y , 0x00FC);
+			Gpu::set( 0	, x	, y , 0 );
+			Gpu::set( 1	, x	, y , 0x0000);
+			Gpu::set( 2	, x	, y , 0x00FC);
 		}
 	}
 	
@@ -460,16 +460,16 @@ void Debug::error( int error_code, bool recoverable ){
 	// Draw guru rectangle
 	for( int x=1; x < 29 ; x++ ){
 		for( int y=1; y <  7 ; y++ ){
-			gpu.set( 1	,  0, y, 0x67);
-			gpu.set( 1	,  x, 0, 0x68);
-			gpu.set( 1	,  x, 6, 0x6A);
-			gpu.set( 1	, 29, y, 0x69);
+			Gpu::set( 1	,  0, y, 0x67);
+			Gpu::set( 1	,  x, 0, 0x68);
+			Gpu::set( 1	,  x, 6, 0x6A);
+			Gpu::set( 1	, 29, y, 0x69);
 		}
 	}
-	gpu.set( 1	, 0 , 0, 0x62);
-	gpu.set( 1	, 0 , 6, 0x61);	
-	gpu.set( 1	,29 , 0, 0x63);
-	gpu.set( 1	,29 , 6, 0x64);
+	Gpu::set( 1	, 0 , 0, 0x62);
+	Gpu::set( 1	, 0 , 6, 0x61);	
+	Gpu::set( 1	,29 , 0, 0x63);
+	Gpu::set( 1	,29 , 6, 0x64);
 	
 	// Draw error text
 	if(!recoverable)
@@ -477,17 +477,17 @@ void Debug::error( int error_code, bool recoverable ){
 	else 
 		Gpu::ascii(  2, 2, "Breakpoint raised.   Press B button to continue.", COLOR_CYAN );
 	Gpu::ascii(  5, 4, "Guru Meditation ", COLOR_CYAN );
-	gpu.set(2, 16, 4, (COLOR_CYAN <<12) | 0x2D );
+	Gpu::set(2, 16, 4, (COLOR_CYAN <<12) | 0x2D );
 	HEXADECIMAL_DOUBLE( 17, 4, COLOR_CYAN , error_code>>24);
 	HEXADECIMAL_DOUBLE( 18, 4, COLOR_CYAN , error_code>>16);
-	gpu.set(2, 19, 4, (COLOR_CYAN <<12) | 0x2C );
+	Gpu::set(2, 19, 4, (COLOR_CYAN <<12) | 0x2C );
 	HEXADECIMAL_DOUBLE( 20, 4, COLOR_CYAN , error_code>>8);
 	HEXADECIMAL_DOUBLE( 21, 4, COLOR_CYAN , error_code	 );
 
 	while(1){
 		// Palette blink
 		counter++;
-		if( gpu.isVblank()){
+		if( Gpu::isVblank()){
 			KEYUPDATE();
 		}
 		if( recoverable){
@@ -495,12 +495,12 @@ void Debug::error( int error_code, bool recoverable ){
 				while( !KEYUP_B ){ KEYUPDATE(); };
 				for(int x=0; x<30; x++){
 					for(int y=0; y<7; y++){
-						gpu.set( 0	, x	, y , 0 );
-						gpu.set( 1	, x	, y , 0x0000);
-						gpu.set( 2	, x	, y , 0x00FC);
+						Gpu::set( 0	, x	, y , 0 );
+						Gpu::set( 1	, x	, y , 0x0000);
+						Gpu::set( 2	, x	, y , 0x00FC);
 					}
 				}			
-				gpu.loadPalette();
+				Gpu::loadPalette();
 				return;
 			}
 		} else {
@@ -517,21 +517,21 @@ void Debug::error( int error_code, bool recoverable ){
 }
 
 void Debug::halt( const char *filename, int line ){
-	gpu.clear();
+	Gpu::clear();
 	int x;
 	
 	for(x=0; x<30; x++){
-		gpu.set( 0	, x , -x , 0x002A);
-		gpu.set( 0	, x , (-x)+1 , 0x003A);
-		gpu.set( 0	, x , (-x)+2 , 0x0013);
-		gpu.set( 0	, x , (-x)+3 , 0x0003);
-		gpu.set( 0	, x , (-x)+4 , 0x0015);
-		gpu.set( 0	, x , (-x)+5 , 0x0005);
+		Gpu::set( 0	, x , -x , 0x002A);
+		Gpu::set( 0	, x , (-x)+1 , 0x003A);
+		Gpu::set( 0	, x , (-x)+2 , 0x0013);
+		Gpu::set( 0	, x , (-x)+3 , 0x0003);
+		Gpu::set( 0	, x , (-x)+4 , 0x0015);
+		Gpu::set( 0	, x , (-x)+5 , 0x0005);
 	}
 	
 	static u16 counter=0;
 	while(1){
-		gpu.set( 2	,  5, 1 , (((counter+0x200)&0xfff) > 0x800 ?0x4000:0x7000) | (((counter+0x200)&0x7ff) > 0x400 ?0xb3:0xa2));
+		Gpu::set( 2	,  5, 1 , (((counter+0x200)&0xfff) > 0x800 ?0x4000:0x7000) | (((counter+0x200)&0x7ff) > 0x400 ?0xb3:0xa2));
 		Gpu::bigString	(  6 , 0 , "PROGRAM HALTED"	, (counter&0x7ff) > 0x400 ? COLOR_WHITE : COLOR_RED);
 		Gpu::string		(  3 , 3 , "LINE"			, COLOR_YELLOW);
 		Gpu::number	(  8 , 3 , line				, COLOR_OLIVE);
@@ -601,12 +601,12 @@ ProgressBar::ProgressBar(){
 		
 void ProgressBar::redraw(){
 	for(int s=0; s<0x30; s++){
-		gpu.set(0, s,19, 0x29);
+		Gpu::set(0, s,19, 0x29);
 	}
 }
 
 void ProgressBar::render(float q, bool highlight ){
-	gpu.set(0, (u8)(q*30),19, highlight ? 0x25 : 0x23);
+	Gpu::set(0, (u8)(q*30),19, highlight ? 0x25 : 0x23);
 }
 
 void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){

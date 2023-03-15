@@ -117,8 +117,9 @@ Added secondary SLOT control on SNG Screen, for the dummies.
 Several small Bugfixes
 Pattern pagination ( B+SELECT+ LEFT/RIGHT )
 
-----------------------
+---------------
 15-03-2023
-----------------------
+---------------
 Made Sys class static
 Made VirtualScreen static
+Replaced gpu instance with Gpu static class

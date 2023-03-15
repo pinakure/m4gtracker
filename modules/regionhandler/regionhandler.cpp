@@ -141,9 +141,9 @@ void RegionHandler::drawCache(u8 x, u8 y, const Cache *c, u8 var, bool highlight
 		map2 = map1 + 4096;
 		
 		for(cx=0; cx<c->itemwidth; cx++){
-			gpu.set(0, x+cx, cy+y, highlight?0x13:0x0);
-			gpu.set(1, x+cx, cy+y, *map1);
-			gpu.set(2, x+cx, cy+y, *map2);
+			Gpu::set(0, x+cx, cy+y, highlight?0x13:0x0);
+			Gpu::set(1, x+cx, cy+y, *map1);
+			Gpu::set(2, x+cx, cy+y, *map2);
 			map0++;
 			map1++;
 			map2++;
@@ -165,9 +165,9 @@ void RegionHandler::drawVerticalCache(u8 x, u8 y, const Cache *c, u8 var, bool h
 		map2 = map1 + 4096;
 		
 		for(cx=0; cx<c->itemwidth; cx++){
-			gpu.set(0, x+cx, cy+y, highlight?0x13:*map0);
-			gpu.set(1, x+cx, cy+y, *map1);
-			gpu.set(2, x+cx, cy+y, *map2);
+			Gpu::set(0, x+cx, cy+y, highlight?0x13:*map0);
+			Gpu::set(1, x+cx, cy+y, *map1);
+			Gpu::set(2, x+cx, cy+y, *map2);
 			map0++;
 			map1++;
 			map2++;
@@ -191,7 +191,7 @@ void RegionHandler::drawControl(const Control *c){
 			// Draw the block below the control
 			int cx = 0;
 			for(; cx<c->cache->itemwidth; cx++){
-				gpu.set(0, x+cx, y, c==control?0x13:0x0);
+				Gpu::set(0, x+cx, y, c==control?0x13:0x0);
 			}				
 			
 		} else {
@@ -224,7 +224,7 @@ void RegionHandler::drawDisplay(const Display *d){
 			// Draw the block below the control
 			int cx = 0;
 			for(; cx<d->cache->itemwidth;cx++){
-				gpu.set(0, x+cx, y, 0x0);
+				Gpu::set(0, x+cx, y, 0x0);
 			}				
 			
 		} else {
@@ -315,12 +315,12 @@ void RegionHandler::loadDisplays(const Region *r){
 void RegionHandler::drawViewport(const Viewport *v, u8 x, u8 y, const Region *r){
 	// Substract original region coordinates to viewport coordinates
 	
-	gpu.blit((E_Maps)region->mapIndex, r->x, r->y, r->xadd<0xFF?r->xadd:x, y, r->width, r->height);
+	Gpu::blit((E_Maps)region->mapIndex, r->x, r->y, r->xadd<0xFF?r->xadd:x, y, r->width, r->height);
 }
 
 void RegionHandler::draw(){
 	Region *r = region;
-	gpu.blit((E_Maps)r->mapIndex, r->x, r->y, 0,0, r->width, r->height);
+	Gpu::blit((E_Maps)r->mapIndex, r->x, r->y, 0,0, r->width, r->height);
 
 	loadControls(r);
 	loadDisplays(r);

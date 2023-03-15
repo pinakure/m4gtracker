@@ -28,11 +28,11 @@ void Console::setTitle(const char *new_title, u16 color){
 void Console::percent( float q ){
 	if( q == 1.0f ) DECIMAL_DOUBLE_TWOTILES(27, cursor_y, COLOR_WHITE, 100);
 	else DECIMAL_DOUBLE_TWOTILES( 27, cursor_y, COLOR_CYAN, (u8)(q*100.0f) );
-	gpu.set(2, 29, cursor_y, (COLOR_RED<<12) | 0x6F);
+	Gpu::set(2, 29, cursor_y, (COLOR_RED<<12) | 0x6F);
 }
 
 void Console::print( const char *text, u16 color){
-	gpu.set(2, cursor_x, cursor_y, 0x0100);
+	Gpu::set(2, cursor_x, cursor_y, 0x0100);
 	cursor_y++;
 	Gpu::ascii( 0 , cursor_y , text , color );
 	cursor_x=strlen( text )/2;
@@ -49,27 +49,27 @@ void Console::setCursor( u8 x, u8 y){
 }
 
 void Console::render(){
-	//gpu.clear( 0x10 | COLOR_DARK_BLUE );
-	gpu.clear( background_color );
+	//Gpu::clear( 0x10 | COLOR_DARK_BLUE );
+	Gpu::clear( background_color );
 	if(title) 
 		Gpu::bigString(15 - (strlen(title)>>1), 0, title, title_color);
 }
 
 void Console::update(){		
 	static bool bm;
-	if(bm != gpu.blink){
-		bm = gpu.blink;
-		gpu.set(2, cursor_x, cursor_y, (cursor_color << 12) | (gpu.blink ? 0x0116 : 0x0100) );
+	if(bm != Gpu::blink){
+		bm = Gpu::blink;
+		Gpu::set(2, cursor_x, cursor_y, (cursor_color << 12) | (Gpu::blink ? 0x0116 : 0x0100) );
 	}
-	gpu.blinkUpdate(8);
+	Gpu::blinkUpdate(8);
 }
 
 void Console::wait( u8 time ){
 	for(int i=0; i<0x7FF<<time; i++){
-		while( gpu.isVblank()){}
-		while(!gpu.isVblank()){}
-		while( gpu.isVblank()){}
-		while(!gpu.isVblank()){}
+		while( Gpu::isVblank()){}
+		while(!Gpu::isVblank()){}
+		while( Gpu::isVblank()){}
+		while(!Gpu::isVblank()){}
 		
 		update();
 	}

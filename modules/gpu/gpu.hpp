@@ -118,47 +118,39 @@ enum E_Maps {
 extern const u32 LAYERS[3];
 extern const unsigned short Palette[256];
 
-
 class Gpu {	
   private:
-	vu8 redraw;
+	static vu8 					redraw;
 
   public:
-  	static const u16 			colors[ 16 ][ 2 ];
-	
-	const unsigned short *MAP0;
-	const unsigned short *MAP1;
-	const unsigned short *MAP2;
-
-	u16 	vcount;
-	bool 	blink;
-	
-	Gpu							( );
-	
-	void   clear 					( u16 color = 0x10, u16 foreground=0x00FC);
+	static const unsigned short*		MAP0;
+	static const unsigned short*		MAP1;
+	static const unsigned short*		MAP2;
+  	static const	u16			colors[ 16 ][ 2 ];
+	static bool 					blink;
+	static u16 					vcount;
 		
-	bool 	isVblank				( );
-	void 	loadPalette			( );
-	void 	start					( );	
-	void 	safeblit				( E_Maps mapIndex, int startx, int starty, int x, int y, int width, int height);
-	void 	blit_0				( E_Maps mapIndex,  u8 startx, int starty,  u8 x,  u8 y,  u8 width,  u8 height);
-	void 	blit					( E_Maps mapIndex, int startx, int starty, int x, int y, int width, int height);
-	void 	otherBlit				( const u16 *map_address, int startx, int starty, int x, int y, int width, int height);
+	static void 	blinkUpdate	( int speed = 0 );
+	static void 	blit			( E_Maps mapIndex, int startx, int starty, int x, int y, int width, int height);
+	static void 	blitBg		( E_Maps mapIndex,  u8 startx, int starty,  u8 x,  u8 y,  u8 width,  u8 height);
+	static void 	blitSafe		( E_Maps mapIndex, int startx, int starty, int x, int y, int width, int height);
+	static void 	blitAlt		( const u16 *map_address, int startx, int starty, int x, int y, int width, int height);
+	static void	clear			( u16 color = 0x10, u16 foreground=0x00FC);	
+	static u16 	get			( u8 layer, u8 x, u8 y );
+	static void 	init			( );	
+	static bool 	isVblank		( );
+	static void 	loadPalette	( );
+	static void 	set			( u8 layer, u8 x, u8 y, u16 index );
 
-	void 	set					( u8 layer, u8 x, u8 y, u16 index );
-	u16 	get					( u8 layer, u8 x, u8 y );
-	void 	blinkUpdate			( int speed = 0 );
-	void 	update				( u8 delta );
+	static void	update		( u8 delta );
 	
 	// Data output helpers
-	static void string	 		( u8 x, u8 y, const char *filename	, u8 color=6 );
-	static void ascii	 		( u8 x, u8 y, const char *filename	, u8 color=6 );
-	static void number	 		( u8 x, u8 y, u32 number 				, u8 color=6 );
-	static void hexnum	 		( u8 x, u8 y, u32 number 				, u8 color=6 );
-	static void bigString		( u8 x, u8 y, const char *filename	, u8 color=6 );	
-	static void drawDialog	( u8 x, u8 y, u8 width					, u8 height	, const char *caption=NULL );
+	static void	string	 	( u8 x, u8 y, const char *filename	, u8 color=6 );
+	static void	ascii	 		( u8 x, u8 y, const char *filename	, u8 color=6 );
+	static void	number	 	( u8 x, u8 y, u32 number 				, u8 color=6 );
+	static void	hexnum	 	( u8 x, u8 y, u32 number 				, u8 color=6 );
+	static void	bigString		( u8 x, u8 y, const char *filename	, u8 color=6 );	
+	static void	drawDialog	( u8 x, u8 y, u8 width					, u8 height	, const char *caption=NULL );
 };
-
-extern Gpu gpu;
 
 #endif 

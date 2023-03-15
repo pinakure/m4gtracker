@@ -129,13 +129,13 @@ void SnakeGame::drawHud(){
 	}
 	
 	if( last_score != score){
-		gpu.set(         2, 0, 12, 0x00);
-		gpu.set(         2, 1, 12, 0x00);
-		gpu.set(         2, 2, 12, 0x00);
-		gpu.set(         2, 3, 12, 0x00);
-		gpu.set(         2, 4, 12, 0x00);
-		gpu.set(         2, 5, 12, 0x00);
-		gpu.set(         2, 6, 12, 0x00);
+		Gpu::set(         2, 0, 12, 0x00);
+		Gpu::set(         2, 1, 12, 0x00);
+		Gpu::set(         2, 2, 12, 0x00);
+		Gpu::set(         2, 3, 12, 0x00);
+		Gpu::set(         2, 4, 12, 0x00);
+		Gpu::set(         2, 5, 12, 0x00);
+		Gpu::set(         2, 6, 12, 0x00);
 		DECIMAL_DOUBLE( 	2, 12, 0xDD, (score/100000000	) % 100);
 		DECIMAL_DOUBLE( 	3, 12, 0xDD, (score/1000000		) % 100);
 		DECIMAL_DOUBLE( 	4, 12, 0xDD, (score/10000		) % 100);
@@ -145,13 +145,13 @@ void SnakeGame::drawHud(){
 	}
 
 	if( last_hiscore != hiscore){
-		gpu.set( 		 2, 0, 15, 0x00);
-		gpu.set( 		 2, 1, 15, 0x00);
-		gpu.set( 		 2, 2, 15, 0x00);
-		gpu.set( 		 2, 3, 15, 0x00);
-		gpu.set( 		 2, 4, 15, 0x00);
-		gpu.set( 		 2, 5, 15, 0x00);
-		gpu.set( 		 2, 6, 15, 0x00);
+		Gpu::set( 		 2, 0, 15, 0x00);
+		Gpu::set( 		 2, 1, 15, 0x00);
+		Gpu::set( 		 2, 2, 15, 0x00);
+		Gpu::set( 		 2, 3, 15, 0x00);
+		Gpu::set( 		 2, 4, 15, 0x00);
+		Gpu::set( 		 2, 5, 15, 0x00);
+		Gpu::set( 		 2, 6, 15, 0x00);
 		DECIMAL_DOUBLE( 	2, 15, 0xDD, (hiscore/100000000		) % 100);
 		DECIMAL_DOUBLE( 	3, 15, 0xDD, (hiscore/1000000		) % 100);
 		DECIMAL_DOUBLE( 	4, 15, 0xDD, (hiscore/10000			) % 100);

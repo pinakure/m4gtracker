@@ -39,9 +39,9 @@ void Notifier::init(){
 }
 
 void Notifier::clear(){
-	gpu.set( 2, 1, 2, 0x0000 ); 
-	gpu.set( 2, 2, 2, 0x0000 ); 	
-	gpu.set( 2, 3, 2, 0x0000 ); 	
+	Gpu::set( 2, 1, 2, 0x0000 ); 
+	Gpu::set( 2, 2, 2, 0x0000 ); 	
+	Gpu::set( 2, 3, 2, 0x0000 ); 	
 }
 
 void Notifier::update(){
@@ -55,9 +55,9 @@ void Notifier::update(){
 }
 
 void Notifier::icon( u16 upper, u16 lower, u16 extra ){
-	gpu.set(2, 1, 2, upper); 
-	gpu.set(2, 2, 2, lower); 	
-	gpu.set(2, 3, 2, extra); 	
+	Gpu::set(2, 1, 2, upper); 
+	Gpu::set(2, 2, 2, lower); 	
+	Gpu::set(2, 3, 2, extra); 	
 	time = 0x7FF;
 }
 
@@ -360,8 +360,8 @@ void Clip::drawMaskPat(int color){
 	for( int y = 0; y < Clipboard::height+1; y++){
 		u8 cc = 4 + ( Clipboard::x * 4);
 		for( int x = Clipboard::x; x < Clipboard::x + Clipboard::width; x++){
-			gpu.set( 1, cc    , Clipboard::y + 4 + y, c1 );
-			gpu.set( 1, cc + 1, Clipboard::y + 4 + y, c1 );
+			Gpu::set( 1, cc    , Clipboard::y + 4 + y, c1 );
+			Gpu::set( 1, cc + 1, Clipboard::y + 4 + y, c1 );
 			cc+=4;
 		}
 	}
@@ -376,31 +376,31 @@ void Clip::drawMaskTrk(int color){
 		switch(x + Clipboard::x ){
 			case 0:	
 				for( u8 y = 0; y < Clipboard::height+1; y++){
-					gpu.set( 1, cc    , Clipboard::y + 4 + y, c1 );
-					gpu.set( 1, cc + 1, Clipboard::y + 4 + y, c1 );
-					gpu.set( 1, cc + 2, Clipboard::y + 4 + y, c1 );
+					Gpu::set( 1, cc    , Clipboard::y + 4 + y, c1 );
+					Gpu::set( 1, cc + 1, Clipboard::y + 4 + y, c1 );
+					Gpu::set( 1, cc + 2, Clipboard::y + 4 + y, c1 );
 				}
 				continue;
 			case 1:
 				for( u8 y = 0; y < Clipboard::height+1; y++){
-					gpu.set( 1, cc + 3, Clipboard::y + 4 + y, c2 );
-					gpu.set( 1, cc + 4, Clipboard::y + 4 + y, c2 );
+					Gpu::set( 1, cc + 3, Clipboard::y + 4 + y, c2 );
+					Gpu::set( 1, cc + 4, Clipboard::y + 4 + y, c2 );
 				}
 				continue;
 			case 2:
 				for( u8 y = 0; y < Clipboard::height+1; y++){
-					gpu.set( 1, cc + 5, Clipboard::y + 4 + y, c1 );
+					Gpu::set( 1, cc + 5, Clipboard::y + 4 + y, c1 );
 				}
 				continue;
 			case 3:
 				for( u8 y = 0; y < Clipboard::height+1; y++){
-					gpu.set( 1, cc + 6, Clipboard::y + 4 + y, c2 );
+					Gpu::set( 1, cc + 6, Clipboard::y + 4 + y, c2 );
 				}
 				continue;
 			case 4:
 				for( u8 y = 0; y < Clipboard::height+1; y++){
-					gpu.set( 1, cc + 7, Clipboard::y + 4 + y, c1 );
-					gpu.set( 1, cc + 8, Clipboard::y + 4 + y, c1 );
+					Gpu::set( 1, cc + 7, Clipboard::y + 4 + y, c1 );
+					Gpu::set( 1, cc + 8, Clipboard::y + 4 + y, c1 );
 				}
 				continue;				
 		}
@@ -417,18 +417,18 @@ void Clip::draw( RegionHandler *rh ){
 		rh->draw();
 		return;
 	}
-	blink_monitor = gpu.blink;
+	blink_monitor = Gpu::blink;
 	int cc = VAR_CFG.CURRENTCHANNEL;
 	cc = ( cc < 5 ) ? cc *= 4 : 6; 
  	if(AT_TRACKER_SCREEN){
 		rh->drawCache(cc+10, 3, &CACHE_CLIPBOARD2, 0, false);
-		gpu.set(0, cc+12 + int(positions[ (int)action ][0]), 5 + int(positions[ (int)action ][1]), gpu.blink ? 0x14 : 0x13);
+		Gpu::set(0, cc+12 + int(positions[ (int)action ][0]), 5 + int(positions[ (int)action ][1]), Gpu::blink ? 0x14 : 0x13);
 	} else {
 		rh->drawCache(26, 0, &CACHE_CLIPBOARD2, 0, false);
-		gpu.set(0, 28 + int(positions[ (int)action ][0]), 2 + int(positions[ (int)action ][1]), gpu.blink ? 0x14 : 0x13);
-		gpu.set(1, 29, 4, 0x0f);
-		gpu.set(1, 26, 3, 0x08);
-		gpu.set(1, 26, 4, 0x00);
+		Gpu::set(0, 28 + int(positions[ (int)action ][0]), 2 + int(positions[ (int)action ][1]), Gpu::blink ? 0x14 : 0x13);
+		Gpu::set(1, 29, 4, 0x0f);
+		Gpu::set(1, 26, 3, 0x08);
+		Gpu::set(1, 26, 4, 0x00);
 	}
 	
 	// draw clipboard mask
@@ -440,10 +440,10 @@ void Clip::update(RegionHandler *rh){
 	
 	Notifier::update();
 	
-	gpu.blinkUpdate(8);
+	Gpu::blinkUpdate(8);
 	
 	// Draw if needed...
-	if((visible) && ( redraw || rh->redraw || ( blink_monitor != gpu.blink ) )) draw( rh );
+	if((visible) && ( redraw || rh->redraw || ( blink_monitor != Gpu::blink ) )) draw( rh );
 	// Or erase when needed
 	if( redraw && !visible ){
 		rh->draw();

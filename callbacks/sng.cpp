@@ -176,7 +176,7 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 	}
 	regHnd.redraw=true;
 	regHnd.update(0);
-	gpu.clear( 0x9010);
+	Gpu::clear( 0x9010);
 	Console console("PLEASE  WAIT", 0x9010);
 	
 	Gpu::drawDialog( 7 , 6 , 16, 8, " Data Purge ");
@@ -208,8 +208,8 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 			}
 		}
 	}
-	/*HACK*/gpu.set(2, 19	, 7	, (COLOR_CYAN<<12) | 0x91);// put 1 on 100...
-	/*HACK*/gpu.set(2, 20	, 7	, (COLOR_CYAN<<12) | 0x300);// put 1 on 100...
+	/*HACK*/Gpu::set(2, 19	, 7	, (COLOR_CYAN<<12) | 0x91);// put 1 on 100...
+	/*HACK*/Gpu::set(2, 20	, 7	, (COLOR_CYAN<<12) | 0x300);// put 1 on 100...
 	
 	// Check for unused patterns	
 	Gpu::ascii( 8 << 1 ,	 8	, " Lookup Patterns          %" , COLOR_DARK_CYAN );
@@ -234,8 +234,8 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 			}
 		}		
 	}
-	/*HACK*/gpu.set(2, 19	, 8	, (COLOR_CYAN<<12) | 0x91);// put 1 on 100...
-	/*HACK*/gpu.set(2, 20	, 8	, (COLOR_CYAN<<12) | 0x300);// put 1 on 100...
+	/*HACK*/Gpu::set(2, 19	, 8	, (COLOR_CYAN<<12) | 0x91);// put 1 on 100...
+	/*HACK*/Gpu::set(2, 20	, 8	, (COLOR_CYAN<<12) | 0x300);// put 1 on 100...
 	
 	// Erase unused instruments
 	Gpu::ascii( 8 << 1 ,	 9	, " Erasing Instruments      %" , COLOR_DARK_CYAN );
@@ -245,8 +245,8 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 		InstEdit::clear( i ); 
 		unused_instrument_count--;
 	}
-	/*HACK*/gpu.set(2, 19	, 9	, (COLOR_CYAN<<12) | 0x91);// put 1 on 100...
-	/*HACK*/gpu.set(2, 20	, 9	, (COLOR_CYAN<<12) | 0x300);// put 1 on 100...
+	/*HACK*/Gpu::set(2, 19	, 9	, (COLOR_CYAN<<12) | 0x91);// put 1 on 100...
+	/*HACK*/Gpu::set(2, 20	, 9	, (COLOR_CYAN<<12) | 0x300);// put 1 on 100...
 	
 	// Erase unused patterns
 	Gpu::ascii( 8 << 1 ,	10	, " Erasing Patterns         %" , COLOR_DARK_CYAN );
@@ -256,14 +256,14 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 		PatEdit::clear( p ); 
 		unused_pattern_count--;
 	}
-	/*HACK*/gpu.set(2, 19	,10, (COLOR_CYAN<<12) | 0x91);// put 1 on 100...
-	/*HACK*/gpu.set(2, 20	,10, (COLOR_CYAN<<12) | 0x300);// put 1 on 100...
+	/*HACK*/Gpu::set(2, 19	,10, (COLOR_CYAN<<12) | 0x91);// put 1 on 100...
+	/*HACK*/Gpu::set(2, 20	,10, (COLOR_CYAN<<12) | 0x300);// put 1 on 100...
 	
 
 	Gpu::ascii( 8 << 1 	, 11	, " Avail. Instruments" 	, COLOR_WHITE 	);
 	Gpu::ascii( 8 << 1 	, 12	, " Avail. Patterns" 		, COLOR_WHITE 	);
 	DECIMAL_DOUBLE( 20	, 11	, COLOR_CYAN, unused_instrument_count	  	);
-	gpu.set(2, 19 , 12	, (COLOR_CYAN<<12) | 0x90 + (unused_pattern_count / 100)	);
+	Gpu::set(2, 19 , 12	, (COLOR_CYAN<<12) | 0x90 + (unused_pattern_count / 100)	);
 	DECIMAL_DOUBLE( 20	, 12	, COLOR_CYAN, unused_pattern_count		  	);
 	// Save shared data (Instruments and Patterns)
 	
@@ -351,8 +351,8 @@ void SongEdit::runGroove(){
 	int y = groove->position % 4;
 	int x = (groove->position / 4) * 5;
 	if((last_x != x)||(last_y!=y)){
-		gpu.set(2, 9 + ( last_x 	 )	, 15 + last_y	, 0x0100 );
-		gpu.set(2, 9 + ( x			 )	, 15 + y			, 0x708D );
+		Gpu::set(2, 9 + ( last_x 	 )	, 15 + last_y	, 0x0100 );
+		Gpu::set(2, 9 + ( x			 )	, 15 + y			, 0x708D );
 		last_y = y;
 		last_x = x;
 	}

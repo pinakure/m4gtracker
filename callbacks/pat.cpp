@@ -573,14 +573,14 @@ void PatEdit::update(RegionHandler* rh){
 			if(PatEdit::bookmarks[c]>0) {
 				y = PatEdit::bookmarks[c] - VAR_CFG.ORDERPOSITION;
 				if((y<=15)&&(y>=0)){
-					gpu.set(0, PatEdit::arrow_position[c]+1, 4+y, 0x8);
-					gpu.set(0, PatEdit::arrow_position[c]+2, 4+y, 0x8);
+					Gpu::set(0, PatEdit::arrow_position[c]+1, 4+y, 0x8);
+					Gpu::set(0, PatEdit::arrow_position[c]+2, 4+y, 0x8);
 				}
 			}
 			y = VAR_CHANNEL[c].POSITION - VAR_CFG.ORDERPOSITION;
 			x = VAR_CHANNEL[c].LASTPOSITION - VAR_CFG.ORDERPOSITION;
-			if((x<=15)&&(x>=0)) gpu.set(2, PatEdit::arrow_position[c], 4+x, 0x00FC);
-			if((y<=15)&&(y>=0)) gpu.set(2, PatEdit::arrow_position[c], 4+y, 0x408D);
+			if((x<=15)&&(x>=0)) Gpu::set(2, PatEdit::arrow_position[c], 4+x, 0x00FC);
+			if((y<=15)&&(y>=0)) Gpu::set(2, PatEdit::arrow_position[c], 4+y, 0x408D);
 		}
 		PatEdit::solo_clean = false;
 	}
@@ -592,21 +592,21 @@ void PatEdit::update(RegionHandler* rh){
 			/* ------------------------------------------------------------
 			If mute is enabled, draw MUTE on High Red color 			 */
 			if(VAR_CHANNEL[c].mute) { 
-				gpu.set(2, PatEdit::arrow_position[c]+1, 3, 0x3057);
-				gpu.set(2, PatEdit::arrow_position[c]+2, 3, 0x3058); 
+				Gpu::set(2, PatEdit::arrow_position[c]+1, 3, 0x3057);
+				Gpu::set(2, PatEdit::arrow_position[c]+2, 3, 0x3058); 
 				continue; 
 			}
 			/* ------------------------------------------------------------
 			If solo is enabled, draw SOLO on High green color	   		 */
 			if(VAR_CHANNEL[c].solo) { 
-				gpu.set(2, PatEdit::arrow_position[c]+1, 3, 0xF055);
-				gpu.set(2, PatEdit::arrow_position[c]+2, 3, 0xF056); 
+				Gpu::set(2, PatEdit::arrow_position[c]+1, 3, 0xF055);
+				Gpu::set(2, PatEdit::arrow_position[c]+2, 3, 0xF056); 
 				continue;
 			}
 			/* ------------------------------------------------------------
 			Else, draw channel icon		 								 */
-				gpu.set(2, PatEdit::arrow_position[c]+1, 3, PatEdit::channel_symbols[c]); 
-				gpu.set(2, PatEdit::arrow_position[c]+2, 3, 0x00FC); 
+				Gpu::set(2, PatEdit::arrow_position[c]+1, 3, PatEdit::channel_symbols[c]); 
+				Gpu::set(2, PatEdit::arrow_position[c]+2, 3, 0x00FC); 
 			// ------------------------------------------------------------
 		}
 		// ------------------------------------------------------------
@@ -700,7 +700,7 @@ void PatEdit::dispatchMessage(u32 msg){
 			y = regHnd.control->y - VAR_CFG.ORDERPOSITION;
 			y-= 4;
 			x = arrow_position[ TRACKER_ACTIVE_CHANNEL ];
-			if( y <= 15 ) gpu.set( 2, x, 4 + y, 0x00FC);
+			if( y <= 15 ) Gpu::set( 2, x, 4 + y, 0x00FC);
 			// If target cell is empty, scroll all cells one position from this position up to the end and fill last cell with 0x00
 			if( VAR_PATTERN[ TRACKER_ACTIVE_CHANNEL ].ORDER[ (regHnd.control->y-4) + VAR_CFG.ORDERPOSITION] == 0){
 				// Scroll from this point on up to the end
@@ -724,7 +724,7 @@ void PatEdit::dispatchMessage(u32 msg){
 				Clear Arrows when pattern scrolls down 						 */
 				for(int c=0, x=0; c<6;c++){
 					x = VAR_CHANNEL[c].POSITION - VAR_CFG.ORDERPOSITION;
-					if((x<=15)&&(x>=0))gpu.set(2, PatEdit::arrow_position[c], 4+x, 0x00FC);
+					if((x<=15)&&(x>=0))Gpu::set(2, PatEdit::arrow_position[c], 4+x, 0x00FC);
 				}
 				// ------------------------------------------------------------
 				VAR_CFG.ORDERPOSITION -= modifier ? 16 : 1;
@@ -747,7 +747,7 @@ void PatEdit::dispatchMessage(u32 msg){
 				Clear Arrows when pattern scrolls down 						 */
 				for(int c=0, x=0; c<6;c++){
 					x = VAR_CHANNEL[c].POSITION - VAR_CFG.ORDERPOSITION;
-					if((x<=15)&&(x>=0))gpu.set(2, PatEdit::arrow_position[c], 4+x, 0x00FC);
+					if((x<=15)&&(x>=0))Gpu::set(2, PatEdit::arrow_position[c], 4+x, 0x00FC);
 				}
 				// ------------------------------------------------------------
 				VAR_CFG.ORDERPOSITION += modifier ? 16 : 1;

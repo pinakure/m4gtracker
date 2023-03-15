@@ -45,7 +45,7 @@ int main(void){
 //		Sys::init();
 		// Move this to sys init
 		Sram::init();
-		gpu.start();
+		Gpu::init();
 		INT.Enable(IRQ_VBLANK);
 		INT.Enable(IRQ_HBLANK);
 		TIM0.Init(0);
@@ -65,7 +65,7 @@ int main(void){
 		InstEdit::unpack( &VAR_INSTRUMENT );	
 
 		Debug::runTests();
-		gpu.clear();
+		Gpu::clear();
 		LookNFeel::init();
 		
 		// Start at Tracker screen
@@ -74,7 +74,7 @@ int main(void){
 		for(;;){
 			#ifdef VSYNC
 				// IF SOMETHING GOES WRONG WITH TIMERS OR AUDIO, TRY ENABLING THIS:
-				if(!gpu.isVblank()	) { lock = false	; continue; }
+				if(!Gpu::isVblank()	) { lock = false	; continue; }
 	 			if(!lock				) { lock = true	; continue; }
 				adsadas
 			#endif

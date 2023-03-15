@@ -60,7 +60,7 @@ void AlphaDialog::rem(){
 }
 
 void AlphaDialog::draw(){
-	gpu.blit(MAP_CACHE, 0x0, 0x0, 0x0, Y, 0x08, 0x8);
+	Gpu::blit(MAP_CACHE, 0x0, 0x0, 0x0, Y, 0x08, 0x8);
 	
 	
 	redraw = false;
@@ -84,14 +84,14 @@ void AlphaDialog::preview(){
 	int i;
 	static u8 lastPosition;
 
-	gpu.set(0, textX+lastPosition, textY, 0x0);	
-	gpu.set(0, textX+(position>0?position-1:position), textY, 0x13);	
+	Gpu::set(0, textX+lastPosition, textY, 0x0);	
+	Gpu::set(0, textX+(position>0?position-1:position), textY, 0x13);	
 
 	lastPosition=position-1;
 	
 	for(i=0; i<maxlen; i++){
-		if(buffer[i]==0) gpu.set(2, textX+i, textY, TABLE_TEXT[0x20][0] | 0xa000);
-		else gpu.set(2, textX+i, textY, ((TABLE_TEXT[buffer[i]][0])-1) | 0x4000);
+		if(buffer[i]==0) Gpu::set(2, textX+i, textY, TABLE_TEXT[0x20][0] | 0xa000);
+		else Gpu::set(2, textX+i, textY, ((TABLE_TEXT[buffer[i]][0])-1) | 0x4000);
 	}
 }
 
@@ -118,9 +118,9 @@ void AlphaDialog::update(){
 	
 		// Redraw if cursor changed
 		if((oldX != cursorX)||(oldY != cursorY)){
-			u16 value = gpu.get(2, 1+cursorX, Y+1+cursorY)&0x0fff; 
-			gpu.set(2, 1+cursorX, Y+1+cursorY, value | 0x2000);
-			gpu.set(2, 1+oldX, Y+1+oldY, oldvalue | 0x9000);
+			u16 value = Gpu::get(2, 1+cursorX, Y+1+cursorY)&0x0fff; 
+			Gpu::set(2, 1+cursorX, Y+1+cursorY, value | 0x2000);
+			Gpu::set(2, 1+oldX, Y+1+oldY, oldvalue | 0x9000);
 			oldvalue = value;
 			
 			oldX = cursorX;

@@ -24,8 +24,8 @@ void Mem::test(){
 	}
 
 	for(x=0;x<256;x++){
-		//GPU.PrintF(0,0, " ADDR8=%p  ADDR16=%p      ADDR32=%p  ",test8, test16, test32);
-		//GPU.SetTile(BG_TEXT, TILESET_HEXADECIMAL + test8[x], x%30, 2+(x/30), 0x6); 
+		//Gpu::PrintF(0,0, " ADDR8=%p  ADDR16=%p      ADDR32=%p  ",test8, test16, test32);
+		//Gpu::set(BG_TEXT, TILESET_HEXADECIMAL + test8[x], x%30, 2+(x/30), 0x6); 
 	}
 	/*
 	Mem::free(test8);

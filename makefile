@@ -9,6 +9,7 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 		modules/clip/clip.o \
 		modules/key/key.o \
 		modules/mem/mem.o \
+		modules/gpu/virtualscreen.o \
 		modules/gpu/gpu.o \
 		modules/net/net.o \
 		modules/spu/mixer.o \

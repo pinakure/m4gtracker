@@ -40,8 +40,8 @@ void Help::drawButton(int x, int y, const char *t, bool active){
 	x+=1;
 	for(int i=0, tx=x, li=strlen(t); i<li; i++){
 		if(t[i] == ' '){tx++; continue;}
-		gpu.set(0,tx,y , active?0x17:0x0);
-		//gpu.set(0,tx,y , active?0x17:0x0);
+		Gpu::set(0,tx,y , active?0x17:0x0);
+		//Gpu::set(0,tx,y , active?0x17:0x0);
 		//TEXT(tx, y, , );
 		//TEXT(tx, y, active?8:4, 0x10);
 		tx++;
@@ -159,9 +159,9 @@ void Help::update(RegionHandler* rh){
 		Help::blit( Help::topics[ index_topic ].map_data, 0, offset, 1, 3, 26, 16 );
 		
 		// Erase old scrollbar knob
-		gpu.set( 1, 28, 3+( old_offset >> 2 ), 0x60);
+		Gpu::set( 1, 28, 3+( old_offset >> 2 ), 0x60);
 		// Draw new scrollbar knob
-		gpu.set( 1, 28, 3+( offset >> 2 ), 0x6F);
+		Gpu::set( 1, 28, 3+( offset >> 2 ), 0x6F);
 		
 		// Memorize current help_offset
 		old_offset = offset;

@@ -21,7 +21,7 @@ const Control LINKMODE_CONTROLS[ CONTROL_LINKMODE_MAX ] = {
 
 void LinkMode::update( RegionHandler* rh ){
 	const Region *c = &REGION_MAP_4_LINKSTATUS;	
-	gpu.otherBlit(MAPDATA + ((MAP_CFG * 3) << 12), c->x, c->y, 0xb, 0xf, c->width, c->height);
+	Gpu::blitAlt(MAPDATA + ((MAP_CFG * 3) << 12), c->x, c->y, 0xb, 0xf, c->width, c->height);
 	switch( VAR_CFG.LINKMODE.LINKMODE ){
 		case LINKMODE_GBA: /*! let the user decide !*/break;
 		case LINKMODE_IBM			: VAR_CFG.LINKMODE.MASTERCLOCK = true; break;

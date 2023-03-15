@@ -39,10 +39,10 @@ void Adsr::drawX4( u8 adsr_tables[ 4 ][ ADSR_TABLE_LENGTH ] , u8 adsr_position )
 			VirtualScreen::set( half , 23 - ( adsr_tables[ 2 ][ quad ] >> 5  ) );
 			VirtualScreen::set( half , 31 - ( adsr_tables[ 3 ][ quad ] >> 5  ) );
 		}
-		//gpu.number(26, 1, ADSR_TABLE_LENGTH, COLOR_RED);
+		//Gpu::number(26, 1, ADSR_TABLE_LENGTH, COLOR_RED);
 
-		gpu.set( last_arrow_position 	& 1 ? 2 : 1 , 14 + ( last_arrow_position 	>> 1 ) , 18 , 0x0100 ); 
-		gpu.set( arrow_position 			& 1 ? 2 : 1 , 14 + ( arrow_position			>> 1 ) , 18 , 0x711E ); 
+		Gpu::set( last_arrow_position 	& 1 ? 2 : 1 , 14 + ( last_arrow_position 	>> 1 ) , 18 , 0x0100 ); 
+		Gpu::set( arrow_position 			& 1 ? 2 : 1 , 14 + ( arrow_position			>> 1 ) , 18 , 0x711E ); 
 		last_arrow_position = arrow_position;
 		
 		//DECIMAL_DOUBLE(28,1,adsr_position < (ADSR_TABLE_LENGTH-1)?COLOR_YELLOW:COLOR_ORANGE ,adsr_position/100);
@@ -73,10 +73,10 @@ void Adsr::draw( u8 adsr_table[ ADSR_TABLE_LENGTH ] , u8 adsr_position ){
 		){
 			VirtualScreen::set( half ,  31 - ( adsr_table[ quad ] >> 3  ) );
 		}
-		//gpu.number(26, 1, ADSR_TABLE_LENGTH, COLOR_RED);
+		//Gpu::number(26, 1, ADSR_TABLE_LENGTH, COLOR_RED);
 
-		gpu.set( last_arrow_position 	& 1 ? 2 : 1 , 14 + ( last_arrow_position 	>> 1 ) , 18 , 0x0100 ); 
-		gpu.set( arrow_position 			& 1 ? 2 : 1 , 14 + ( arrow_position			>> 1 ) , 18 , 0x711E ); 
+		Gpu::set( last_arrow_position 	& 1 ? 2 : 1 , 14 + ( last_arrow_position 	>> 1 ) , 18 , 0x0100 ); 
+		Gpu::set( arrow_position 			& 1 ? 2 : 1 , 14 + ( arrow_position			>> 1 ) , 18 , 0x711E ); 
 		last_arrow_position = arrow_position;
 		
 		//DECIMAL_DOUBLE(28,1,adsr_position < (ADSR_TABLE_LENGTH-1)?COLOR_YELLOW:COLOR_ORANGE ,adsr_position/100);

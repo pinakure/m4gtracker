@@ -55,7 +55,7 @@ void LookNFeel::logoFade(){
 			Synth::polysynth( 0xffffffff - ((freeze>>4)+(freeze>>2)) );
 		}
 		if( ((R_VCOUNT&0x00FF) >=160)){
-		//if(!gpu.isVblank()) {
+		//if(!Gpu::isVblank()) {
 			freeze++;
 			for(int i=0;i<16;i++) {
 				int c1 = Palette[4+((freeze)&0x7)];
@@ -88,14 +88,14 @@ void LookNFeel::logoFade(){
 void LookNFeel::logoWait(){
 	int freeze=0;
 	
-	gpu.loadPalette();
+	Gpu::loadPalette();
 	while( (freeze < 2048) && !KEYACTIVITY() ){
 		regHnd.drawVerticalCache(8,7,&CACHE_LOGOTYPE,0,0);
 		KEYUPDATE();
 		rotateGfx(); 
 		freeze++;
 	}
-	gpu.loadPalette();
+	Gpu::loadPalette();
 }
 
 void LookNFeel::init(){

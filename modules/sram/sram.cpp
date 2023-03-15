@@ -74,8 +74,8 @@ void Sram::drawPosition(u8 x, u8 y, u8 color) {
 
 void Sram::write(u8 a){ 
 	SRAM_WriteByte(position++, a);
-	if((position & 0xFF)>0x80) gpu.set( 2,29, 0, 0x100);
-	else gpu.set( 2,29, 0, (COLOR_RED << 12) | 0x3D);
+	if((position & 0xFF)>0x80) Gpu::set( 2,29, 0, 0x100);
+	else Gpu::set( 2,29, 0, (COLOR_RED << 12) | 0x3D);
 }
 
 void Sram::write16(u16 a) { 
@@ -91,8 +91,8 @@ void Sram::write32(u32 a) {
 }
 
 u8 Sram::read(){
-	if((position & 0xFF)>0x80)gpu.set( 2,29, 0, 0x100);
-	else gpu.set( 2,29, 0, (COLOR_GREEN << 12) | 0x3D);
+	if((position & 0xFF)>0x80)Gpu::set( 2,29, 0, 0x100);
+	else Gpu::set( 2,29, 0, (COLOR_GREEN << 12) | 0x3D);
 	u8 r = SRAM_ReadByte(position++);
 	return r;
 }
