@@ -9,19 +9,24 @@
  So it has to return KeyDown, KeyUp and KeyRepeat status for all keys.Thats all.
 ------------------------------------------------------------------------------*/
 
-cKEY KEY;
-
+vu16	Key::keytrig;
+u16 	Key::keyinput;
+bool	Key::retrig;
+u16	Key::keyrate;
+u16 	Key::keytimer[10];
+u16	Key::keydown;
+u16 	Key::keyup;				
+u16 	Key::keyrepeat;
+u16 	Key::keypress;
 
 // INPUT REGISTER = LRdulrsSBA (s=st)
-void cKEY::init(void)
-{
+void Key::init(){
 	*(u16*)REG_KEYCNT = 0x43FF;//Set Key Interrupt on every button
 	keyrate = 40;
 	retrig  = false;
 }
 
-void cKEY::update(void)
-{
+void Key::update(){
 	R_IME=0x0;
 	u8 i  = 0;
 	
@@ -37,8 +42,7 @@ void cKEY::update(void)
 		cp = 0x0000,
 		cu = 0x0000;
 
-	while(i<10)
-	{
+	while(i<10){
 		u16 pos = 1<<i;
 		ct = (keytrig  & pos)>>i;
 		cd = (keydown  & pos)>>i;
@@ -46,22 +50,19 @@ void cKEY::update(void)
 		cu = (keyup    & pos)>>i;
 	
 	
-		if( cd)
-		{
+		if( cd ){
 			if(!ct)cd=0;
 		}
 
-		if( ct)
-		{			
+		if( ct ){			
 			if(!cu)if(!cd)if( cp){cp=1;		}
 			if( cd)if(!cu)if(!cp){cp=1;cd=0;}
 			if(!cp)if(!cd)if(!cu){cd=1;		}
 		}
 		
-		if( cu)cu=0;
+		if( cu )cu=0;
 		
-		if( cp)
-		{
+		if( cp ){
 			if(!ct)if(!cu)if(!cd){cu=1; cp=0;}
 		}
 
@@ -75,35 +76,30 @@ void cKEY::update(void)
 	
 	keytrig	= kt;
 	keydown	= kd;
-	keypress= kp;
-	keyup	= ku;
+	keypress	= kp;
+	keyup		= ku;
 	if(((!keytrig)&&(!keyup))&&(!keypress)&&(!keydown))SYS_QUERYKEY = false;
 	R_IME=0x1;	
 }
 
-bool cKEY::down(u16 keyflag)
-{
+bool Key::down(u16 keyflag){
 	if((keydown & keyflag)==keyflag)return(true);
 	return(false);
 }
 
-bool cKEY::up(u16 keyflag)
-{
+bool Key::up(u16 keyflag){
 	if((keyup & keyflag)==keyflag)return(true);
 	return(false);
 }
 
-bool cKEY::press(u16 keyflag)
-{	
+bool Key::press(u16 keyflag){	
 	if((keypress & keyflag)==keyflag)return(true);		
 	return(false);
 }
 
-bool cKEY::repeat(u8 index)
-{
+bool Key::repeat(u8 index){
 	u16 keyflag = (1 <<index);
-	if((keypress & keyflag)==keyflag)
-	{
+	if((keypress & keyflag)==keyflag){
 		keytimer[index]++;
 		if(keytimer[index] > keyrate)
 		{
@@ -115,10 +111,10 @@ bool cKEY::repeat(u8 index)
 	return(false);
 }
 
-bool cKEY::activity(){
+bool Key::activity(){
 	return(keypress || keytrig || keyup );
 }
 
-void cKEY::forceNoInput(){
+void Key::forceNoInput(){
 	while( activity() ){ update(); }
 }

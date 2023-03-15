@@ -36,76 +36,67 @@
 // #define KEYUP_UP			((Sys::cursor & 0x30) == 0x20)
 // #define KEYUP_DOWN			((Sys::cursor & 0xC0) == 0x80)
 
-#define KEYDOWN_A				KEY.down(KEY_A)
-#define KEYDOWN_B				KEY.down(KEY_B)
-#define KEYDOWN_SELECT		KEY.down(KEY_SELECT)
-#define KEYDOWN_START			KEY.down(KEY_START)
-#define KEYDOWN_R				KEY.down(KEY_R)
-#define KEYDOWN_L				KEY.down(KEY_L)
-#define KEYDOWN_RIGHT			KEY.down(KEY_RIGHT)
-#define KEYDOWN_LEFT			KEY.down(KEY_LEFT)
-#define KEYDOWN_UP				KEY.down(KEY_UP)
-#define KEYDOWN_DOWN			KEY.down(KEY_DOWN)
-
-#define KEYPRESS_A				KEY.press(KEY_A)
-#define KEYPRESS_B				KEY.press(KEY_B)
-#define KEYPRESS_SELECT		KEY.press(KEY_SELECT)
-#define KEYPRESS_START		KEY.press(KEY_START)
-#define KEYPRESS_R				KEY.press(KEY_R)
-#define KEYPRESS_L				KEY.press(KEY_L)
-#define KEYPRESS_RIGHT		KEY.press(KEY_RIGHT)
-#define KEYPRESS_LEFT			KEY.press(KEY_LEFT)
-#define KEYPRESS_UP			KEY.press(KEY_UP)
-#define KEYPRESS_DOWN			KEY.press(KEY_DOWN)
-
-#define KEYUPDATE				KEY.update
-#define KEYFORCENOINPUT		KEY.forceNoInput
-#define KEYACTIVITY			KEY.activity
-#define KEYINIT					KEY.init
-
-#define KEYUP_A					KEY.up(KEY_A)
-#define KEYUP_B					KEY.up(KEY_B)
-#define KEYUP_SELECT			KEY.up(KEY_SELECT)
-#define KEYUP_START			KEY.up(KEY_START)
-#define KEYUP_R					KEY.up(KEY_R)
-#define KEYUP_L					KEY.up(KEY_L)
-#define KEYUP_RIGHT			KEY.up(KEY_RIGHT)
-#define KEYUP_LEFT				KEY.up(KEY_LEFT)
-#define KEYUP_UP				KEY.up(KEY_UP)
-#define KEYUP_DOWN				KEY.up(KEY_DOWN)
+#define KEYDOWN_A				Key::down(KEY_A)
+#define KEYDOWN_B				Key::down(KEY_B)
+#define KEYDOWN_SELECT		Key::down(KEY_SELECT)
+#define KEYDOWN_START			Key::down(KEY_START)
+#define KEYDOWN_R				Key::down(KEY_R)
+#define KEYDOWN_L				Key::down(KEY_L)
+#define KEYDOWN_RIGHT			Key::down(KEY_RIGHT)
+#define KEYDOWN_LEFT			Key::down(KEY_LEFT)
+#define KEYDOWN_UP				Key::down(KEY_UP)
+#define KEYDOWN_DOWN			Key::down(KEY_DOWN)
+#define KEYPRESS_A				Key::press(KEY_A)
+#define KEYPRESS_B				Key::press(KEY_B)
+#define KEYPRESS_SELECT		Key::press(KEY_SELECT)
+#define KEYPRESS_START		Key::press(KEY_START)
+#define KEYPRESS_R				Key::press(KEY_R)
+#define KEYPRESS_L				Key::press(KEY_L)
+#define KEYPRESS_RIGHT		Key::press(KEY_RIGHT)
+#define KEYPRESS_LEFT			Key::press(KEY_LEFT)
+#define KEYPRESS_UP			Key::press(KEY_UP)
+#define KEYPRESS_DOWN			Key::press(KEY_DOWN)
+#define KEYUP_A					Key::up(KEY_A)
+#define KEYUP_B					Key::up(KEY_B)
+#define KEYUP_SELECT			Key::up(KEY_SELECT)
+#define KEYUP_START			Key::up(KEY_START)
+#define KEYUP_R					Key::up(KEY_R)
+#define KEYUP_L					Key::up(KEY_L)
+#define KEYUP_RIGHT			Key::up(KEY_RIGHT)
+#define KEYUP_LEFT				Key::up(KEY_LEFT)
+#define KEYUP_UP				Key::up(KEY_UP)
+#define KEYUP_DOWN				Key::up(KEY_DOWN)
+#define KEYUPDATE				Key::update
+#define KEYFORCENOINPUT		Key::forceNoInput
+#define KEYACTIVITY			Key::activity
+#define KEYINIT					Key::init
 
 #define REG_KEYINPUT    		(REG_BASE + 0x130)  // Key Input
 #define REG_KEYCNT      		(REG_KEYINPUT + 02) // Key Interrupt Control
 
-class cKEY
-{
+class Key {
 	private:
 				
 	public:
-		vu16	keytrig;
-		u16 keyinput;
-		bool	retrig;
-		u16		keyrate,
-				keytimer[10];
-		u16		keydown,
-				keyup,				
-				keyrepeat,
-				keypress;
-		cKEY(){}
-		~cKEY(){}
-		void init(void);
-		void update(void);
-		bool down(u16 keyflag);
-		bool up(u16 keyflag);
-		bool press(u16 keyflag);
-		bool repeat(u8 index);
-		
-		void forceNoInput();
-
-		bool activity();
+		static vu16	keytrig;
+		static u16 	keyinput;
+		static bool	retrig;
+		static u16	keyrate,
+						keytimer[10];
+		static u16	keydown,
+						keyup,				
+						keyrepeat,
+						keypress;
+	
+		static void init			( );
+		static void update			( );
+		static bool down			( u16 keyflag 	);
+		static bool up				( u16 keyflag 	);
+		static bool press			( u16 keyflag 	);
+		static bool repeat			( u8 index		);
+		static void forceNoInput	( );
+		static bool activity		( );
 };
-
-extern cKEY KEY;
 
 extern volatile bool SYS_QUERYKEY;		 //True when a key is triggered
 
