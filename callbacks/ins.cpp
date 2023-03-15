@@ -606,7 +606,7 @@ void InstEdit::updateWav( RegionHandler* rh ){
 	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_WAV ].inst ) 
 	if( adsr_position != WAV_ADSR_POSITION ){
 		adsr_position = WAV_ADSR_POSITION;
-		if(!KEY.press(KEY_SELECT)) Adsr::drawX4( Adsr::wav_table, adsr_position);
+		if( !KEYPRESS_SELECT ) Adsr::drawX4( Adsr::wav_table, adsr_position);
 		else viewWaveFormWav( );
 	}
 	
@@ -624,7 +624,7 @@ void InstEdit::updateFmw( RegionHandler* rh ){
 	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_FMW ].inst ) 
 	if( adsr_position != FMW_ADSR_POSITION ){
 		adsr_position = FMW_ADSR_POSITION;
-		if( !KEY.press( KEY_SELECT ) ) Adsr::drawX4( Adsr::fmw_table, adsr_position);
+		if( !KEYPRESS_SELECT ) Adsr::drawX4( Adsr::fmw_table, adsr_position);
 		else viewWaveFormFmw();
 	}
 	
@@ -639,7 +639,7 @@ void InstEdit::updateSmp( RegionHandler* rh ){
 	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_SMP ].inst ) 
 	if( adsr_position != SMP_ADSR_POSITION ){
 		adsr_position = SMP_ADSR_POSITION;
-		if( !KEY.press( KEY_SELECT ) ) Adsr::draw( Adsr::smp_table, adsr_position );
+		if( !KEYPRESS_SELECT ) Adsr::draw( Adsr::smp_table, adsr_position );
 		else viewWaveFormSmp();
 	}
 	

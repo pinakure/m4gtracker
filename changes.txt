@@ -116,3 +116,8 @@ Removed useless option 'COPY' from SNG screen
 Added secondary SLOT control on SNG Screen, for the dummies.
 Several small Bugfixes
 Pattern pagination ( B+SELECT+ LEFT/RIGHT )
+
+----------------------
+15-03-2023
+----------------------
+Made Sys class static, keeping rom speed (or increasing it at best)

@@ -351,10 +351,10 @@ void RegionHandler::controlTrigger(const Control *c, u16 q){
 		case EVENT_KEY_B		: dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_B	, (u32*)this);
 								  break;
 		
-		case EVENT_KEYUP_A		: KEY.forceNoInput(); dispatchCallback(c->callback, c, true, true, EVENT_KEYUP_A  	, (u32*)this); KEY.forceNoInput(); break;
-		case EVENT_KEYUP_B		: KEY.forceNoInput(); dispatchCallback(c->callback, c, true, true, EVENT_KEYUP_B  	, (u32*)this); KEY.forceNoInput(); break;
-		case EVENT_KEYDOWN_A	: KEY.forceNoInput(); dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_A	, (u32*)this); break;
-		case EVENT_KEYDOWN_B	: KEY.forceNoInput(); dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_B, (u32*)this); break;
+		case EVENT_KEYUP_A		: KEYFORCENOINPUT(); dispatchCallback(c->callback, c, true, true, EVENT_KEYUP_A  	, (u32*)this); KEYFORCENOINPUT(); break;
+		case EVENT_KEYUP_B		: KEYFORCENOINPUT(); dispatchCallback(c->callback, c, true, true, EVENT_KEYUP_B  	, (u32*)this); KEYFORCENOINPUT(); break;
+		case EVENT_KEYDOWN_A	: KEYFORCENOINPUT(); dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_A	, (u32*)this); break;
+		case EVENT_KEYDOWN_B	: KEYFORCENOINPUT(); dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_B, (u32*)this); break;
 	}
 	
 	/*control->callback(control, true, true, (u32*)this); */

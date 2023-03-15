@@ -330,7 +330,7 @@ void Config::defaults (Control *c, bool bigstep, bool add, u32 *pointer){
 }
 
 void Config::reset (Control *c, bool bigstep, bool add, u32 *pointer){
-	sys.reset();
+	Sys::reset();
 }
 
 void Config::reinit (Control *c, bool bigstep, bool add, u32 *pointer){

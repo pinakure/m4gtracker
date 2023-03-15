@@ -31,9 +31,9 @@ void ReallyDialog::draw(){
 }
 
 void ReallyDialog::confirm(){
-	if(KEY.down	(KEY_B)) return;
-	if(KEY.press(KEY_B)) return;
-	if(KEY.up	(KEY_B)) return;
+	if( KEYDOWN_B 	) return;
+	if( KEYPRESS_B	) return;
+	if( KEYUP_B		) return;
 		
 	result  = true;
 	enabled = false;
@@ -54,12 +54,12 @@ void ReallyDialog::enable(){
 	while(enabled){		
 		
 		Sequencer::update();
-		KEY.update();
+		KEYUPDATE();
 		
-		if( KEY.down	( KEY_LEFT  	) ) { result = 1; draw(); };
-		if( KEY.down	( KEY_RIGHT 	) ) { result = 0; draw(); };
-		if( KEY.up	( KEY_A		) ) { if( result ) confirm(); else cancel(); }
-		if( KEY.up	( KEY_B		) ) cancel();
+		if( KEYDOWN_LEFT 	) { result = 1; draw(); };
+		if( KEYDOWN_RIGHT	) { result = 0; draw(); };
+		if( KEYUP_A			) { if( result ) confirm(); else cancel(); }
+		if( KEYUP_B			) cancel();
 	}
-	KEY.update();
+	KEYUPDATE();
 }

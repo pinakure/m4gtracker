@@ -490,7 +490,7 @@ CB_PATTERNS(0, F);		CB_PATTERNS(1, F);		CB_PATTERNS(2, F);		CB_PATTERNS(3, F);		
 void PatEdit::globalUpdate(RegionHandler* rh){
 	static int bookmark_timer = 0;
 		
-	if(KEY.press(KEY_B)) {
+	if( KEYPRESS_B ) {
 		bookmark_timer++;
 		if(bookmark_timer > 2000) {			
 			PatEdit::bookmarks[ VAR_CFG.CURRENTCHANNEL ] = VAR_CFG.ORDERPOSITION + PatEdit::bookmark_row;
@@ -691,7 +691,7 @@ void PatEdit::sync( bool verbose ){
 void PatEdit::dispatchMessage(u32 msg){
 	u8 x, y;
 	
-	bool modifier = KEY.press(KEY_SELECT);
+	bool modifier = KEYPRESS_SELECT;
 	
 	switch(msg){
 		case MESSAGE_CANCEL: // Erase
@@ -798,10 +798,10 @@ void PatEdit::transpose( int q ){
 }
 
 void PatEdit::processInput( ){
-	if		( KEY.down( KEY_LEFT  ) ) transpose( -1 );
-	else if	( KEY.down( KEY_RIGHT ) ) transpose(  1 );
-	if		( KEY.down( KEY_UP    ) ) shift( -1 );
-	else if	( KEY.down( KEY_DOWN  ) ) shift(  1 );
+			if ( KEYDOWN_LEFT 	) transpose( -1 ); 
+	else 	if ( KEYDOWN_RIGHT 	) transpose(  1 );
+	else 	if ( KEYDOWN_UP    	) shift( -1 );
+	else 	if ( KEYDOWN_DOWN  	) shift(  1 );
 }
 
 /* Delete pattern from pattern shared data */

@@ -13,18 +13,22 @@
 #include "../../data/data.hpp"
 #include "../../macros.h"
 
-Sys sys;
+u16 	Sys::keyboard;
+u8  	Sys::cursor;
 
 void Sys::reset(){
 	Sequencer::stop();
-	var_reset = true;
+	Mixer::stop();
+	asm("swi 00");
 }
 
 void Sys::init(){
+	cursor		= 0x00; 
+	keyboard 		= 0x0000;
 	
 	DEBUG_INIT();
 	
-	KEY.init();
+	KEYINIT();
 	
 	Clip::init();
 	
@@ -39,7 +43,6 @@ void Sys::init(){
 	/*----------------------------------------------------------*/
 	
 	Net::init();
-	var_reset = false;
 	
 	//keyrate  = 40;
 	//retrig   = false;
@@ -91,10 +94,10 @@ void Sys::updateInput(){
 		L + SELECT
 	-------------------------------------------------------------------------*/ 
 	if( AT_TRACKER_SCREEN ){
-		if( KEY.press(KEY_L) ) {
+		if( KEYPRESS_L ) {
 			return Clip::processInput();
 		}
-		if( KEY.press(KEY_R) ) {
+		if( KEYPRESS_R ) {
 			if( Clip::visible ) 
 				return Clip::processInput();
 			else 
@@ -103,10 +106,10 @@ void Sys::updateInput(){
 	}
 	
 	if( AT_PATTERN_SCREEN ){
-		if( KEY.press(KEY_L) ) {
+		if( KEYPRESS_L ) {
 			return Clip::processInput();
 		}
-		if( KEY.press(KEY_R) ) {
+		if( KEYPRESS_R ) {
 			if( Clip::visible ) 
 				return Clip::processInput();
 			else 
@@ -122,14 +125,15 @@ void Sys::updateInput(){
 		SELECT + UP
 		SELECT + DOWN
 	-------------------------------------------------------------------------*/ 
-	if(KEY.press(KEY_SELECT	)&&
-	  !KEY.press(KEY_A		)&&
-	  !KEY.press(KEY_B		)){
-		msg  = KEY.down(KEY_LEFT ) ? MESSAGE_NAVIGATE_LEFT  :
-			   KEY.down(KEY_RIGHT) ? MESSAGE_NAVIGATE_RIGHT :
-			   KEY.down(KEY_UP   ) ? MESSAGE_NAVIGATE_UP    :
-			   KEY.down(KEY_DOWN ) ? MESSAGE_NAVIGATE_DOWN  :
-			   0x0;
+	if(
+	KEYPRESS_SELECT &&
+	!KEYPRESS_A		&&
+	!KEYPRESS_B		){
+		msg  	= KEYDOWN_LEFT  ? MESSAGE_NAVIGATE_LEFT  
+				: KEYDOWN_RIGHT ? MESSAGE_NAVIGATE_RIGHT 
+				: KEYDOWN_UP   	? MESSAGE_NAVIGATE_UP    
+				: KEYDOWN_DOWN	? MESSAGE_NAVIGATE_DOWN 
+				: 0x0;
 		if(regHnd.region && msg){
 			regHnd.sendMessage(msg | (unsigned)regHnd.region);
 			return;
@@ -143,7 +147,7 @@ void Sys::updateInput(){
 		B
 	-------------------------------------------------------------------------*/ 
 	if(regHnd.control){
-		if( ( KEY.up( KEY_A ) || KEY.down( KEY_A ) ) && ( !KEY.up( KEY_B ) && !KEY.press( KEY_B ) && !KEY.down( KEY_B ) ) ) {
+		if( ( KEYUP_A || KEYDOWN_A ) && ( !KEYUP_B && !KEYPRESS_B && !KEYDOWN_B ) ) {
 			regHnd.sendMessage(MESSAGE_ACTIVATE | (unsigned)regHnd.control);
 		}
 	}
@@ -154,13 +158,13 @@ void Sys::updateInput(){
 		START
 		SELECT + START
 	-------------------------------------------------------------------------*/ 
-	if( KEY.down( KEY_START ) ) {
+	if( KEYDOWN_START ) {
 		if( Sequencer::playing ) {
 			Sequencer::stop();
 			return;
 		}
 		
-		if( KEY.press( KEY_SELECT ) ) {
+		if( KEYPRESS_SELECT ) {
 			Sequencer::play(true);
 			return;
 		}	
@@ -169,54 +173,57 @@ void Sys::updateInput(){
 		return;
 	}
 		// Handle Copy Command (B+A)
-	if(KEY.press(KEY_B) && regHnd.control) {
+	if( KEYPRESS_B && regHnd.control) {
 		
 		
-		if(KEY.press(KEY_A)) {
+		if( KEYPRESS_A ) {
 			regHnd.sendMessage(MESSAGE_PASTE | (unsigned)regHnd.control);
 			return;		
 		}
 		
-		msg = KEY.down(KEY_LEFT ) ? MESSAGE_OTHER_PREV : 
-			  KEY.down(KEY_RIGHT) ? MESSAGE_OTHER_NEXT : 
-			  KEY.down(KEY_DOWN ) ? MESSAGE_OTHER_BIGPREV : 
-			  KEY.down(KEY_UP   ) ? MESSAGE_OTHER_BIGNEXT : 
-			  0;
+		msg	= KEYDOWN_LEFT 	? MESSAGE_OTHER_PREV 
+				: KEYDOWN_RIGHT	? MESSAGE_OTHER_NEXT 
+				: KEYDOWN_DOWN 	? MESSAGE_OTHER_BIGPREV
+				: KEYDOWN_UP   	? MESSAGE_OTHER_BIGNEXT 
+				: 0x00;
 		
 		if(msg)regHnd.sendMessage(msg);
 		return;
 	}
 	
 	// Handle control modifiers
-	if(KEY.press(KEY_A)){
-		msg  = KEY.down(KEY_LEFT ) ? MESSAGE_MODIFY_SUB 	:
-			   KEY.down(KEY_RIGHT) ? MESSAGE_MODIFY_ADD 	:
-			   KEY.down(KEY_UP   ) ? MESSAGE_MODIFY_BIGADD  :
-			   KEY.down(KEY_DOWN ) ? MESSAGE_MODIFY_BIGSUB  :
-			   0x0;
+	if( KEYPRESS_A ){
+		msg  	= KEYDOWN_LEFT 	? MESSAGE_MODIFY_SUB 	
+				: KEYDOWN_RIGHT	? MESSAGE_MODIFY_ADD 	
+				: KEYDOWN_UP   	? MESSAGE_MODIFY_BIGADD  
+				: KEYDOWN_DOWN	? MESSAGE_MODIFY_BIGSUB  
+				: 0x0;
+				
 		if(regHnd.control && msg){
 			regHnd.sendMessage(msg | (unsigned)regHnd.control);
 			return;
 		}
 		
 		// Handle A Cancel (A, then B)
-		if(KEY.down(KEY_B) && regHnd.control) {
+		if( KEYDOWN_B && regHnd.control) {
 			regHnd.sendMessage(MESSAGE_CANCEL | (unsigned)regHnd.control);
 			return;
 		}
-		
+	
 	}
 		
 	// Handle other arbitrary keypresses (MESSAGE_KEYPRESS)
-	msg =  KEY.down(KEY_LEFT  ) ? 1 :
-		   KEY.down(KEY_RIGHT ) ? 1 :
-		   KEY.down(KEY_UP    ) ? 1 :
-		   KEY.down(KEY_DOWN  ) ? 1 :
-		/*   KEY.down(KEY_A     ) ? 1 :
-		   KEY.down(KEY_B     ) ? 1 :*/	
-		   KEY.down(KEY_SELECT) ? 1 :
-		   KEY.down(KEY_START ) ? 1 :
-		   0;
+	msg 	= KEYDOWN_LEFT 		? 1 
+			: KEYDOWN_RIGHT 	? 1 
+			: KEYDOWN_UP    		? 1 
+			: KEYDOWN_DOWN  	? 1 
+			/* 
+			: KEYDOWN_A 			? 1 
+			: KEYDOWN_B 			? 1 
+			*/	
+			: KEYDOWN_SELECT 	? 1 
+			: KEYDOWN_START  	? 1 
+			: 0x00;
 		   
 	if(regHnd.control && msg ){
 		regHnd.sendMessage(MESSAGE_KEYPRESS | (unsigned)regHnd.control);
@@ -231,10 +238,10 @@ void Sys::update(){
 	//DEBUG_UPDATE();
 	
 	Sequencer::update();	
-	KEY.update();
+	KEYUPDATE();
 	updateInput();	
 	
-	//if(KEY.press(KEY_L)) overloadTest(regHnd);
-	// if(KEY.Press(KEY_R))gpu.vs->draw(14,2);
+	//if( KEYPRESS_L ) overloadTest(regHnd);
+	//if( KEYPRESS_R ) gpu.vs->draw(14,2);
 }
 

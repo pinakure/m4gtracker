@@ -252,13 +252,13 @@ void SnakeGame::update( RegionHandler* rh){
 	
 	
 	// Process input 
-	if(KEYPRESS_LEFT  && ( direction !=SNAKE_RIGHT) ) nextdirection = SNAKE_LEFT  ; else
-	if(KEYPRESS_UP    && ( direction !=SNAKE_DOWN ) ) nextdirection = SNAKE_UP	  ; else
-	if(KEYPRESS_RIGHT && ( direction !=SNAKE_LEFT ) ) nextdirection = SNAKE_RIGHT ; else
-	if(KEYPRESS_DOWN  && ( direction !=SNAKE_UP   ) ) nextdirection = SNAKE_DOWN  ;
+	if( KEYPRESS_LEFT  && ( direction !=SNAKE_RIGHT) ) nextdirection = SNAKE_LEFT  ; else
+	if( KEYPRESS_UP    	&& ( direction !=SNAKE_DOWN ) ) nextdirection = SNAKE_UP	  ; else
+	if( KEYPRESS_RIGHT && ( direction !=SNAKE_LEFT ) ) nextdirection = SNAKE_RIGHT ; else
+	if( KEYPRESS_DOWN 	&& ( direction !=SNAKE_UP   ) ) nextdirection = SNAKE_DOWN  ;
 	
-	if(KEY.press( KEY_A )) eat();
-	//if(KEY.press( KEY_A )) newFruit();
+	if( KEYPRESS_A ) eat();
+	//if( KEYPRESS_A ) newFruit();
 	
 	turbo = KEYPRESS_B ? true : false;
 	

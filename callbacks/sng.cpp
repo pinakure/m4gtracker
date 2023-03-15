@@ -181,7 +181,7 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 	
 	Gpu::drawDialog( 7 , 6 , 16, 8, " Data Purge ");
 	
-	KEY.forceNoInput();
+	KEYFORCENOINPUT();
 	
 	SRAM.songSave( false );
 	
@@ -274,7 +274,7 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 
 	Gpu::bigString( 7, 15, "PRESS ANY BUTTON");
 	
-	while(!KEY.activity()){ KEY.update(); };
+	while( !KEYACTIVITY() ){ KEYUPDATE(); };
 	regHnd.redraw = 1;
 	regHnd.update(1);
 	#undef PATTERN_TOTAL
@@ -300,9 +300,9 @@ void SongEdit::erase( Control *c, bool bigstep, bool add, u32 *pointer ){
 		SRAM.sharedDataLoad( true );
 		// Save empty song
 		SRAM.songSave( true );
-		/*HACK*/while(KEY.down(KEY_A)||KEY.up(KEY_A)||KEY.press(KEY_A)){ KEY.update(); }
+		/*HACK*/while( KEYDOWN_A || KEYUP_A || KEYPRESS_A ){ KEYUPDATE(); }
 	}
-	/*HACK*/while(KEY.down(KEY_B)||KEY.up(KEY_B)||KEY.press(KEY_B)){ KEY.update(); }
+	/*HACK*/while( KEYDOWN_B || KEYUP_B || KEYPRESS_B ){ KEYUPDATE(); }
 	regHnd.redraw=true;
 }
 

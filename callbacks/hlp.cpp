@@ -145,10 +145,10 @@ void Help::updateButtons(){
 
 void Help::update(RegionHandler* rh){
 	
-	if(KEY.down(KEY_B	)) { Help::activateBack(); }
-	if(KEY.down(KEY_A	)) { Help::activateButton(); }
-	if(KEY.down(KEY_UP	)) Help::scrollUp(); else if(KEY.down(KEY_DOWN) ) Help::scrollDown();
-	if(KEY.down(KEY_LEFT)) Help::prevButton();else if(KEY.down(KEY_RIGHT)) Help::nextButton();
+	if( KEYDOWN_B		) { Help::activateBack(); }
+	if( KEYDOWN_A		) { Help::activateButton(); }
+	if( KEYDOWN_UP		) Help::scrollUp	(); else if( KEYDOWN_DOWN		) Help::scrollDown();
+	if( KEYDOWN_LEFT	) Help::prevButton	(); else if( KEYDOWN_RIGHT	) Help::nextButton();
 
 	// Propagate Region redraw flag
 	if( rh->redraw ){

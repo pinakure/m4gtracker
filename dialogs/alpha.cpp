@@ -24,7 +24,7 @@ bool 	AlphaDialog::redraw		= false;
 // Also Sets regionHander in modal alphanumeric dialog mode, max string len 14
 void AlphaDialog::getBigString(Control *c, bool bigstep, bool add, u32 *pointer){
 	AlphaDialog::enable(true, c->var, c->x, c->y);
-	KEY.forceNoInput();
+	KEYFORCENOINPUT();
 	regHnd.redraw=true;
 }
 
@@ -32,7 +32,7 @@ void AlphaDialog::getBigString(Control *c, bool bigstep, bool add, u32 *pointer)
 // Also Sets regionHander in modal alphanumeric dialog mode, max string len 6
 void AlphaDialog::getString(Control *c, bool bigstep, bool add, u32 *pointer){
 	AlphaDialog::enable(false, c->var, c->x, c->y);
-	KEY.forceNoInput();
+	KEYFORCENOINPUT();
 	regHnd.redraw=true;
 }
 	
@@ -101,7 +101,7 @@ void AlphaDialog::update(){
 		if(redraw)draw();
 		
 		Sequencer::update();	
-		KEY.update();
+		KEYUPDATE();
 	
 		if(KEYDOWN_LEFT ) cursorX--; else
 		if(KEYDOWN_RIGHT) cursorX++; else 

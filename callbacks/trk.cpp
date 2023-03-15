@@ -517,8 +517,8 @@ void Tracker::transpose( int q ){
 }
 
 void Tracker::processInput( ){
-	if		( KEY.down( KEY_LEFT  ) ) transpose( -1 );
-	else if	( KEY.down( KEY_RIGHT ) ) transpose(  1 );
-	if		( KEY.down( KEY_UP    ) ) shift( -1 );
-	else if	( KEY.down( KEY_DOWN  ) ) shift(  1 );
+			if ( KEYDOWN_LEFT 	) transpose( -1 );
+	else 	if ( KEYDOWN_RIGHT 	) transpose(  1 );
+	else 	if ( KEYDOWN_UP     	) shift( -1 );
+	else 	if ( KEYDOWN_DOWN  	) shift(  1 );
 }

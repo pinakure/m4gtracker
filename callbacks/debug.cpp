@@ -74,11 +74,11 @@ void Debug::updateWatch(){
 	
 	if( regHnd.new_region || regHnd.redraw ) redraw = true;
 	
-	if(KEY.press( KEY_L ) && KEY.up(KEY_R)) {
+	if( KEYPRESS_L && KEYUP_R ) {
 		redraw 		  = true;
 		watch_hex 	 ^= 1;
 	}
-	if(KEY.press( KEY_R ) && KEY.up(KEY_L)) {
+	if( KEYPRESS_R && KEYUP_L ) {
 		redraw 		  = true;
 		step_by_step ^= 1;
 	}
@@ -357,8 +357,8 @@ void Debug::watchUpdate( u8 index ){
 		
 		vw->timer = 0x7FF;
 		
-		if( step_by_step )while( !KEY.down( KEY_SELECT )) {
-			KEY.update();
+		if( step_by_step )while( !KEYDOWN_SELECT ) {
+			KEYUPDATE();
 		}
 		
 		vw->last_value 	= u32value;
@@ -412,8 +412,8 @@ void Debug::bsod( const char *title, const char *message1,const char *message2, 
 	console.print(" Press START to reboot this unit.", COLOR_WHITE);
 	
 	while(1){
-		KEY.update();
-		if( KEY.down( KEY_START ) ) asm("swi 00");
+		KEYUPDATE();
+		if( KEYDOWN_START ) asm("swi 00");
 		
 		static bool bm;
 		if(bm != gpu.blink){
@@ -436,7 +436,7 @@ void Debug::panic( const char *message, u32 *pointer){
 
 void Debug::error( int error_code, bool recoverable ){
 
-	if( recoverable) while(KEY.press(KEY_B))KEY.update();
+	if( recoverable) while( KEYPRESS_B ) KEYUPDATE();
 
 	// Clear unused palette color
 	*(u32*)(BG_PALETTE+16) = 0x00000000;
@@ -488,11 +488,11 @@ void Debug::error( int error_code, bool recoverable ){
 		// Palette blink
 		counter++;
 		if( gpu.isVblank()){
-			KEY.update();
+			KEYUPDATE();
 		}
 		if( recoverable){
-			if( KEY.down( KEY_B ) ){
-				while( !KEY.up( KEY_B ) ){ KEY.update(); };
+			if( KEYDOWN_B ){
+				while( !KEYUP_B ){ KEYUPDATE(); };
 				for(int x=0; x<30; x++){
 					for(int y=0; y<7; y++){
 						gpu.set( 0	, x	, y , 0 );
@@ -504,8 +504,8 @@ void Debug::error( int error_code, bool recoverable ){
 				return;
 			}
 		} else {
-			if( KEY.down( KEY_START ) ) {
-				asm("swi 26");
+			if( KEYDOWN_START ) {
+				asm("swi 00");
 			}
 		}
 		if((counter & 0xFFF) > 0x800) {

@@ -5,19 +5,14 @@
 
 class Sys {
 	private:
+		static u16 	keyboard;
+		static u8  	cursor;
 	
-	public:
-		bool var_reset;
-		
-		u16 keyboard;
-		u8  cursor;
-		
-		Sys(){ cursor= 0x00; keyboard = 0x0000;};
-		
-		void init();
-		void reset();
-		void update();
-		void updateInput();
+	public:		
+		static void init();
+		static void reset();
+		static void update();
+		static void updateInput();
 };
 
 extern Sys sys;
