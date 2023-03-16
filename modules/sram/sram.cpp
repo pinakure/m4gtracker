@@ -152,14 +152,13 @@ void Sram::songSave( bool verbose ){
 	//seek(0x200);
 		
 	for(i=0; i<ORDER_COUNT; i++){
-		for(int c=0; i<CHANNEL_COUNT; c++){
+		for(int c=0; c<CHANNEL_COUNT; c++){
 			write(VAR_SONG.PATTERNS[ c ].ORDER		[ i ] );
 			write(VAR_SONG.PATTERNS[ c ].TRANSPOSE	[ i ] );
 		}
 	}
-	
+
 	if( verbose ) drawPosition(27, 4, 2);	
-	
 	sharedDataSave( verbose );
 }
 

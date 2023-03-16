@@ -24,8 +24,7 @@ bool 		PatEdit::solo_clean 						= false;
 bool 		PatEdit::clean 								= false;
 u16 		PatEdit::icon_time 							= 0;
 
-#define CTL(a) 			&PAT_CONTROLS[CONTROL_PAT_##a]
-#define VAR(index, a) 	((u8*)&(VAR_PATTERN[index].a))
+// VARIOUS
 
 const Callback cb_pat_solo_0 = { PatEdit::solo , EVENT_KEYUP_B	, NULL 	, NULL 	};
 const Callback cb_pat_solo_1 = { PatEdit::solo , EVENT_KEYUP_B	, NULL 	, NULL 	};
@@ -40,6 +39,7 @@ const Callback cb_pat_mute_3 = { PatEdit::mute , EVENT_KEYUP_B	, NULL 	, NULL 	}
 const Callback cb_pat_mute_4 = { PatEdit::mute , EVENT_KEYUP_B	, NULL 	, NULL 	};
 const Callback cb_pat_mute_5 = { PatEdit::mute , EVENT_KEYUP_B	, NULL 	, NULL 	};
 
+// TRANSPOSE
 
 void transposeCH0_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 0 ); }
 void transposeCH1_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 1 ); }
@@ -61,6 +61,29 @@ void transposeCH2_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_C
 void transposeCH3_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 3;	PatEdit::bookmark_row = *(u8*)pointer;}
 void transposeCH4_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 4;	PatEdit::bookmark_row = *(u8*)pointer;}
 void transposeCH5_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 5;	PatEdit::bookmark_row = *(u8*)pointer;}
+
+// PATTERNS 
+
+void patternCH0_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 0 ); }
+void patternCH1_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 1 ); }
+void patternCH2_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 2 ); }
+void patternCH3_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 3 ); }
+void patternCH4_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 4 ); }
+void patternCH5_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 5 ); }
+
+void patternCH0_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 0 ); }
+void patternCH1_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 1 ); }
+void patternCH2_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 2 ); }
+void patternCH3_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 3 ); }
+void patternCH4_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 4 ); }
+void patternCH5_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 5 ); }
+
+void patternCH0_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 0; PatEdit::bookmark_row = *(u8*)pointer;}
+void patternCH1_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 1; PatEdit::bookmark_row = *(u8*)pointer;}
+void patternCH2_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 2;	PatEdit::bookmark_row = *(u8*)pointer;}
+void patternCH3_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 3;	PatEdit::bookmark_row = *(u8*)pointer;}
+void patternCH4_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 4;	PatEdit::bookmark_row = *(u8*)pointer;}
+void patternCH5_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 5;	PatEdit::bookmark_row = *(u8*)pointer;}
 
 
 //TRANSPOSE
@@ -86,8 +109,32 @@ CB_TRANSPOSE(0, E);		CB_TRANSPOSE(1, E);		CB_TRANSPOSE(2, E);		CB_TRANSPOSE(3, E
 CB_TRANSPOSE(0, F);		CB_TRANSPOSE(1, F);		CB_TRANSPOSE(2, F);		CB_TRANSPOSE(3, F);		CB_TRANSPOSE(4, F);		CB_TRANSPOSE(5, F);
 #undef CB_TRANSPOSE
 
+//PATTERNS
+#define CB_PATTERNS(c, a)																																				\
+const Callback cb_patterns_focus_##c##_0##a = { patternCH##c##_focus	, EVENT_FOCUS 		, (u32*)&NUMBERS[0x0##a] 			, NULL							};		\
+const Callback cb_patterns_paste_##c##_0##a = { patternCH##c##_paste	, EVENT_KEYDOWN_B 	, &VAR_PATTERN[0x##c].ORDER[0x##a] 	, &cb_patterns_focus_##c##_0##a };		\
+const Callback cb_patterns_##c##_0##a		= { patternCH##c##_alter	, EVENT_MODIFY_B 	, &VAR_PATTERN[0x##c].ORDER[0x##a] 	, &cb_patterns_paste_##c##_0##a };  
+CB_PATTERNS(0, 0);		CB_PATTERNS(1, 0);		CB_PATTERNS(2, 0);		CB_PATTERNS(3, 0);		CB_PATTERNS(4, 0);		CB_PATTERNS(5, 0);
+CB_PATTERNS(0, 1);		CB_PATTERNS(1, 1);		CB_PATTERNS(2, 1);		CB_PATTERNS(3, 1);		CB_PATTERNS(4, 1);		CB_PATTERNS(5, 1);
+CB_PATTERNS(0, 2);		CB_PATTERNS(1, 2);		CB_PATTERNS(2, 2);		CB_PATTERNS(3, 2);		CB_PATTERNS(4, 2);		CB_PATTERNS(5, 2);
+CB_PATTERNS(0, 3);		CB_PATTERNS(1, 3);		CB_PATTERNS(2, 3);		CB_PATTERNS(3, 3);		CB_PATTERNS(4, 3);		CB_PATTERNS(5, 3);
+CB_PATTERNS(0, 4);		CB_PATTERNS(1, 4);		CB_PATTERNS(2, 4);		CB_PATTERNS(3, 4);		CB_PATTERNS(4, 4);		CB_PATTERNS(5, 4);
+CB_PATTERNS(0, 5);		CB_PATTERNS(1, 5);		CB_PATTERNS(2, 5);		CB_PATTERNS(3, 5);		CB_PATTERNS(4, 5);		CB_PATTERNS(5, 5);
+CB_PATTERNS(0, 6);		CB_PATTERNS(1, 6);		CB_PATTERNS(2, 6);		CB_PATTERNS(3, 6);		CB_PATTERNS(4, 6);		CB_PATTERNS(5, 6);
+CB_PATTERNS(0, 7);		CB_PATTERNS(1, 7);		CB_PATTERNS(2, 7);		CB_PATTERNS(3, 7);		CB_PATTERNS(4, 7);		CB_PATTERNS(5, 7);
+CB_PATTERNS(0, 8);		CB_PATTERNS(1, 8);		CB_PATTERNS(2, 8);		CB_PATTERNS(3, 8);		CB_PATTERNS(4, 8);		CB_PATTERNS(5, 8);
+CB_PATTERNS(0, 9);		CB_PATTERNS(1, 9);		CB_PATTERNS(2, 9);		CB_PATTERNS(3, 9);		CB_PATTERNS(4, 9);		CB_PATTERNS(5, 9);
+CB_PATTERNS(0, A);		CB_PATTERNS(1, A);		CB_PATTERNS(2, A);		CB_PATTERNS(3, A);		CB_PATTERNS(4, A);		CB_PATTERNS(5, A);
+CB_PATTERNS(0, B);		CB_PATTERNS(1, B);		CB_PATTERNS(2, B);		CB_PATTERNS(3, B);		CB_PATTERNS(4, B);		CB_PATTERNS(5, B);
+CB_PATTERNS(0, C);		CB_PATTERNS(1, C);		CB_PATTERNS(2, C);		CB_PATTERNS(3, C);		CB_PATTERNS(4, C);		CB_PATTERNS(5, C);
+CB_PATTERNS(0, D);		CB_PATTERNS(1, D);		CB_PATTERNS(2, D);		CB_PATTERNS(3, D);		CB_PATTERNS(4, D);		CB_PATTERNS(5, D);
+CB_PATTERNS(0, E);		CB_PATTERNS(1, E);		CB_PATTERNS(2, E);		CB_PATTERNS(3, E);		CB_PATTERNS(4, E);		CB_PATTERNS(5, E);
+CB_PATTERNS(0, F);		CB_PATTERNS(1, F);		CB_PATTERNS(2, F);		CB_PATTERNS(3, F);		CB_PATTERNS(4, F);		CB_PATTERNS(5, F);
+#undef CB_PATTERNS
 
 
+#define CTL(a) 			&PAT_CONTROLS[CONTROL_PAT_##a]
+#define VAR(index, a) 	((u8*)&(VAR_PATTERN[index].a))
 const Control PAT_CONTROLS[ CONTROL_PAT_MAX ] = { 
 //	{ x	 		, y		, up					, right					, down					, left					, cache							, var						, callback			},
 	{ COLUMN00 	, 0x04 	, CTL( SOLO_LEFT_02	  ) , CTL( TRANSPOSE_B_00  ) , CTL( PATTERNS_A_01  ) , CTL( TRANSPOSE_A_00  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[  0 ]  ) , &cb_patterns_0_00	},
@@ -339,53 +386,6 @@ void PatEdit::copy( u8 channel_index ){
 	PatEdit::sync();
 }
 
-void patternCH0_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 0 ); }
-void patternCH1_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 1 ); }
-void patternCH2_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 2 ); }
-void patternCH3_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 3 ); }
-void patternCH4_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 4 ); }
-void patternCH5_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 5 ); }
-
-void patternCH0_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 0 ); }
-void patternCH1_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 1 ); }
-void patternCH2_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 2 ); }
-void patternCH3_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 3 ); }
-void patternCH4_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 4 ); }
-void patternCH5_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 5 ); }
-
-void patternCH0_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 0; PatEdit::bookmark_row = *(u8*)pointer;}
-void patternCH1_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 1; PatEdit::bookmark_row = *(u8*)pointer;}
-void patternCH2_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 2;	PatEdit::bookmark_row = *(u8*)pointer;}
-void patternCH3_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 3;	PatEdit::bookmark_row = *(u8*)pointer;}
-void patternCH4_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 4;	PatEdit::bookmark_row = *(u8*)pointer;}
-void patternCH5_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 5;	PatEdit::bookmark_row = *(u8*)pointer;}
-
-//PATTERNS
-#define CB_PATTERNS(c, a)																																				\
-const Callback cb_patterns_focus_##c##_0##a = { patternCH##c##_focus	, EVENT_FOCUS 		, (u32*)&NUMBERS[0x0##a] 			, NULL							};		\
-const Callback cb_patterns_paste_##c##_0##a = { patternCH##c##_paste	, EVENT_KEYDOWN_B 	, &VAR_PATTERN[0x##c].ORDER[0x##a] 	, &cb_patterns_focus_##c##_0##a };		\
-const Callback cb_patterns_##c##_0##a		= { patternCH##c##_alter	, EVENT_MODIFY_B 	, &VAR_PATTERN[0x##c].ORDER[0x##a] 	, &cb_patterns_paste_##c##_0##a };  
-CB_PATTERNS(0, 0);		CB_PATTERNS(1, 0);		CB_PATTERNS(2, 0);		CB_PATTERNS(3, 0);		CB_PATTERNS(4, 0);		CB_PATTERNS(5, 0);
-CB_PATTERNS(0, 1);		CB_PATTERNS(1, 1);		CB_PATTERNS(2, 1);		CB_PATTERNS(3, 1);		CB_PATTERNS(4, 1);		CB_PATTERNS(5, 1);
-CB_PATTERNS(0, 2);		CB_PATTERNS(1, 2);		CB_PATTERNS(2, 2);		CB_PATTERNS(3, 2);		CB_PATTERNS(4, 2);		CB_PATTERNS(5, 2);
-CB_PATTERNS(0, 3);		CB_PATTERNS(1, 3);		CB_PATTERNS(2, 3);		CB_PATTERNS(3, 3);		CB_PATTERNS(4, 3);		CB_PATTERNS(5, 3);
-CB_PATTERNS(0, 4);		CB_PATTERNS(1, 4);		CB_PATTERNS(2, 4);		CB_PATTERNS(3, 4);		CB_PATTERNS(4, 4);		CB_PATTERNS(5, 4);
-CB_PATTERNS(0, 5);		CB_PATTERNS(1, 5);		CB_PATTERNS(2, 5);		CB_PATTERNS(3, 5);		CB_PATTERNS(4, 5);		CB_PATTERNS(5, 5);
-CB_PATTERNS(0, 6);		CB_PATTERNS(1, 6);		CB_PATTERNS(2, 6);		CB_PATTERNS(3, 6);		CB_PATTERNS(4, 6);		CB_PATTERNS(5, 6);
-CB_PATTERNS(0, 7);		CB_PATTERNS(1, 7);		CB_PATTERNS(2, 7);		CB_PATTERNS(3, 7);		CB_PATTERNS(4, 7);		CB_PATTERNS(5, 7);
-CB_PATTERNS(0, 8);		CB_PATTERNS(1, 8);		CB_PATTERNS(2, 8);		CB_PATTERNS(3, 8);		CB_PATTERNS(4, 8);		CB_PATTERNS(5, 8);
-CB_PATTERNS(0, 9);		CB_PATTERNS(1, 9);		CB_PATTERNS(2, 9);		CB_PATTERNS(3, 9);		CB_PATTERNS(4, 9);		CB_PATTERNS(5, 9);
-CB_PATTERNS(0, A);		CB_PATTERNS(1, A);		CB_PATTERNS(2, A);		CB_PATTERNS(3, A);		CB_PATTERNS(4, A);		CB_PATTERNS(5, A);
-CB_PATTERNS(0, B);		CB_PATTERNS(1, B);		CB_PATTERNS(2, B);		CB_PATTERNS(3, B);		CB_PATTERNS(4, B);		CB_PATTERNS(5, B);
-CB_PATTERNS(0, C);		CB_PATTERNS(1, C);		CB_PATTERNS(2, C);		CB_PATTERNS(3, C);		CB_PATTERNS(4, C);		CB_PATTERNS(5, C);
-CB_PATTERNS(0, D);		CB_PATTERNS(1, D);		CB_PATTERNS(2, D);		CB_PATTERNS(3, D);		CB_PATTERNS(4, D);		CB_PATTERNS(5, D);
-CB_PATTERNS(0, E);		CB_PATTERNS(1, E);		CB_PATTERNS(2, E);		CB_PATTERNS(3, E);		CB_PATTERNS(4, E);		CB_PATTERNS(5, E);
-CB_PATTERNS(0, F);		CB_PATTERNS(1, F);		CB_PATTERNS(2, F);		CB_PATTERNS(3, F);		CB_PATTERNS(4, F);		CB_PATTERNS(5, F);
-#undef CB_PATTERNS
-
-
-	
-	
 void PatEdit::globalUpdate(){
 	static int bookmark_timer = 0;
 		

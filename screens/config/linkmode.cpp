@@ -1,4 +1,5 @@
 #include "linkmode.hpp" 
+#include "../config.hpp" 
 #include "../../data/enum.h" 
 #include "../../data/data.hpp" 
 #include "../../modules/gpu/gpu.hpp" 
@@ -15,7 +16,7 @@ const Callback cb_cfg_sendsong		= { LinkMode::songSend			, EVENT_KEYUP_B		, NULL
 #define VAR(a) 	((u8*)&( VAR_CFG.LINKMODE.a ))
 const Control LINKMODE_CONTROLS[ CONTROL_LINKMODE_MAX ] = { 
 //	{	x    , y    , up				, right				, down				, left			, cache						, var						, callback				}
-	{	0x04 , 0x04 , NULL				, CTL(MODE		)	, NULL				, NULL			, NULL						, (u8*)&(VAR_CFG.MENUSLOT ) , &cb_cfg_menuindex		},
+	{	0x04 , 0x04 , NULL				, CTL(MODE		)	, NULL				, NULL			, NULL						, (u8*)&(VAR_CFG.MENUSLOT ) , &Config::menuindex		},
 	{	0x19 , 0x06 , CTL(SEND		)	, CTL(MODE		)	, CTL(MASTER	)	, CTL(MENU2)	, &CACHE_LIVE_MODE			, VAR(LINKMODE			  ) , &cb_cfg_linkmode		},
 	{	0x1b , 0x07 , CTL(MODE		)	, CTL(MASTER	)	, CTL(SYNCRATE	)	, CTL(MENU2)	, &CACHE_CHECK 				, VAR(MASTERCLOCK		  ) , &cb_cfg_masterclock	},
 	{	0x1b , 0x08 , CTL(MASTER	)	, CTL(SYNCRATE	)	, CTL(SYNCTICKS	)	, CTL(MENU2)	, &CACHE_HEXADECIMAL		, VAR(SYNCRATE			  ) , &cb_cfg_syncrate		},

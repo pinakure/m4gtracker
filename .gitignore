@@ -233,3 +233,5 @@ screens/console.o
 debug.o
 helpers.o
 helpers.s
+asm/libgbfs.o
+*.snm

@@ -13,7 +13,7 @@ const Callback cb_cfg_reset			= { Config::reset				, EVENT_KEYUP_B		, NULL 					
 #define VAR(a) ((u8*)&(VAR_CFG.MEMORY.a))
 const Control MEMORY_CONTROLS[CONTROL_MEMORY_MAX] = { 
 //  						{ 	x    , y  	, up				 , right			 , down				 , left				 , cache				, var						 , callback
-/* MENU5				*/	{	0x04 , 0x04 , NULL				 , CTL( PREFETCH	), NULL				 , NULL				 , NULL					, (u8*)&( VAR_CFG.MENUSLOT  ), &cb_cfg_menuindex		}, 
+/* MENU5				*/	{	0x04 , 0x04 , NULL				 , CTL( PREFETCH	), NULL				 , NULL				 , NULL					, (u8*)&( VAR_CFG.MENUSLOT  ), &Config::menuindex		}, 
 /* prefetch				*/	{	0x1b , 0x06 , CTL( RESET		), CTL( PREFETCH	), CTL( SLOTUSAGE	), CTL( MENU5		), &CACHE_CHECK			, VAR( PREF					), &cb_cfg_prefetch			}, 
 /* slotusage ->backup	*/	{	0x1b , 0x07 , CTL( PREFETCH		), CTL( SLOTUSAGE	), CTL( PURGESONGS	), CTL( MENU5		), &CACHE_ARROW_LEFT	, NULL						 , &cb_cfg_backup			}, 
 /* purgesongs -> revert	*/	{	0x1b , 0x08 , CTL( SLOTUSAGE	), CTL( PURGESONGS	), CTL( MEMORYTEST	), CTL( MENU5		), &CACHE_ARROW_LEFT	, NULL						 , &cb_cfg_revert			}, 

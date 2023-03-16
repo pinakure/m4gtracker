@@ -12,7 +12,7 @@ const Callback cb_cfg_initconfig	= { Config::defaults			, EVENT_KEYUP_B		, NULL 
 #define VAR(a) ((u8*)&(VAR_CFG.BEHAVIOR.a))
 const Control BEHAVIOR_CONTROLS[CONTROL_BEHAVIOR_MAX] = { 
 //				{	x	 , y     , up					 , right				 , down					 , left					 , cache				, var						 , callback
-/* MENU3	*/ 	{	0x04 , 0x04	, NULL					 , CTL( AUTOLOAD		), NULL					 , NULL					 , NULL					, (u8*)&(VAR_CFG.MENUSLOT	), &cb_cfg_menuindex	}, 
+/* MENU3	*/ 	{	0x04 , 0x04	, NULL					 , CTL( AUTOLOAD		), NULL					 , NULL					 , NULL					, (u8*)&(VAR_CFG.MENUSLOT	), &Config::menuindex	}, 
 /* AUTOLOAD	*/	{	0x1b , 0x06	, CTL( DEFAULTS			), CTL( AUTOLOAD		), CTL( AUTOSAVE		), CTL( MENU3			), &CACHE_CHECK			, VAR( AUTOLOAD				), &cb_cfg_autoload	 	}, 
 /* autosave	*/	{	0x1b , 0x07	, CTL( AUTOLOAD			), CTL( AUTOSAVE		), CTL( KEYRATE			), CTL( MENU3			), &CACHE_CHECK			, VAR( AUTOSAVE				), &cb_cfg_autosave		}, 
 /* keyrate	*/	{	0x1b , 0x08	, CTL( AUTOSAVE			), CTL( KEYRATE			), CTL( SAVE			), CTL( MENU3			), &CACHE_HEXADECIMAL	, VAR( KEYRATE				), &cb_cfg_keyrate		}, 

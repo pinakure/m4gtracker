@@ -1,4 +1,5 @@
 #include "tracker.hpp"
+#include "config.hpp"
 #include "../data/data.hpp"
 #include "../helpers.hpp"
 #include "../modules/gpu/gpu.hpp"
@@ -22,7 +23,7 @@ const Callback cb_cfg_mixer			= { Mixer::show					, EVENT_KEYUP_B		, NULL 						
 #define VAR(a) ((u8*)&(VAR_CFG.TRACKER.a))
 const Control TRACKER_CONTROLS[CONTROL_TRACKER_MAX] = { 
 //  				{ x		, y   	, up				, right				, down				, left			, cache						, var						, callback				},
-/* MENU4		*/	{ 0x04 	, 0x04 	, NULL				, CTL(FINETUNE)		, NULL				, NULL			, NULL						, (u8*)&(VAR_CFG.MENUSLOT)	, &cb_cfg_menuindex		}, 
+/* MENU4		*/	{ 0x04 	, 0x04 	, NULL				, CTL(FINETUNE)		, NULL				, NULL			, NULL						, (u8*)&(VAR_CFG.MENUSLOT)	, &Config::menuindex	}, 
 /* finetune		*/	{ 0x1b 	, 0x06 	, CTL(MIXER)		, CTL(FINETUNE)		, CTL(PRELISTEN)	, CTL(MENU4)	, &CACHE_HEXADECIMAL		, VAR(FINETUNE)				, &cb_cfg_finetune		},
 /* prelisten	*/	{ 0x1b 	, 0x07 	, CTL(FINETUNE)		, CTL(PRELISTEN)	, CTL(TRANSPOSE)	, CTL(MENU4)	, &CACHE_CHECK				, VAR(PRELISTEN)			, &cb_cfg_prelisten		},
 /* transpose	*/	{ 0x1b 	, 0x08 	, CTL(PRELISTEN)	, CTL(TRANSPOSE)	, CTL(INPUTMODE)	, CTL(MENU4)	, &CACHE_HEXADECIMAL_DOUBLE	, VAR(TRANSPOSE)			, &cb_cfg_transpose		},

@@ -91,35 +91,6 @@ CALLBACKDEC(ch0_key, F);CALLBACKDEC(ch1_key, F);CALLBACKDEC(ch2_key, F);CALLBACK
 //------------------------------------------------------------------------------------------//
 // PATT CALLBACKS 																			//
 //------------------------------------------------------------------------------------------//
-CALLBACKDEC(patterns_0, 0); CALLBACKDEC(patterns_1, 0); CALLBACKDEC(patterns_2, 0); CALLBACKDEC(patterns_3, 0); CALLBACKDEC(patterns_4, 0); CALLBACKDEC(patterns_5, 0); 
-CALLBACKDEC(patterns_0, 1); CALLBACKDEC(patterns_1, 1); CALLBACKDEC(patterns_2, 1); CALLBACKDEC(patterns_3, 1); CALLBACKDEC(patterns_4, 1); CALLBACKDEC(patterns_5, 1); 
-CALLBACKDEC(patterns_0, 2); CALLBACKDEC(patterns_1, 2); CALLBACKDEC(patterns_2, 2); CALLBACKDEC(patterns_3, 2); CALLBACKDEC(patterns_4, 2); CALLBACKDEC(patterns_5, 2); 
-CALLBACKDEC(patterns_0, 3); CALLBACKDEC(patterns_1, 3); CALLBACKDEC(patterns_2, 3); CALLBACKDEC(patterns_3, 3); CALLBACKDEC(patterns_4, 3); CALLBACKDEC(patterns_5, 3); 
-CALLBACKDEC(patterns_0, 4); CALLBACKDEC(patterns_1, 4); CALLBACKDEC(patterns_2, 4); CALLBACKDEC(patterns_3, 4); CALLBACKDEC(patterns_4, 4); CALLBACKDEC(patterns_5, 4); 
-CALLBACKDEC(patterns_0, 5); CALLBACKDEC(patterns_1, 5); CALLBACKDEC(patterns_2, 5); CALLBACKDEC(patterns_3, 5); CALLBACKDEC(patterns_4, 5); CALLBACKDEC(patterns_5, 5); 
-CALLBACKDEC(patterns_0, 6); CALLBACKDEC(patterns_1, 6); CALLBACKDEC(patterns_2, 6); CALLBACKDEC(patterns_3, 6); CALLBACKDEC(patterns_4, 6); CALLBACKDEC(patterns_5, 6); 
-CALLBACKDEC(patterns_0, 7); CALLBACKDEC(patterns_1, 7); CALLBACKDEC(patterns_2, 7); CALLBACKDEC(patterns_3, 7); CALLBACKDEC(patterns_4, 7); CALLBACKDEC(patterns_5, 7); 
-CALLBACKDEC(patterns_0, 8); CALLBACKDEC(patterns_1, 8); CALLBACKDEC(patterns_2, 8); CALLBACKDEC(patterns_3, 8); CALLBACKDEC(patterns_4, 8); CALLBACKDEC(patterns_5, 8); 
-CALLBACKDEC(patterns_0, 9); CALLBACKDEC(patterns_1, 9); CALLBACKDEC(patterns_2, 9); CALLBACKDEC(patterns_3, 9); CALLBACKDEC(patterns_4, 9); CALLBACKDEC(patterns_5, 9); 
-CALLBACKDEC(patterns_0, A); CALLBACKDEC(patterns_1, A); CALLBACKDEC(patterns_2, A); CALLBACKDEC(patterns_3, A); CALLBACKDEC(patterns_4, A); CALLBACKDEC(patterns_5, A); 
-CALLBACKDEC(patterns_0, B); CALLBACKDEC(patterns_1, B); CALLBACKDEC(patterns_2, B); CALLBACKDEC(patterns_3, B); CALLBACKDEC(patterns_4, B); CALLBACKDEC(patterns_5, B); 
-CALLBACKDEC(patterns_0, C); CALLBACKDEC(patterns_1, C); CALLBACKDEC(patterns_2, C); CALLBACKDEC(patterns_3, C); CALLBACKDEC(patterns_4, C); CALLBACKDEC(patterns_5, C); 
-CALLBACKDEC(patterns_0, D); CALLBACKDEC(patterns_1, D); CALLBACKDEC(patterns_2, D); CALLBACKDEC(patterns_3, D); CALLBACKDEC(patterns_4, D); CALLBACKDEC(patterns_5, D); 
-CALLBACKDEC(patterns_0, E); CALLBACKDEC(patterns_1, E); CALLBACKDEC(patterns_2, E); CALLBACKDEC(patterns_3, E); CALLBACKDEC(patterns_4, E); CALLBACKDEC(patterns_5, E); 
-CALLBACKDEC(patterns_0, F); CALLBACKDEC(patterns_1, F); CALLBACKDEC(patterns_2, F); CALLBACKDEC(patterns_3, F); CALLBACKDEC(patterns_4, F); CALLBACKDEC(patterns_5, F); 
-
-CALLBACK(pat_solo_0);
-CALLBACK(pat_solo_1);
-CALLBACK(pat_solo_2);
-CALLBACK(pat_solo_3);
-CALLBACK(pat_solo_4);
-CALLBACK(pat_solo_5);
-CALLBACK(pat_mute_0);
-CALLBACK(pat_mute_1);
-CALLBACK(pat_mute_2);
-CALLBACK(pat_mute_3);
-CALLBACK(pat_mute_4);
-CALLBACK(pat_mute_5);
 
 //------------------------------------------------------------------------------------------//
 // INST CALLBACKS 																			//
@@ -208,90 +179,6 @@ CALLBACKDEC(ins_tsp, C); CALLBACKDEC(ins_vol, C); CALLBACK(ins_wav_op4adsr_0); C
 CALLBACKDEC(ins_tsp, D); CALLBACKDEC(ins_vol, D); CALLBACK(ins_wav_op4adsr_1); CALLBACK(ins_fm_op4adsr_1);
 CALLBACKDEC(ins_tsp, E); CALLBACKDEC(ins_vol, E); CALLBACK(ins_wav_op4adsr_2); CALLBACK(ins_fm_op4adsr_2);
 CALLBACKDEC(ins_tsp, F); CALLBACKDEC(ins_vol, F); CALLBACK(ins_wav_op4adsr_3); CALLBACK(ins_fm_op4adsr_3);
-
-//------------------------------------------------------------------------------------------//
-// CFG CALLBACKS 																			//
-//------------------------------------------------------------------------------------------//
-CALLBACK(cfg_menuindex	);
-CALLBACK(cfg_interface	);
-CALLBACK(cfg_font		);
-CALLBACK(cfg_border		);
-CALLBACK(cfg_showlogo	);
-CALLBACK(cfg_startupsfx	);
-CALLBACK(cfg_coloreditor);
-CALLBACK(cfg_linkmode	);
-CALLBACK(cfg_masterclock);
-CALLBACK(cfg_syncrate	);
-CALLBACK(cfg_syncticks  );
-CALLBACK(cfg_receivesong);
-CALLBACK(cfg_sendsong	);
-CALLBACK(cfg_autoload	);
-CALLBACK(cfg_keyrate	);
-CALLBACK(cfg_autosave	);
-CALLBACK(cfg_saveconfig	);
-CALLBACK(cfg_loadconfig	);
-CALLBACK(cfg_initconfig	);
-CALLBACK(cfg_finetune	);
-CALLBACK(cfg_prelisten	);
-CALLBACK(cfg_transpose	);
-CALLBACK(cfg_inputmode	);
-CALLBACK(cfg_soundbias	);
-CALLBACK(cfg_mixer		);
-CALLBACK(cfg_prefetch	);
-CALLBACK(cfg_backup		);
-CALLBACK(cfg_revert		);
-CALLBACK(cfg_memorytest	);
-CALLBACK(cfg_format		);
-CALLBACK(cfg_reset		);
-
-//------------------------------------------------------------------------------------------//
-// LIVE CALLBACKS 																			//
-//------------------------------------------------------------------------------------------//
-CALLBACK(live_chan1		);
-CALLBACK(live_chan2		);
-CALLBACK(live_mode		);
-CALLBACK(live_octave	);
-CALLBACK(live_transpose );
-CALLBACK(live_quantize2 );
-CALLBACK(live_midichan1	);
-CALLBACK(live_midichan2	);
-CALLBACK(live_retrig	);
-CALLBACK(live_speed	 	);
-CALLBACK(live_quantize1	);
-
-CALLBACKDEC(live_left_VAL  , 0); CALLBACKDEC(live_left_VOL  , 0); CALLBACKDEC(live_left_INS  , 0); CALLBACKDEC(live_left_CMD  , 0); CALLBACKDEC(live_left_CHAN  , 0); CALLBACKDEC(live_left_KEY  , 0);
-CALLBACKDEC(live_left_VAL  , 1); CALLBACKDEC(live_left_VOL  , 1); CALLBACKDEC(live_left_INS  , 1); CALLBACKDEC(live_left_CMD  , 1); CALLBACKDEC(live_left_CHAN  , 1); CALLBACKDEC(live_left_KEY  , 1);
-CALLBACKDEC(live_left_VAL  , 2); CALLBACKDEC(live_left_VOL  , 2); CALLBACKDEC(live_left_INS  , 2); CALLBACKDEC(live_left_CMD  , 2); CALLBACKDEC(live_left_CHAN  , 2); CALLBACKDEC(live_left_KEY  , 2);
-CALLBACKDEC(live_left_VAL  , 3); CALLBACKDEC(live_left_VOL  , 3); CALLBACKDEC(live_left_INS  , 3); CALLBACKDEC(live_left_CMD  , 3); CALLBACKDEC(live_left_CHAN  , 3); CALLBACKDEC(live_left_KEY  , 3);
-CALLBACKDEC(live_left_VAL  , 4); CALLBACKDEC(live_left_VOL  , 4); CALLBACKDEC(live_left_INS  , 4); CALLBACKDEC(live_left_CMD  , 4); CALLBACKDEC(live_left_CHAN  , 4); CALLBACKDEC(live_left_KEY  , 4);
-CALLBACKDEC(live_left_VAL  , 5); CALLBACKDEC(live_left_VOL  , 5); CALLBACKDEC(live_left_INS  , 5); CALLBACKDEC(live_left_CMD  , 5); CALLBACKDEC(live_left_CHAN  , 5); CALLBACKDEC(live_left_KEY  , 5);
-CALLBACKDEC(live_left_VAL  , 6); CALLBACKDEC(live_left_VOL  , 6); CALLBACKDEC(live_left_INS  , 6); CALLBACKDEC(live_left_CMD  , 6); CALLBACKDEC(live_left_CHAN  , 6); CALLBACKDEC(live_left_KEY  , 6);
-CALLBACKDEC(live_left_VAL  , 7); CALLBACKDEC(live_left_VOL  , 7); CALLBACKDEC(live_left_INS  , 7); CALLBACKDEC(live_left_CMD  , 7); CALLBACKDEC(live_left_CHAN  , 7); CALLBACKDEC(live_left_KEY  , 7);
-CALLBACKDEC(live_left_VAL  , 8); CALLBACKDEC(live_left_VOL  , 8); CALLBACKDEC(live_left_INS  , 8); CALLBACKDEC(live_left_CMD  , 8); CALLBACKDEC(live_left_CHAN  , 8); CALLBACKDEC(live_left_KEY  , 8);
-CALLBACKDEC(live_left_VAL  , 9); CALLBACKDEC(live_left_VOL  , 9); CALLBACKDEC(live_left_INS  , 9); CALLBACKDEC(live_left_CMD  , 9); CALLBACKDEC(live_left_CHAN  , 9); CALLBACKDEC(live_left_KEY  , 9);
-CALLBACKDEC(live_left_VAL  , A); CALLBACKDEC(live_left_VOL  , A); CALLBACKDEC(live_left_INS  , A); CALLBACKDEC(live_left_CMD  , A); CALLBACKDEC(live_left_CHAN  , A); CALLBACKDEC(live_left_KEY  , A);
-CALLBACKDEC(live_left_VAL  , B); CALLBACKDEC(live_left_VOL  , B); CALLBACKDEC(live_left_INS  , B); CALLBACKDEC(live_left_CMD  , B); CALLBACKDEC(live_left_CHAN  , B); CALLBACKDEC(live_left_KEY  , B);
-CALLBACKDEC(live_left_VAL  , C); CALLBACKDEC(live_left_VOL  , C); CALLBACKDEC(live_left_INS  , C); CALLBACKDEC(live_left_CMD  , C); CALLBACKDEC(live_left_CHAN  , C); CALLBACKDEC(live_left_KEY  , C);
-CALLBACKDEC(live_left_VAL  , D); CALLBACKDEC(live_left_VOL  , D); CALLBACKDEC(live_left_INS  , D); CALLBACKDEC(live_left_CMD  , D); CALLBACKDEC(live_left_CHAN  , D); CALLBACKDEC(live_left_KEY  , D);
-CALLBACKDEC(live_left_VAL  , E); CALLBACKDEC(live_left_VOL  , E); CALLBACKDEC(live_left_INS  , E); CALLBACKDEC(live_left_CMD  , E); CALLBACKDEC(live_left_CHAN  , E); CALLBACKDEC(live_left_KEY  , E);
-CALLBACKDEC(live_left_VAL  , F); CALLBACKDEC(live_left_VOL  , F); CALLBACKDEC(live_left_INS  , F); CALLBACKDEC(live_left_CMD  , F); CALLBACKDEC(live_left_CHAN  , F); CALLBACKDEC(live_left_KEY  , F);
-
-CALLBACKDEC(live_right_VAL , 0); CALLBACKDEC(live_right_VOL , 0); CALLBACKDEC(live_right_INS , 0); CALLBACKDEC(live_right_CMD , 0); CALLBACKDEC(live_right_CHAN , 0); CALLBACKDEC(live_right_KEY , 0);
-CALLBACKDEC(live_right_VAL , 1); CALLBACKDEC(live_right_VOL , 1); CALLBACKDEC(live_right_INS , 1); CALLBACKDEC(live_right_CMD , 1); CALLBACKDEC(live_right_CHAN , 1); CALLBACKDEC(live_right_KEY , 1);
-CALLBACKDEC(live_right_VAL , 2); CALLBACKDEC(live_right_VOL , 2); CALLBACKDEC(live_right_INS , 2); CALLBACKDEC(live_right_CMD , 2); CALLBACKDEC(live_right_CHAN , 2); CALLBACKDEC(live_right_KEY , 2);
-CALLBACKDEC(live_right_VAL , 3); CALLBACKDEC(live_right_VOL , 3); CALLBACKDEC(live_right_INS , 3); CALLBACKDEC(live_right_CMD , 3); CALLBACKDEC(live_right_CHAN , 3); CALLBACKDEC(live_right_KEY , 3);
-CALLBACKDEC(live_right_VAL , 4); CALLBACKDEC(live_right_VOL , 4); CALLBACKDEC(live_right_INS , 4); CALLBACKDEC(live_right_CMD , 4); CALLBACKDEC(live_right_CHAN , 4); CALLBACKDEC(live_right_KEY , 4);
-CALLBACKDEC(live_right_VAL , 5); CALLBACKDEC(live_right_VOL , 5); CALLBACKDEC(live_right_INS , 5); CALLBACKDEC(live_right_CMD , 5); CALLBACKDEC(live_right_CHAN , 5); CALLBACKDEC(live_right_KEY , 5);
-CALLBACKDEC(live_right_VAL , 6); CALLBACKDEC(live_right_VOL , 6); CALLBACKDEC(live_right_INS , 6); CALLBACKDEC(live_right_CMD , 6); CALLBACKDEC(live_right_CHAN , 6); CALLBACKDEC(live_right_KEY , 6);
-CALLBACKDEC(live_right_VAL , 7); CALLBACKDEC(live_right_VOL , 7); CALLBACKDEC(live_right_INS , 7); CALLBACKDEC(live_right_CMD , 7); CALLBACKDEC(live_right_CHAN , 7); CALLBACKDEC(live_right_KEY , 7);
-CALLBACKDEC(live_right_VAL , 8); CALLBACKDEC(live_right_VOL , 8); CALLBACKDEC(live_right_INS , 8); CALLBACKDEC(live_right_CMD , 8); CALLBACKDEC(live_right_CHAN , 8); CALLBACKDEC(live_right_KEY , 8);
-CALLBACKDEC(live_right_VAL , 9); CALLBACKDEC(live_right_VOL , 9); CALLBACKDEC(live_right_INS , 9); CALLBACKDEC(live_right_CMD , 9); CALLBACKDEC(live_right_CHAN , 9); CALLBACKDEC(live_right_KEY , 9);
-CALLBACKDEC(live_right_VAL , A); CALLBACKDEC(live_right_VOL , A); CALLBACKDEC(live_right_INS , A); CALLBACKDEC(live_right_CMD , A); CALLBACKDEC(live_right_CHAN , A); CALLBACKDEC(live_right_KEY , A);
-CALLBACKDEC(live_right_VAL , B); CALLBACKDEC(live_right_VOL , B); CALLBACKDEC(live_right_INS , B); CALLBACKDEC(live_right_CMD , B); CALLBACKDEC(live_right_CHAN , B); CALLBACKDEC(live_right_KEY , B);
-CALLBACKDEC(live_right_VAL , C); CALLBACKDEC(live_right_VOL , C); CALLBACKDEC(live_right_INS , C); CALLBACKDEC(live_right_CMD , C); CALLBACKDEC(live_right_CHAN , C); CALLBACKDEC(live_right_KEY , C);
-CALLBACKDEC(live_right_VAL , D); CALLBACKDEC(live_right_VOL , D); CALLBACKDEC(live_right_INS , D); CALLBACKDEC(live_right_CMD , D); CALLBACKDEC(live_right_CHAN , D); CALLBACKDEC(live_right_KEY , D);
-CALLBACKDEC(live_right_VAL , E); CALLBACKDEC(live_right_VOL , E); CALLBACKDEC(live_right_INS , E); CALLBACKDEC(live_right_CMD , E); CALLBACKDEC(live_right_CHAN , E); CALLBACKDEC(live_right_KEY , E);
-CALLBACKDEC(live_right_VAL , F); CALLBACKDEC(live_right_VOL , F); CALLBACKDEC(live_right_INS , F); CALLBACKDEC(live_right_CMD , F); CALLBACKDEC(live_right_CHAN , F); CALLBACKDEC(live_right_KEY , F);
 
 #undef CALLBACK
 #undef CALLBACKDEC

@@ -1,5 +1,6 @@
 #include "looknfeel.hpp"
 #include "coloreditor.hpp"
+#include "../config.hpp"
 
 #include "../../modules/spu/mixer.hpp"
 #include "../../modules/spu/synth.hpp"
@@ -19,7 +20,7 @@ const Callback cb_cfg_coloreditor	= { ColorEditor::show 			, EVENT_KEYUP_B		, NU
 #define VAR(a) ((u8*)&(VAR_CFG.LOOKNFEEL.a))
 const Control LOOKNFEEL_CONTROLS[CONTROL_LOOKNFEEL_MAX] = { 
 //					{ x    , y    , up					, right				, down				, left				, cache					, var						, callback				},
-/* MENUSLOT  	*/	{ 0x04 , 0x04 , NULL				, CTL(INTERFACE)	, NULL				, NULL				, NULL					, (u8*)&(VAR_CFG.MENUSLOT)	, &cb_cfg_menuindex		},
+/* MENUSLOT  	*/	{ 0x04 , 0x04 , NULL				, CTL(INTERFACE)	, NULL				, NULL				, NULL					, (u8*)&(VAR_CFG.MENUSLOT)	, &Config::menuindex	},
 /* Interface  	*/	{ 0x19 , 0x06 , CTL(EDITPAL)		, CTL(INTERFACE)	, CTL(FONT)			, CTL(MENU1)		, &CACHE_INTERFACE		, VAR(INTERFACE)			, &cb_cfg_interface		},
 /* Font  		*/	{ 0x17 , 0x07 , CTL(INTERFACE)		, CTL(FONT)			, CTL(BORDER)		, CTL(MENU1)		, &CACHE_FONTSTYLE		, VAR(FONT)					, &cb_cfg_font			},
 /* Border  		*/	{ 0x17 , 0x08 , CTL(FONT)			, CTL(BORDER)		, CTL(SHOWLOGO)		, CTL(MENU1)		, &CACHE_BORDERSTYLE	, VAR(BORDER)				, &cb_cfg_border		},

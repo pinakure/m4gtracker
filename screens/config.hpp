@@ -9,6 +9,8 @@
 
 class Config {
 	public:
+		static const Callback 	menuindex;
+
 		static void load		( Control *c = NULL, bool bigstep=0, bool add=0, u32 *pointer=NULL );
 		static void backup		( Control *c = NULL, bool bigstep=0, bool add=0, u32 *pointer=NULL );
 		static void revert 		( Control *c = NULL, bool bigstep=0, bool add=0, u32 *pointer=NULL );
