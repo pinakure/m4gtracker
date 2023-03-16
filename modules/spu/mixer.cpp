@@ -349,5 +349,5 @@ void Mixer::show( Control *c, bool bigstep, bool add, u32 *pointer ){
 	
 }
 
-void Mixer::update( RegionHandler *rh ){
+void Mixer::update(  ){
 }

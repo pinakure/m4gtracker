@@ -13,7 +13,7 @@ enum E_BEHAVIOR_CONTROLS {
 
 class Behavior {
 	public:
-		static void update( RegionHandler* rh );
+		static void update(  );
 };
 
 extern const Callback cb_cfg_autoload;

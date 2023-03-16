@@ -3060,7 +3060,7 @@ _Z6STATUShhtt:
 	.text
 .Letext0:
 	.section	.debug_info
-	.4byte	0x4b03
+	.4byte	0x4a5c
 	.2byte	0x2
 	.4byte	.Ldebug_abbrev0
 	.byte	0x4
@@ -3068,9 +3068,9 @@ _Z6STATUShhtt:
 	.4byte	.Ldebug_line0
 	.4byte	.Letext0
 	.4byte	.Ltext0
-	.4byte	.LC1683
-	.4byte	.LC1684
-	.4byte	.LC1685
+	.4byte	.LC1695
+	.4byte	.LC1696
+	.4byte	.LC1697
 	.byte	0x4
 	.uleb128 0x2
 	.4byte	.LC154
@@ -8926,7 +8926,7 @@ _Z6STATUShhtt:
 	.4byte	.LC1332
 	.byte	0xf
 	.byte	0x23
-	.4byte	0x327b
+	.4byte	0x440
 	.byte	0x2
 	.byte	0x23
 	.uleb128 0x30
@@ -8934,7 +8934,7 @@ _Z6STATUShhtt:
 	.4byte	.LC1333
 	.byte	0xf
 	.byte	0x24
-	.4byte	0x3281
+	.4byte	0x2f0f
 	.byte	0x2
 	.byte	0x23
 	.uleb128 0x34
@@ -8943,14 +8943,14 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.4byte	.LC169
 	.4byte	.LC1334
-	.4byte	0x328c
+	.4byte	0x2f1a
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3292
+	.4byte	0x2f20
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3298
+	.4byte	0x2f26
 	.byte	0x0
 	.uleb128 0x19
 	.byte	0x1
@@ -8958,10 +8958,10 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3292
+	.4byte	0x2f20
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3298
+	.4byte	0x2f26
 	.byte	0x0
 	.byte	0x0
 	.uleb128 0x7
@@ -9083,167 +9083,968 @@ _Z6STATUShhtt:
 	.4byte	0x2f0a
 	.uleb128 0x15
 	.4byte	0x2cdf
-	.uleb128 0x23
-	.4byte	0x2f1a
-	.uleb128 0xd
-	.4byte	0x2f1a
-	.byte	0x0
 	.uleb128 0x14
 	.byte	0x4
-	.4byte	0x2f20
-	.uleb128 0x1a
-	.4byte	0x327b
+	.4byte	0x2f15
+	.uleb128 0x15
+	.4byte	0x2ef9
+	.uleb128 0x13
+	.byte	0x4
+	.4byte	0x2cf5
+	.uleb128 0x14
+	.byte	0x4
+	.4byte	0x2cf5
+	.uleb128 0x13
+	.byte	0x4
+	.4byte	0x2f2c
+	.uleb128 0x15
+	.4byte	0x2cf5
+	.uleb128 0x7
+	.4byte	0x3070
 	.4byte	.LC1340
-	.2byte	0x1024
+	.byte	0x4
+	.byte	0x10
+	.byte	0x7
+	.uleb128 0x2b
+	.ascii	"max\000"
+	.byte	0x10
+	.byte	0x9
+	.4byte	.LC1354
+	.4byte	0xef1
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1341
+	.byte	0x10
+	.byte	0xa
+	.4byte	.LC1342
+	.4byte	0xef1
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1343
+	.byte	0x10
+	.byte	0xb
+	.4byte	.LC1344
+	.4byte	0xedc
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1345
+	.byte	0x10
+	.byte	0xc
+	.4byte	.LC1346
+	.4byte	0xedc
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1347
+	.byte	0x10
+	.byte	0xd
+	.4byte	.LC1348
+	.4byte	0x14ee
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1349
+	.byte	0x10
+	.byte	0xe
+	.4byte	.LC1350
+	.4byte	0x14ee
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1351
+	.byte	0x10
+	.byte	0xf
+	.4byte	.LC1352
+	.4byte	0x12cd
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1320
+	.byte	0x10
+	.byte	0x10
+	.4byte	.LC1353
+	.4byte	0xedc
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2b
+	.ascii	"var\000"
+	.byte	0x10
+	.byte	0x11
+	.4byte	.LC1355
+	.4byte	0x12d4
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x17
+	.4byte	0x2fff
+	.byte	0x1
+	.4byte	.LC169
+	.4byte	.LC1356
+	.4byte	0x3070
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0xc
+	.4byte	0x3076
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x307c
+	.byte	0x0
+	.uleb128 0x18
+	.4byte	0x3017
+	.byte	0x1
+	.4byte	.LC1340
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0xc
+	.4byte	0x3076
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x307c
+	.byte	0x0
+	.uleb128 0x18
+	.4byte	0x302a
+	.byte	0x1
+	.4byte	.LC1340
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0xc
+	.4byte	0x3076
+	.byte	0x1
+	.byte	0x0
+	.uleb128 0x2d
+	.byte	0x1
+	.4byte	.LC1357
+	.byte	0x10
+	.byte	0x14
+	.4byte	.LC1359
+	.4byte	0x12cd
+	.byte	0x1
+	.uleb128 0x2e
+	.byte	0x1
+	.4byte	.LC1358
+	.byte	0x10
+	.byte	0x15
+	.4byte	.LC1360
+	.byte	0x1
+	.uleb128 0x2f
+	.byte	0x1
+	.4byte	.LC1361
+	.byte	0x10
+	.byte	0x16
+	.4byte	.LC1406
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x91
+	.uleb128 0xd
+	.4byte	0x91
+	.uleb128 0xd
+	.4byte	0x14ee
+	.uleb128 0xd
+	.4byte	0x14ee
+	.uleb128 0xd
+	.4byte	0x12d4
+	.byte	0x0
+	.byte	0x0
+	.uleb128 0x13
+	.byte	0x4
+	.4byte	0x2f31
+	.uleb128 0x14
+	.byte	0x4
+	.4byte	0x2f31
+	.uleb128 0x13
+	.byte	0x4
+	.4byte	0x3082
+	.uleb128 0x15
+	.4byte	0x2f31
+	.uleb128 0x7
+	.4byte	0x32bc
+	.4byte	.LC1362
+	.byte	0x4
+	.byte	0x11
+	.byte	0x7
+	.uleb128 0x2c
+	.4byte	.LC1363
+	.byte	0x11
+	.byte	0x9
+	.4byte	.LC1364
+	.4byte	0x32bc
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1365
+	.byte	0x11
+	.byte	0xa
+	.4byte	.LC1366
+	.4byte	0xedc
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1367
+	.byte	0x11
+	.byte	0xb
+	.4byte	.LC1368
+	.4byte	0xedc
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1369
+	.byte	0x11
+	.byte	0xc
+	.4byte	.LC1370
+	.4byte	0xedc
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1371
+	.byte	0x11
+	.byte	0xd
+	.4byte	.LC1372
+	.4byte	0xedc
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1373
+	.byte	0x11
+	.byte	0xe
+	.4byte	.LC1374
+	.4byte	0xedc
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1375
+	.byte	0x11
+	.byte	0xf
+	.4byte	.LC1376
+	.4byte	0xedc
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1377
+	.byte	0x11
+	.byte	0x10
+	.4byte	.LC1378
+	.4byte	0xedc
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1379
+	.byte	0x11
+	.byte	0x11
+	.4byte	.LC1380
+	.4byte	0xedc
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1381
+	.byte	0x11
+	.byte	0x12
+	.4byte	.LC1382
+	.4byte	0xedc
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2b
+	.ascii	"Y\000"
+	.byte	0x11
+	.byte	0x13
+	.4byte	.LC1383
+	.4byte	0xedc
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1384
+	.byte	0x11
+	.byte	0x14
+	.4byte	.LC1385
+	.4byte	0xee6
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1386
+	.byte	0x11
+	.byte	0x15
+	.4byte	.LC1387
+	.4byte	0x1481
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1351
+	.byte	0x11
+	.byte	0x16
+	.4byte	.LC1388
+	.4byte	0x12cd
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1320
+	.byte	0x11
+	.byte	0x21
+	.4byte	.LC1389
+	.4byte	0x12cd
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x17
+	.4byte	0x31bf
+	.byte	0x1
+	.4byte	.LC169
+	.4byte	.LC1390
+	.4byte	0x32cc
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0xc
+	.4byte	0x32d2
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x32d8
+	.byte	0x0
+	.uleb128 0x18
+	.4byte	0x31d7
+	.byte	0x1
+	.4byte	.LC1362
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0xc
+	.4byte	0x32d2
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x32d8
+	.byte	0x0
+	.uleb128 0x18
+	.4byte	0x31ea
+	.byte	0x1
+	.4byte	.LC1362
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0xc
+	.4byte	0x32d2
+	.byte	0x1
+	.byte	0x0
+	.uleb128 0x30
+	.byte	0x1
+	.ascii	"add\000"
+	.byte	0x11
+	.byte	0x19
+	.4byte	.LC1391
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x30
+	.byte	0x1
+	.ascii	"rem\000"
+	.byte	0x11
+	.byte	0x1a
+	.4byte	.LC1392
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x31
+	.byte	0x1
+	.4byte	.LC1393
+	.byte	0x11
+	.byte	0x1b
+	.4byte	.LC1394
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x31
+	.byte	0x1
+	.4byte	.LC1395
+	.byte	0x11
+	.byte	0x1c
+	.4byte	.LC1396
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x31
+	.byte	0x1
+	.4byte	.LC1397
+	.byte	0x11
+	.byte	0x1d
+	.4byte	.LC1398
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x31
+	.byte	0x1
+	.4byte	.LC1399
+	.byte	0x11
+	.byte	0x1e
+	.4byte	.LC1400
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x31
+	.byte	0x1
+	.4byte	.LC1357
+	.byte	0x11
+	.byte	0x1f
+	.4byte	.LC1401
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x32
+	.4byte	0x3273
+	.byte	0x1
+	.4byte	.LC1361
+	.byte	0x11
+	.byte	0x22
+	.4byte	.LC1403
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x1481
+	.uleb128 0xd
+	.4byte	0x18b
+	.uleb128 0xd
+	.4byte	0x18b
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x3299
+	.byte	0x1
+	.4byte	.LC1402
+	.byte	0x11
+	.byte	0x24
+	.4byte	.LC1404
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x12c7
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12d4
+	.byte	0x0
+	.uleb128 0x2f
+	.byte	0x1
+	.4byte	.LC1405
+	.byte	0x11
+	.byte	0x25
+	.4byte	.LC1407
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x12c7
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12d4
+	.byte	0x0
+	.byte	0x0
+	.uleb128 0x11
+	.4byte	0x32cc
+	.4byte	0xedc
+	.uleb128 0x12
+	.4byte	0x184
+	.byte	0xf
+	.byte	0x0
+	.uleb128 0x13
+	.byte	0x4
+	.4byte	0x3087
+	.uleb128 0x14
+	.byte	0x4
+	.4byte	0x3087
+	.uleb128 0x13
+	.byte	0x4
+	.4byte	0x32de
+	.uleb128 0x15
+	.4byte	0x3087
+	.uleb128 0x7
+	.4byte	0x33b9
+	.4byte	.LC1408
+	.byte	0x4
+	.byte	0x12
+	.byte	0x6
+	.uleb128 0x2c
+	.4byte	.LC1351
+	.byte	0x12
+	.byte	0x8
+	.4byte	.LC1409
+	.4byte	0x12cd
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1410
+	.byte	0x12
+	.byte	0x9
+	.4byte	.LC1411
+	.4byte	0x12cd
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2c
+	.4byte	.LC1412
+	.byte	0x12
+	.byte	0xa
+	.4byte	.LC1413
+	.4byte	0xee6
+	.byte	0x1
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x29
+	.4byte	.LC1414
+	.byte	0x12
+	.byte	0xf
+	.4byte	.LC1415
+	.4byte	0x12cd
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0x17
+	.4byte	0x3356
+	.byte	0x1
+	.4byte	.LC169
+	.4byte	.LC1416
+	.4byte	0x33b9
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0xc
+	.4byte	0x33bf
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x33c5
+	.byte	0x0
+	.uleb128 0x18
+	.4byte	0x336e
+	.byte	0x1
+	.4byte	.LC1408
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0xc
+	.4byte	0x33bf
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x33c5
+	.byte	0x0
+	.uleb128 0x18
+	.4byte	0x3381
+	.byte	0x1
+	.4byte	.LC1408
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0xc
+	.4byte	0x33bf
+	.byte	0x1
+	.byte	0x0
+	.uleb128 0x31
+	.byte	0x1
+	.4byte	.LC1393
+	.byte	0x12
+	.byte	0xb
+	.4byte	.LC1417
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x31
+	.byte	0x1
+	.4byte	.LC1395
+	.byte	0x12
+	.byte	0xc
+	.4byte	.LC1418
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x31
+	.byte	0x1
+	.4byte	.LC1397
+	.byte	0x12
+	.byte	0xd
+	.4byte	.LC1419
+	.byte	0x3
+	.byte	0x1
+	.uleb128 0x2e
+	.byte	0x1
+	.4byte	.LC1361
+	.byte	0x12
+	.byte	0x10
+	.4byte	.LC1420
+	.byte	0x1
+	.byte	0x0
+	.uleb128 0x13
+	.byte	0x4
+	.4byte	0x32e3
+	.uleb128 0x14
+	.byte	0x4
+	.4byte	0x32e3
+	.uleb128 0x13
+	.byte	0x4
+	.4byte	0x33cb
+	.uleb128 0x15
+	.4byte	0x32e3
+	.uleb128 0x7
+	.4byte	0x36db
+	.4byte	.LC1421
+	.byte	0x4
 	.byte	0x13
 	.byte	0xe
-	.uleb128 0x8
-	.4byte	.LC1341
+	.uleb128 0x29
+	.4byte	.LC1422
 	.byte	0x13
 	.byte	0x12
-	.4byte	0x3742
-	.byte	0x2
-	.byte	0x23
-	.uleb128 0x0
-	.uleb128 0x8
-	.4byte	.LC1342
+	.4byte	.LC1423
+	.4byte	0x36db
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0x29
+	.4byte	.LC1424
 	.byte	0x13
 	.byte	0x13
-	.4byte	0x3742
-	.byte	0x2
-	.byte	0x23
-	.uleb128 0x4
-	.uleb128 0x8
-	.4byte	.LC1343
+	.4byte	.LC1425
+	.4byte	0x36db
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0x29
+	.4byte	.LC1426
 	.byte	0x13
 	.byte	0x14
-	.4byte	0x3742
-	.byte	0x2
-	.byte	0x23
-	.uleb128 0x8
-	.uleb128 0x8
+	.4byte	.LC1427
+	.4byte	0x36db
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0x29
 	.4byte	.LC1327
 	.byte	0x13
 	.byte	0x16
-	.4byte	0x3748
-	.byte	0x2
-	.byte	0x23
-	.uleb128 0xc
-	.uleb128 0x8
-	.4byte	.LC1344
+	.4byte	.LC1428
+	.4byte	0x36e1
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0x29
+	.4byte	.LC1429
 	.byte	0x13
 	.byte	0x17
-	.4byte	0x374e
-	.byte	0x2
-	.byte	0x23
-	.uleb128 0x10
-	.uleb128 0x8
-	.4byte	.LC1345
+	.4byte	.LC1430
+	.4byte	0x36e7
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0x29
+	.4byte	.LC1431
 	.byte	0x13
 	.byte	0x18
+	.4byte	.LC1432
 	.4byte	0x12c7
-	.byte	0x2
-	.byte	0x23
-	.uleb128 0x14
-	.uleb128 0x8
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0x29
 	.4byte	.LC1320
 	.byte	0x13
 	.byte	0x19
+	.4byte	.LC1433
 	.4byte	0x12cd
-	.byte	0x2
-	.byte	0x23
-	.uleb128 0x18
-	.uleb128 0x8
-	.4byte	.LC1346
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0x29
+	.4byte	.LC1434
 	.byte	0x13
 	.byte	0x1a
+	.4byte	.LC1435
 	.4byte	0x12cd
-	.byte	0x2
-	.byte	0x23
-	.uleb128 0x19
-	.uleb128 0x8
-	.4byte	.LC1347
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0x29
+	.4byte	.LC1436
+	.byte	0x13
+	.byte	0x1b
+	.4byte	.LC1437
+	.4byte	0x36ed
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0x29
+	.4byte	.LC1438
 	.byte	0x13
 	.byte	0x1c
-	.4byte	0x3754
-	.byte	0x2
-	.byte	0x23
-	.uleb128 0x1c
-	.uleb128 0x8
-	.4byte	.LC1348
+	.4byte	.LC1439
+	.4byte	0xf23
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0x29
+	.4byte	.LC1440
 	.byte	0x13
 	.byte	0x1d
-	.4byte	0xf23
-	.byte	0x3
-	.byte	0x23
-	.uleb128 0x101c
-	.uleb128 0x8
-	.4byte	.LC1349
-	.byte	0x13
-	.byte	0x1f
+	.4byte	.LC1441
 	.4byte	0xedc
-	.byte	0x3
-	.byte	0x23
-	.uleb128 0x1020
+	.byte	0x1
+	.byte	0x1
 	.uleb128 0x17
-	.4byte	0x2fe9
+	.4byte	0x34b7
 	.byte	0x1
 	.4byte	.LC169
-	.4byte	.LC1350
-	.4byte	0x3765
+	.4byte	.LC1442
+	.4byte	0x36fe
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x2f1a
+	.4byte	0x3704
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x376b
+	.4byte	0x370a
 	.byte	0x0
 	.uleb128 0x18
-	.4byte	0x3001
+	.4byte	0x34cf
 	.byte	0x1
-	.4byte	.LC1340
+	.4byte	.LC1421
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x2f1a
+	.4byte	0x3704
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x376b
+	.4byte	0x370a
 	.byte	0x0
-	.uleb128 0x2b
-	.4byte	0x3015
+	.uleb128 0x34
+	.4byte	0x34e3
 	.byte	0x1
-	.4byte	.LC1340
+	.4byte	.LC1421
+	.byte	0x13
+	.byte	0x1f
+	.byte	0x1
+	.uleb128 0xc
+	.4byte	0x3704
+	.byte	0x1
+	.byte	0x0
+	.uleb128 0x2e
+	.byte	0x1
+	.4byte	.LC1443
+	.byte	0x13
+	.byte	0x20
+	.4byte	.LC1444
+	.byte	0x1
+	.uleb128 0x2e
+	.byte	0x1
+	.4byte	.LC1445
 	.byte	0x13
 	.byte	0x21
+	.4byte	.LC1446
 	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
+	.uleb128 0x2e
 	.byte	0x1
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x302d
-	.byte	0x1
-	.4byte	.LC1351
+	.4byte	.LC1393
 	.byte	0x13
 	.byte	0x22
-	.4byte	.LC1353
+	.4byte	.LC1447
 	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
+	.uleb128 0x33
+	.4byte	0x3521
 	.byte	0x1
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x3063
-	.byte	0x1
-	.4byte	.LC1352
+	.4byte	.LC1448
 	.byte	0x13
-	.byte	0x23
-	.4byte	.LC1354
+	.byte	0x24
+	.4byte	.LC1449
 	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
+	.uleb128 0xd
+	.4byte	0x91
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x3538
+	.byte	0x1
+	.4byte	.LC1450
+	.byte	0x13
+	.byte	0x25
+	.4byte	.LC1451
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x2ed7
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x3563
+	.byte	0x1
+	.4byte	.LC1452
+	.byte	0x13
+	.byte	0x26
+	.4byte	.LC1453
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x18b
+	.uleb128 0xd
+	.4byte	0x18b
+	.uleb128 0xd
+	.4byte	0x1476
+	.uleb128 0xd
+	.4byte	0x18b
+	.uleb128 0xd
+	.4byte	0x12cd
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x358e
+	.byte	0x1
+	.4byte	.LC1454
+	.byte	0x13
+	.byte	0x27
+	.4byte	.LC1455
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x18b
+	.uleb128 0xd
+	.4byte	0x18b
+	.uleb128 0xd
+	.4byte	0x1476
+	.uleb128 0xd
+	.4byte	0x18b
+	.uleb128 0xd
+	.4byte	0x12cd
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x35a5
+	.byte	0x1
+	.4byte	.LC1456
+	.byte	0x13
+	.byte	0x28
+	.4byte	.LC1457
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x146b
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x35bc
+	.byte	0x1
+	.4byte	.LC1458
+	.byte	0x13
+	.byte	0x29
+	.4byte	.LC1459
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x2f04
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x35dd
+	.byte	0x1
+	.4byte	.LC1460
+	.byte	0x13
+	.byte	0x2a
+	.4byte	.LC1461
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x2f0f
+	.uleb128 0xd
+	.4byte	0x18b
+	.uleb128 0xd
+	.4byte	0x18b
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x35f4
+	.byte	0x1
+	.4byte	.LC1462
+	.byte	0x13
+	.byte	0x2b
+	.4byte	.LC1463
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x2ed7
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x360b
+	.byte	0x1
+	.4byte	.LC1464
+	.byte	0x13
+	.byte	0x2c
+	.4byte	.LC1465
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x2ed7
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x3631
+	.byte	0x1
+	.4byte	.LC1466
+	.byte	0x13
+	.byte	0x2d
+	.4byte	.LC1467
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x2f0f
+	.uleb128 0xd
+	.4byte	0x18b
+	.uleb128 0xd
+	.4byte	0x18b
+	.uleb128 0xd
+	.4byte	0x2ed7
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x3648
+	.byte	0x1
+	.4byte	.LC1468
+	.byte	0x13
+	.byte	0x2e
+	.4byte	.LC1469
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x146b
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x3664
+	.byte	0x1
+	.4byte	.LC1470
+	.byte	0x13
+	.byte	0x2f
+	.4byte	.LC1471
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x146b
+	.uleb128 0xd
+	.4byte	0xc5b
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x367b
+	.byte	0x1
+	.4byte	.LC1472
+	.byte	0x13
+	.byte	0x30
+	.4byte	.LC1473
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x146b
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x369c
+	.byte	0x1
+	.4byte	.LC1474
+	.byte	0x13
+	.byte	0x31
+	.4byte	.LC1475
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x146b
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12cd
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x36b3
+	.byte	0x1
+	.4byte	.LC1357
+	.byte	0x13
+	.byte	0x32
+	.4byte	.LC1476
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x18b
+	.byte	0x0
+	.uleb128 0x2f
+	.byte	0x1
+	.4byte	.LC1477
+	.byte	0x13
+	.byte	0x34
+	.4byte	.LC1478
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0x12e5
@@ -9255,873 +10056,8 @@ _Z6STATUShhtt:
 	.4byte	0x18b
 	.uleb128 0xd
 	.4byte	0xc5b
-	.uleb128 0xd
-	.4byte	0x12d4
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x3080
-	.byte	0x1
-	.4byte	.LC1355
-	.byte	0x13
-	.byte	0x24
-	.4byte	.LC1356
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x91
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x309d
-	.byte	0x1
-	.4byte	.LC1357
-	.byte	0x13
-	.byte	0x25
-	.4byte	.LC1358
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x2ed7
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x30ce
-	.byte	0x1
-	.4byte	.LC1359
-	.byte	0x13
-	.byte	0x26
-	.4byte	.LC1360
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x18b
-	.uleb128 0xd
-	.4byte	0x18b
-	.uleb128 0xd
-	.4byte	0x1476
-	.uleb128 0xd
-	.4byte	0x18b
-	.uleb128 0xd
-	.4byte	0x12cd
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x30ff
-	.byte	0x1
-	.4byte	.LC1361
-	.byte	0x13
-	.byte	0x27
-	.4byte	.LC1362
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x18b
-	.uleb128 0xd
-	.4byte	0x18b
-	.uleb128 0xd
-	.4byte	0x1476
-	.uleb128 0xd
-	.4byte	0x18b
-	.uleb128 0xd
-	.4byte	0x12cd
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x311c
-	.byte	0x1
-	.4byte	.LC1363
-	.byte	0x13
-	.byte	0x28
-	.4byte	.LC1364
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x146b
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x3139
-	.byte	0x1
-	.4byte	.LC1365
-	.byte	0x13
-	.byte	0x29
-	.4byte	.LC1366
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x2f04
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x3160
-	.byte	0x1
-	.4byte	.LC1367
-	.byte	0x13
-	.byte	0x2a
-	.4byte	.LC1368
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x3281
-	.uleb128 0xd
-	.4byte	0x18b
-	.uleb128 0xd
-	.4byte	0x18b
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x317d
-	.byte	0x1
-	.4byte	.LC1369
-	.byte	0x13
-	.byte	0x2b
-	.4byte	.LC1370
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x2ed7
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x319a
-	.byte	0x1
-	.4byte	.LC1371
-	.byte	0x13
-	.byte	0x2c
-	.4byte	.LC1372
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x2ed7
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x31c6
-	.byte	0x1
-	.4byte	.LC1373
-	.byte	0x13
-	.byte	0x2d
-	.4byte	.LC1374
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x3281
-	.uleb128 0xd
-	.4byte	0x18b
-	.uleb128 0xd
-	.4byte	0x18b
-	.uleb128 0xd
-	.4byte	0x2ed7
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x31de
-	.byte	0x1
-	.4byte	.LC1375
-	.byte	0x13
-	.byte	0x2e
-	.4byte	.LC1376
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
-	.byte	0x1
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x31fb
-	.byte	0x1
-	.4byte	.LC1377
-	.byte	0x13
-	.byte	0x2f
-	.4byte	.LC1378
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x146b
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x321d
-	.byte	0x1
-	.4byte	.LC1379
-	.byte	0x13
-	.byte	0x30
-	.4byte	.LC1380
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x146b
-	.uleb128 0xd
-	.4byte	0xc5b
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x323a
-	.byte	0x1
-	.4byte	.LC1381
-	.byte	0x13
-	.byte	0x31
-	.4byte	.LC1382
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x146b
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x3261
-	.byte	0x1
-	.4byte	.LC1383
-	.byte	0x13
-	.byte	0x32
-	.4byte	.LC1384
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x146b
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12cd
-	.byte	0x0
-	.uleb128 0x2d
-	.byte	0x1
-	.4byte	.LC1385
-	.byte	0x13
-	.byte	0x33
-	.4byte	.LC1407
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x2f1a
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x18b
 	.byte	0x0
 	.byte	0x0
-	.uleb128 0x14
-	.byte	0x4
-	.4byte	0x2f0f
-	.uleb128 0x14
-	.byte	0x4
-	.4byte	0x3287
-	.uleb128 0x15
-	.4byte	0x2ef9
-	.uleb128 0x13
-	.byte	0x4
-	.4byte	0x2cf5
-	.uleb128 0x14
-	.byte	0x4
-	.4byte	0x2cf5
-	.uleb128 0x13
-	.byte	0x4
-	.4byte	0x329e
-	.uleb128 0x15
-	.4byte	0x2cf5
-	.uleb128 0x7
-	.4byte	0x33e2
-	.4byte	.LC1386
-	.byte	0x4
-	.byte	0x10
-	.byte	0x7
-	.uleb128 0x2e
-	.ascii	"max\000"
-	.byte	0x10
-	.byte	0x9
-	.4byte	.LC1400
-	.4byte	0xef1
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1387
-	.byte	0x10
-	.byte	0xa
-	.4byte	.LC1388
-	.4byte	0xef1
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1389
-	.byte	0x10
-	.byte	0xb
-	.4byte	.LC1390
-	.4byte	0xedc
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1391
-	.byte	0x10
-	.byte	0xc
-	.4byte	.LC1392
-	.4byte	0xedc
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1393
-	.byte	0x10
-	.byte	0xd
-	.4byte	.LC1394
-	.4byte	0x14ee
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1395
-	.byte	0x10
-	.byte	0xe
-	.4byte	.LC1396
-	.4byte	0x14ee
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1397
-	.byte	0x10
-	.byte	0xf
-	.4byte	.LC1398
-	.4byte	0x12cd
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1320
-	.byte	0x10
-	.byte	0x10
-	.4byte	.LC1399
-	.4byte	0xedc
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2e
-	.ascii	"var\000"
-	.byte	0x10
-	.byte	0x11
-	.4byte	.LC1401
-	.4byte	0x12d4
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x17
-	.4byte	0x3371
-	.byte	0x1
-	.4byte	.LC169
-	.4byte	.LC1402
-	.4byte	0x33e2
-	.byte	0x1
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x33e8
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x33ee
-	.byte	0x0
-	.uleb128 0x18
-	.4byte	0x3389
-	.byte	0x1
-	.4byte	.LC1386
-	.byte	0x1
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x33e8
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x33ee
-	.byte	0x0
-	.uleb128 0x18
-	.4byte	0x339c
-	.byte	0x1
-	.4byte	.LC1386
-	.byte	0x1
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x33e8
-	.byte	0x1
-	.byte	0x0
-	.uleb128 0x30
-	.byte	0x1
-	.4byte	.LC1385
-	.byte	0x10
-	.byte	0x14
-	.4byte	.LC1404
-	.4byte	0x12cd
-	.byte	0x1
-	.uleb128 0x31
-	.byte	0x1
-	.4byte	.LC1403
-	.byte	0x10
-	.byte	0x15
-	.4byte	.LC1405
-	.byte	0x1
-	.uleb128 0x2d
-	.byte	0x1
-	.4byte	.LC1406
-	.byte	0x10
-	.byte	0x16
-	.4byte	.LC1408
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x91
-	.uleb128 0xd
-	.4byte	0x91
-	.uleb128 0xd
-	.4byte	0x14ee
-	.uleb128 0xd
-	.4byte	0x14ee
-	.uleb128 0xd
-	.4byte	0x12d4
-	.byte	0x0
-	.byte	0x0
-	.uleb128 0x13
-	.byte	0x4
-	.4byte	0x32a3
-	.uleb128 0x14
-	.byte	0x4
-	.4byte	0x32a3
-	.uleb128 0x13
-	.byte	0x4
-	.4byte	0x33f4
-	.uleb128 0x15
-	.4byte	0x32a3
-	.uleb128 0x7
-	.4byte	0x362e
-	.4byte	.LC1409
-	.byte	0x4
-	.byte	0x11
-	.byte	0x7
-	.uleb128 0x2f
-	.4byte	.LC1410
-	.byte	0x11
-	.byte	0x9
-	.4byte	.LC1411
-	.4byte	0x362e
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1412
-	.byte	0x11
-	.byte	0xa
-	.4byte	.LC1413
-	.4byte	0xedc
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1414
-	.byte	0x11
-	.byte	0xb
-	.4byte	.LC1415
-	.4byte	0xedc
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1416
-	.byte	0x11
-	.byte	0xc
-	.4byte	.LC1417
-	.4byte	0xedc
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1418
-	.byte	0x11
-	.byte	0xd
-	.4byte	.LC1419
-	.4byte	0xedc
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1420
-	.byte	0x11
-	.byte	0xe
-	.4byte	.LC1421
-	.4byte	0xedc
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1422
-	.byte	0x11
-	.byte	0xf
-	.4byte	.LC1423
-	.4byte	0xedc
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1424
-	.byte	0x11
-	.byte	0x10
-	.4byte	.LC1425
-	.4byte	0xedc
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1426
-	.byte	0x11
-	.byte	0x11
-	.4byte	.LC1427
-	.4byte	0xedc
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1428
-	.byte	0x11
-	.byte	0x12
-	.4byte	.LC1429
-	.4byte	0xedc
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2e
-	.ascii	"Y\000"
-	.byte	0x11
-	.byte	0x13
-	.4byte	.LC1430
-	.4byte	0xedc
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1431
-	.byte	0x11
-	.byte	0x14
-	.4byte	.LC1432
-	.4byte	0xee6
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1433
-	.byte	0x11
-	.byte	0x15
-	.4byte	.LC1434
-	.4byte	0x1481
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1397
-	.byte	0x11
-	.byte	0x16
-	.4byte	.LC1435
-	.4byte	0x12cd
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1320
-	.byte	0x11
-	.byte	0x21
-	.4byte	.LC1436
-	.4byte	0x12cd
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x17
-	.4byte	0x3531
-	.byte	0x1
-	.4byte	.LC169
-	.4byte	.LC1437
-	.4byte	0x363e
-	.byte	0x1
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x3644
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x364a
-	.byte	0x0
-	.uleb128 0x18
-	.4byte	0x3549
-	.byte	0x1
-	.4byte	.LC1409
-	.byte	0x1
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x3644
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x364a
-	.byte	0x0
-	.uleb128 0x18
-	.4byte	0x355c
-	.byte	0x1
-	.4byte	.LC1409
-	.byte	0x1
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x3644
-	.byte	0x1
-	.byte	0x0
-	.uleb128 0x32
-	.byte	0x1
-	.ascii	"add\000"
-	.byte	0x11
-	.byte	0x19
-	.4byte	.LC1438
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x32
-	.byte	0x1
-	.ascii	"rem\000"
-	.byte	0x11
-	.byte	0x1a
-	.4byte	.LC1439
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x33
-	.byte	0x1
-	.4byte	.LC1375
-	.byte	0x11
-	.byte	0x1b
-	.4byte	.LC1440
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x33
-	.byte	0x1
-	.4byte	.LC1441
-	.byte	0x11
-	.byte	0x1c
-	.4byte	.LC1442
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x33
-	.byte	0x1
-	.4byte	.LC1443
-	.byte	0x11
-	.byte	0x1d
-	.4byte	.LC1444
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x33
-	.byte	0x1
-	.4byte	.LC1445
-	.byte	0x11
-	.byte	0x1e
-	.4byte	.LC1446
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x33
-	.byte	0x1
-	.4byte	.LC1385
-	.byte	0x11
-	.byte	0x1f
-	.4byte	.LC1447
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x34
-	.4byte	0x35e5
-	.byte	0x1
-	.4byte	.LC1406
-	.byte	0x11
-	.byte	0x22
-	.4byte	.LC1448
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x1481
-	.uleb128 0xd
-	.4byte	0x18b
-	.uleb128 0xd
-	.4byte	0x18b
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x360b
-	.byte	0x1
-	.4byte	.LC1449
-	.byte	0x11
-	.byte	0x24
-	.4byte	.LC1450
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x12c7
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12d4
-	.byte	0x0
-	.uleb128 0x2d
-	.byte	0x1
-	.4byte	.LC1451
-	.byte	0x11
-	.byte	0x25
-	.4byte	.LC1452
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x12c7
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12d4
-	.byte	0x0
-	.byte	0x0
-	.uleb128 0x11
-	.4byte	0x363e
-	.4byte	0xedc
-	.uleb128 0x12
-	.4byte	0x184
-	.byte	0xf
-	.byte	0x0
-	.uleb128 0x13
-	.byte	0x4
-	.4byte	0x33f9
-	.uleb128 0x14
-	.byte	0x4
-	.4byte	0x33f9
-	.uleb128 0x13
-	.byte	0x4
-	.4byte	0x3650
-	.uleb128 0x15
-	.4byte	0x33f9
-	.uleb128 0x7
-	.4byte	0x372b
-	.4byte	.LC1453
-	.byte	0x4
-	.byte	0x12
-	.byte	0x6
-	.uleb128 0x2f
-	.4byte	.LC1397
-	.byte	0x12
-	.byte	0x8
-	.4byte	.LC1454
-	.4byte	0x12cd
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1455
-	.byte	0x12
-	.byte	0x9
-	.4byte	.LC1456
-	.4byte	0x12cd
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x2f
-	.4byte	.LC1457
-	.byte	0x12
-	.byte	0xa
-	.4byte	.LC1458
-	.4byte	0xee6
-	.byte	0x1
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x29
-	.4byte	.LC1459
-	.byte	0x12
-	.byte	0xf
-	.4byte	.LC1460
-	.4byte	0x12cd
-	.byte	0x1
-	.byte	0x1
-	.uleb128 0x17
-	.4byte	0x36c8
-	.byte	0x1
-	.4byte	.LC169
-	.4byte	.LC1461
-	.4byte	0x372b
-	.byte	0x1
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x3731
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x3737
-	.byte	0x0
-	.uleb128 0x18
-	.4byte	0x36e0
-	.byte	0x1
-	.4byte	.LC1453
-	.byte	0x1
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x3731
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x3737
-	.byte	0x0
-	.uleb128 0x18
-	.4byte	0x36f3
-	.byte	0x1
-	.4byte	.LC1453
-	.byte	0x1
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x3731
-	.byte	0x1
-	.byte	0x0
-	.uleb128 0x33
-	.byte	0x1
-	.4byte	.LC1375
-	.byte	0x12
-	.byte	0xb
-	.4byte	.LC1462
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x33
-	.byte	0x1
-	.4byte	.LC1441
-	.byte	0x12
-	.byte	0xc
-	.4byte	.LC1463
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x33
-	.byte	0x1
-	.4byte	.LC1443
-	.byte	0x12
-	.byte	0xd
-	.4byte	.LC1464
-	.byte	0x3
-	.byte	0x1
-	.uleb128 0x31
-	.byte	0x1
-	.4byte	.LC1406
-	.byte	0x12
-	.byte	0x10
-	.4byte	.LC1465
-	.byte	0x1
-	.byte	0x0
-	.uleb128 0x13
-	.byte	0x4
-	.4byte	0x3655
-	.uleb128 0x14
-	.byte	0x4
-	.4byte	0x3655
-	.uleb128 0x13
-	.byte	0x4
-	.4byte	0x373d
-	.uleb128 0x15
-	.4byte	0x3655
 	.uleb128 0x14
 	.byte	0x4
 	.4byte	0xea7
@@ -10132,7 +10068,7 @@ _Z6STATUShhtt:
 	.byte	0x4
 	.4byte	0x2cea
 	.uleb128 0x11
-	.4byte	0x3765
+	.4byte	0x36fe
 	.4byte	0xef1
 	.uleb128 0x35
 	.4byte	0x184
@@ -10140,180 +10076,64 @@ _Z6STATUShhtt:
 	.byte	0x0
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x2f20
+	.4byte	0x33d0
+	.uleb128 0x14
+	.byte	0x4
+	.4byte	0x33d0
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x3771
+	.4byte	0x3710
 	.uleb128 0x15
-	.4byte	0x2f20
+	.4byte	0x33d0
 	.uleb128 0x7
-	.4byte	0x3928
-	.4byte	.LC1466
+	.4byte	0x38b7
+	.4byte	.LC1479
 	.byte	0x4
 	.byte	0x14
 	.byte	0xa
 	.uleb128 0x17
-	.4byte	0x37a2
+	.4byte	0x3741
 	.byte	0x1
 	.4byte	.LC169
-	.4byte	.LC1467
-	.4byte	0x3928
+	.4byte	.LC1480
+	.4byte	0x38b7
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x392e
+	.4byte	0x38bd
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3934
+	.4byte	0x38c3
 	.byte	0x0
 	.uleb128 0x18
-	.4byte	0x37ba
-	.byte	0x1
-	.4byte	.LC1466
-	.byte	0x1
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x392e
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x3934
-	.byte	0x0
-	.uleb128 0x18
-	.4byte	0x37cd
-	.byte	0x1
-	.4byte	.LC1466
-	.byte	0x1
-	.byte	0x1
-	.uleb128 0xc
-	.4byte	0x392e
-	.byte	0x1
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x37f3
-	.byte	0x1
-	.4byte	.LC1357
-	.byte	0x14
-	.byte	0xc
-	.4byte	.LC1468
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x12c7
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12d4
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x3819
-	.byte	0x1
-	.4byte	.LC1469
-	.byte	0x14
-	.byte	0xd
-	.4byte	.LC1470
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x12c7
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12d4
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x383f
-	.byte	0x1
-	.4byte	.LC1471
-	.byte	0x14
-	.byte	0xe
-	.4byte	.LC1472
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x12c7
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12d4
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x3865
-	.byte	0x1
-	.4byte	.LC1473
-	.byte	0x14
-	.byte	0xf
-	.4byte	.LC1474
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x12c7
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12d4
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x388b
-	.byte	0x1
-	.4byte	.LC1475
-	.byte	0x14
-	.byte	0x10
-	.4byte	.LC1476
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x12c7
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12d4
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x38b1
-	.byte	0x1
-	.4byte	.LC1477
-	.byte	0x14
-	.byte	0x11
-	.4byte	.LC1478
-	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x12c7
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12d4
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x38d7
+	.4byte	0x3759
 	.byte	0x1
 	.4byte	.LC1479
-	.byte	0x14
-	.byte	0x12
-	.4byte	.LC1480
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0xc
+	.4byte	0x38bd
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x12c7
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12cd
-	.uleb128 0xd
-	.4byte	0x12d4
+	.4byte	0x38c3
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x38fd
+	.uleb128 0x18
+	.4byte	0x376c
 	.byte	0x1
+	.4byte	.LC1479
+	.byte	0x1
+	.byte	0x1
+	.uleb128 0xc
+	.4byte	0x38bd
+	.byte	0x1
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x3792
+	.byte	0x1
+	.4byte	.LC1450
+	.byte	0x14
+	.byte	0xc
 	.4byte	.LC1481
-	.byte	0x14
-	.byte	0x13
-	.4byte	.LC1482
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0x12c7
@@ -10324,144 +10144,248 @@ _Z6STATUShhtt:
 	.uleb128 0xd
 	.4byte	0x12d4
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x3914
+	.uleb128 0x33
+	.4byte	0x37b8
 	.byte	0x1
+	.4byte	.LC1482
+	.byte	0x14
+	.byte	0xd
 	.4byte	.LC1483
-	.byte	0x14
-	.byte	0x14
-	.4byte	.LC1484
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x2f1a
+	.4byte	0x12c7
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12d4
 	.byte	0x0
-	.uleb128 0x2d
+	.uleb128 0x33
+	.4byte	0x37de
 	.byte	0x1
-	.4byte	.LC1385
+	.4byte	.LC1484
 	.byte	0x14
-	.byte	0x15
+	.byte	0xe
 	.4byte	.LC1485
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x2f1a
+	.4byte	0x12c7
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12d4
 	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x3804
+	.byte	0x1
+	.4byte	.LC1486
+	.byte	0x14
+	.byte	0xf
+	.4byte	.LC1487
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x12c7
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12d4
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x382a
+	.byte	0x1
+	.4byte	.LC1488
+	.byte	0x14
+	.byte	0x10
+	.4byte	.LC1489
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x12c7
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12d4
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x3850
+	.byte	0x1
+	.4byte	.LC1490
+	.byte	0x14
+	.byte	0x11
+	.4byte	.LC1491
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x12c7
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12d4
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x3876
+	.byte	0x1
+	.4byte	.LC1492
+	.byte	0x14
+	.byte	0x12
+	.4byte	.LC1493
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x12c7
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12d4
+	.byte	0x0
+	.uleb128 0x33
+	.4byte	0x389c
+	.byte	0x1
+	.4byte	.LC1494
+	.byte	0x14
+	.byte	0x13
+	.4byte	.LC1495
+	.byte	0x1
+	.uleb128 0xd
+	.4byte	0x12c7
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12cd
+	.uleb128 0xd
+	.4byte	0x12d4
+	.byte	0x0
+	.uleb128 0x2e
+	.byte	0x1
+	.4byte	.LC1496
+	.byte	0x14
+	.byte	0x14
+	.4byte	.LC1497
+	.byte	0x1
+	.uleb128 0x2e
+	.byte	0x1
+	.4byte	.LC1357
+	.byte	0x14
+	.byte	0x15
+	.4byte	.LC1498
+	.byte	0x1
 	.byte	0x0
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x3776
+	.4byte	0x3715
 	.uleb128 0x14
 	.byte	0x4
-	.4byte	0x3776
+	.4byte	0x3715
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x393a
+	.4byte	0x38c9
 	.uleb128 0x15
-	.4byte	0x3776
+	.4byte	0x3715
 	.uleb128 0x26
-	.4byte	0x3982
-	.4byte	.LC1486
+	.4byte	0x3911
+	.4byte	.LC1499
 	.byte	0x4
 	.byte	0x15
 	.byte	0x9
 	.uleb128 0x27
-	.4byte	.LC1487
+	.4byte	.LC1500
 	.byte	0x0
 	.uleb128 0x27
-	.4byte	.LC1488
+	.4byte	.LC1501
 	.byte	0x1
 	.uleb128 0x27
-	.4byte	.LC1489
+	.4byte	.LC1502
 	.byte	0x2
 	.uleb128 0x27
-	.4byte	.LC1490
+	.4byte	.LC1503
 	.byte	0x3
 	.uleb128 0x27
-	.4byte	.LC1491
+	.4byte	.LC1504
 	.byte	0x4
 	.uleb128 0x27
-	.4byte	.LC1492
+	.4byte	.LC1505
 	.byte	0x5
 	.uleb128 0x27
-	.4byte	.LC1493
+	.4byte	.LC1506
 	.byte	0x6
 	.uleb128 0x27
-	.4byte	.LC1494
+	.4byte	.LC1507
 	.byte	0x7
 	.uleb128 0x27
-	.4byte	.LC1495
+	.4byte	.LC1508
 	.byte	0x8
 	.byte	0x0
 	.uleb128 0x7
-	.4byte	0x3a76
-	.4byte	.LC1496
+	.4byte	0x39f1
+	.4byte	.LC1509
 	.byte	0x4
 	.byte	0x15
 	.byte	0x15
 	.uleb128 0x17
-	.4byte	0x39ae
+	.4byte	0x393d
 	.byte	0x1
 	.4byte	.LC169
-	.4byte	.LC1497
-	.4byte	0x3a76
+	.4byte	.LC1510
+	.4byte	0x39f1
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3a7c
+	.4byte	0x39f7
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3a82
+	.4byte	0x39fd
 	.byte	0x0
 	.uleb128 0x18
-	.4byte	0x39c6
+	.4byte	0x3955
 	.byte	0x1
-	.4byte	.LC1496
+	.4byte	.LC1509
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3a7c
+	.4byte	0x39f7
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3a82
+	.4byte	0x39fd
 	.byte	0x0
 	.uleb128 0x18
-	.4byte	0x39d9
+	.4byte	0x3968
 	.byte	0x1
-	.4byte	.LC1496
+	.4byte	.LC1509
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3a7c
+	.4byte	0x39f7
 	.byte	0x1
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x39f0
+	.uleb128 0x2e
 	.byte	0x1
-	.4byte	.LC1385
+	.4byte	.LC1357
 	.byte	0x15
 	.byte	0x17
-	.4byte	.LC1498
+	.4byte	.LC1511
 	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x2f1a
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x3a07
+	.uleb128 0x2e
 	.byte	0x1
-	.4byte	.LC1499
+	.4byte	.LC1512
 	.byte	0x15
 	.byte	0x18
-	.4byte	.LC1500
+	.4byte	.LC1513
 	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x2f1a
-	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x3a2d
+	.uleb128 0x33
+	.4byte	0x39a8
 	.byte	0x1
-	.4byte	.LC1501
+	.4byte	.LC1514
 	.byte	0x15
 	.byte	0x19
-	.4byte	.LC1502
+	.4byte	.LC1515
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0x12c7
@@ -10472,13 +10396,13 @@ _Z6STATUShhtt:
 	.uleb128 0xd
 	.4byte	0x12d4
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x3a53
+	.uleb128 0x33
+	.4byte	0x39ce
 	.byte	0x1
-	.4byte	.LC1503
+	.4byte	.LC1516
 	.byte	0x15
 	.byte	0x1a
-	.4byte	.LC1504
+	.4byte	.LC1517
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0x12c7
@@ -10489,12 +10413,12 @@ _Z6STATUShhtt:
 	.uleb128 0xd
 	.4byte	0x12d4
 	.byte	0x0
-	.uleb128 0x2d
+	.uleb128 0x2f
 	.byte	0x1
-	.4byte	.LC1505
+	.4byte	.LC1518
 	.byte	0x15
 	.byte	0x1b
-	.4byte	.LC1506
+	.4byte	.LC1519
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0x12c7
@@ -10508,194 +10432,187 @@ _Z6STATUShhtt:
 	.byte	0x0
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x3982
+	.4byte	0x3911
 	.uleb128 0x14
 	.byte	0x4
-	.4byte	0x3982
+	.4byte	0x3911
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x3a88
+	.4byte	0x3a03
 	.uleb128 0x15
-	.4byte	0x3982
+	.4byte	0x3911
 	.uleb128 0x26
-	.4byte	0x3ad0
-	.4byte	.LC1507
+	.4byte	0x3a4b
+	.4byte	.LC1520
 	.byte	0x4
 	.byte	0x16
 	.byte	0xd
 	.uleb128 0x27
-	.4byte	.LC1508
+	.4byte	.LC1521
 	.byte	0x0
 	.uleb128 0x27
-	.4byte	.LC1509
+	.4byte	.LC1522
 	.byte	0x1
 	.uleb128 0x27
-	.4byte	.LC1510
+	.4byte	.LC1523
 	.byte	0x2
 	.uleb128 0x27
-	.4byte	.LC1511
+	.4byte	.LC1524
 	.byte	0x3
 	.uleb128 0x27
-	.4byte	.LC1512
+	.4byte	.LC1525
 	.byte	0x4
 	.uleb128 0x27
-	.4byte	.LC1513
+	.4byte	.LC1526
 	.byte	0x5
 	.uleb128 0x27
-	.4byte	.LC1514
+	.4byte	.LC1527
 	.byte	0x6
 	.uleb128 0x27
-	.4byte	.LC1515
+	.4byte	.LC1528
 	.byte	0x7
 	.uleb128 0x27
-	.4byte	.LC1516
+	.4byte	.LC1529
 	.byte	0x8
 	.byte	0x0
 	.uleb128 0x7
-	.4byte	0x3b79
-	.4byte	.LC1517
+	.4byte	0x3ae4
+	.4byte	.LC1530
 	.byte	0x4
 	.byte	0x16
 	.byte	0x14
 	.uleb128 0x17
-	.4byte	0x3afc
+	.4byte	0x3a77
 	.byte	0x1
 	.4byte	.LC169
-	.4byte	.LC1518
-	.4byte	0x3b79
+	.4byte	.LC1531
+	.4byte	0x3ae4
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3b7f
+	.4byte	0x3aea
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3b85
+	.4byte	0x3af0
 	.byte	0x0
 	.uleb128 0x18
-	.4byte	0x3b14
+	.4byte	0x3a8f
 	.byte	0x1
-	.4byte	.LC1517
+	.4byte	.LC1530
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3b7f
+	.4byte	0x3aea
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3b85
+	.4byte	0x3af0
 	.byte	0x0
 	.uleb128 0x18
-	.4byte	0x3b27
+	.4byte	0x3aa2
 	.byte	0x1
-	.4byte	.LC1517
+	.4byte	.LC1530
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3b7f
+	.4byte	0x3aea
 	.byte	0x1
 	.byte	0x0
-	.uleb128 0x31
+	.uleb128 0x2e
 	.byte	0x1
-	.4byte	.LC1519
+	.4byte	.LC1443
 	.byte	0x16
 	.byte	0x16
-	.4byte	.LC1520
+	.4byte	.LC1532
 	.byte	0x1
-	.uleb128 0x31
+	.uleb128 0x2e
 	.byte	0x1
-	.4byte	.LC1521
+	.4byte	.LC1533
 	.byte	0x16
 	.byte	0x17
-	.4byte	.LC1522
+	.4byte	.LC1534
 	.byte	0x1
-	.uleb128 0x31
+	.uleb128 0x2e
 	.byte	0x1
-	.4byte	.LC1523
+	.4byte	.LC1535
 	.byte	0x16
 	.byte	0x18
-	.4byte	.LC1524
+	.4byte	.LC1536
 	.byte	0x1
-	.uleb128 0x2c
-	.4byte	0x3b65
+	.uleb128 0x2e
 	.byte	0x1
-	.4byte	.LC1385
+	.4byte	.LC1357
 	.byte	0x16
 	.byte	0x19
-	.4byte	.LC1525
+	.4byte	.LC1537
 	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x2f1a
-	.byte	0x0
-	.uleb128 0x2d
+	.uleb128 0x2e
 	.byte	0x1
-	.4byte	.LC1526
+	.4byte	.LC1538
 	.byte	0x16
 	.byte	0x1a
-	.4byte	.LC1527
+	.4byte	.LC1539
 	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x2f1a
-	.byte	0x0
 	.byte	0x0
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x3ad0
+	.4byte	0x3a4b
 	.uleb128 0x14
 	.byte	0x4
-	.4byte	0x3ad0
+	.4byte	0x3a4b
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x3b8b
+	.4byte	0x3af6
 	.uleb128 0x15
-	.4byte	0x3ad0
+	.4byte	0x3a4b
 	.uleb128 0x7
-	.4byte	0x3c21
-	.4byte	.LC1528
+	.4byte	0x3b86
+	.4byte	.LC1540
 	.byte	0x4
 	.byte	0x17
 	.byte	0x9
 	.uleb128 0x17
-	.4byte	0x3bbc
+	.4byte	0x3b27
 	.byte	0x1
 	.4byte	.LC169
-	.4byte	.LC1529
-	.4byte	0x3c21
+	.4byte	.LC1541
+	.4byte	0x3b86
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3c27
+	.4byte	0x3b8c
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3c2d
+	.4byte	0x3b92
 	.byte	0x0
 	.uleb128 0x18
-	.4byte	0x3bd4
+	.4byte	0x3b3f
 	.byte	0x1
-	.4byte	.LC1528
+	.4byte	.LC1540
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3c27
+	.4byte	0x3b8c
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3c2d
+	.4byte	0x3b92
 	.byte	0x0
 	.uleb128 0x18
-	.4byte	0x3be7
+	.4byte	0x3b52
 	.byte	0x1
-	.4byte	.LC1528
+	.4byte	.LC1540
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3c27
+	.4byte	0x3b8c
 	.byte	0x1
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x3c0d
+	.uleb128 0x33
+	.4byte	0x3b78
 	.byte	0x1
-	.4byte	.LC1530
+	.4byte	.LC1542
 	.byte	0x17
 	.byte	0xb
-	.4byte	.LC1531
+	.4byte	.LC1543
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0x12c7
@@ -10706,462 +10623,453 @@ _Z6STATUShhtt:
 	.uleb128 0xd
 	.4byte	0x12d4
 	.byte	0x0
-	.uleb128 0x2d
+	.uleb128 0x2e
 	.byte	0x1
-	.4byte	.LC1385
+	.4byte	.LC1357
 	.byte	0x17
 	.byte	0xc
-	.4byte	.LC1532
+	.4byte	.LC1544
 	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x2f1a
-	.byte	0x0
 	.byte	0x0
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x3b90
+	.4byte	0x3afb
 	.uleb128 0x14
 	.byte	0x4
-	.4byte	0x3b90
+	.4byte	0x3afb
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x3c33
+	.4byte	0x3b98
 	.uleb128 0x15
-	.4byte	0x3b90
+	.4byte	0x3afb
 	.uleb128 0x26
-	.4byte	0x3c7b
-	.4byte	.LC1533
+	.4byte	0x3be0
+	.4byte	.LC1545
 	.byte	0x4
 	.byte	0x18
 	.byte	0x8
 	.uleb128 0x27
-	.4byte	.LC1534
+	.4byte	.LC1546
 	.byte	0x0
 	.uleb128 0x27
-	.4byte	.LC1535
+	.4byte	.LC1547
 	.byte	0x1
 	.uleb128 0x27
-	.4byte	.LC1536
+	.4byte	.LC1548
 	.byte	0x2
 	.uleb128 0x27
-	.4byte	.LC1537
+	.4byte	.LC1549
 	.byte	0x3
 	.uleb128 0x27
-	.4byte	.LC1538
+	.4byte	.LC1550
 	.byte	0x4
 	.uleb128 0x27
-	.4byte	.LC1539
+	.4byte	.LC1551
 	.byte	0x5
 	.uleb128 0x27
-	.4byte	.LC1540
+	.4byte	.LC1552
 	.byte	0x6
 	.uleb128 0x27
-	.4byte	.LC1541
+	.4byte	.LC1553
 	.byte	0x7
 	.uleb128 0x27
-	.4byte	.LC1542
+	.4byte	.LC1554
 	.byte	0x8
 	.byte	0x0
 	.uleb128 0x7
-	.4byte	0x3ce6
-	.4byte	.LC1543
+	.4byte	0x3c45
+	.4byte	.LC1555
 	.byte	0x4
 	.byte	0x18
 	.byte	0xe
 	.uleb128 0x17
-	.4byte	0x3ca7
+	.4byte	0x3c0c
 	.byte	0x1
 	.4byte	.LC169
-	.4byte	.LC1544
-	.4byte	0x3ce6
+	.4byte	.LC1556
+	.4byte	0x3c45
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3cec
+	.4byte	0x3c4b
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3cf2
+	.4byte	0x3c51
 	.byte	0x0
 	.uleb128 0x18
-	.4byte	0x3cbf
+	.4byte	0x3c24
 	.byte	0x1
-	.4byte	.LC1543
+	.4byte	.LC1555
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3cec
+	.4byte	0x3c4b
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3cf2
+	.4byte	0x3c51
 	.byte	0x0
 	.uleb128 0x18
-	.4byte	0x3cd2
+	.4byte	0x3c37
 	.byte	0x1
-	.4byte	.LC1543
+	.4byte	.LC1555
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3cec
+	.4byte	0x3c4b
 	.byte	0x1
 	.byte	0x0
-	.uleb128 0x2d
+	.uleb128 0x2e
 	.byte	0x1
-	.4byte	.LC1385
+	.4byte	.LC1357
 	.byte	0x18
 	.byte	0x10
-	.4byte	.LC1545
+	.4byte	.LC1557
 	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x2f1a
-	.byte	0x0
 	.byte	0x0
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x3c7b
+	.4byte	0x3be0
 	.uleb128 0x14
 	.byte	0x4
-	.4byte	0x3c7b
+	.4byte	0x3be0
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x3cf8
+	.4byte	0x3c57
 	.uleb128 0x15
-	.4byte	0x3c7b
+	.4byte	0x3be0
 	.uleb128 0x2
-	.4byte	.LC1546
+	.4byte	.LC1558
 	.byte	0x19
 	.byte	0x9
-	.4byte	0x3d08
+	.4byte	0x3c67
 	.uleb128 0x7
-	.4byte	0x3d5e
-	.4byte	.LC1546
+	.4byte	0x3cbd
+	.4byte	.LC1558
 	.byte	0x4
 	.byte	0x19
 	.byte	0x7
 	.uleb128 0x10
 	.ascii	"._7\000"
-	.4byte	0x3d08
+	.4byte	0x3c67
 	.uleb128 0xb
-	.4byte	0x3d38
+	.4byte	0x3c97
 	.4byte	.LC169
-	.4byte	0x3d5e
+	.4byte	0x3cbd
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3d64
+	.4byte	0x3cc3
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3d6a
+	.4byte	0x3cc9
 	.byte	0x0
 	.uleb128 0xe
-	.4byte	0x3d4f
+	.4byte	0x3cae
 	.ascii	"._7\000"
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3d64
+	.4byte	0x3cc3
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3d6a
+	.4byte	0x3cc9
 	.byte	0x0
 	.uleb128 0xf
 	.ascii	"._7\000"
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3d64
+	.4byte	0x3cc3
 	.byte	0x1
 	.byte	0x0
 	.byte	0x0
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x3d08
+	.4byte	0x3c67
 	.uleb128 0x14
 	.byte	0x4
-	.4byte	0x3d08
+	.4byte	0x3c67
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x3d70
+	.4byte	0x3ccf
 	.uleb128 0x15
-	.4byte	0x3d08
+	.4byte	0x3c67
 	.uleb128 0x26
-	.4byte	0x3db8
-	.4byte	.LC1547
+	.4byte	0x3d17
+	.4byte	.LC1559
 	.byte	0x4
 	.byte	0x19
 	.byte	0xb
 	.uleb128 0x27
-	.4byte	.LC1548
+	.4byte	.LC1560
 	.byte	0x0
 	.uleb128 0x27
-	.4byte	.LC1549
+	.4byte	.LC1561
 	.byte	0x1
 	.uleb128 0x27
-	.4byte	.LC1550
+	.4byte	.LC1562
 	.byte	0x2
 	.uleb128 0x27
-	.4byte	.LC1551
+	.4byte	.LC1563
 	.byte	0x3
 	.uleb128 0x27
-	.4byte	.LC1552
+	.4byte	.LC1564
 	.byte	0x4
 	.uleb128 0x27
-	.4byte	.LC1553
+	.4byte	.LC1565
 	.byte	0x5
 	.uleb128 0x27
-	.4byte	.LC1554
+	.4byte	.LC1566
 	.byte	0x6
 	.uleb128 0x27
-	.4byte	.LC1555
+	.4byte	.LC1567
 	.byte	0x7
 	.uleb128 0x27
-	.4byte	.LC1556
+	.4byte	.LC1568
 	.byte	0x8
 	.byte	0x0
 	.uleb128 0x7
-	.4byte	0x3e6b
-	.4byte	.LC1557
+	.4byte	0x3dc4
+	.4byte	.LC1569
 	.byte	0x4
 	.byte	0x19
 	.byte	0x11
 	.uleb128 0x17
-	.4byte	0x3de4
+	.4byte	0x3d43
 	.byte	0x1
 	.4byte	.LC169
-	.4byte	.LC1558
-	.4byte	0x3e6b
+	.4byte	.LC1570
+	.4byte	0x3dc4
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3e71
+	.4byte	0x3dca
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3e77
+	.4byte	0x3dd0
 	.byte	0x0
 	.uleb128 0x18
-	.4byte	0x3dfc
+	.4byte	0x3d5b
 	.byte	0x1
-	.4byte	.LC1557
+	.4byte	.LC1569
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3e71
+	.4byte	0x3dca
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3e77
+	.4byte	0x3dd0
 	.byte	0x0
 	.uleb128 0x18
-	.4byte	0x3e0f
+	.4byte	0x3d6e
 	.byte	0x1
-	.4byte	.LC1557
+	.4byte	.LC1569
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x3e71
+	.4byte	0x3dca
 	.byte	0x1
 	.byte	0x0
-	.uleb128 0x31
+	.uleb128 0x2e
 	.byte	0x1
-	.4byte	.LC1519
+	.4byte	.LC1443
 	.byte	0x19
 	.byte	0x15
-	.4byte	.LC1559
+	.4byte	.LC1571
 	.byte	0x1
-	.uleb128 0x31
+	.uleb128 0x2e
 	.byte	0x1
-	.4byte	.LC1560
+	.4byte	.LC1572
 	.byte	0x19
 	.byte	0x16
-	.4byte	.LC1561
+	.4byte	.LC1573
 	.byte	0x1
 	.uleb128 0x36
-	.4byte	0x3e40
+	.4byte	0x3d9f
 	.byte	0x1
 	.ascii	"get\000"
 	.byte	0x19
 	.byte	0x17
-	.4byte	.LC1598
+	.4byte	.LC1610
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0x18b
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x3e57
+	.uleb128 0x33
+	.4byte	0x3db6
 	.byte	0x1
-	.4byte	.LC1562
+	.4byte	.LC1574
 	.byte	0x19
 	.byte	0x18
-	.4byte	.LC1563
+	.4byte	.LC1575
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0xc5b
 	.byte	0x0
-	.uleb128 0x2d
+	.uleb128 0x2e
 	.byte	0x1
-	.4byte	.LC1385
+	.4byte	.LC1357
 	.byte	0x19
 	.byte	0x19
-	.4byte	.LC1564
+	.4byte	.LC1576
 	.byte	0x1
-	.uleb128 0xd
-	.4byte	0x2f1a
-	.byte	0x0
 	.byte	0x0
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x3db8
+	.4byte	0x3d17
 	.uleb128 0x14
 	.byte	0x4
-	.4byte	0x3db8
+	.4byte	0x3d17
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x3e7d
+	.4byte	0x3dd6
 	.uleb128 0x15
-	.4byte	0x3db8
+	.4byte	0x3d17
 	.uleb128 0x26
-	.4byte	0x3eb3
-	.4byte	.LC1565
+	.4byte	0x3e0c
+	.4byte	.LC1577
 	.byte	0x4
 	.byte	0x1a
 	.byte	0x6d
 	.uleb128 0x27
-	.4byte	.LC1566
+	.4byte	.LC1578
 	.byte	0x0
 	.uleb128 0x27
-	.4byte	.LC1567
+	.4byte	.LC1579
 	.byte	0x1
 	.uleb128 0x27
-	.4byte	.LC1568
+	.4byte	.LC1580
 	.byte	0x2
 	.uleb128 0x27
-	.4byte	.LC1569
+	.4byte	.LC1581
 	.byte	0x3
 	.uleb128 0x27
-	.4byte	.LC1570
+	.4byte	.LC1582
 	.byte	0x4
 	.uleb128 0x27
-	.4byte	.LC1571
+	.4byte	.LC1583
 	.byte	0x5
 	.byte	0x0
 	.uleb128 0x37
-	.4byte	0x41fc
+	.4byte	0x4155
 	.ascii	"Gpu\000"
 	.byte	0x4
 	.byte	0x1a
 	.byte	0x79
-	.uleb128 0x2f
+	.uleb128 0x2c
 	.4byte	.LC1320
 	.byte	0x1a
 	.byte	0x7b
-	.4byte	.LC1572
+	.4byte	.LC1584
 	.4byte	0xf39
 	.byte	0x1
 	.byte	0x3
 	.byte	0x1
 	.uleb128 0x29
-	.4byte	.LC1573
+	.4byte	.LC1585
 	.byte	0x1a
 	.byte	0x7e
-	.4byte	.LC1574
-	.4byte	0x3742
+	.4byte	.LC1586
+	.4byte	0x36db
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0x29
-	.4byte	.LC1575
+	.4byte	.LC1587
 	.byte	0x1a
 	.byte	0x7f
-	.4byte	.LC1576
-	.4byte	0x3742
+	.4byte	.LC1588
+	.4byte	0x36db
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0x29
-	.4byte	.LC1577
+	.4byte	.LC1589
 	.byte	0x1a
 	.byte	0x80
-	.4byte	.LC1578
-	.4byte	0x3742
+	.4byte	.LC1590
+	.4byte	0x36db
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0x29
-	.4byte	.LC1579
+	.4byte	.LC1591
 	.byte	0x1a
 	.byte	0x81
-	.4byte	.LC1580
-	.4byte	0x4212
+	.4byte	.LC1592
+	.4byte	0x416b
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0x29
-	.4byte	.LC1581
+	.4byte	.LC1593
 	.byte	0x1a
 	.byte	0x82
-	.4byte	.LC1582
+	.4byte	.LC1594
 	.4byte	0x12cd
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0x29
-	.4byte	.LC1583
+	.4byte	.LC1595
 	.byte	0x1a
 	.byte	0x83
-	.4byte	.LC1584
+	.4byte	.LC1596
 	.4byte	0xee6
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0x17
-	.4byte	0x3f57
+	.4byte	0x3eb0
 	.byte	0x1
 	.4byte	.LC169
-	.4byte	.LC1585
-	.4byte	0x4217
+	.4byte	.LC1597
+	.4byte	0x4170
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x421d
+	.4byte	0x4176
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x4223
+	.4byte	0x417c
 	.byte	0x0
 	.uleb128 0x38
-	.4byte	0x3f6f
+	.4byte	0x3ec8
 	.byte	0x1
 	.ascii	"Gpu\000"
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x421d
+	.4byte	0x4176
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x4223
+	.4byte	0x417c
 	.byte	0x0
 	.uleb128 0x38
-	.4byte	0x3f82
+	.4byte	0x3edb
 	.byte	0x1
 	.ascii	"Gpu\000"
 	.byte	0x1
 	.byte	0x1
 	.uleb128 0xc
-	.4byte	0x421d
+	.4byte	0x4176
 	.byte	0x1
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x3f99
+	.uleb128 0x33
+	.4byte	0x3ef2
 	.byte	0x1
-	.4byte	.LC1586
+	.4byte	.LC1598
 	.byte	0x1a
 	.byte	0x85
-	.4byte	.LC1587
+	.4byte	.LC1599
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0x7e
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x3fce
+	.uleb128 0x33
+	.4byte	0x3f27
 	.byte	0x1
-	.4byte	.LC1588
+	.4byte	.LC1600
 	.byte	0x1a
 	.byte	0x86
-	.4byte	.LC1589
+	.4byte	.LC1601
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3e82
+	.4byte	0x3ddb
 	.uleb128 0xd
 	.4byte	0x7e
 	.uleb128 0xd
@@ -11175,16 +11083,16 @@ _Z6STATUShhtt:
 	.uleb128 0xd
 	.4byte	0x7e
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x4003
+	.uleb128 0x33
+	.4byte	0x3f5c
 	.byte	0x1
-	.4byte	.LC1590
+	.4byte	.LC1602
 	.byte	0x1a
 	.byte	0x87
-	.4byte	.LC1591
+	.4byte	.LC1603
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3e82
+	.4byte	0x3ddb
 	.uleb128 0xd
 	.4byte	0x18b
 	.uleb128 0xd
@@ -11198,16 +11106,16 @@ _Z6STATUShhtt:
 	.uleb128 0xd
 	.4byte	0x18b
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x4038
+	.uleb128 0x33
+	.4byte	0x3f91
 	.byte	0x1
-	.4byte	.LC1592
+	.4byte	.LC1604
 	.byte	0x1a
 	.byte	0x88
-	.4byte	.LC1593
+	.4byte	.LC1605
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x3e82
+	.4byte	0x3ddb
 	.uleb128 0xd
 	.4byte	0x7e
 	.uleb128 0xd
@@ -11221,16 +11129,16 @@ _Z6STATUShhtt:
 	.uleb128 0xd
 	.4byte	0x7e
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x406d
+	.uleb128 0x33
+	.4byte	0x3fc6
 	.byte	0x1
-	.4byte	.LC1594
+	.4byte	.LC1606
 	.byte	0x1a
 	.byte	0x89
-	.4byte	.LC1595
+	.4byte	.LC1607
 	.byte	0x1
 	.uleb128 0xd
-	.4byte	0x422e
+	.4byte	0x4187
 	.uleb128 0xd
 	.4byte	0x7e
 	.uleb128 0xd
@@ -11244,13 +11152,13 @@ _Z6STATUShhtt:
 	.uleb128 0xd
 	.4byte	0x7e
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x4089
+	.uleb128 0x33
+	.4byte	0x3fe2
 	.byte	0x1
-	.4byte	.LC1596
+	.4byte	.LC1608
 	.byte	0x1a
 	.byte	0x8a
-	.4byte	.LC1597
+	.4byte	.LC1609
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0xc5b
@@ -11258,12 +11166,12 @@ _Z6STATUShhtt:
 	.4byte	0xc5b
 	.byte	0x0
 	.uleb128 0x39
-	.4byte	0x40ae
+	.4byte	0x4007
 	.byte	0x1
 	.ascii	"get\000"
 	.byte	0x1a
 	.byte	0x8b
-	.4byte	.LC1599
+	.4byte	.LC1611
 	.4byte	0xee6
 	.byte	0x1
 	.uleb128 0xd
@@ -11273,35 +11181,35 @@ _Z6STATUShhtt:
 	.uleb128 0xd
 	.4byte	0x18b
 	.byte	0x0
-	.uleb128 0x31
+	.uleb128 0x2e
 	.byte	0x1
-	.4byte	.LC1519
+	.4byte	.LC1443
 	.byte	0x1a
 	.byte	0x8c
-	.4byte	.LC1600
+	.4byte	.LC1612
 	.byte	0x1
-	.uleb128 0x30
+	.uleb128 0x2d
 	.byte	0x1
-	.4byte	.LC1601
+	.4byte	.LC1613
 	.byte	0x1a
 	.byte	0x8d
-	.4byte	.LC1602
+	.4byte	.LC1614
 	.4byte	0x12cd
 	.byte	0x1
-	.uleb128 0x31
+	.uleb128 0x2e
 	.byte	0x1
-	.4byte	.LC1603
+	.4byte	.LC1615
 	.byte	0x1a
 	.byte	0x8e
-	.4byte	.LC1604
+	.4byte	.LC1616
 	.byte	0x1
 	.uleb128 0x36
-	.4byte	0x40ff
+	.4byte	0x4058
 	.byte	0x1
 	.ascii	"set\000"
 	.byte	0x1a
 	.byte	0x8f
-	.4byte	.LC1605
+	.4byte	.LC1617
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0x18b
@@ -11312,24 +11220,24 @@ _Z6STATUShhtt:
 	.uleb128 0xd
 	.4byte	0xc5b
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x4116
+	.uleb128 0x33
+	.4byte	0x406f
 	.byte	0x1
-	.4byte	.LC1385
+	.4byte	.LC1357
 	.byte	0x1a
 	.byte	0x91
-	.4byte	.LC1606
+	.4byte	.LC1618
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0x18b
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x413c
+	.uleb128 0x33
+	.4byte	0x4095
 	.byte	0x1
-	.4byte	.LC1607
+	.4byte	.LC1619
 	.byte	0x1a
 	.byte	0x94
-	.4byte	.LC1608
+	.4byte	.LC1620
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0x18b
@@ -11340,13 +11248,13 @@ _Z6STATUShhtt:
 	.uleb128 0xd
 	.4byte	0x18b
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x4162
+	.uleb128 0x33
+	.4byte	0x40bb
 	.byte	0x1
-	.4byte	.LC1609
+	.4byte	.LC1621
 	.byte	0x1a
 	.byte	0x95
-	.4byte	.LC1610
+	.4byte	.LC1622
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0x18b
@@ -11357,13 +11265,13 @@ _Z6STATUShhtt:
 	.uleb128 0xd
 	.4byte	0x18b
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x4188
+	.uleb128 0x33
+	.4byte	0x40e1
 	.byte	0x1
-	.4byte	.LC1611
+	.4byte	.LC1623
 	.byte	0x1a
 	.byte	0x96
-	.4byte	.LC1612
+	.4byte	.LC1624
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0x18b
@@ -11374,13 +11282,13 @@ _Z6STATUShhtt:
 	.uleb128 0xd
 	.4byte	0x18b
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x41ae
+	.uleb128 0x33
+	.4byte	0x4107
 	.byte	0x1
-	.4byte	.LC1613
+	.4byte	.LC1625
 	.byte	0x1a
 	.byte	0x97
-	.4byte	.LC1614
+	.4byte	.LC1626
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0x18b
@@ -11391,13 +11299,13 @@ _Z6STATUShhtt:
 	.uleb128 0xd
 	.4byte	0x18b
 	.byte	0x0
-	.uleb128 0x2c
-	.4byte	0x41d4
+	.uleb128 0x33
+	.4byte	0x412d
 	.byte	0x1
-	.4byte	.LC1615
+	.4byte	.LC1627
 	.byte	0x1a
 	.byte	0x98
-	.4byte	.LC1616
+	.4byte	.LC1628
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0x18b
@@ -11408,12 +11316,12 @@ _Z6STATUShhtt:
 	.uleb128 0xd
 	.4byte	0x18b
 	.byte	0x0
-	.uleb128 0x2d
+	.uleb128 0x2f
 	.byte	0x1
-	.4byte	.LC1617
+	.4byte	.LC1629
 	.byte	0x1a
 	.byte	0x99
-	.4byte	.LC1618
+	.4byte	.LC1630
 	.byte	0x1
 	.uleb128 0xd
 	.4byte	0x18b
@@ -11428,7 +11336,7 @@ _Z6STATUShhtt:
 	.byte	0x0
 	.byte	0x0
 	.uleb128 0x11
-	.4byte	0x4212
+	.4byte	0x416b
 	.4byte	0xee6
 	.uleb128 0x12
 	.4byte	0x184
@@ -11438,28 +11346,28 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x0
 	.uleb128 0x15
-	.4byte	0x41fc
+	.4byte	0x4155
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x3eb3
+	.4byte	0x3e0c
 	.uleb128 0x14
 	.byte	0x4
-	.4byte	0x3eb3
+	.4byte	0x3e0c
 	.uleb128 0x13
 	.byte	0x4
-	.4byte	0x4229
+	.4byte	0x4182
 	.uleb128 0x15
-	.4byte	0x3eb3
+	.4byte	0x3e0c
 	.uleb128 0x14
 	.byte	0x4
 	.4byte	0x12e0
 	.uleb128 0x3a
-	.4byte	0x4295
+	.4byte	0x41ee
 	.byte	0x1
-	.4byte	.LC1619
+	.4byte	.LC1631
 	.byte	0x1
 	.byte	0x9
-	.4byte	.LC1620
+	.4byte	.LC1632
 	.4byte	.LFB3
 	.4byte	.LFE3
 	.byte	0x1
@@ -11484,7 +11392,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x56
 	.uleb128 0x3d
-	.4byte	.LC1621
+	.4byte	.LC1633
 	.byte	0x1
 	.byte	0x9
 	.4byte	0x1481
@@ -11498,7 +11406,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x55
 	.uleb128 0x3f
-	.4byte	.LC1622
+	.4byte	.LC1634
 	.byte	0x1
 	.byte	0xb
 	.4byte	0x7e
@@ -11506,12 +11414,12 @@ _Z6STATUShhtt:
 	.byte	0x59
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x42e0
+	.4byte	0x4239
 	.byte	0x1
-	.4byte	.LC1623
+	.4byte	.LC1635
 	.byte	0x1
 	.byte	0x14
-	.4byte	.LC1624
+	.4byte	.LC1636
 	.4byte	.LFB5
 	.4byte	.LFE5
 	.byte	0x1
@@ -11531,7 +11439,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x55
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0x14
 	.4byte	0xee6
@@ -11546,12 +11454,12 @@ _Z6STATUShhtt:
 	.byte	0x51
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x432b
+	.4byte	0x4284
 	.byte	0x1
-	.4byte	.LC1626
+	.4byte	.LC1638
 	.byte	0x1
 	.byte	0x1b
-	.4byte	.LC1627
+	.4byte	.LC1639
 	.4byte	.LFB7
 	.4byte	.LFE7
 	.byte	0x1
@@ -11571,7 +11479,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x55
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0x1b
 	.4byte	0xee6
@@ -11586,12 +11494,12 @@ _Z6STATUShhtt:
 	.byte	0x51
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x4376
+	.4byte	0x42cf
 	.byte	0x1
-	.4byte	.LC1628
+	.4byte	.LC1640
 	.byte	0x1
 	.byte	0x35
-	.4byte	.LC1629
+	.4byte	.LC1641
 	.4byte	.LFB9
 	.4byte	.LFE9
 	.byte	0x1
@@ -11611,7 +11519,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x55
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0x35
 	.4byte	0xee6
@@ -11626,12 +11534,12 @@ _Z6STATUShhtt:
 	.byte	0x52
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x43c1
+	.4byte	0x431a
 	.byte	0x1
-	.4byte	.LC1630
+	.4byte	.LC1642
 	.byte	0x1
 	.byte	0x3e
-	.4byte	.LC1631
+	.4byte	.LC1643
 	.4byte	.LFB11
 	.4byte	.LFE11
 	.byte	0x1
@@ -11651,7 +11559,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x58
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0x3e
 	.4byte	0xee6
@@ -11666,12 +11574,12 @@ _Z6STATUShhtt:
 	.byte	0x55
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x440c
+	.4byte	0x4365
 	.byte	0x1
-	.4byte	.LC1632
+	.4byte	.LC1644
 	.byte	0x1
 	.byte	0x46
-	.4byte	.LC1633
+	.4byte	.LC1645
 	.4byte	.LFB13
 	.4byte	.LFE13
 	.byte	0x1
@@ -11691,7 +11599,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x58
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0x46
 	.4byte	0xee6
@@ -11706,12 +11614,12 @@ _Z6STATUShhtt:
 	.byte	0x53
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x4457
+	.4byte	0x43b0
 	.byte	0x1
-	.4byte	.LC1634
+	.4byte	.LC1646
 	.byte	0x1
 	.byte	0x4e
-	.4byte	.LC1635
+	.4byte	.LC1647
 	.4byte	.LFB15
 	.4byte	.LFE15
 	.byte	0x1
@@ -11731,7 +11639,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x56
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0x4e
 	.4byte	0xee6
@@ -11746,12 +11654,12 @@ _Z6STATUShhtt:
 	.byte	0x53
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x44a2
+	.4byte	0x43fb
 	.byte	0x1
-	.4byte	.LC1636
+	.4byte	.LC1648
 	.byte	0x1
 	.byte	0x55
-	.4byte	.LC1637
+	.4byte	.LC1649
 	.4byte	.LFB17
 	.4byte	.LFE17
 	.byte	0x1
@@ -11771,7 +11679,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x56
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0x55
 	.4byte	0xee6
@@ -11786,12 +11694,12 @@ _Z6STATUShhtt:
 	.byte	0x53
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x44ed
+	.4byte	0x4446
 	.byte	0x1
-	.4byte	.LC1638
+	.4byte	.LC1650
 	.byte	0x1
 	.byte	0x5c
-	.4byte	.LC1639
+	.4byte	.LC1651
 	.4byte	.LFB19
 	.4byte	.LFE19
 	.byte	0x1
@@ -11811,7 +11719,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x58
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0x5c
 	.4byte	0xee6
@@ -11826,12 +11734,12 @@ _Z6STATUShhtt:
 	.byte	0x53
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x4538
+	.4byte	0x4491
 	.byte	0x1
-	.4byte	.LC1640
+	.4byte	.LC1652
 	.byte	0x1
 	.byte	0x64
-	.4byte	.LC1641
+	.4byte	.LC1653
 	.4byte	.LFB21
 	.4byte	.LFE21
 	.byte	0x1
@@ -11851,7 +11759,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x58
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0x64
 	.4byte	0xee6
@@ -11866,12 +11774,12 @@ _Z6STATUShhtt:
 	.byte	0x53
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x4583
+	.4byte	0x44dc
 	.byte	0x1
-	.4byte	.LC1642
+	.4byte	.LC1654
 	.byte	0x1
 	.byte	0x6c
-	.4byte	.LC1643
+	.4byte	.LC1655
 	.4byte	.LFB23
 	.4byte	.LFE23
 	.byte	0x1
@@ -11891,7 +11799,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x5a
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0x6c
 	.4byte	0xee6
@@ -11906,12 +11814,12 @@ _Z6STATUShhtt:
 	.byte	0x55
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x45ce
+	.4byte	0x4527
 	.byte	0x1
-	.4byte	.LC1644
+	.4byte	.LC1656
 	.byte	0x1
 	.byte	0x74
-	.4byte	.LC1645
+	.4byte	.LC1657
 	.4byte	.LFB25
 	.4byte	.LFE25
 	.byte	0x1
@@ -11931,7 +11839,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x56
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0x74
 	.4byte	0xee6
@@ -11946,12 +11854,12 @@ _Z6STATUShhtt:
 	.byte	0x53
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x4619
+	.4byte	0x4572
 	.byte	0x1
-	.4byte	.LC1646
+	.4byte	.LC1658
 	.byte	0x1
 	.byte	0x83
-	.4byte	.LC1647
+	.4byte	.LC1659
 	.4byte	.LFB27
 	.4byte	.LFE27
 	.byte	0x1
@@ -11971,7 +11879,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x55
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0x83
 	.4byte	0xee6
@@ -11986,12 +11894,12 @@ _Z6STATUShhtt:
 	.byte	0x54
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x4664
+	.4byte	0x45bd
 	.byte	0x1
-	.4byte	.LC1648
+	.4byte	.LC1660
 	.byte	0x1
 	.byte	0x8c
-	.4byte	.LC1649
+	.4byte	.LC1661
 	.4byte	.LFB29
 	.4byte	.LFE29
 	.byte	0x1
@@ -12011,7 +11919,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x51
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0x8c
 	.4byte	0xee6
@@ -12026,12 +11934,12 @@ _Z6STATUShhtt:
 	.byte	0x53
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x46af
+	.4byte	0x4608
 	.byte	0x1
-	.4byte	.LC1650
+	.4byte	.LC1662
 	.byte	0x1
 	.byte	0x91
-	.4byte	.LC1651
+	.4byte	.LC1663
 	.4byte	.LFB31
 	.4byte	.LFE31
 	.byte	0x1
@@ -12051,7 +11959,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x55
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0x91
 	.4byte	0xee6
@@ -12066,12 +11974,12 @@ _Z6STATUShhtt:
 	.byte	0x53
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x46fa
+	.4byte	0x4653
 	.byte	0x1
-	.4byte	.LC1652
+	.4byte	.LC1664
 	.byte	0x1
 	.byte	0x98
-	.4byte	.LC1653
+	.4byte	.LC1665
 	.4byte	.LFB33
 	.4byte	.LFE33
 	.byte	0x1
@@ -12091,7 +11999,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x56
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0x98
 	.4byte	0xee6
@@ -12106,12 +12014,12 @@ _Z6STATUShhtt:
 	.byte	0x55
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x4745
+	.4byte	0x469e
 	.byte	0x1
-	.4byte	.LC1654
+	.4byte	.LC1666
 	.byte	0x1
 	.byte	0xa0
-	.4byte	.LC1655
+	.4byte	.LC1667
 	.4byte	.LFB35
 	.4byte	.LFE35
 	.byte	0x1
@@ -12131,7 +12039,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x59
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0xa0
 	.4byte	0xee6
@@ -12146,12 +12054,12 @@ _Z6STATUShhtt:
 	.byte	0x53
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x4790
+	.4byte	0x46e9
 	.byte	0x1
-	.4byte	.LC1656
+	.4byte	.LC1668
 	.byte	0x1
 	.byte	0xa8
-	.4byte	.LC1657
+	.4byte	.LC1669
 	.4byte	.LFB37
 	.4byte	.LFE37
 	.byte	0x1
@@ -12171,7 +12079,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x59
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0xa8
 	.4byte	0xee6
@@ -12186,12 +12094,12 @@ _Z6STATUShhtt:
 	.byte	0x53
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x47db
+	.4byte	0x4734
 	.byte	0x1
-	.4byte	.LC1658
+	.4byte	.LC1670
 	.byte	0x1
 	.byte	0xb0
-	.4byte	.LC1659
+	.4byte	.LC1671
 	.4byte	.LFB39
 	.4byte	.LFE39
 	.byte	0x1
@@ -12211,7 +12119,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x51
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0xb0
 	.4byte	0xee6
@@ -12226,12 +12134,12 @@ _Z6STATUShhtt:
 	.byte	0x53
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x4826
+	.4byte	0x477f
 	.byte	0x1
-	.4byte	.LC1660
+	.4byte	.LC1672
 	.byte	0x1
 	.byte	0xbb
-	.4byte	.LC1661
+	.4byte	.LC1673
 	.4byte	.LFB41
 	.4byte	.LFE41
 	.byte	0x1
@@ -12251,7 +12159,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x54
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0xbb
 	.4byte	0xee6
@@ -12266,12 +12174,12 @@ _Z6STATUShhtt:
 	.byte	0x53
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x4871
+	.4byte	0x47ca
 	.byte	0x1
-	.4byte	.LC1662
+	.4byte	.LC1674
 	.byte	0x1
 	.byte	0xc4
-	.4byte	.LC1663
+	.4byte	.LC1675
 	.4byte	.LFB43
 	.4byte	.LFE43
 	.byte	0x1
@@ -12291,7 +12199,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x55
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0xc4
 	.4byte	0xee6
@@ -12306,12 +12214,12 @@ _Z6STATUShhtt:
 	.byte	0x53
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x48bc
+	.4byte	0x4815
 	.byte	0x1
-	.4byte	.LC1664
+	.4byte	.LC1676
 	.byte	0x1
 	.byte	0xcd
-	.4byte	.LC1665
+	.4byte	.LC1677
 	.4byte	.LFB45
 	.4byte	.LFE45
 	.byte	0x1
@@ -12331,7 +12239,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x52
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0xcd
 	.4byte	0xee6
@@ -12346,12 +12254,12 @@ _Z6STATUShhtt:
 	.byte	0x51
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x4907
+	.4byte	0x4860
 	.byte	0x1
-	.4byte	.LC1666
+	.4byte	.LC1678
 	.byte	0x1
 	.byte	0xd4
-	.4byte	.LC1667
+	.4byte	.LC1679
 	.4byte	.LFB47
 	.4byte	.LFE47
 	.byte	0x1
@@ -12371,7 +12279,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x52
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0xd4
 	.4byte	0xee6
@@ -12386,12 +12294,12 @@ _Z6STATUShhtt:
 	.byte	0x51
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x4952
+	.4byte	0x48ab
 	.byte	0x1
-	.4byte	.LC1668
+	.4byte	.LC1680
 	.byte	0x1
 	.byte	0xdb
-	.4byte	.LC1669
+	.4byte	.LC1681
 	.4byte	.LFB49
 	.4byte	.LFE49
 	.byte	0x1
@@ -12411,7 +12319,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x54
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0xdb
 	.4byte	0xee6
@@ -12426,12 +12334,12 @@ _Z6STATUShhtt:
 	.byte	0x53
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x499d
+	.4byte	0x48f6
 	.byte	0x1
-	.4byte	.LC1670
+	.4byte	.LC1682
 	.byte	0x1
 	.byte	0xe2
-	.4byte	.LC1671
+	.4byte	.LC1683
 	.4byte	.LFB51
 	.4byte	.LFE51
 	.byte	0x1
@@ -12451,7 +12359,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x58
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0xe2
 	.4byte	0xee6
@@ -12466,12 +12374,12 @@ _Z6STATUShhtt:
 	.byte	0x53
 	.byte	0x0
 	.uleb128 0x3a
-	.4byte	0x49e8
+	.4byte	0x4941
 	.byte	0x1
-	.4byte	.LC1672
+	.4byte	.LC1684
 	.byte	0x1
 	.byte	0xeb
-	.4byte	.LC1673
+	.4byte	.LC1685
 	.4byte	.LFB53
 	.4byte	.LFE53
 	.byte	0x1
@@ -12491,7 +12399,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x54
 	.uleb128 0x3d
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.byte	0xeb
 	.4byte	0xee6
@@ -12506,12 +12414,12 @@ _Z6STATUShhtt:
 	.byte	0x55
 	.byte	0x0
 	.uleb128 0x40
-	.4byte	0x4a38
+	.4byte	0x4991
 	.byte	0x1
-	.4byte	.LC1674
+	.4byte	.LC1686
 	.byte	0x1
 	.2byte	0x101
-	.4byte	.LC1676
+	.4byte	.LC1688
 	.4byte	.LFB55
 	.4byte	.LFE55
 	.byte	0x1
@@ -12531,7 +12439,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x56
 	.uleb128 0x42
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.2byte	0x101
 	.4byte	0xee6
@@ -12546,12 +12454,12 @@ _Z6STATUShhtt:
 	.byte	0x55
 	.byte	0x0
 	.uleb128 0x40
-	.4byte	0x4a88
+	.4byte	0x49e1
 	.byte	0x1
-	.4byte	.LC1675
+	.4byte	.LC1687
 	.byte	0x1
 	.2byte	0x117
-	.4byte	.LC1677
+	.4byte	.LC1689
 	.4byte	.LFB57
 	.4byte	.LFE57
 	.byte	0x1
@@ -12571,7 +12479,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x56
 	.uleb128 0x42
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.2byte	0x117
 	.4byte	0xee6
@@ -12586,12 +12494,12 @@ _Z6STATUShhtt:
 	.byte	0x55
 	.byte	0x0
 	.uleb128 0x40
-	.4byte	0x4ad8
+	.4byte	0x4a31
 	.byte	0x1
-	.4byte	.LC1678
+	.4byte	.LC1690
 	.byte	0x1
 	.2byte	0x12c
-	.4byte	.LC1679
+	.4byte	.LC1691
 	.4byte	.LFB59
 	.4byte	.LFE59
 	.byte	0x1
@@ -12611,7 +12519,7 @@ _Z6STATUShhtt:
 	.byte	0x1
 	.byte	0x54
 	.uleb128 0x42
-	.4byte	.LC1625
+	.4byte	.LC1637
 	.byte	0x1
 	.2byte	0x12c
 	.4byte	0xee6
@@ -12626,24 +12534,24 @@ _Z6STATUShhtt:
 	.byte	0x53
 	.byte	0x0
 	.uleb128 0x43
-	.4byte	.LC1680
+	.4byte	.LC1692
 	.byte	0x1
 	.byte	0x21
-	.4byte	0x4ae3
+	.4byte	0x4a3c
 	.uleb128 0x15
-	.4byte	0x362e
+	.4byte	0x32bc
 	.uleb128 0x44
-	.4byte	.LC1681
+	.4byte	.LC1693
 	.byte	0x1
 	.2byte	0x147
 	.4byte	0x12eb
 	.uleb128 0x44
-	.4byte	.LC1682
+	.4byte	.LC1694
 	.byte	0x1
 	.2byte	0x148
 	.4byte	0x12eb
 	.uleb128 0x45
-	.4byte	0x3f04
+	.4byte	0x3e5d
 	.byte	0x1
 	.byte	0x0
 	.section	.debug_abbrev
@@ -13148,59 +13056,6 @@ _Z6STATUShhtt:
 	.byte	0x0
 	.byte	0x0
 	.uleb128 0x2b
-	.uleb128 0x2e
-	.byte	0x1
-	.uleb128 0x1
-	.uleb128 0x13
-	.uleb128 0x3f
-	.uleb128 0xc
-	.uleb128 0x3
-	.uleb128 0xe
-	.uleb128 0x3a
-	.uleb128 0xb
-	.uleb128 0x3b
-	.uleb128 0xb
-	.uleb128 0x3c
-	.uleb128 0xc
-	.byte	0x0
-	.byte	0x0
-	.uleb128 0x2c
-	.uleb128 0x2e
-	.byte	0x1
-	.uleb128 0x1
-	.uleb128 0x13
-	.uleb128 0x3f
-	.uleb128 0xc
-	.uleb128 0x3
-	.uleb128 0xe
-	.uleb128 0x3a
-	.uleb128 0xb
-	.uleb128 0x3b
-	.uleb128 0xb
-	.uleb128 0x2007
-	.uleb128 0xe
-	.uleb128 0x3c
-	.uleb128 0xc
-	.byte	0x0
-	.byte	0x0
-	.uleb128 0x2d
-	.uleb128 0x2e
-	.byte	0x1
-	.uleb128 0x3f
-	.uleb128 0xc
-	.uleb128 0x3
-	.uleb128 0xe
-	.uleb128 0x3a
-	.uleb128 0xb
-	.uleb128 0x3b
-	.uleb128 0xb
-	.uleb128 0x2007
-	.uleb128 0xe
-	.uleb128 0x3c
-	.uleb128 0xc
-	.byte	0x0
-	.byte	0x0
-	.uleb128 0x2e
 	.uleb128 0x34
 	.byte	0x0
 	.uleb128 0x3
@@ -13221,7 +13076,7 @@ _Z6STATUShhtt:
 	.uleb128 0xc
 	.byte	0x0
 	.byte	0x0
-	.uleb128 0x2f
+	.uleb128 0x2c
 	.uleb128 0x34
 	.byte	0x0
 	.uleb128 0x3
@@ -13242,7 +13097,7 @@ _Z6STATUShhtt:
 	.uleb128 0xc
 	.byte	0x0
 	.byte	0x0
-	.uleb128 0x30
+	.uleb128 0x2d
 	.uleb128 0x2e
 	.byte	0x0
 	.uleb128 0x3f
@@ -13257,6 +13112,59 @@ _Z6STATUShhtt:
 	.uleb128 0xe
 	.uleb128 0x49
 	.uleb128 0x13
+	.uleb128 0x3c
+	.uleb128 0xc
+	.byte	0x0
+	.byte	0x0
+	.uleb128 0x2e
+	.uleb128 0x2e
+	.byte	0x0
+	.uleb128 0x3f
+	.uleb128 0xc
+	.uleb128 0x3
+	.uleb128 0xe
+	.uleb128 0x3a
+	.uleb128 0xb
+	.uleb128 0x3b
+	.uleb128 0xb
+	.uleb128 0x2007
+	.uleb128 0xe
+	.uleb128 0x3c
+	.uleb128 0xc
+	.byte	0x0
+	.byte	0x0
+	.uleb128 0x2f
+	.uleb128 0x2e
+	.byte	0x1
+	.uleb128 0x3f
+	.uleb128 0xc
+	.uleb128 0x3
+	.uleb128 0xe
+	.uleb128 0x3a
+	.uleb128 0xb
+	.uleb128 0x3b
+	.uleb128 0xb
+	.uleb128 0x2007
+	.uleb128 0xe
+	.uleb128 0x3c
+	.uleb128 0xc
+	.byte	0x0
+	.byte	0x0
+	.uleb128 0x30
+	.uleb128 0x2e
+	.byte	0x0
+	.uleb128 0x3f
+	.uleb128 0xc
+	.uleb128 0x3
+	.uleb128 0x8
+	.uleb128 0x3a
+	.uleb128 0xb
+	.uleb128 0x3b
+	.uleb128 0xb
+	.uleb128 0x2007
+	.uleb128 0xe
+	.uleb128 0x32
+	.uleb128 0xb
 	.uleb128 0x3c
 	.uleb128 0xc
 	.byte	0x0
@@ -13274,17 +13182,21 @@ _Z6STATUShhtt:
 	.uleb128 0xb
 	.uleb128 0x2007
 	.uleb128 0xe
+	.uleb128 0x32
+	.uleb128 0xb
 	.uleb128 0x3c
 	.uleb128 0xc
 	.byte	0x0
 	.byte	0x0
 	.uleb128 0x32
 	.uleb128 0x2e
-	.byte	0x0
+	.byte	0x1
+	.uleb128 0x1
+	.uleb128 0x13
 	.uleb128 0x3f
 	.uleb128 0xc
 	.uleb128 0x3
-	.uleb128 0x8
+	.uleb128 0xe
 	.uleb128 0x3a
 	.uleb128 0xb
 	.uleb128 0x3b
@@ -13299,7 +13211,9 @@ _Z6STATUShhtt:
 	.byte	0x0
 	.uleb128 0x33
 	.uleb128 0x2e
-	.byte	0x0
+	.byte	0x1
+	.uleb128 0x1
+	.uleb128 0x13
 	.uleb128 0x3f
 	.uleb128 0xc
 	.uleb128 0x3
@@ -13310,8 +13224,6 @@ _Z6STATUShhtt:
 	.uleb128 0xb
 	.uleb128 0x2007
 	.uleb128 0xe
-	.uleb128 0x32
-	.uleb128 0xb
 	.uleb128 0x3c
 	.uleb128 0xc
 	.byte	0x0
@@ -13328,10 +13240,6 @@ _Z6STATUShhtt:
 	.uleb128 0x3a
 	.uleb128 0xb
 	.uleb128 0x3b
-	.uleb128 0xb
-	.uleb128 0x2007
-	.uleb128 0xe
-	.uleb128 0x32
 	.uleb128 0xb
 	.uleb128 0x3c
 	.uleb128 0xc
@@ -13605,64 +13513,64 @@ _Z6STATUShhtt:
 	.4byte	0x1ce
 	.2byte	0x2
 	.4byte	.Ldebug_info0
-	.4byte	0x4b07
-	.4byte	0x4234
+	.4byte	0x4a60
+	.4byte	0x418d
 	.ascii	"STRING\000"
-	.4byte	0x4295
+	.4byte	0x41ee
 	.ascii	"HEXADECIMAL\000"
-	.4byte	0x42e0
+	.4byte	0x4239
 	.ascii	"HEXADECIMAL_DOUBLE\000"
-	.4byte	0x432b
+	.4byte	0x4284
 	.ascii	"HEXADECIMAL_DOUBLE_DASH\000"
-	.4byte	0x4376
+	.4byte	0x42cf
 	.ascii	"HEXADECIMAL_INSTRUMENT\000"
-	.4byte	0x43c1
+	.4byte	0x431a
 	.ascii	"HEXADECIMAL_TWOTILES\000"
-	.4byte	0x440c
+	.4byte	0x4365
 	.ascii	"DECIMAL\000"
-	.4byte	0x4457
+	.4byte	0x43b0
 	.ascii	"DECIMAL_DOUBLE\000"
-	.4byte	0x44a2
+	.4byte	0x43fb
 	.ascii	"DECIMAL_TWOTILES\000"
-	.4byte	0x44ed
+	.4byte	0x4446
 	.ascii	"DECIMAL_DOUBLE_TWOTILES\000"
-	.4byte	0x4538
+	.4byte	0x4491
 	.ascii	"NIBBLE\000"
-	.4byte	0x4583
+	.4byte	0x44dc
 	.ascii	"PROGRESS\000"
-	.4byte	0x45ce
+	.4byte	0x4527
 	.ascii	"WAVE_DOUBLE\000"
-	.4byte	0x4619
+	.4byte	0x4572
 	.ascii	"PIXEL\000"
-	.4byte	0x4664
+	.4byte	0x45bd
 	.ascii	"WAVE_SINGLE\000"
-	.4byte	0x46af
+	.4byte	0x4608
 	.ascii	"BIGHEX\000"
-	.4byte	0x46fa
+	.4byte	0x4653
 	.ascii	"BIGDEC\000"
-	.4byte	0x4745
+	.4byte	0x469e
 	.ascii	"BIGTEXT\000"
-	.4byte	0x4790
+	.4byte	0x46e9
 	.ascii	"TEXT\000"
-	.4byte	0x47db
+	.4byte	0x4734
 	.ascii	"VUMETER_V3\000"
-	.4byte	0x4826
+	.4byte	0x477f
 	.ascii	"VUMETER_H3\000"
-	.4byte	0x4871
+	.4byte	0x47ca
 	.ascii	"VUMETER_H1\000"
-	.4byte	0x48bc
+	.4byte	0x4815
 	.ascii	"VUMETER_V1\000"
-	.4byte	0x4907
+	.4byte	0x4860
 	.ascii	"COMMAND\000"
-	.4byte	0x4952
+	.4byte	0x48ab
 	.ascii	"NOTE\000"
-	.4byte	0x499d
+	.4byte	0x48f6
 	.ascii	"TABLEPOS\000"
-	.4byte	0x49e8
+	.4byte	0x4941
 	.ascii	"VISPOS1\000"
-	.4byte	0x4a38
+	.4byte	0x4991
 	.ascii	"VISPOS2\000"
-	.4byte	0x4a88
+	.4byte	0x49e1
 	.ascii	"STATUS\000"
 	.4byte	0x0
 	.section	.debug_aranges,"",%progbits
@@ -13680,11 +13588,11 @@ _Z6STATUShhtt:
 	.section	.debug_str,"MS",%progbits,1
 .LC1140:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VAL_07\000"
-.LC1377:
+.LC1468:
 	.ascii	"jumpToControl\000"
 .LC1142:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VAL_09\000"
-.LC1509:
+.LC1522:
 	.ascii	"CONTROL_LOOKNFEEL_INTERFACE\000"
 .LC1143:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VAL_0A\000"
@@ -13698,13 +13606,13 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VAL_0E\000"
 .LC1148:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VAL_0F\000"
-.LC1430:
+.LC1383:
 	.ascii	"_ZN11AlphaDialog1YE\000"
 .LC1141:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VAL_08\000"
-.LC1523:
+.LC1535:
 	.ascii	"logoFade\000"
-.LC1381:
+.LC1472:
 	.ascii	"controlClear\000"
 .LC237:
 	.ascii	"_unused_rand\000"
@@ -13750,7 +13658,7 @@ _Z6STATUShhtt:
 	.ascii	"_lbfsize\000"
 .LC171:
 	.ascii	"unsigned char\000"
-.LC1458:
+.LC1413:
 	.ascii	"_ZN12ReallyDialog10backgroundE\000"
 .LC370:
 	.ascii	"INSTRUMENT_TYPE_FMW\000"
@@ -13758,15 +13666,15 @@ _Z6STATUShhtt:
 	.ascii	"STATUS_SENDING\000"
 .LC404:
 	.ascii	"VAR_3VAL\000"
-.LC1345:
+.LC1431:
 	.ascii	"control\000"
-.LC1636:
+.LC1648:
 	.ascii	"DECIMAL_DOUBLE\000"
 .LC548:
 	.ascii	"COLOR_DARK_CYAN\000"
 .LC170:
 	.ascii	"__value\000"
-.LC1589:
+.LC1601:
 	.ascii	"_ZN3Gpu4blitE6E_Mapsiiiiii\000"
 .LC1226:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4VAL_0A\000"
@@ -13792,7 +13700,7 @@ _Z6STATUShhtt:
 	.ascii	"palActive\000"
 .LC693:
 	.ascii	"CONTROL_INS_SMP_START\000"
-.LC1429:
+.LC1382:
 	.ascii	"_ZN11AlphaDialog4oldYE\000"
 .LC962:
 	.ascii	"CONTROL_CHANNEL1_0_CHAN1CMD_0B\000"
@@ -13810,36 +13718,38 @@ _Z6STATUShhtt:
 	.ascii	"STATUS_PATTERNS\000"
 .LC266:
 	.ascii	"_niobs\000"
-.LC1508:
+.LC1521:
 	.ascii	"CONTROL_LOOKNFEEL_MENU1\000"
-.LC1450:
+.LC1404:
 	.ascii	"_ZN11AlphaDialog12getBigStringEP8sControlbbPj\000"
-.LC1354:
-	.ascii	"_ZN13RegionHandler16dispatchCallbackEPK9sCallbackPK"
-	.ascii	"8sControlhhtPj\000"
 .LC602:
 	.ascii	"CONTROL_INS_PWM_DUTYLEN\000"
 .LC317:
 	.ascii	"Control\000"
 .LC607:
 	.ascii	"CONTROL_INS_PWM_ENVELOPEDIR\000"
-.LC1678:
+.LC1690:
 	.ascii	"STATUS\000"
 .LC1151:
 	.ascii	"E_CHANNEL4_0_CONTROLS\000"
-.LC1410:
+.LC1513:
+	.ascii	"_ZN8LinkMode7monitorEv\000"
+.LC1363:
 	.ascii	"buffer\000"
-.LC1477:
+.LC1490:
 	.ascii	"reinit\000"
-.LC1473:
+.LC1486:
 	.ascii	"save\000"
+.LC1478:
+	.ascii	"_ZN13RegionHandler16dispatchCallbackEPK9sCallbackPK"
+	.ascii	"8sControlhht\000"
 .LC191:
 	.ascii	"_atexit\000"
-.LC1387:
+.LC1341:
 	.ascii	"current\000"
-.LC1576:
+.LC1588:
 	.ascii	"_ZN3Gpu4MAP1E\000"
-.LC1544:
+.LC1556:
 	.ascii	"_ZN8BehavioraSERKS_\000"
 .LC721:
 	.ascii	"CONTROL_TABLE_TRANSPOSE_00\000"
@@ -13861,7 +13771,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_TABLE_TRANSPOSE_08\000"
 .LC730:
 	.ascii	"CONTROL_TABLE_TRANSPOSE_09\000"
-.LC1536:
+.LC1548:
 	.ascii	"CONTROL_BEHAVIOR_AUTOSAVE\000"
 .LC731:
 	.ascii	"CONTROL_TABLE_TRANSPOSE_0A\000"
@@ -13873,7 +13783,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_TABLE_TRANSPOSE_0D\000"
 .LC735:
 	.ascii	"CONTROL_TABLE_TRANSPOSE_0E\000"
-.LC1393:
+.LC1347:
 	.ascii	"upperLine\000"
 .LC1018:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2VOL_00\000"
@@ -13895,10 +13805,10 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2VOL_08\000"
 .LC1027:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2VOL_09\000"
-.LC1402:
+.LC1497:
+	.ascii	"_ZN6Config6memMapEv\000"
+.LC1356:
 	.ascii	"_ZN8ProgressaSERKS_\000"
-.LC195:
-	.ascii	"_fntypes\000"
 .LC1028:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2VOL_0A\000"
 .LC1029:
@@ -13913,7 +13823,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2VOL_0F\000"
 .LC392:
 	.ascii	"STATUS_SLAVE\000"
-.LC1370:
+.LC1463:
 	.ascii	"_ZN13RegionHandler12loadControlsEPK7sRegion\000"
 .LC1339:
 	.ascii	"Viewport\000"
@@ -13921,39 +13831,43 @@ _Z6STATUShhtt:
 	.ascii	"DISPLAY_TABLE_TABLE_BAR_CMD1\000"
 .LC434:
 	.ascii	"DISPLAY_TABLE_TABLE_BAR_CMD2\000"
-.LC1540:
+.LC1655:
+	.ascii	"_Z6NIBBLEhhtt\000"
+.LC1552:
 	.ascii	"CONTROL_BEHAVIOR_DEFAULTS\000"
-.LC1680:
+.LC1692:
 	.ascii	"darker_color\000"
-.LC1673:
+.LC1685:
 	.ascii	"_Z8TABLEPOShhtt\000"
 .LC198:
 	.ascii	"_base\000"
 .LC424:
 	.ascii	"DISPLAY_VIS_VIS_BAR_ENVELOPE\000"
-.LC1379:
+.LC1470:
 	.ascii	"controlTrigger\000"
 .LC166:
 	.ascii	"__count\000"
 .LC1330:
 	.ascii	"focus\000"
-.LC1348:
+.LC1438:
 	.ascii	"messagecount\000"
-.LC1418:
+.LC1371:
 	.ascii	"cursorX\000"
-.LC1409:
+.LC1644:
+	.ascii	"HEXADECIMAL_TWOTILES\000"
+.LC1362:
 	.ascii	"AlphaDialog\000"
-.LC1461:
+.LC1416:
 	.ascii	"_ZN12ReallyDialogaSERKS_\000"
 .LC709:
 	.ascii	"CONTROL_INS_SMP_SMPKIT_07\000"
-.LC1398:
+.LC1352:
 	.ascii	"_ZN8Progress7enabledE\000"
 .LC540:
 	.ascii	"MESSAGE_MODIFY_BIGADD\000"
 .LC533:
 	.ascii	"MESSAGE_REDRAW_REGION\000"
-.LC1420:
+.LC1373:
 	.ascii	"cursorY\000"
 .LC399:
 	.ascii	"VAR_5BIT\000"
@@ -13963,15 +13877,15 @@ _Z6STATUShhtt:
 	.ascii	"MESSAGE_MODIFY_BIGSUB\000"
 .LC529:
 	.ascii	"MESSAGE_PASTE\000"
-.LC1499:
+.LC1512:
 	.ascii	"monitor\000"
-.LC1513:
+.LC1526:
 	.ascii	"CONTROL_LOOKNFEEL_STARTSFX\000"
-.LC1407:
+.LC1476:
 	.ascii	"_ZN13RegionHandler6updateEh\000"
-.LC1493:
+.LC1506:
 	.ascii	"CONTROL_LINKMODE_SEND\000"
-.LC1346:
+.LC1434:
 	.ascii	"new_region\000"
 .LC1338:
 	.ascii	"_ZN9_ViewportaSERKS_\000"
@@ -13989,7 +13903,7 @@ _Z6STATUShhtt:
 	.ascii	"E_DISPLAY_MAP_5\000"
 .LC482:
 	.ascii	"EVENT_KEYDOWN_SELECT\000"
-.LC1584:
+.LC1596:
 	.ascii	"_ZN3Gpu6vcountE\000"
 .LC187:
 	.ascii	"__tm_yday\000"
@@ -14005,7 +13919,7 @@ _Z6STATUShhtt:
 	.ascii	"DISPLAY_CHANNEL1_CHANNEL1_5\000"
 .LC184:
 	.ascii	"__tm_mon\000"
-.LC1648:
+.LC1660:
 	.ascii	"PIXEL\000"
 .LC330:
 	.ascii	"sTransient\000"
@@ -14015,29 +13929,29 @@ _Z6STATUShhtt:
 	.ascii	"MESSAGE_REDRAW_VIEWPORT\000"
 .LC316:
 	.ascii	"Cache\000"
-.LC1554:
+.LC1566:
 	.ascii	"CONTROL_MEMORY_RESET\000"
-.LC1433:
+.LC1386:
 	.ascii	"target\000"
-.LC1445:
+.LC1399:
 	.ascii	"preview\000"
-.LC1378:
+.LC1469:
 	.ascii	"_ZN13RegionHandler13jumpToControlEPK8sControl\000"
 .LC414:
 	.ascii	"DISPLAY_LIVE1_SELECT\000"
 .LC273:
 	.ascii	"_ZN7_rand48aSERKS_\000"
-.LC1431:
+.LC1384:
 	.ascii	"oldvalue\000"
-.LC1482:
+.LC1495:
 	.ascii	"_ZN6Config5resetEP8sControlbbPj\000"
 .LC667:
 	.ascii	"CONTROL_INS_FMW_FM3_TYPE\000"
 .LC516:
 	.ascii	"EVENT_VERTICAL_DOWN\000"
-.LC1559:
+.LC1571:
 	.ascii	"_ZN6Memory4initEv\000"
-.LC1570:
+.LC1582:
 	.ascii	"MAP_CACHE\000"
 .LC1069:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3KEY_00\000"
@@ -14077,17 +13991,15 @@ _Z6STATUShhtt:
 	.ascii	"INSTRUMENT_TYPE_PWM\000"
 .LC305:
 	.ascii	"_Cache\000"
-.LC1459:
+.LC1414:
 	.ascii	"result\000"
-.LC488:
-	.ascii	"EVENT_KEY_LEFT\000"
 .LC319:
 	.ascii	"right\000"
 .LC547:
 	.ascii	"COLOR_NONE\000"
-.LC1361:
+.LC1454:
 	.ascii	"drawVerticalCache\000"
-.LC1444:
+.LC1398:
 	.ascii	"_ZN11AlphaDialog6cancelEv\000"
 .LC625:
 	.ascii	"CONTROL_INS_PWM_MAX\000"
@@ -14095,7 +14007,7 @@ _Z6STATUShhtt:
 	.ascii	"_Display\000"
 .LC671:
 	.ascii	"CONTROL_INS_FMW_FM2_ADSR_00\000"
-.LC1519:
+.LC1443:
 	.ascii	"init\000"
 .LC1086:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3INS_01\000"
@@ -14115,7 +14027,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3INS_08\000"
 .LC1094:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3INS_09\000"
-.LC1391:
+.LC1345:
 	.ascii	"laststep\000"
 .LC1095:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3INS_0A\000"
@@ -14129,9 +14041,9 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3INS_0E\000"
 .LC1100:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3INS_0F\000"
-.LC1496:
+.LC1509:
 	.ascii	"LinkMode\000"
-.LC1619:
+.LC1631:
 	.ascii	"STRING\000"
 .LC1050:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2VAL_00\000"
@@ -14153,10 +14065,12 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2VAL_08\000"
 .LC1059:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2VAL_09\000"
-.LC1560:
+.LC1572:
 	.ascii	"test\000"
 .LC661:
 	.ascii	"E_INS_FMW_CONTROLS\000"
+.LC1576:
+	.ascii	"_ZN6Memory6updateEv\000"
 .LC1060:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2VAL_0A\000"
 .LC1061:
@@ -14173,9 +14087,9 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_INS_PWM_NAME\000"
 .LC384:
 	.ascii	"STATUS_DEFAULTS\000"
-.LC1453:
+.LC1408:
 	.ascii	"ReallyDialog\000"
-.LC1452:
+.LC1407:
 	.ascii	"_ZN11AlphaDialog9getStringEP8sControlbbPj\000"
 .LC307:
 	.ascii	"mapIndex\000"
@@ -14195,7 +14109,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_INS_WAV_WAVPRESET_04\000"
 .LC646:
 	.ascii	"CONTROL_INS_WAV_WAVPRESET_05\000"
-.LC1617:
+.LC1629:
 	.ascii	"drawDialog\000"
 .LC376:
 	.ascii	"STATUS_RECEIVING\000"
@@ -14205,10 +14119,12 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_TABLE_TRANSPOSE_0F\000"
 .LC549:
 	.ascii	"COLOR_CYAN\000"
-.LC1526:
+.LC1538:
 	.ascii	"credits\000"
 .LC609:
 	.ascii	"CONTROL_INS_PWM_VOL_TABLE_01\000"
+.LC1439:
+	.ascii	"_ZN13RegionHandler12messagecountE\000"
 .LC571:
 	.ascii	"SCREEN_SNG\000"
 .LC573:
@@ -14249,7 +14165,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_TABLE_VALUE2_0F\000"
 .LC177:
 	.ascii	"_sign\000"
-.LC1463:
+.LC1418:
 	.ascii	"_ZN12ReallyDialog7confirmEv\000"
 .LC606:
 	.ascii	"CONTROL_INS_PWM_STARTLEVEL\000"
@@ -14299,17 +14215,17 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5VOL_07\000"
 .LC182:
 	.ascii	"__tm_hour\000"
-.LC1580:
+.LC1592:
 	.ascii	"_ZN3Gpu6colorsE\000"
-.LC1652:
+.LC1664:
 	.ascii	"BIGHEX\000"
 .LC437:
 	.ascii	"DISPLAY_SNG_SLOT02\000"
 .LC215:
 	.ascii	"_data\000"
-.LC1441:
+.LC1395:
 	.ascii	"confirm\000"
-.LC1558:
+.LC1570:
 	.ascii	"_ZN6MemoryaSERKS_\000"
 .LC615:
 	.ascii	"CONTROL_INS_PWM_VOL_TABLE_07\000"
@@ -14317,25 +14233,27 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VOL_02\000"
 .LC233:
 	.ascii	"_p5s\000"
-.LC1435:
+.LC1388:
 	.ascii	"_ZN11AlphaDialog7enabledE\000"
 .LC296:
 	.ascii	"KEY_SELECT\000"
-.LC1437:
+.LC1390:
 	.ascii	"_ZN11AlphaDialogaSERKS_\000"
-.LC1514:
+.LC1527:
 	.ascii	"CONTROL_LOOKNFEEL_EDITPAL\000"
 .LC562:
 	.ascii	"COLOR_GREEN\000"
 .LC338:
 	.ascii	"_ZN10sTransient4bit4E\000"
-.LC1534:
+.LC1546:
 	.ascii	"CONTROL_BEHAVIOR_MENU3\000"
+.LC1344:
+	.ascii	"_ZN8Progress4stepE\000"
 .LC701:
 	.ascii	"CONTROL_INS_SMP_KIT\000"
 .LC1104:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VOL_03\000"
-.LC1672:
+.LC1684:
 	.ascii	"TABLEPOS\000"
 .LC597:
 	.ascii	"CONTROL_INS_PWM_VOL_MODE\000"
@@ -14343,13 +14261,13 @@ _Z6STATUShhtt:
 	.ascii	"_ZN10sTransient5valueE\000"
 .LC353:
 	.ascii	"instrument\000"
-.LC1614:
+.LC1626:
 	.ascii	"_ZN3Gpu6hexnumEhhjh\000"
-.LC1608:
+.LC1620:
 	.ascii	"_ZN3Gpu6stringEhhPKch\000"
 .LC519:
 	.ascii	"EVENT_UNKNOWN\000"
-.LC1449:
+.LC1402:
 	.ascii	"getBigString\000"
 .LC428:
 	.ascii	"DISPLAY_PAT_PATTERNSTATUS_D\000"
@@ -14363,7 +14281,7 @@ _Z6STATUShhtt:
 	.ascii	"VAR_NOTE\000"
 .LC323:
 	.ascii	"callback\000"
-.LC1660:
+.LC1672:
 	.ascii	"VUMETER_V3\000"
 .LC176:
 	.ascii	"_maxwds\000"
@@ -14401,13 +14319,13 @@ _Z6STATUShhtt:
 	.ascii	"_ZN8sControlaSERKS_\000"
 .LC948:
 	.ascii	"CONTROL_CHANNEL1_0_CHAN1VOL_0D\000"
-.LC949:
-	.ascii	"CONTROL_CHANNEL1_0_CHAN1VOL_0E\000"
+.LC1435:
+	.ascii	"_ZN13RegionHandler10new_regionE\000"
 .LC950:
 	.ascii	"CONTROL_CHANNEL1_0_CHAN1VOL_0F\000"
-.LC1553:
+.LC1565:
 	.ascii	"CONTROL_MEMORY_REINIT\000"
-.LC1591:
+.LC1603:
 	.ascii	"_ZN3Gpu6blitBgE6E_Mapshihhhh\000"
 .LC167:
 	.ascii	"__wch\000"
@@ -14417,27 +14335,27 @@ _Z6STATUShhtt:
 	.ascii	"VAR_27VAL\000"
 .LC598:
 	.ascii	"CONTROL_INS_PWM_VOL_ENVELOPE\000"
-.LC1565:
+.LC1577:
 	.ascii	"E_Maps\000"
-.LC1460:
+.LC1415:
 	.ascii	"_ZN12ReallyDialog6resultE\000"
 .LC669:
 	.ascii	"CONTROL_INS_FMW_MULT\000"
 .LC1325:
 	.ascii	"xadd\000"
-.LC1612:
+.LC1624:
 	.ascii	"_ZN3Gpu6numberEhhjh\000"
 .LC186:
 	.ascii	"__tm_wday\000"
-.LC1641:
+.LC1653:
 	.ascii	"_Z23DECIMAL_DOUBLE_TWOTILEShhtt\000"
-.LC1386:
+.LC1340:
 	.ascii	"Progress\000"
-.LC1535:
+.LC1547:
 	.ascii	"CONTROL_BEHAVIOR_AUTOLOAD\000"
 .LC1279:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5VOL_0C\000"
-.LC1670:
+.LC1682:
 	.ascii	"NOTE\000"
 .LC530:
 	.ascii	"MESSAGE_REDRAW_CONTROL\000"
@@ -14447,13 +14365,13 @@ _Z6STATUShhtt:
 	.ascii	"MESSAGE_OTHER_BIGPREV\000"
 .LC269:
 	.ascii	"_rand48\000"
-.LC1380:
+.LC1471:
 	.ascii	"_ZN13RegionHandler14controlTriggerEPK8sControlt\000"
 .LC254:
 	.ascii	"_wcsrtombs_state\000"
 .LC349:
 	.ascii	"value\000"
-.LC1375:
+.LC1393:
 	.ascii	"draw\000"
 .LC371:
 	.ascii	"INSTRUMENT_TYPE_SMP\000"
@@ -14463,13 +14381,15 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_INS_PWM_VOL_TABLE_0D\000"
 .LC1336:
 	.ascii	"regions\000"
-.LC1566:
+.LC1437:
+	.ascii	"_ZN13RegionHandler8messagesE\000"
+.LC1578:
 	.ascii	"MAP_HLP\000"
 .LC439:
 	.ascii	"DISPLAY_SNG_SLOT04\000"
 .LC286:
 	.ascii	"vs16\000"
-.LC1585:
+.LC1597:
 	.ascii	"_ZN3GpuaSERKS_\000"
 .LC1197:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4VOL_0D\000"
@@ -14479,13 +14399,15 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_INS_SMP_MAX\000"
 .LC385:
 	.ascii	"STATUS_INSTDATA\000"
-.LC1510:
+.LC1523:
 	.ascii	"CONTROL_LOOKNFEEL_FONT\000"
+.LC1539:
+	.ascii	"_ZN9LookNFeel7creditsEv\000"
 .LC417:
 	.ascii	"DISPLAY_LIVE1_START\000"
-.LC1405:
+.LC1360:
 	.ascii	"_ZN8Progress7disableEv\000"
-.LC1620:
+.LC1632:
 	.ascii	"_Z6STRINGbhhPh\000"
 .LC207:
 	.ascii	"_read\000"
@@ -14503,13 +14425,15 @@ _Z6STATUShhtt:
 	.ascii	"E_INS_SMP_CONTROLS\000"
 .LC861:
 	.ascii	"CONTROL_CHANNEL0_0_CHAN0VOL_09\000"
-.LC1525:
-	.ascii	"_ZN9LookNFeel6updateEP13RegionHandler\000"
+.LC1433:
+	.ascii	"_ZN13RegionHandler6redrawE\000"
+.LC488:
+	.ascii	"EVENT_KEY_LEFT\000"
 .LC479:
 	.ascii	"EVENT_KEYDOWN_RIGHT\000"
 .LC520:
 	.ascii	"eMessages\000"
-.LC1466:
+.LC1479:
 	.ascii	"Config\000"
 .LC1114:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VOL_0D\000"
@@ -14521,7 +14445,7 @@ _Z6STATUShhtt:
 	.ascii	"COLOR_ORANGE\000"
 .LC438:
 	.ascii	"DISPLAY_SNG_SLOT03\000"
-.LC1364:
+.LC1457:
 	.ascii	"_ZN13RegionHandler11drawControlEPK8sControl\000"
 .LC440:
 	.ascii	"DISPLAY_SNG_SLOT05\000"
@@ -14529,13 +14453,13 @@ _Z6STATUShhtt:
 	.ascii	"_sig_func\000"
 .LC228:
 	.ascii	"_current_locale\000"
-.LC1388:
+.LC1342:
 	.ascii	"_ZN8Progress7currentE\000"
 .LC202:
 	.ascii	"__sFILE\000"
-.LC1609:
+.LC1621:
 	.ascii	"ascii\000"
-.LC1548:
+.LC1560:
 	.ascii	"CONTROL_MEMORY_MENU5\000"
 .LC603:
 	.ascii	"CONTROL_INS_PWM_SWEEPDIR\000"
@@ -14575,17 +14499,17 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2KEY_0E\000"
 .LC1001:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2KEY_0F\000"
-.LC1340:
+.LC1421:
 	.ascii	"RegionHandler\000"
 .LC298:
 	.ascii	"KEY_RIGHT\000"
 .LC900:
 	.ascii	"CONTROL_CHANNEL0_0_COUNT\000"
-.LC1366:
+.LC1459:
 	.ascii	"_ZN13RegionHandler11drawDisplayEPK8_Display\000"
-.LC1667:
+.LC1679:
 	.ascii	"_Z10VUMETER_V1hhtt\000"
-.LC1561:
+.LC1573:
 	.ascii	"_ZN6Memory4testEv\000"
 .LC367:
 	.ascii	"E_InstrumentTypes\000"
@@ -14593,7 +14517,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL1_0_CHAN1VOL_0C\000"
 .LC1225:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4VAL_09\000"
-.LC1489:
+.LC1502:
 	.ascii	"CONTROL_LINKMODE_MASTER\000"
 .LC231:
 	.ascii	"_result\000"
@@ -14601,13 +14525,13 @@ _Z6STATUShhtt:
 	.ascii	"__sdidinit\000"
 .LC297:
 	.ascii	"KEY_START\000"
-.LC1611:
+.LC1623:
 	.ascii	"number\000"
-.LC1417:
+.LC1370:
 	.ascii	"_ZN11AlphaDialog8positionE\000"
 .LC203:
 	.ascii	"_flags\000"
-.LC1562:
+.LC1574:
 	.ascii	"free\000"
 .LC1002:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2INS_00\000"
@@ -14629,9 +14553,9 @@ _Z6STATUShhtt:
 	.ascii	"changed\000"
 .LC279:
 	.ascii	"cu16\000"
-.LC1524:
+.LC1536:
 	.ascii	"_ZN9LookNFeel8logoFadeEv\000"
-.LC1488:
+.LC1501:
 	.ascii	"CONTROL_LINKMODE_MODE\000"
 .LC226:
 	.ascii	"_emergency\000"
@@ -14647,9 +14571,9 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2INS_0E\000"
 .LC1017:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2INS_0F\000"
-.LC1651:
+.LC1663:
 	.ascii	"_Z11WAVE_SINGLEhhtt\000"
-.LC1467:
+.LC1480:
 	.ascii	"_ZN6ConfigaSERKS_\000"
 .LC631:
 	.ascii	"CONTROL_INS_WAV_AM\000"
@@ -14683,7 +14607,7 @@ _Z6STATUShhtt:
 	.ascii	"sRegion\000"
 .LC320:
 	.ascii	"down\000"
-.LC1419:
+.LC1372:
 	.ascii	"_ZN11AlphaDialog7cursorXE\000"
 .LC977:
 	.ascii	"CONTROL_CHANNEL1_0_CHAN1VAL_0A\000"
@@ -14701,11 +14625,11 @@ _Z6STATUShhtt:
 	.ascii	"_ZN6__sbufaSERKS_\000"
 .LC575:
 	.ascii	"CONTROL_INS_PWM_INDEX\000"
-.LC1645:
+.LC1657:
 	.ascii	"_Z8PROGRESShhtt\000"
-.LC867:
-	.ascii	"CONTROL_CHANNEL0_0_CHAN0VOL_0F\000"
-.LC1368:
+.LC1652:
+	.ascii	"DECIMAL_DOUBLE_TWOTILES\000"
+.LC1461:
 	.ascii	"_ZN13RegionHandler14updateViewportEPK9_Viewporthh\000"
 .LC822:
 	.ascii	"CONTROL_CHANNEL0_0_CHAN0KEY_02\000"
@@ -14717,13 +14641,13 @@ _Z6STATUShhtt:
 	.ascii	"_stdin\000"
 .LC1234:
 	.ascii	"E_CHANNEL5_0_CONTROLS\000"
-.LC1436:
+.LC1389:
 	.ascii	"_ZN11AlphaDialog6redrawE\000"
 .LC569:
 	.ascii	"SCREEN_TRK\000"
 .LC277:
 	.ascii	"quot\000"
-.LC1421:
+.LC1374:
 	.ascii	"_ZN11AlphaDialog7cursorYE\000"
 .LC668:
 	.ascii	"CONTROL_INS_FMW_FM1_TYPE\000"
@@ -14735,12 +14659,10 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_INS_WAV_TYPE\000"
 .LC280:
 	.ascii	"cu32\000"
-.LC1582:
+.LC1594:
 	.ascii	"_ZN3Gpu5blinkE\000"
 .LC665:
 	.ascii	"CONTROL_INS_FMW_FM2_TYPE\000"
-.LC1532:
-	.ascii	"_ZN11ColorEditor6updateEP13RegionHandler\000"
 .LC1283:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5CMD_00\000"
 .LC1329:
@@ -14761,9 +14683,9 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5CMD_08\000"
 .LC1292:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5CMD_09\000"
-.LC1434:
+.LC1387:
 	.ascii	"_ZN11AlphaDialog6targetE\000"
-.LC1469:
+.LC1482:
 	.ascii	"backup\000"
 .LC1010:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2INS_08\000"
@@ -14781,7 +14703,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5CMD_0F\000"
 .LC188:
 	.ascii	"__tm_isdst\000"
-.LC1603:
+.LC1615:
 	.ascii	"loadPalette\000"
 .LC496:
 	.ascii	"EVENT_KEYUP_UP\000"
@@ -14793,17 +14715,17 @@ _Z6STATUShhtt:
 	.ascii	"_ZN10sTransient6volumeE\000"
 .LC381:
 	.ascii	"STATUS_TESTING\000"
-.LC1507:
+.LC1520:
 	.ascii	"E_LOOKNFEEL_CONTROLS\000"
-.LC1659:
+.LC1671:
 	.ascii	"_Z4TEXThhtt\000"
 .LC252:
 	.ascii	"_mbsrtowcs_state\000"
 .LC163:
 	.ascii	"wint_t\000"
-.LC1628:
+.LC1640:
 	.ascii	"HEXADECIMAL_DOUBLE_DASH\000"
-.LC1414:
+.LC1367:
 	.ascii	"length\000"
 .LC401:
 	.ascii	"VAR_8BIT\000"
@@ -14813,11 +14735,11 @@ _Z6STATUShhtt:
 	.ascii	"DISPLAY_TABLE_TABLE_BAR_TSP\000"
 .LC639:
 	.ascii	"CONTROL_INS_WAV_OP3_TYPE\000"
-.LC1470:
+.LC1483:
 	.ascii	"_ZN6Config6backupEP8sControlbbPj\000"
 .LC395:
 	.ascii	"E_VAR_TYPES\000"
-.LC1638:
+.LC1650:
 	.ascii	"DECIMAL_TWOTILES\000"
 .LC493:
 	.ascii	"EVENT_KEY_START\000"
@@ -14851,18 +14773,20 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_TABLE_COMMAND1_0E\000"
 .LC784:
 	.ascii	"CONTROL_TABLE_COMMAND1_0F\000"
-.LC1355:
+.LC1448:
 	.ascii	"sendMessage\000"
 .LC720:
 	.ascii	"E_TABLE_CONTROLS\000"
 .LC220:
 	.ascii	"_reent\000"
-.LC1607:
+.LC1619:
 	.ascii	"string\000"
-.LC1362:
+.LC1557:
+	.ascii	"_ZN8Behavior6updateEv\000"
+.LC1455:
 	.ascii	"_ZN13RegionHandler17drawVerticalCacheEhhPK6_Cachehb"
 	.ascii	"\000"
-.LC1633:
+.LC1645:
 	.ascii	"_Z20HEXADECIMAL_TWOTILEShhtt\000"
 .LC362:
 	.ascii	"eLinkModes\000"
@@ -14872,9 +14796,9 @@ _Z6STATUShhtt:
 	.ascii	"E_INS_PWM_CONTROLS\000"
 .LC249:
 	.ascii	"_getdate_err\000"
-.LC1567:
+.LC1579:
 	.ascii	"MAP_INS\000"
-.LC1357:
+.LC1450:
 	.ascii	"load\000"
 .LC852:
 	.ascii	"CONTROL_CHANNEL0_0_CHAN0VOL_00\000"
@@ -14910,11 +14834,13 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL0_0_CHAN0VOL_0D\000"
 .LC866:
 	.ascii	"CONTROL_CHANNEL0_0_CHAN0VOL_0E\000"
-.LC1640:
-	.ascii	"DECIMAL_DOUBLE_TWOTILES\000"
+.LC867:
+	.ascii	"CONTROL_CHANNEL0_0_CHAN0VOL_0F\000"
+.LC949:
+	.ascii	"CONTROL_CHANNEL1_0_CHAN1VOL_0E\000"
 .LC476:
 	.ascii	"EVENT_KEYDOWN_UP\000"
-.LC1627:
+.LC1639:
 	.ascii	"_Z18HEXADECIMAL_DOUBLEhhtt\000"
 .LC1150:
 	.ascii	"CONTROL_CHANNEL3_0_MAX\000"
@@ -14926,27 +14852,27 @@ _Z6STATUShhtt:
 	.ascii	"EVENT_MODIFY\000"
 .LC234:
 	.ascii	"_freelist\000"
-.LC1573:
+.LC1585:
 	.ascii	"MAP0\000"
-.LC1575:
+.LC1587:
 	.ascii	"MAP1\000"
-.LC1577:
+.LC1589:
 	.ascii	"MAP2\000"
-.LC1416:
+.LC1369:
 	.ascii	"position\000"
 .LC474:
 	.ascii	"E_CallbackEvents\000"
-.LC1622:
+.LC1634:
 	.ascii	"limit\000"
 .LC264:
 	.ascii	"__FILE\000"
-.LC1543:
+.LC1555:
 	.ascii	"Behavior\000"
-.LC1487:
+.LC1500:
 	.ascii	"CONTROL_LINKMODE_MENU2\000"
-.LC1456:
+.LC1411:
 	.ascii	"_ZN12ReallyDialog9highlightE\000"
-.LC1595:
+.LC1607:
 	.ascii	"_ZN3Gpu7blitAltEPKtiiiiii\000"
 .LC1233:
 	.ascii	"CONTROL_CHANNEL4_0_MAX\000"
@@ -14954,25 +14880,23 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_INS_SMP_COUNT\000"
 .LC194:
 	.ascii	"_fnargs\000"
-.LC1382:
+.LC1473:
 	.ascii	"_ZN13RegionHandler12controlClearEPK8sControl\000"
-.LC1581:
+.LC1593:
 	.ascii	"blink\000"
-.LC1677:
+.LC1689:
 	.ascii	"_Z7VISPOS2hhtt\000"
 .LC408:
 	.ascii	"DISPLAY_LIVE1_RIGHT_A\000"
-.LC1443:
+.LC1397:
 	.ascii	"cancel\000"
 .LC169:
 	.ascii	"operator=\000"
 .LC743:
 	.ascii	"CONTROL_TABLE_VOLUME_06\000"
-.LC366:
-	.ascii	"LINKMODE_SYNC_MASTER\000"
 .LC1328:
 	.ascii	"controls\000"
-.LC1442:
+.LC1396:
 	.ascii	"_ZN11AlphaDialog7confirmEv\000"
 .LC1070:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3KEY_01\000"
@@ -14980,11 +14904,11 @@ _Z6STATUShhtt:
 	.ascii	"_l64a_buf\000"
 .LC687:
 	.ascii	"CONTROL_INS_FMW_COUNT\000"
-.LC1682:
+.LC1694:
 	.ascii	"cb_reset\000"
-.LC1426:
+.LC1379:
 	.ascii	"oldX\000"
-.LC1428:
+.LC1381:
 	.ascii	"oldY\000"
 .LC343:
 	.ascii	"bit7\000"
@@ -14998,13 +14922,13 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_INS_PWM_TSP_TABLE_0B\000"
 .LC360:
 	.ascii	"Transient\000"
-.LC1654:
+.LC1666:
 	.ascii	"BIGDEC\000"
 .LC369:
 	.ascii	"INSTRUMENT_TYPE_WAV\000"
-.LC1384:
+.LC1475:
 	.ascii	"_ZN13RegionHandler13controlModifyEPK8sControlbb\000"
-.LC1412:
+.LC1365:
 	.ascii	"maxlen\000"
 .LC380:
 	.ascii	"STATUS_PURGING\000"
@@ -15016,7 +14940,7 @@ _Z6STATUShhtt:
 	.ascii	"STATUS_SYNCWITH\000"
 .LC253:
 	.ascii	"_wcrtomb_state\000"
-.LC1432:
+.LC1385:
 	.ascii	"_ZN11AlphaDialog8oldvalueE\000"
 .LC700:
 	.ascii	"CONTROL_INS_SMP_LOOPMODE\000"
@@ -15030,13 +14954,13 @@ _Z6STATUShhtt:
 	.ascii	"dirty\000"
 .LC690:
 	.ascii	"CONTROL_INS_SMP_INDEX\000"
-.LC1663:
+.LC1675:
 	.ascii	"_Z10VUMETER_H3hhtt\000"
-.LC1403:
+.LC1358:
 	.ascii	"disable\000"
 .LC523:
 	.ascii	"MESSAGE_OTHER_BIGNEXT\000"
-.LC1597:
+.LC1609:
 	.ascii	"_ZN3Gpu5clearEtt\000"
 .LC225:
 	.ascii	"_inc\000"
@@ -15044,7 +14968,7 @@ _Z6STATUShhtt:
 	.ascii	"_ind\000"
 .LC692:
 	.ascii	"CONTROL_INS_SMP_TYPE\000"
-.LC1438:
+.LC1391:
 	.ascii	"_ZN11AlphaDialog3addEv\000"
 .LC903:
 	.ascii	"CONTROL_CHANNEL1_0_CHAN1KEY_00\000"
@@ -15086,17 +15010,15 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL1_0_CHAN1KEY_0E\000"
 .LC918:
 	.ascii	"CONTROL_CHANNEL1_0_CHAN1KEY_0F\000"
-.LC1657:
+.LC1669:
 	.ascii	"_Z7BIGTEXThhtt\000"
-.LC1674:
+.LC1686:
 	.ascii	"VISPOS1\000"
-.LC1457:
+.LC1412:
 	.ascii	"background\000"
-.LC1498:
-	.ascii	"_ZN8LinkMode6updateEP13RegionHandler\000"
-.LC1546:
+.LC1558:
 	.ascii	"t_chunk\000"
-.LC1630:
+.LC1642:
 	.ascii	"HEXADECIMAL_INSTRUMENT\000"
 .LC906:
 	.ascii	"CONTROL_CHANNEL1_0_CHAN1KEY_03\000"
@@ -15110,10 +15032,12 @@ _Z6STATUShhtt:
 	.ascii	"MESSAGE_CANCEL\000"
 .LC559:
 	.ascii	"COLOR_DARK_GREEN\000"
-.LC1427:
+.LC1380:
 	.ascii	"_ZN11AlphaDialog4oldXE\000"
-.LC1352:
+.LC1477:
 	.ascii	"dispatchCallback\000"
+.LC1695:
+	.ascii	"helpers.cpp\000"
 .LC919:
 	.ascii	"CONTROL_CHANNEL1_0_CHAN1INS_00\000"
 .LC920:
@@ -15134,11 +15058,11 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL1_0_CHAN1INS_08\000"
 .LC1335:
 	.ascii	"_Viewport\000"
-.LC1600:
+.LC1612:
 	.ascii	"_ZN3Gpu4initEv\000"
-.LC1610:
+.LC1622:
 	.ascii	"_ZN3Gpu5asciiEhhPKch\000"
-.LC1522:
+.LC1534:
 	.ascii	"_ZN9LookNFeel8logoWaitEv\000"
 .LC929:
 	.ascii	"CONTROL_CHANNEL1_0_CHAN1INS_0A\000"
@@ -15152,7 +15076,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL1_0_CHAN1INS_0E\000"
 .LC934:
 	.ascii	"CONTROL_CHANNEL1_0_CHAN1INS_0F\000"
-.LC1465:
+.LC1420:
 	.ascii	"_ZN12ReallyDialog6enableEv\000"
 .LC1319:
 	.ascii	"active\000"
@@ -15208,23 +15132,23 @@ _Z6STATUShhtt:
 	.ascii	"_new\000"
 .LC432:
 	.ascii	"DISPLAY_TABLE_TABLE_BAR_VOL\000"
-.LC1586:
+.LC1598:
 	.ascii	"blinkUpdate\000"
 .LC1067:
 	.ascii	"CONTROL_CHANNEL2_0_MAX\000"
 .LC1284:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5CMD_01\000"
-.LC1376:
+.LC1447:
 	.ascii	"_ZN13RegionHandler4drawEv\000"
 .LC340:
 	.ascii	"_ZN10sTransient4bit5E\000"
-.LC1390:
-	.ascii	"_ZN8Progress4stepE\000"
-.LC1363:
+.LC1498:
+	.ascii	"_ZN6Config6updateEv\000"
+.LC1456:
 	.ascii	"drawControl\000"
 .LC1323:
 	.ascii	"Region\000"
-.LC1583:
+.LC1595:
 	.ascii	"vcount\000"
 .LC365:
 	.ascii	"LINKMODE_SYNC_SLAVE\000"
@@ -15238,19 +15162,21 @@ _Z6STATUShhtt:
 	.ascii	"EVENT_KEY_B\000"
 .LC374:
 	.ascii	"STATUS_SAVING\000"
-.LC1568:
+.LC1580:
 	.ascii	"MAP_TRK\000"
-.LC1531:
+.LC1543:
 	.ascii	"_ZN11ColorEditor4showEP8sControlbbPj\000"
-.LC1593:
+.LC1605:
 	.ascii	"_ZN3Gpu8blitSafeE6E_Mapsiiiiii\000"
 .LC495:
 	.ascii	"EVENT_KEY_L\000"
+.LC1423:
+	.ascii	"_ZN13RegionHandler4map0E\000"
 .LC572:
 	.ascii	"SCREEN_CFG\000"
 .LC494:
 	.ascii	"EVENT_KEY_R\000"
-.LC1528:
+.LC1540:
 	.ascii	"ColorEditor\000"
 .LC626:
 	.ascii	"E_INS_WAV_CONTROLS\000"
@@ -15262,7 +15188,7 @@ _Z6STATUShhtt:
 	.ascii	"EVENT_KEYDOWN_B\000"
 .LC321:
 	.ascii	"left\000"
-.LC1497:
+.LC1510:
 	.ascii	"_ZN8LinkModeaSERKS_\000"
 .LC1200:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4CMD_00\000"
@@ -15288,13 +15214,13 @@ _Z6STATUShhtt:
 	.ascii	"DISPLAY_PAT_PATTERNSTATUS_B\000"
 .LC484:
 	.ascii	"EVENT_KEYDOWN_R\000"
-.LC1415:
+.LC1368:
 	.ascii	"_ZN11AlphaDialog6lengthE\000"
 .LC1210:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4CMD_0A\000"
 .LC1211:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4CMD_0B\000"
-.LC1424:
+.LC1377:
 	.ascii	"textY\000"
 .LC1213:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4CMD_0D\000"
@@ -15304,11 +15230,11 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4CMD_0F\000"
 .LC605:
 	.ascii	"CONTROL_INS_PWM_SWEEPSTEPS\000"
-.LC1624:
+.LC1636:
 	.ascii	"_Z11HEXADECIMALhhtt\000"
 .LC402:
 	.ascii	"VAR_CHAR\000"
-.LC1383:
+.LC1474:
 	.ascii	"controlModify\000"
 .LC525:
 	.ascii	"MESSAGE_OTHER_NEXT\000"
@@ -15318,11 +15244,11 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_INS_FMW_MODE\000"
 .LC427:
 	.ascii	"DISPLAY_PAT_PATTERNSTATUS_C\000"
-.LC1618:
+.LC1630:
 	.ascii	"_ZN3Gpu10drawDialogEhhhhPKc\000"
 .LC1205:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4CMD_05\000"
-.LC1529:
+.LC1541:
 	.ascii	"_ZN11ColorEditoraSERKS_\000"
 .LC521:
 	.ascii	"MESSAGE_OTHER\000"
@@ -15360,7 +15286,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_INS_SMP_SMPKIT_0B\000"
 .LC984:
 	.ascii	"CONTROL_CHANNEL1_0_MAX\000"
-.LC1644:
+.LC1656:
 	.ascii	"PROGRESS\000"
 .LC1131:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3CMD_0E\000"
@@ -15372,23 +15298,25 @@ _Z6STATUShhtt:
 	.ascii	"_off_t\000"
 .LC818:
 	.ascii	"CONTROL_TABLE_MAX\000"
-.LC1517:
+.LC1530:
 	.ascii	"LookNFeel\000"
-.LC1598:
+.LC1610:
 	.ascii	"_ZN6Memory3getEh\000"
-.LC1494:
+.LC1427:
+	.ascii	"_ZN13RegionHandler4map2E\000"
+.LC1507:
 	.ascii	"CONTROL_LINKMODE_COUNT\000"
 .LC429:
 	.ascii	"DISPLAY_PAT_PATTERNSTATUS_E\000"
-.LC1396:
+.LC1350:
 	.ascii	"_ZN8Progress9lowerLineE\000"
 .LC544:
 	.ascii	"MESSAGE_KEYPRESS\000"
-.LC1468:
+.LC1481:
 	.ascii	"_ZN6Config4loadEP8sControlbbPj\000"
 .LC251:
 	.ascii	"_mbrtowc_state\000"
-.LC1481:
+.LC1494:
 	.ascii	"reset\000"
 .LC276:
 	.ascii	"div_t\000"
@@ -15396,7 +15324,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5VOL_00\000"
 .LC1268:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5VOL_01\000"
-.LC1476:
+.LC1489:
 	.ascii	"_ZN6Config8defaultsEP8sControlbbPj\000"
 .LC1270:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5VOL_03\000"
@@ -15416,9 +15344,9 @@ _Z6STATUShhtt:
 	.ascii	"STATUS_CORRUPTED\000"
 .LC265:
 	.ascii	"_glue\000"
-.LC1564:
-	.ascii	"_ZN6Memory6updateEP13RegionHandler\000"
-.LC1541:
+.LC366:
+	.ascii	"LINKMODE_SYNC_MASTER\000"
+.LC1553:
 	.ascii	"CONTROL_BEHAVIOR_COUNT\000"
 .LC1277:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5VOL_0A\000"
@@ -15434,7 +15362,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5VOL_0F\000"
 .LC833:
 	.ascii	"CONTROL_CHANNEL0_0_CHAN0KEY_0D\000"
-.LC1425:
+.LC1378:
 	.ascii	"_ZN11AlphaDialog5textYE\000"
 .LC1232:
 	.ascii	"CONTROL_CHANNEL4_0_COUNT\000"
@@ -15442,9 +15370,9 @@ _Z6STATUShhtt:
 	.ascii	"EVENT_VERTICAL_UP\000"
 .LC834:
 	.ascii	"CONTROL_CHANNEL0_0_CHAN0KEY_0E\000"
-.LC1538:
+.LC1550:
 	.ascii	"CONTROL_BEHAVIOR_SAVE\000"
-.LC1539:
+.LC1551:
 	.ascii	"CONTROL_BEHAVIOR_LOAD\000"
 .LC291:
 	.ascii	"sfp32\000"
@@ -15454,11 +15382,11 @@ _Z6STATUShhtt:
 	.ascii	"E_StatusStrings\000"
 .LC389:
 	.ascii	"STATUS_MIDIOUT\000"
-.LC1650:
+.LC1662:
 	.ascii	"WAVE_SINGLE\000"
 .LC596:
 	.ascii	"CONTROL_INS_PWM_VOL_ENABLE\000"
-.LC1647:
+.LC1659:
 	.ascii	"_Z11WAVE_DOUBLEhhtt\000"
 .LC363:
 	.ascii	"LINKMODE_GBA\000"
@@ -15478,11 +15406,11 @@ _Z6STATUShhtt:
 	.ascii	"_ZN10sTransient4noteE\000"
 .LC717:
 	.ascii	"CONTROL_INS_SMP_ADSR_03\000"
-.LC1550:
+.LC1562:
 	.ascii	"CONTROL_MEMORY_SLOTUSAGE\000"
 .LC1149:
 	.ascii	"CONTROL_CHANNEL3_0_COUNT\000"
-.LC1347:
+.LC1436:
 	.ascii	"messages\000"
 .LC326:
 	.ascii	"sCallback\000"
@@ -15492,7 +15420,7 @@ _Z6STATUShhtt:
 	.ascii	"MESSAGE_OTHER_PREV\000"
 .LC960:
 	.ascii	"CONTROL_CHANNEL1_0_CHAN1CMD_09\000"
-.LC1360:
+.LC1453:
 	.ascii	"_ZN13RegionHandler9drawCacheEhhPK6_Cachehb\000"
 .LC359:
 	.ascii	"_ZN10sTransientaSERKS_\000"
@@ -15502,11 +15430,11 @@ _Z6STATUShhtt:
 	.ascii	"_write\000"
 .LC928:
 	.ascii	"CONTROL_CHANNEL1_0_CHAN1INS_09\000"
-.LC1556:
+.LC1568:
 	.ascii	"CONTROL_MEMORY_MAX\000"
 .LC633:
 	.ascii	"CONTROL_INS_WAV_OP1_TYPE\000"
-.LC1631:
+.LC1643:
 	.ascii	"_Z22HEXADECIMAL_INSTRUMENThhtt\000"
 .LC211:
 	.ascii	"_ubuf\000"
@@ -15518,15 +15446,15 @@ _Z6STATUShhtt:
 	.ascii	"short int\000"
 .LC315:
 	.ascii	"_ZN6_CacheaSERKS_\000"
-.LC1684:
+.LC1696:
 	.ascii	"/cygdrive/c/codigo/m4gtool/data/m4g\000"
-.LC1675:
+.LC1687:
 	.ascii	"VISPOS2\000"
 .LC511:
 	.ascii	"EVENT_LAND\000"
 .LC1334:
 	.ascii	"_ZN7sRegionaSERKS_\000"
-.LC1594:
+.LC1606:
 	.ascii	"blitAlt\000"
 .LC162:
 	.ascii	"_ssize_t\000"
@@ -15536,19 +15464,21 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_INS_PWM_COUNT\000"
 .LC518:
 	.ascii	"EVENT_HORIZONTAL_RIGHT\000"
-.LC1478:
+.LC1491:
 	.ascii	"_ZN6Config6reinitEP8sControlbbPj\000"
+.LC1441:
+	.ascii	"_ZN13RegionHandler17viewportLastValueE\000"
 .LC473:
 	.ascii	"DISPLAY_NULL_PROGRESS_LINE\000"
 .LC278:
 	.ascii	"ldiv_t\000"
-.LC1668:
+.LC1680:
 	.ascii	"COMMAND\000"
 .LC554:
 	.ascii	"COLOR_YELLOW\000"
 .LC232:
 	.ascii	"_result_k\000"
-.LC1592:
+.LC1604:
 	.ascii	"blitSafe\000"
 .LC604:
 	.ascii	"CONTROL_INS_PWM_SWEEPSPEED\000"
@@ -15560,7 +15490,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL0_0_CHAN0KEY_00\000"
 .LC821:
 	.ascii	"CONTROL_CHANNEL0_0_CHAN0KEY_01\000"
-.LC1356:
+.LC1449:
 	.ascii	"_ZN13RegionHandler11sendMessageEj\000"
 .LC823:
 	.ascii	"CONTROL_CHANNEL0_0_CHAN0KEY_03\000"
@@ -15590,7 +15520,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL0_0_CHAN0KEY_0F\000"
 .LC325:
 	.ascii	"Callback\000"
-.LC1563:
+.LC1575:
 	.ascii	"_ZN6Memory4freeEt\000"
 .LC165:
 	.ascii	"_mbstate_t\000"
@@ -15598,27 +15528,27 @@ _Z6STATUShhtt:
 	.ascii	"_ZN7_BigintaSERKS_\000"
 .LC1269:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5VOL_02\000"
-.LC1367:
+.LC1460:
 	.ascii	"updateViewport\000"
-.LC1479:
+.LC1492:
 	.ascii	"format\000"
-.LC1656:
+.LC1668:
 	.ascii	"BIGTEXT\000"
 .LC387:
 	.ascii	"STATUS_MEMORY\000"
 .LC178:
 	.ascii	"_wds\000"
-.LC1574:
+.LC1586:
 	.ascii	"_ZN3Gpu4MAP0E\000"
 .LC539:
 	.ascii	"MESSAGE_MODIFY_SUB\000"
-.LC1521:
+.LC1533:
 	.ascii	"logoWait\000"
-.LC1490:
+.LC1503:
 	.ascii	"CONTROL_LINKMODE_SYNCRATE\000"
-.LC1511:
+.LC1524:
 	.ascii	"CONTROL_LOOKNFEEL_BORDER\000"
-.LC1623:
+.LC1635:
 	.ascii	"HEXADECIMAL\000"
 .LC836:
 	.ascii	"CONTROL_CHANNEL0_0_CHAN0INS_00\000"
@@ -15676,7 +15606,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5VAL_09\000"
 .LC303:
 	.ascii	"KEY_L\000"
-.LC1537:
+.LC1549:
 	.ascii	"CONTROL_BEHAVIOR_KEYRATE\000"
 .LC355:
 	.ascii	"command\000"
@@ -15692,15 +15622,15 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5VAL_0E\000"
 .LC595:
 	.ascii	"CONTROL_INS_PWM_TSP_ENABLE\000"
-.LC1394:
+.LC1348:
 	.ascii	"_ZN8Progress9upperLineE\000"
-.LC1401:
+.LC1355:
 	.ascii	"_ZN8Progress3varE\000"
 .LC282:
 	.ascii	"signed char\000"
 .LC422:
 	.ascii	"DISPLAY_INS_FM_ALGORITHM\000"
-.LC1646:
+.LC1658:
 	.ascii	"WAVE_DOUBLE\000"
 .LC556:
 	.ascii	"COLOR_DARK_BLUE\000"
@@ -15716,7 +15646,7 @@ _Z6STATUShhtt:
 	.ascii	"DISPLAY_CHANNEL5_CHANNEL5_5\000"
 .LC1326:
 	.ascii	"yadd\000"
-.LC1557:
+.LC1569:
 	.ascii	"Memory\000"
 .LC327:
 	.ascii	"next\000"
@@ -15726,39 +15656,41 @@ _Z6STATUShhtt:
 	.ascii	"unsigned int\000"
 .LC300:
 	.ascii	"KEY_UP\000"
-.LC1423:
+.LC1376:
 	.ascii	"_ZN11AlphaDialog5textXE\000"
-.LC1533:
+.LC1545:
 	.ascii	"E_BEHAVIOR_CONTROLS\000"
 .LC372:
 	.ascii	"INSTRUMENT_TYPE_COUNT\000"
-.LC419:
-	.ascii	"DISPLAY_LIVE2_KEY24\000"
-.LC1578:
+.LC1544:
+	.ascii	"_ZN11ColorEditor6updateEv\000"
+.LC1590:
 	.ascii	"_ZN3Gpu4MAP2E\000"
 .LC250:
 	.ascii	"_mbrlen_state\000"
 .LC555:
 	.ascii	"COLOR_BLACK\000"
+.LC1425:
+	.ascii	"_ZN13RegionHandler4map1E\000"
 .LC242:
 	.ascii	"_rand_next\000"
 .LC568:
 	.ascii	"SCREEN_PAT\000"
-.LC1664:
+.LC1676:
 	.ascii	"VUMETER_H1\000"
-.LC1555:
+.LC1567:
 	.ascii	"CONTROL_MEMORY_COUNT\000"
-.LC1662:
+.LC1674:
 	.ascii	"VUMETER_H3\000"
-.LC1569:
+.LC1581:
 	.ascii	"MAP_CFG\000"
-.LC1371:
+.LC1464:
 	.ascii	"loadDisplays\000"
 .LC664:
 	.ascii	"CONTROL_INS_FMW_TYPE\000"
 .LC386:
 	.ascii	"STATUS_MASTER\000"
-.LC1422:
+.LC1375:
 	.ascii	"textX\000"
 .LC1117:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3CMD_00\000"
@@ -15780,10 +15712,8 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3CMD_08\000"
 .LC1126:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3CMD_09\000"
-.LC1587:
+.LC1599:
 	.ascii	"_ZN3Gpu11blinkUpdateEi\000"
-.LC1500:
-	.ascii	"_ZN8LinkMode7monitorEP13RegionHandler\000"
 .LC1127:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3CMD_0A\000"
 .LC1128:
@@ -15800,23 +15730,25 @@ _Z6STATUShhtt:
 	.ascii	"_mblen_state\000"
 .LC204:
 	.ascii	"_file\000"
-.LC1655:
+.LC1667:
 	.ascii	"_Z6BIGDEChhtt\000"
 .LC216:
 	.ascii	"_lock\000"
-.LC1506:
+.LC1519:
 	.ascii	"_ZN8LinkMode12toggleMasterEP8sControlbbPj\000"
-.LC1475:
+.LC1488:
 	.ascii	"defaults\000"
 .LC660:
 	.ascii	"CONTROL_INS_WAV_MAX\000"
+.LC1511:
+	.ascii	"_ZN8LinkMode6updateEv\000"
 .LC695:
 	.ascii	"CONTROL_INS_SMP_FREQUENCY\000"
-.LC1349:
+.LC1440:
 	.ascii	"viewportLastValue\000"
 .LC675:
 	.ascii	"CONTROL_INS_FMW_FM3_ADSR_00\000"
-.LC1404:
+.LC1359:
 	.ascii	"_ZN8Progress6updateEv\000"
 .LC168:
 	.ascii	"__wchb\000"
@@ -15834,25 +15766,25 @@ _Z6STATUShhtt:
 	.ascii	"_ZN10sTransient4bit3E\000"
 .LC694:
 	.ascii	"CONTROL_INS_SMP_END\000"
-.LC1615:
+.LC1627:
 	.ascii	"bigString\000"
-.LC1341:
+.LC1422:
 	.ascii	"map0\000"
-.LC1343:
+.LC1426:
 	.ascii	"map2\000"
-.LC1395:
+.LC1349:
 	.ascii	"lowerLine\000"
-.LC1505:
+.LC1518:
 	.ascii	"toggleMaster\000"
-.LC1501:
+.LC1514:
 	.ascii	"songRecv\000"
-.LC1676:
+.LC1688:
 	.ascii	"_Z7VISPOS1hhtt\000"
-.LC1661:
+.LC1673:
 	.ascii	"_Z10VUMETER_V3hhtt\000"
-.LC1649:
+.LC1661:
 	.ascii	"_Z5PIXELhhtt\000"
-.LC1625:
+.LC1637:
 	.ascii	"color\000"
 .LC499:
 	.ascii	"EVENT_KEYUP_RIGHT\000"
@@ -15876,7 +15808,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4VOL_08\000"
 .LC1193:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4VOL_09\000"
-.LC1669:
+.LC1681:
 	.ascii	"_Z7COMMANDhhtt\000"
 .LC416:
 	.ascii	"DISPLAY_LIVE1_LEFT_A\000"
@@ -15896,7 +15828,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4VOL_0F\000"
 .LC1212:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4CMD_0C\000"
-.LC1635:
+.LC1647:
 	.ascii	"_Z7DECIMALhhtt\000"
 .LC679:
 	.ascii	"CONTROL_INS_FMW_FM4_ADSR_00\000"
@@ -15908,9 +15840,9 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_INS_FMW_FM4_ADSR_03\000"
 .LC762:
 	.ascii	"CONTROL_TABLE_VALUE1_09\000"
-.LC1626:
+.LC1638:
 	.ascii	"HEXADECIMAL_DOUBLE\000"
-.LC1590:
+.LC1602:
 	.ascii	"blitBg\000"
 .LC576:
 	.ascii	"CONTROL_INS_PWM_TSP_TABLE_00\000"
@@ -15942,7 +15874,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_TABLE_VOLUME_04\000"
 .LC742:
 	.ascii	"CONTROL_TABLE_VOLUME_05\000"
-.LC1520:
+.LC1532:
 	.ascii	"_ZN9LookNFeel4initEv\000"
 .LC744:
 	.ascii	"CONTROL_TABLE_VOLUME_07\000"
@@ -15958,7 +15890,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_INS_PWM_TSP_TABLE_0E\000"
 .LC591:
 	.ascii	"CONTROL_INS_PWM_TSP_TABLE_0F\000"
-.LC1512:
+.LC1525:
 	.ascii	"CONTROL_LOOKNFEEL_SHOWLOGO\000"
 .LC747:
 	.ascii	"CONTROL_TABLE_VOLUME_0A\000"
@@ -15974,12 +15906,12 @@ _Z6STATUShhtt:
 	.ascii	"cache\000"
 .LC306:
 	.ascii	"element\000"
-.LC1495:
+.LC1508:
 	.ascii	"CONTROL_LINKMODE_MAX\000"
 .LC236:
 	.ascii	"_cvtbuf\000"
-.LC1683:
-	.ascii	"helpers.cpp\000"
+.LC1444:
+	.ascii	"_ZN13RegionHandler4initEv\000"
 .LC1068:
 	.ascii	"E_CHANNEL3_0_CONTROLS\000"
 .LC632:
@@ -15988,7 +15920,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_INS_FMW_MAX\000"
 .LC217:
 	.ascii	"_ZN7__sFILEaSERKS_\000"
-.LC1679:
+.LC1691:
 	.ascii	"_Z6STATUShhtt\000"
 .LC753:
 	.ascii	"CONTROL_TABLE_VALUE1_00\000"
@@ -16006,7 +15938,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_TABLE_VALUE1_06\000"
 .LC760:
 	.ascii	"CONTROL_TABLE_VALUE1_07\000"
-.LC1462:
+.LC1417:
 	.ascii	"_ZN12ReallyDialog4drawEv\000"
 .LC676:
 	.ascii	"CONTROL_INS_FMW_FM3_ADSR_01\000"
@@ -16032,7 +15964,7 @@ _Z6STATUShhtt:
 	.ascii	"_Bigint\000"
 .LC342:
 	.ascii	"_ZN10sTransient4bit6E\000"
-.LC1474:
+.LC1487:
 	.ascii	"_ZN6Config4saveEP8sControlbbPj\000"
 .LC537:
 	.ascii	"MESSAGE_NAVIGATE_DOWN\000"
@@ -16040,7 +15972,7 @@ _Z6STATUShhtt:
 	.ascii	"_nmalloc\000"
 .LC663:
 	.ascii	"CONTROL_INS_FMW_NAME\000"
-.LC1369:
+.LC1462:
 	.ascii	"loadControls\000"
 .LC655:
 	.ascii	"CONTROL_INS_WAV_OP4_ADSR_00\000"
@@ -16052,23 +15984,25 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_INS_WAV_OP4_ADSR_03\000"
 .LC375:
 	.ascii	"STATUS_LOADING\000"
-.LC1353:
+.LC1446:
 	.ascii	"_ZN13RegionHandler16dispatchMessagesEv\000"
 .LC270:
 	.ascii	"_seed\000"
-.LC1411:
+.LC1364:
 	.ascii	"_ZN11AlphaDialog6bufferE\000"
 .LC209:
 	.ascii	"_seek\000"
+.LC1432:
+	.ascii	"_ZN13RegionHandler7controlE\000"
 .LC647:
 	.ascii	"CONTROL_INS_WAV_OP2_ADSR_00\000"
-.LC1448:
+.LC1403:
 	.ascii	"_ZN11AlphaDialog6enableEbPhhh\000"
 .LC500:
 	.ascii	"EVENT_KEYUP_A\000"
 .LC501:
 	.ascii	"EVENT_KEYUP_B\000"
-.LC1572:
+.LC1584:
 	.ascii	"_ZN3Gpu6redrawE\000"
 .LC505:
 	.ascii	"EVENT_KEYUP_L\000"
@@ -16080,13 +16014,13 @@ _Z6STATUShhtt:
 	.ascii	"DISPLAY_LIVE1_STATUS_FREE\000"
 .LC504:
 	.ascii	"EVENT_KEYUP_R\000"
-.LC1385:
+.LC1357:
 	.ascii	"update\000"
-.LC1439:
+.LC1392:
 	.ascii	"_ZN11AlphaDialog3remEv\000"
 .LC160:
 	.ascii	"_off64_t\000"
-.LC1491:
+.LC1504:
 	.ascii	"CONTROL_LINKMODE_SYNCTICKS\000"
 .LC672:
 	.ascii	"CONTROL_INS_FMW_FM2_ADSR_01\000"
@@ -16102,21 +16036,21 @@ _Z6STATUShhtt:
 	.ascii	"_mbtowc_state\000"
 .LC413:
 	.ascii	"DISPLAY_LIVE1_STATUS_LOCKED\000"
-.LC1483:
+.LC1496:
 	.ascii	"memMap\000"
 .LC477:
 	.ascii	"EVENT_KEYDOWN_DOWN\000"
-.LC1516:
+.LC1529:
 	.ascii	"CONTROL_LOOKNFEEL_MAX\000"
 .LC650:
 	.ascii	"CONTROL_INS_WAV_OP2_ADSR_03\000"
 .LC382:
 	.ascii	"STATUS_REINIT\000"
-.LC1551:
+.LC1563:
 	.ascii	"CONTROL_MEMORY_PURGESONGS\000"
 .LC1085:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3INS_00\000"
-.LC1596:
+.LC1608:
 	.ascii	"clear\000"
 .LC651:
 	.ascii	"CONTROL_INS_WAV_OP3_ADSR_00\000"
@@ -16154,11 +16088,11 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5KEY_08\000"
 .LC1244:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5KEY_09\000"
-.LC1613:
+.LC1625:
 	.ascii	"hexnum\000"
 .LC552:
 	.ascii	"COLOR_DARK_RED\000"
-.LC1372:
+.LC1465:
 	.ascii	"_ZN13RegionHandler12loadDisplaysEPK7sRegion\000"
 .LC1245:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5KEY_0A\000"
@@ -16212,9 +16146,9 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_TABLE_COMMAND2_09\000"
 .LC475:
 	.ascii	"EVENT_NONE\000"
-.LC1413:
+.LC1366:
 	.ascii	"_ZN11AlphaDialog6maxlenE\000"
-.LC1344:
+.LC1429:
 	.ascii	"region\000"
 .LC811:
 	.ascii	"CONTROL_TABLE_COMMAND2_0A\000"
@@ -16230,7 +16164,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_TABLE_COMMAND2_0F\000"
 .LC1052:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2VAL_02\000"
-.LC1515:
+.LC1528:
 	.ascii	"CONTROL_LOOKNFEEL_COUNT\000"
 .LC1251:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5INS_00\000"
@@ -16266,9 +16200,9 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5INS_0E\000"
 .LC1266:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5INS_0F\000"
-.LC1653:
+.LC1665:
 	.ascii	"_Z6BIGHEXhhtt\000"
-.LC1602:
+.LC1614:
 	.ascii	"_ZN3Gpu8isVblankEv\000"
 .LC1216:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4VAL_00\000"
@@ -16290,11 +16224,11 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4VAL_08\000"
 .LC561:
 	.ascii	"COLOR_BLUE\000"
-.LC1447:
+.LC1401:
 	.ascii	"_ZN11AlphaDialog6updateEv\000"
-.LC1350:
+.LC1442:
 	.ascii	"_ZN13RegionHandleraSERKS_\000"
-.LC1472:
+.LC1485:
 	.ascii	"_ZN6Config6revertEP8sControlbbPj\000"
 .LC1227:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4VAL_0B\000"
@@ -16320,11 +16254,11 @@ _Z6STATUShhtt:
 	.ascii	"bit5\000"
 .LC341:
 	.ascii	"bit6\000"
-.LC1373:
+.LC1466:
 	.ascii	"drawViewport\000"
 .LC345:
 	.ascii	"bit8\000"
-.LC1629:
+.LC1641:
 	.ascii	"_Z23HEXADECIMAL_DOUBLE_DASHhhtt\000"
 .LC634:
 	.ascii	"CONTROL_INS_WAV_OP1_ADSR_00\000"
@@ -16334,7 +16268,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_INS_WAV_OP1_ADSR_02\000"
 .LC637:
 	.ascii	"CONTROL_INS_WAV_OP1_ADSR_03\000"
-.LC1579:
+.LC1591:
 	.ascii	"colors\000"
 .LC478:
 	.ascii	"EVENT_KEYDOWN_LEFT\000"
@@ -16344,17 +16278,17 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2INS_09\000"
 .LC601:
 	.ascii	"CONTROL_INS_PWM_DUTYCYCLE\000"
-.LC1406:
+.LC1361:
 	.ascii	"enable\000"
 .LC640:
 	.ascii	"CONTROL_INS_WAV_OP4_TYPE\000"
-.LC1440:
+.LC1394:
 	.ascii	"_ZN11AlphaDialog4drawEv\000"
 .LC1320:
 	.ascii	"redraw\000"
-.LC1351:
+.LC1445:
 	.ascii	"dispatchMessages\000"
-.LC1518:
+.LC1531:
 	.ascii	"_ZN9LookNFeelaSERKS_\000"
 .LC223:
 	.ascii	"_stdout\000"
@@ -16382,10 +16316,8 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2CMD_08\000"
 .LC1043:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2CMD_09\000"
-.LC1634:
+.LC1646:
 	.ascii	"DECIMAL\000"
-.LC1545:
-	.ascii	"_ZN8Behavior6updateEP13RegionHandler\000"
 .LC1044:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2CMD_0A\000"
 .LC1045:
@@ -16412,28 +16344,28 @@ _Z6STATUShhtt:
 	.ascii	"updater\000"
 .LC553:
 	.ascii	"COLOR_WHITE\000"
-.LC1408:
+.LC1406:
 	.ascii	"_ZN8Progress6enableEjj15E_StatusStringsS0_Pj\000"
 .LC393:
 	.ascii	"STATUS_SONG\000"
 .LC219:
 	.ascii	"char\000"
-.LC1606:
+.LC1618:
 	.ascii	"_ZN3Gpu6updateEh\000"
 .LC309:
 	.ascii	"height\000"
-.LC1486:
+.LC1499:
 	.ascii	"E_LINKMODE_CONTROLS\000"
-.LC1642:
+.LC1654:
 	.ascii	"NIBBLE\000"
-.LC1665:
+.LC1677:
 	.ascii	"_Z10VUMETER_H1hhtt\000"
-.LC1374:
+.LC1467:
 	.ascii	"_ZN13RegionHandler12drawViewportEPK9_ViewporthhPK7s"
 	.ascii	"Region\000"
 .LC506:
 	.ascii	"EVENT_VERTICAL\000"
-.LC1480:
+.LC1493:
 	.ascii	"_ZN6Config6formatEP8sControlbbPj\000"
 .LC458:
 	.ascii	"DISPLAY_CHANNEL3_CHANNEL3_1\000"
@@ -16445,33 +16377,33 @@ _Z6STATUShhtt:
 	.ascii	"DISPLAY_CHANNEL3_CHANNEL3_4\000"
 .LC460:
 	.ascii	"DISPLAY_CHANNEL3_CHANNEL3_5\000"
-.LC1503:
+.LC1516:
 	.ascii	"songSend\000"
 .LC409:
 	.ascii	"DISPLAY_LIVE2_KEY00\000"
 .LC502:
 	.ascii	"EVENT_KEYUP_SELECT\000"
-.LC1632:
-	.ascii	"HEXADECIMAL_TWOTILES\000"
-.LC1599:
+.LC195:
+	.ascii	"_fntypes\000"
+.LC1611:
 	.ascii	"_ZN3Gpu3getEhhh\000"
-.LC1547:
+.LC1559:
 	.ascii	"E_MEMORY_CONTROLS\000"
-.LC1399:
+.LC1353:
 	.ascii	"_ZN8Progress6redrawE\000"
 .LC391:
 	.ascii	"STATUS_SETTINGS\000"
-.LC1685:
+.LC1697:
 	.ascii	"GNU C++ 3.3.2\000"
 .LC489:
 	.ascii	"EVENT_KEY_RIGHT\000"
-.LC1392:
+.LC1346:
 	.ascii	"_ZN8Progress8laststepE\000"
 .LC1102:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VOL_01\000"
 .LC425:
 	.ascii	"DISPLAY_PAT_PATTERNSTATUS_A\000"
-.LC1616:
+.LC1628:
 	.ascii	"_ZN3Gpu9bigStringEhhPKch\000"
 .LC1105:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VOL_04\000"
@@ -16481,7 +16413,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VOL_06\000"
 .LC1108:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VOL_07\000"
-.LC1446:
+.LC1400:
 	.ascii	"_ZN11AlphaDialog7previewEv\000"
 .LC1110:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VOL_09\000"
@@ -16497,29 +16429,29 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VOL_0E\000"
 .LC1116:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VOL_0F\000"
-.LC1397:
+.LC1351:
 	.ascii	"enabled\000"
-.LC1365:
+.LC1458:
 	.ascii	"drawDisplay\000"
 .LC627:
 	.ascii	"CONTROL_INS_WAV_INDEX\000"
-.LC1471:
+.LC1484:
 	.ascii	"revert\000"
 .LC418:
 	.ascii	"DISPLAY_LIVE2_KEY12\000"
 .LC535:
 	.ascii	"MESSAGE_NAVIGATE_RIGHT\000"
-.LC1358:
+.LC1451:
 	.ascii	"_ZN13RegionHandler4loadEPK7sRegion\000"
-.LC1400:
+.LC1354:
 	.ascii	"_ZN8Progress3maxE\000"
-.LC1671:
+.LC1683:
 	.ascii	"_Z4NOTEhhtt\000"
 .LC531:
 	.ascii	"MESSAGE_REDRAW_DISPLAY\000"
-.LC1552:
+.LC1564:
 	.ascii	"CONTROL_MEMORY_MEMORYTEST\000"
-.LC1455:
+.LC1410:
 	.ascii	"highlight\000"
 .LC383:
 	.ascii	"STATUS_CELLS\000"
@@ -16529,53 +16461,51 @@ _Z6STATUShhtt:
 	.ascii	"EVENT_KEY_UP\000"
 .LC527:
 	.ascii	"MESSAGE_OTHER_REFRESH_DATA\000"
-.LC1666:
+.LC1678:
 	.ascii	"VUMETER_V1\000"
 .LC361:
 	.ascii	"eAGBKeys\000"
-.LC1643:
-	.ascii	"_Z6NIBBLEhhtt\000"
+.LC1430:
+	.ascii	"_ZN13RegionHandler6regionE\000"
 .LC696:
 	.ascii	"CONTROL_INS_SMP_B\000"
-.LC1484:
-	.ascii	"_ZN6Config6memMapEP13RegionHandler\000"
 .LC512:
 	.ascii	"EVENT_PANIC\000"
-.LC1485:
-	.ascii	"_ZN6Config6updateEP13RegionHandler\000"
+.LC419:
+	.ascii	"DISPLAY_LIVE2_KEY24\000"
 .LC224:
 	.ascii	"_stderr\000"
 .LC698:
 	.ascii	"CONTROL_INS_SMP_R\000"
 .LC697:
 	.ascii	"CONTROL_INS_SMP_S\000"
-.LC1542:
+.LC1554:
 	.ascii	"CONTROL_BEHAVIOR_MAX\000"
 .LC557:
 	.ascii	"COLOR_BROWN\000"
-.LC1527:
-	.ascii	"_ZN9LookNFeel7creditsEP13RegionHandler\000"
-.LC1492:
+.LC1505:
 	.ascii	"CONTROL_LINKMODE_RECEIVE\000"
 .LC546:
 	.ascii	"eColors\000"
 .LC508:
 	.ascii	"EVENT_NAVIGATE\000"
-.LC1464:
+.LC1428:
+	.ascii	"_ZN13RegionHandler5dirtyE\000"
+.LC1419:
 	.ascii	"_ZN12ReallyDialog6cancelEv\000"
-.LC1658:
+.LC1670:
 	.ascii	"TEXT\000"
 .LC550:
 	.ascii	"COLOR_RED\000"
-.LC1549:
+.LC1561:
 	.ascii	"CONTROL_MEMORY_PREFETCH\000"
 .LC1299:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5VAL_00\000"
 .LC1133:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VAL_00\000"
-.LC1621:
+.LC1633:
 	.ascii	"data\000"
-.LC1571:
+.LC1583:
 	.ascii	"MAP_NONE\000"
 .LC775:
 	.ascii	"CONTROL_TABLE_COMMAND1_06\000"
@@ -16583,31 +16513,31 @@ _Z6STATUShhtt:
 	.ascii	"DISPLAY_LIVE2_KEY36\000"
 .LC1300:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5VAL_01\000"
-.LC1637:
+.LC1649:
 	.ascii	"_Z14DECIMAL_DOUBLEhhtt\000"
 .LC564:
 	.ascii	"eScreens\000"
 .LC175:
 	.ascii	"_next\000"
-.LC1389:
+.LC1343:
 	.ascii	"step\000"
-.LC1504:
+.LC1517:
 	.ascii	"_ZN8LinkMode8songSendEP8sControlbbPj\000"
 .LC238:
 	.ascii	"_strtok_last\000"
 .LC536:
 	.ascii	"MESSAGE_NAVIGATE_UP\000"
-.LC1681:
+.LC1693:
 	.ascii	"cb_no_callback\000"
-.LC1342:
+.LC1424:
 	.ascii	"map1\000"
 .LC292:
 	.ascii	"ufp16\000"
 .LC558:
 	.ascii	"COLOR_OLIVE\000"
-.LC1530:
+.LC1542:
 	.ascii	"show\000"
-.LC1588:
+.LC1600:
 	.ascii	"blit\000"
 .LC1062:
 	.ascii	"CONTROL_CHANNEL2_0_CHAN2VAL_0C\000"
@@ -16637,7 +16567,7 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4KEY_09\000"
 .LC235:
 	.ascii	"_cvtlen\000"
-.LC1604:
+.LC1616:
 	.ascii	"_ZN3Gpu11loadPaletteEv\000"
 .LC1162:
 	.ascii	"CONTROL_CHANNEL4_0_CHAN4KEY_0A\000"
@@ -16655,21 +16585,21 @@ _Z6STATUShhtt:
 	.ascii	"EVENT_KEYUP_DOWN\000"
 .LC1307:
 	.ascii	"CONTROL_CHANNEL5_0_CHAN5VAL_08\000"
-.LC1601:
+.LC1613:
 	.ascii	"isVblank\000"
 .LC379:
 	.ascii	"STATUS_RESTORING\000"
-.LC1502:
+.LC1515:
 	.ascii	"_ZN8LinkMode8songRecvEP8sControlbbPj\000"
 .LC507:
 	.ascii	"EVENT_HORIZONTAL\000"
-.LC1605:
+.LC1617:
 	.ascii	"_ZN3Gpu3setEhhht\000"
 .LC593:
 	.ascii	"CONTROL_INS_PWM_TSP_ENVELOPE\000"
-.LC1359:
+.LC1452:
 	.ascii	"drawCache\000"
-.LC1639:
+.LC1651:
 	.ascii	"_Z16DECIMAL_TWOTILEShhtt\000"
 .LC313:
 	.ascii	"palInactive\000"
@@ -16733,6 +16663,8 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VAL_06\000"
 .LC510:
 	.ascii	"EVENT_FOCUS\000"
+.LC1537:
+	.ascii	"_ZN9LookNFeel6updateEv\000"
 .LC1134:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VAL_01\000"
 .LC1135:
@@ -16741,8 +16673,8 @@ _Z6STATUShhtt:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VAL_03\000"
 .LC1137:
 	.ascii	"CONTROL_CHANNEL3_0_CHAN3VAL_04\000"
-.LC1454:
+.LC1409:
 	.ascii	"_ZN12ReallyDialog7enabledE\000"
-.LC1451:
+.LC1405:
 	.ascii	"getString\000"
 	.ident	"GCC: (GNU) 3.3.2"

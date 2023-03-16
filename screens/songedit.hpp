@@ -34,7 +34,7 @@ enum E_SNG_DISPLAYS {
 class SongEdit {
 	public:
 		static MEM_IN_EWRAM bool has_data[ SONG_SLOT_COUNT ];
-		static void update			( RegionHandler* rh );
+		static void update			(  );
 		static void runGroove		(  );
 		static void load			( Control *c=NULL	, bool bigstep=false	, bool add=false	, u32 *pointer=NULL );
 		static void save 			( Control *c=NULL	, bool bigstep=false	, bool add=false	, u32 *pointer=NULL );

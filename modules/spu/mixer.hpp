@@ -90,7 +90,7 @@ class Mixer {
 		
 		// These are interacted through Cfg Screen
 		static void show 	( Control* c, bool bigstep, bool add, u32* pointer );
-		static void update  ( RegionHandler* rh );
+		static void update  (  );
 };
 
 extern const u16 DSOUND_FREQ_TABLE[];

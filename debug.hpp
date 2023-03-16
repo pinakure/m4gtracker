@@ -51,7 +51,7 @@ class Debug {
 	
 		static void init			( );
 	
-		static void benchmark		( RegionHandler &regHnd );
+		static void benchmark		( );
 		static void halt			( const char *filename, int line );
 		static void bsod			( const char *title		, const char *message1, const char *message2, const char *message3, u32 *pointer=NULL);
 		static void panic			( const char *message	, u32 *pointer=NULL);
@@ -74,7 +74,7 @@ class Debug {
 		
 		static void runTests		( );
 		static void updateWatch		( );
-		static void updateMemTest   ( RegionHandler* rh );
+		static void updateMemTest   (  );
 		static void memoryTest		( Control* c, bool bigstep, bool add, u32* pointer );
 		
 		static void drawFrame		( u8 pos_x, u8 pos_y, u8 width, u8 height, const char *title, u8 size, bool alt_color );

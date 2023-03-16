@@ -94,17 +94,17 @@ void SongEdit::toggleGroove(Control *a, bool b, bool c, u32 *d){
 
 
 void SongEdit::redrawCtl(eSngControl control){
-	regHnd.drawControl( &SNG_CONTROLS[ control ] );
+	RegionHandler::drawControl( &SNG_CONTROLS[ control ] );
 }
 
 void SongEdit::focusCtl(eSngControl control){
-	Control *prior 	= regHnd.control;
-	regHnd.control 	= (Control*)&SNG_CONTROLS[ control ];
-	if( prior ) regHnd.drawControl( prior );
-	regHnd.drawControl( regHnd.control );
+	Control *prior 	= RegionHandler::control;
+	RegionHandler::control 	= (Control*)&SNG_CONTROLS[ control ];
+	if( prior ) RegionHandler::drawControl( prior );
+	RegionHandler::drawControl( RegionHandler::control );
 }
 
-#define REDRAW(a)			rh->sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&rh->region->displays[a])&0x0fffffff);
+#define REDRAW(a)			RegionHandler::sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&RegionHandler::region->displays[a])&0x0fffffff);
 
 static void copystr(u8 *s, u8 *d, u8 len){
 	for(int i=0; i<len; i++) s[i] = d[i];	
@@ -117,7 +117,7 @@ static int compstr(u8 *a, u8*b, u8 len){
 
 MEM_IN_EWRAM bool SongEdit::has_data[ SONG_SLOT_COUNT ] = { false, false, false, false, false, false };
 
-void SongEdit::update( RegionHandler* rh ){
+void SongEdit::update(  ){
 	const Control *ct = &SNG_CONTROLS[CONTROL_SNG_TITLE];
 	const Control *ca = &SNG_CONTROLS[CONTROL_SNG_ARTIST];
 	
@@ -147,7 +147,7 @@ void SongEdit::load( Control *c, bool bigstep, bool add, u32 *pointer ){
 	SongEdit::has_data[ 5 ] = false;
 	SongEdit::has_data[ VAR_CFG.SLOT ] = true;
 	
-	regHnd.redraw = true;
+	RegionHandler::redraw = true;
 }
 
 void SongEdit::save( Control *c, bool bigstep, bool add, u32 *pointer ){
@@ -169,11 +169,11 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 	
 	ReallyDialog::enable();
 	if(!ReallyDialog::result) {
-		regHnd.redraw=true;
+		RegionHandler::redraw=true;
 		return;
 	}
-	regHnd.redraw=true;
-	regHnd.update(0);
+	RegionHandler::redraw=true;
+	RegionHandler::update(0);
 	Gpu::clear( 0x9010);
 	Console console("PLEASE  WAIT", 0x9010);
 	
@@ -272,8 +272,8 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 	Gpu::bigString( 7, 15, "PRESS ANY BUTTON");
 	
 	while( !KEYACTIVITY() ){ KEYUPDATE(); };
-	regHnd.redraw = 1;
-	regHnd.update(1);
+	RegionHandler::redraw = 1;
+	RegionHandler::update(1);
 	#undef PATTERN_TOTAL
 	#undef INSTRUMENT_TOTAL
 }
@@ -298,15 +298,15 @@ void SongEdit::erase( Control *c, bool bigstep, bool add, u32 *pointer ){
 		/*HACK*/while( KEYDOWN_A || KEYUP_A || KEYPRESS_A ){ KEYUPDATE(); }
 	}
 	/*HACK*/while( KEYDOWN_B || KEYUP_B || KEYPRESS_B ){ KEYUPDATE(); }
-	regHnd.redraw=true;
+	RegionHandler::redraw=true;
 }
 
 /* Called each time BPM is changed by the control on SNG screen */
 void SongEdit::setTempo( Control *c, bool bigstep, bool add, u32 *pointer ){	
 	(*(u8*) c->var) = ((*(u8*) c->var) + ((bigstep?0x10:0x1)* (add?1:-1)) ) & 0xFF;
 	u8 val = *(c->var);
-	if(regHnd.control)
-		regHnd.sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)&SNG_CONTROLS[CONTROL_SNG_BPM]);
+	if(RegionHandler::control)
+		RegionHandler::sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)&SNG_CONTROLS[CONTROL_SNG_BPM]);
 	Sequencer::setTempo(val);
 }
 

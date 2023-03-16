@@ -9,13 +9,13 @@ This regions must reside in each correspondent callback/xxx file
 #include "viewports.hpp"
 #include "../modules/spu/mixer.hpp"
 
-void updateCHANNEL0(RegionHandler* rh);
-void updateCHANNEL1(RegionHandler* rh);
-void updateCHANNEL2(RegionHandler* rh);
-void updateCHANNEL3(RegionHandler* rh);
-void updateCHANNEL4(RegionHandler* rh);
-void updateCHANNEL5(RegionHandler* rh);
-void updatePROGRESS(RegionHandler* rh);
+void updateCHANNEL0();
+void updateCHANNEL1();
+void updateCHANNEL2();
+void updateCHANNEL3();
+void updateCHANNEL4();
+void updateCHANNEL5();
+void updatePROGRESS();
 
 
 #include "../debug.hpp"

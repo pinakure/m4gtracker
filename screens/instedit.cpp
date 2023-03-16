@@ -261,7 +261,7 @@ const Callback cb_ins_table_command2_0F  = { InstEdit::modVal27  	, EVENT_MODIFY
 void InstEdit::load(){	
 	InstEdit::copy( &VAR_INSTRUMENTS[ VAR_CFG.CURRENTINSTRUMENT ], &VAR_INSTRUMENT );	
 	InstEdit::unpack( &VAR_INSTRUMENT );
-	regHnd.redraw = true;	
+	RegionHandler::redraw = true;	
 }
 
 // Called on value change (against index and type)
@@ -563,7 +563,7 @@ void InstEdit::synchronize(){
 		InstEdit::copy(&VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT], &VAR_INSTRUMENT);
 		InstEdit::unpack( &VAR_INSTRUMENT );
 		LASTINSTRUMENT = VAR_CFG.CURRENTINSTRUMENT;
-		regHnd.redraw = true;
+		RegionHandler::redraw = true;
 	} /*else {
 		InstEdit::copy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT]);
 		InstEdit::pack( &VAR_INSTRUMENT );
@@ -574,7 +574,7 @@ void InstEdit::dispatchMessage(u32 msg) {
 	switch(msg) {
 		
 		case MESSAGE_CANCEL:			
-			regHnd.controlClear	( regHnd.control );
+			RegionHandler::controlClear	( RegionHandler::control );
 			repack();//dispatchMessage		( MESSAGE_OTHER_REFRESH_DATA );
 			break;
 		
@@ -600,7 +600,7 @@ void InstEdit::dispatchMessage(u32 msg) {
 	}	
 }
 
-void InstEdit::updateWav( RegionHandler* rh ){
+void InstEdit::updateWav(  ){
 	const Control *cname = &INS_WAV_CONTROLS[CONTROL_INS_WAV_NAME];
 	STRING(false, cname->x, cname->y, cname->var);
 	
@@ -615,7 +615,7 @@ void InstEdit::updateWav( RegionHandler* rh ){
 	InstEdit::synchronize();
 }
 
-void InstEdit::updateFmw( RegionHandler* rh ){
+void InstEdit::updateFmw(  ){
 	const Control *cname = &INS_FMW_CONTROLS[CONTROL_INS_FMW_NAME];
 	STRING(false, cname->x, cname->y, cname->var);
 	
@@ -633,7 +633,7 @@ void InstEdit::updateFmw( RegionHandler* rh ){
 	InstEdit::synchronize();
 }
 
-void InstEdit::updateSmp( RegionHandler* rh ){
+void InstEdit::updateSmp(  ){
 	const Control *cname = &INS_SMP_CONTROLS[CONTROL_INS_SMP_NAME];
 	STRING(false, cname->x, cname->y, cname->var);
 	
@@ -648,7 +648,7 @@ void InstEdit::updateSmp( RegionHandler* rh ){
 	InstEdit::synchronize();
 }
 
-void InstEdit::updatePwm( RegionHandler* rh ){
+void InstEdit::updatePwm(  ){
 	const Control *cname = &INS_PWM_CONTROLS[CONTROL_INS_PWM_NAME];
 	STRING(false, cname->x, cname->y, cname->var);
 	InstEdit::synchronize();

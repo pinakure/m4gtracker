@@ -24,18 +24,18 @@ class Tracker{
 		static void syncPattern			( );
 		static void syncChannel			( u8 channel_index );
 		static void copyChannel			( u8 channel_index );
-		static void globalUpdate		( RegionHandler *rh );
+		static void globalUpdate		(  );
 		
 		static void drawPosition		( int channel );
 		static void drawTransientInfo	( );
 		static void drawLine			( int channel );
 		static void dispatchMessage		( u32 msg);
 
-		static void update				( RegionHandler* rh );// Update function for Config Tracker Suboption!
-		static void updateVis			( RegionHandler* rh );
-		static void updateHeader1		( RegionHandler* rh );
-		static void updateHeader2		( RegionHandler* rh );
-		static void updateTable			( RegionHandler* rh );
+		static void update				(  );// Update function for Config Tracker Suboption!
+		static void updateVis			(  );
+		static void updateHeader1		(  );
+		static void updateHeader2		(  );
+		static void updateTable			(  );
 
 		static void processInput		(  );
 		static void shift				( int q );

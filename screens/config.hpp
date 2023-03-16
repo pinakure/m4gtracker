@@ -17,8 +17,8 @@ class Config {
 		static void reinit		( Control *c = NULL, bool bigstep=0, bool add=0, u32 *pointer=NULL );
 		static void format 		( Control *c = NULL, bool bigstep=0, bool add=0, u32 *pointer=NULL );
 		static void reset 		( Control *c = NULL, bool bigstep=0, bool add=0, u32 *pointer=NULL );
-		static void memMap		( RegionHandler* rh );
-		static void update		( RegionHandler* rh );
+		static void memMap		(  );
+		static void update		(  );
 };
 
 #include "config/linkmode.hpp"

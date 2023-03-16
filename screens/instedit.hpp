@@ -17,10 +17,10 @@ class InstEdit {
 		static void dispatchMessage			(u32 msg);
 	
 		// Specific type modifiers
-		static void updateWav				( RegionHandler* rh );
-		static void updateFmw				( RegionHandler* rh );
-		static void updateSmp				( RegionHandler* rh );
-		static void updatePwm				( RegionHandler* rh );
+		static void updateWav				(  );
+		static void updateFmw				(  );
+		static void updateSmp				(  );
+		static void updatePwm				(  );
 		
 		// Visible instrument modifiers
 		static SETTINGS_PWM unpackPwm		( Instrument* i );

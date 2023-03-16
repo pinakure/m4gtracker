@@ -85,64 +85,64 @@ void Tracker::syncChannel(u8 c){
 		VAR_CELLS[ c ].VAL[ i ] = VAR_DATA[ pattern ].VAL[ i ];
 	}
 	
-	if(regHnd.region != &REGION_MAP_3_TRK) return;
+	if(RegionHandler::region != &REGION_MAP_3_TRK) return;
 	
 	int  len = (VAR_CFG.CURRENTCHANNEL==c?(0x10 * (CHANNEL_COUNT-1) ): 0x10);
 	
 	switch(VAR_CFG.CURRENTCHANNEL){
 		case 0:	
 			switch(c){
-				case 0:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN0_CONTROLS[i	   	  ]); } return;
-				case 1:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN0_CONTROLS[i+(0x10*5)]); } return;
-				case 2:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN0_CONTROLS[i+(0x10*6)]); } return;
-				case 3:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN0_CONTROLS[i+(0x10*7)]); } return;
-				case 4:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN0_CONTROLS[i+(0x10*8)]); } return;
-				case 5:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN0_CONTROLS[i+(0x10*9)]); } return;
+				case 0:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN0_CONTROLS[i	   	  ]); } return;
+				case 1:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN0_CONTROLS[i+(0x10*5)]); } return;
+				case 2:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN0_CONTROLS[i+(0x10*6)]); } return;
+				case 3:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN0_CONTROLS[i+(0x10*7)]); } return;
+				case 4:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN0_CONTROLS[i+(0x10*8)]); } return;
+				case 5:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN0_CONTROLS[i+(0x10*9)]); } return;
 			}				
 		case 1:	
 			switch(c){
-				case 0:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN1_CONTROLS[i+(0x10*5)]); } return;
-				case 1:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN1_CONTROLS[i		  ]); } return;
-				case 2:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN1_CONTROLS[i+(0x10*6)]); } return;
-				case 3:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN1_CONTROLS[i+(0x10*7)]); } return;
-				case 4:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN1_CONTROLS[i+(0x10*8)]); } return;
-				case 5:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN1_CONTROLS[i+(0x10*9)]); } return;
+				case 0:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN1_CONTROLS[i+(0x10*5)]); } return;
+				case 1:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN1_CONTROLS[i		  ]); } return;
+				case 2:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN1_CONTROLS[i+(0x10*6)]); } return;
+				case 3:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN1_CONTROLS[i+(0x10*7)]); } return;
+				case 4:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN1_CONTROLS[i+(0x10*8)]); } return;
+				case 5:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN1_CONTROLS[i+(0x10*9)]); } return;
 			}
 		case 2:	
 			switch(c){
-				case 0:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN2_CONTROLS[i+(0x10*5)]); } return;
-				case 1:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN2_CONTROLS[i+(0x10*6)]); } return;
-				case 2:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN2_CONTROLS[i		  ]); } return;
-				case 3:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN2_CONTROLS[i+(0x10*7)]); } return;
-				case 4:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN2_CONTROLS[i+(0x10*8)]); } return;
-				case 5:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN2_CONTROLS[i+(0x10*9)]); } return;
+				case 0:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN2_CONTROLS[i+(0x10*5)]); } return;
+				case 1:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN2_CONTROLS[i+(0x10*6)]); } return;
+				case 2:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN2_CONTROLS[i		  ]); } return;
+				case 3:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN2_CONTROLS[i+(0x10*7)]); } return;
+				case 4:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN2_CONTROLS[i+(0x10*8)]); } return;
+				case 5:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN2_CONTROLS[i+(0x10*9)]); } return;
 			}
 		case 3:	
 			switch(c){
-				case 0:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN3_CONTROLS[i+(0x10*5)]); } return;
-				case 1:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN3_CONTROLS[i+(0x10*6)]); } return;
-				case 2:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN3_CONTROLS[i+(0x10*7)]); } return;
-				case 3:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN3_CONTROLS[i		  ]); } return;
-				case 4:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN3_CONTROLS[i+(0x10*8)]); } return;
-				case 5:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN3_CONTROLS[i+(0x10*9)]); } return;
+				case 0:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN3_CONTROLS[i+(0x10*5)]); } return;
+				case 1:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN3_CONTROLS[i+(0x10*6)]); } return;
+				case 2:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN3_CONTROLS[i+(0x10*7)]); } return;
+				case 3:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN3_CONTROLS[i		  ]); } return;
+				case 4:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN3_CONTROLS[i+(0x10*8)]); } return;
+				case 5:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN3_CONTROLS[i+(0x10*9)]); } return;
 			}
 		case 4:	
 			switch(c){
-				case 0:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN4_CONTROLS[i+(0x10*5)]); } return;
-				case 1:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN4_CONTROLS[i+(0x10*6)]); } return;
-				case 2:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN4_CONTROLS[i+(0x10*7)]); } return;
-				case 3:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN4_CONTROLS[i+(0x10*8)]); } return;
-				case 4:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN4_CONTROLS[i		  ]); } return;
-				case 5:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN4_CONTROLS[i+(0x10*9)]); } return;
+				case 0:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN4_CONTROLS[i+(0x10*5)]); } return;
+				case 1:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN4_CONTROLS[i+(0x10*6)]); } return;
+				case 2:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN4_CONTROLS[i+(0x10*7)]); } return;
+				case 3:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN4_CONTROLS[i+(0x10*8)]); } return;
+				case 4:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN4_CONTROLS[i		  ]); } return;
+				case 5:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN4_CONTROLS[i+(0x10*9)]); } return;
 			}
 		case 5:	
 			switch(c){
-				case 0:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN5_CONTROLS[i+(0x10*5)]); } return;
-				case 1:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN5_CONTROLS[i+(0x10*6)]); } return;
-				case 2:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN5_CONTROLS[i+(0x10*7)]); } return;
-				case 3:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN5_CONTROLS[i+(0x10*8)]); } return;
-				case 4:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN5_CONTROLS[i+(0x10*9)]); } return;
-				case 5:	for(int i=0, li=len; i<li; i++){ regHnd.drawControl(&CHAN5_CONTROLS[i		  ]); } return;
+				case 0:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN5_CONTROLS[i+(0x10*5)]); } return;
+				case 1:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN5_CONTROLS[i+(0x10*6)]); } return;
+				case 2:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN5_CONTROLS[i+(0x10*7)]); } return;
+				case 3:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN5_CONTROLS[i+(0x10*8)]); } return;
+				case 4:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN5_CONTROLS[i+(0x10*9)]); } return;
+				case 5:	for(int i=0, li=len; i<li; i++){ RegionHandler::drawControl(&CHAN5_CONTROLS[i		  ]); } return;
 			}
 	}
 }
@@ -213,7 +213,7 @@ void Tracker::dispatchMessage(u32 msg){
 	switch(msg){
 		
 		case MESSAGE_CANCEL:
-			regHnd.controlClear	( regHnd.control );
+			RegionHandler::controlClear	( RegionHandler::control );
 			Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL );	//dispatchMessage		( MESSAGE_OTHER_REFRESH_DATA );
 			return;
 		
@@ -228,7 +228,7 @@ void Tracker::dispatchMessage(u32 msg){
 			for(int i=0; i < CHANNEL_COUNT ;i++){
 				Tracker::drawPosition( i );
 			}	
-			regHnd.updateViewport(&VIEWPORT_TRK, regHnd.region->xadd,regHnd.region->yadd);
+			RegionHandler::updateViewport(&VIEWPORT_TRK, RegionHandler::region->xadd,RegionHandler::region->yadd);
 			return;
 		
 		case MESSAGE_OTHER_NEXT:
@@ -238,23 +238,23 @@ void Tracker::dispatchMessage(u32 msg){
 			for(int i=0; i < CHANNEL_COUNT ;i++){
 				Tracker::drawPosition( i );
 			}	
-			regHnd.updateViewport(&VIEWPORT_TRK, regHnd.region->xadd, regHnd.region->yadd);
+			RegionHandler::updateViewport(&VIEWPORT_TRK, RegionHandler::region->xadd, RegionHandler::region->yadd);
 			return;
 	}
 }
 
-void Tracker::globalUpdate( RegionHandler* rh ){
+void Tracker::globalUpdate(  ){
 	//Tracker::clean = false;
 
-	Clip::update( rh );
+	Clip::update( );
 	
 	Gpu::set(2,0,1, Sequencer::playing ? 0xF08D  : 0x31FE );
 	Gpu::set(1,0,0, Sequencer::playing ? ((Sequencer::currentBeats) == 0?0x32 : ((Sequencer::currentBeats&3) == 0?0x34 : 0x33)):0x33);
 		
-	if( Transient::changed || rh->redraw) Tracker::drawTransientInfo();
+	if( Transient::changed || RegionHandler::redraw) Tracker::drawTransientInfo();
 
 	for(int i=0; i < CHANNEL_COUNT ;i++){
-		if( rh->redraw ) 
+		if( RegionHandler::redraw ) 
 			Tracker::drawPosition( i );
 		
 		if( !Sequencer::playing) continue;
@@ -269,7 +269,7 @@ void Tracker::globalUpdate( RegionHandler* rh ){
 		if(channel->LASTSTEP != channel->STEP) Tracker::drawLine(i);
 		
 		// Update next pattern reactive elements
-		if((channel->LASTPOSITION != channel->POSITION) || rh->redraw) {
+		if((channel->LASTPOSITION != channel->POSITION) || RegionHandler::redraw) {
 			Tracker::drawPosition( i );
 			Tracker::syncChannel( i );
 			channel->LASTPOSITION =  channel->POSITION;
@@ -288,24 +288,24 @@ void Tracker::globalUpdate( RegionHandler* rh ){
 				Gpu::set(0, i, y, 0x0);
 			}
 		}
-		regHnd.sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)(regHnd.control)&0x0fffffff);
+		RegionHandler::sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)(RegionHandler::control)&0x0fffffff);
 		Tracker::clean = true;
 	}
 }
 
-void Tracker::updateVis( RegionHandler* rh ){
+void Tracker::updateVis(  ){
 
 }
 
-void Tracker::updateHeader1( RegionHandler* rh ){
+void Tracker::updateHeader1(  ){
 
 }
 
-void Tracker::updateHeader2( RegionHandler* rh ){
+void Tracker::updateHeader2(  ){
 
 }
 
-void Tracker::updateTable( RegionHandler* rh ){
+void Tracker::updateTable(  ){
 
 }
 
@@ -427,7 +427,7 @@ CB_CHAN_VAL(5, F);	CB_CHAN_CMD(5, F);	CB_CHAN_VOL(5, F);	CB_CHAN_INS(5, F);	CB_C
 #undef CB_CHAN_INS
 #undef CB_CHAN_KEY
 
-void Tracker::update( RegionHandler* rh ){
+void Tracker::update(  ){
 	const Region *c = &REGION_MAP_4_CHANNELMIXER;	
 	Gpu::blitAlt(MAPDATA + ((MAP_CFG * 3) << 12), c->x, c->y, 0xb, 0xf, c->width, c->height);
 }

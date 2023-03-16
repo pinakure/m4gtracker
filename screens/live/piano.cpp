@@ -49,7 +49,7 @@ const Control LIVE2_CONTROLS[CONTROL_LIVE2_MAX] = {
 #undef VAR
 #undef CTL
 
-void Piano::update( RegionHandler* rh ){
+void Piano::update(  ){
 	if(Live::PIANO.MODE != last_value){
 		last_value = Live::PIANO.MODE;
 		REDRAW(LIVE2_DISPLAY_KEYLAYOUT_A);

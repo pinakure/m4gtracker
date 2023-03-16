@@ -386,7 +386,7 @@ CB_PATTERNS(0, F);		CB_PATTERNS(1, F);		CB_PATTERNS(2, F);		CB_PATTERNS(3, F);		
 
 	
 	
-void PatEdit::globalUpdate(RegionHandler* rh){
+void PatEdit::globalUpdate(){
 	static int bookmark_timer = 0;
 		
 	if( KEYPRESS_B ) {
@@ -401,10 +401,10 @@ void PatEdit::globalUpdate(RegionHandler* rh){
 	bookmark_timer = 0;
 }
 	
-void PatEdit::update(RegionHandler* rh){
+void PatEdit::update(){
 	static int last_position=0xFFFF;
 	
-	Clip::update( rh );
+	Clip::update( );
 	/*
 	static u8 last_peak[ CHANNEL_COUNT ] = { 0, 0, 0, 0, 0, 0 };
 	
@@ -463,11 +463,11 @@ void PatEdit::update(RegionHandler* rh){
 		VUMETER_V1	(coords[5][0] + 8 	, coords[5][1] ,0 , last_peak[5] );
 	}
 	*/
-	PatEdit::globalUpdate( rh );
+	PatEdit::globalUpdate( );
 	
 	// Draw position arrows
 	for(int c=0, x=0, y=0; c < 6; c++) {
-		if( ( !PatEdit::clean ) || ( rh->redraw ) || ( VAR_CHANNEL[ c ].POSITION != VAR_CHANNEL[ c ].LASTPOSITION ) ){
+		if( ( !PatEdit::clean ) || ( RegionHandler::redraw ) || ( VAR_CHANNEL[ c ].POSITION != VAR_CHANNEL[ c ].LASTPOSITION ) ){
 			
 			if(PatEdit::bookmarks[c]>0) {
 				y = PatEdit::bookmarks[c] - VAR_CFG.ORDERPOSITION;
@@ -513,7 +513,7 @@ void PatEdit::update(RegionHandler* rh){
 	}
 	
 	// Draw position tags (Sides)
-	if( ( !PatEdit::clean ) || ( last_position != VAR_CFG.ORDERPOSITION ) || ( rh->redraw ) ){		
+	if( ( !PatEdit::clean ) || ( last_position != VAR_CFG.ORDERPOSITION ) || ( RegionHandler::redraw ) ){		
 		for(int c=0, h=0, y=4, v=VAR_CFG.ORDERPOSITION; c < 16; c++) {
 			h = (c & 1) ? 0x3 : 0x5;
 			HEXADECIMAL( 1, y, h, v>>4);
@@ -572,8 +572,8 @@ void PatEdit::sync( bool verbose ){
 			/* ------------------------------------------------------------
 			Manually draw the controls (good to avoid message overflow)  */
 			if( verbose ) {
-				regHnd.drawControl( ctl );			// Redraw pattern controls
-				regHnd.drawControl( ctl+( 16*6 ) ); // Redraw transpose controls
+				RegionHandler::drawControl( ctl );			// Redraw pattern controls
+				RegionHandler::drawControl( ctl+( 16*6 ) ); // Redraw transpose controls
 			}
 			/* ------------------------------------------------------------
 			Ensure the pattern order tags at the sides get updated later */
@@ -594,15 +594,15 @@ void PatEdit::dispatchMessage(u32 msg){
 		case MESSAGE_CANCEL: // Erase
 			// Clear Arrow on current channel 
 			// y = VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ].POSITION - VAR_CFG.ORDERPOSITION;
-			y = regHnd.control->y - VAR_CFG.ORDERPOSITION;
+			y = RegionHandler::control->y - VAR_CFG.ORDERPOSITION;
 			y-= 4;
 			x = arrow_position[ TRACKER_ACTIVE_CHANNEL ];
 			if( y <= 15 ) Gpu::set( 2, x, 4 + y, 0x00FC);
 			// If target cell is empty, scroll all cells one position from this position up to the end and fill last cell with 0x00
-			if( VAR_PATTERN[ TRACKER_ACTIVE_CHANNEL ].ORDER[ (regHnd.control->y-4) + VAR_CFG.ORDERPOSITION] == 0){
+			if( VAR_PATTERN[ TRACKER_ACTIVE_CHANNEL ].ORDER[ (RegionHandler::control->y-4) + VAR_CFG.ORDERPOSITION] == 0){
 				// Scroll from this point on up to the end
 				shift( -1, y );
-			} else regHnd.controlClear	( regHnd.control );
+			} else RegionHandler::controlClear	( RegionHandler::control );
 			copy( TRACKER_ACTIVE_CHANNEL ); 			
 			VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ].LASTPOSITION = VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ].POSITION;
 			sync();

@@ -25,6 +25,6 @@ const Control BEHAVIOR_CONTROLS[CONTROL_BEHAVIOR_MAX] = {
 #undef CTL
 
 
-void Behavior::update( RegionHandler* rh ){
+void Behavior::update(  ){
 	
 }

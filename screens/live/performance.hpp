@@ -82,7 +82,7 @@ class Performance{
 		MEM_IN_EWRAM static u8			LOCK;
 		MEM_IN_EWRAM static u8 			vars[ CONTROL_LIVE1_MAX ];	
 
-		static void update( RegionHandler* rh );
+		static void update(  );
 };
 
 extern const Control LIVE1_CONTROLS[ CONTROL_LIVE1_MAX ];

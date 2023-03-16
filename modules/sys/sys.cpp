@@ -34,15 +34,15 @@ void Sys::reset(){
 
 void Sys::setScreen( eScreens screen ){
 	switch( screen ){
-		case SCREEN_LIV1	: return regHnd.load( &REGION_MAP_1_LIVE1 	);
-		case SCREEN_LIV2	: return regHnd.load( &REGION_MAP_1_LIVE2 	);
-		case SCREEN_HLP		: return regHnd.load( &REGION_MAP_1_HLP 		);
-		case SCREEN_PAT		: return regHnd.load( &REGION_MAP_2_PAT		);
-		case SCREEN_TRK		: return regHnd.load( &REGION_MAP_3_TRK 		);
-		case SCREEN_INS		: return regHnd.load( &REGION_MAP_2_INS		);
-		case SCREEN_SNG		: return regHnd.load( &REGION_MAP_2_SNG		);
-		case SCREEN_CFG		: return regHnd.load( &REGION_MAP_4_CFG		);
-		case SCREEN_SNK		: return regHnd.load( &REGION_MAP_4_SNK		);
+		case SCREEN_LIV1	: return RegionHandler::load( &REGION_MAP_1_LIVE1 	);
+		case SCREEN_LIV2	: return RegionHandler::load( &REGION_MAP_1_LIVE2 	);
+		case SCREEN_HLP		: return RegionHandler::load( &REGION_MAP_1_HLP 		);
+		case SCREEN_PAT		: return RegionHandler::load( &REGION_MAP_2_PAT		);
+		case SCREEN_TRK		: return RegionHandler::load( &REGION_MAP_3_TRK 		);
+		case SCREEN_INS		: return RegionHandler::load( &REGION_MAP_2_INS		);
+		case SCREEN_SNG		: return RegionHandler::load( &REGION_MAP_2_SNG		);
+		case SCREEN_CFG		: return RegionHandler::load( &REGION_MAP_4_CFG		);
+		case SCREEN_SNK		: return RegionHandler::load( &REGION_MAP_4_SNK		);
 	}		
 }
 
@@ -70,9 +70,12 @@ void Sys::init(){
 	/* High level initialization							*/
 	/*!-----------------------------------------------*/
 	cursor		= 0x00; 
-	keyboard 		= 0x0000; // Clear Keypress, down and up buffer (AB, SL, ST, arrows)
-	//keyrate  	 = 40;
-	//retrig    	= false;
+	keyboard 	= 0x0000; // Clear Keypress, down and up buffer (AB, SL, ST, arrows)
+	//keyrate  	= 40;
+	//retrig    = false;
+	
+	// Initialize RegionHandler
+	RegionHandler::init();
 	
 	#ifndef NDEBUG
 	Debug::init();
@@ -113,7 +116,7 @@ void Sys::init(){
 	// Start SYS
 	Gpu::clear();
 	LookNFeel::init();
-	
+		
 	// Start at Tracker screen	
 	setScreen( SCREEN_TRK );
 	
@@ -202,8 +205,8 @@ void Sys::updateInput(){
 				: KEYDOWN_UP   	? MESSAGE_NAVIGATE_UP    
 				: KEYDOWN_DOWN	? MESSAGE_NAVIGATE_DOWN 
 				: 0x0;
-		if(regHnd.region && msg){
-			regHnd.sendMessage(msg | (unsigned)regHnd.region);
+		if(RegionHandler::region && msg){
+			RegionHandler::sendMessage(msg | (unsigned)RegionHandler::region);
 			return;
 		}
 	}
@@ -214,9 +217,9 @@ void Sys::updateInput(){
 		A
 		B
 	-------------------------------------------------------------------------*/ 
-	if(regHnd.control){
+	if(RegionHandler::control){
 		if( ( KEYUP_A || KEYDOWN_A ) && ( !KEYUP_B && !KEYPRESS_B && !KEYDOWN_B ) ) {
-			regHnd.sendMessage(MESSAGE_ACTIVATE | (unsigned)regHnd.control);
+			RegionHandler::sendMessage(MESSAGE_ACTIVATE | (unsigned)RegionHandler::control);
 		}
 	}
 	/* ------------------------------------------------------------------------
@@ -241,11 +244,11 @@ void Sys::updateInput(){
 		return;
 	}
 		// Handle Copy Command (B+A)
-	if( KEYPRESS_B && regHnd.control) {
+	if( KEYPRESS_B && RegionHandler::control) {
 		
 		
 		if( KEYPRESS_A ) {
-			regHnd.sendMessage(MESSAGE_PASTE | (unsigned)regHnd.control);
+			RegionHandler::sendMessage(MESSAGE_PASTE | (unsigned)RegionHandler::control);
 			return;		
 		}
 		
@@ -255,7 +258,7 @@ void Sys::updateInput(){
 				: KEYDOWN_UP   	? MESSAGE_OTHER_BIGNEXT 
 				: 0x00;
 		
-		if(msg)regHnd.sendMessage(msg);
+		if(msg)RegionHandler::sendMessage(msg);
 		return;
 	}
 	
@@ -267,14 +270,14 @@ void Sys::updateInput(){
 				: KEYDOWN_DOWN	? MESSAGE_MODIFY_BIGSUB  
 				: 0x0;
 				
-		if(regHnd.control && msg){
-			regHnd.sendMessage(msg | (unsigned)regHnd.control);
+		if(RegionHandler::control && msg){
+			RegionHandler::sendMessage(msg | (unsigned)RegionHandler::control);
 			return;
 		}
 		
 		// Handle A Cancel (A, then B)
-		if( KEYDOWN_B && regHnd.control) {
-			regHnd.sendMessage(MESSAGE_CANCEL | (unsigned)regHnd.control);
+		if( KEYDOWN_B && RegionHandler::control) {
+			RegionHandler::sendMessage(MESSAGE_CANCEL | (unsigned)RegionHandler::control);
 			return;
 		}
 	
@@ -293,13 +296,13 @@ void Sys::updateInput(){
 			: KEYDOWN_START  	? 1 
 			: 0x00;
 		   
-	if(regHnd.control && msg ){
-		regHnd.sendMessage(MESSAGE_KEYPRESS | (unsigned)regHnd.control);
+	if(RegionHandler::control && msg ){
+		RegionHandler::sendMessage(MESSAGE_KEYPRESS | (unsigned)RegionHandler::control);
 	}
 	
 }
 
-void overloadTest(RegionHandler &regHnd);
+void overloadTest();
 
 void Sys::update(){
 	
@@ -309,7 +312,7 @@ void Sys::update(){
 	KEYUPDATE();
 	updateInput();	
 	
-	//if( KEYPRESS_L ) overloadTest(regHnd);
+	//if( KEYPRESS_L ) overloadTest();
 	//if( KEYPRESS_R ) VirtualScreen::draw(14,2);
 }
 

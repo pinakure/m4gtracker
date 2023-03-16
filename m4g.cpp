@@ -51,9 +51,9 @@ int main(void){
 				adsadas
 			#endif
 			Sys::update();			
-			regHnd.update(1);
+			RegionHandler::update(1);
 			DEBUG_UPDATE();
-			regHnd.new_region = false;
+			RegionHandler::new_region = false;
 		};
 	}
 	return 0;

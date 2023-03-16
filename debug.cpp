@@ -70,7 +70,7 @@ void Debug::updateWatch(){
 	
 	bool redraw = false;
 	
-	if( regHnd.new_region || regHnd.redraw ) redraw = true;
+	if( RegionHandler::new_region || RegionHandler::redraw ) redraw = true;
 	
 	if( KEYPRESS_L && KEYUP_R ) {
 		redraw 		  = true;
@@ -545,7 +545,7 @@ void Debug::halt( const char *filename, int line ){
 }
 
 // Stress test for GUI Display Functions
-void Debug::benchmark( RegionHandler &regHnd ){
+void Debug::benchmark( ){
 	static u16 i, o;
 	// M4G0 code offers a great collection of macros which you
 	// can use to display a value in a bunch of different formats:
@@ -592,7 +592,7 @@ void Debug::benchmark( RegionHandler &regHnd ){
 	o++;
 }
 
-void Debug::updateMemTest(RegionHandler* rh){
+void Debug::updateMemTest(){
 }
 
 ProgressBar::ProgressBar(){
@@ -727,14 +727,14 @@ void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 	
 	console.print("Checks passed successfully."	, COLOR_GREEN );
 	console.wait( 1 );
-	regHnd.redraw = true;
-	regHnd.update(0);
+	RegionHandler::redraw = true;
+	RegionHandler::update(0);
 }
 
 #else
 
-void Debug::init			( 									 				){}
-void Debug::benchmark		( RegionHandler &regHnd 			 				){}
+void Debug::init			( ){}
+void Debug::benchmark		( ){}
 void Debug::halt			( const char *filename, int line 	 				){}
 void Debug::panic			( const char *filename, u32 *pointer 				){}
 void Debug::error			( int error_code , bool recoverable  				){}
@@ -743,10 +743,10 @@ void Debug::watch			( const char *varname	, size_t var 				){}
 void Debug::watch			( const char *varname	, u32 var 	 				){}
 void Debug::watch			( const char *varname	, u16 var 	 				){}
 void Debug::watch			( const char *varname	, u32 var 	, u8 size		){}
-void Debug::runTests		( 													){}
-void Debug::updateWatch		( 													){}
-void Debug::updateMemTest  	( RegionHandler* rh 								){}
+void Debug::runTests		( ){}
+void Debug::updateWatch		( ){}
+void Debug::updateMemTest  	( ){}
 void Debug::memoryTest		( Control* c, bool bigstep, bool add, u32* pointer 	){}
-void Debug::watchArray		( 													){}
+void Debug::watchArray		( ){}
 	
 #endif

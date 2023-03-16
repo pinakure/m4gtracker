@@ -80,8 +80,8 @@ class PatEdit {
 		static void sync				( bool verbose = true ); // sync pattern data and optionally redraw controls 
 		static void syncPosition		( u8 position );
 		static void copy				( u8 channel );
-		static void globalUpdate		( RegionHandler *rh );
-		static void update				( RegionHandler *rh );
+		static void globalUpdate		(  );
+		static void update				(  );
 		static void dispatchMessage		( u32 msg );
 		static void solo				( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void mute				( Control *c, bool bigstep, bool add, u32 *pointer );

@@ -118,11 +118,11 @@ void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 	// Force skins and fonts to be reloaded
 	VAR_CFG.RELOADSKIN = true;
 	
-	LookNFeel::update( &regHnd );
+	LookNFeel::update( );
 		
 	Progress::disable();
-	//regHnd.progress.enabled = false;
-	//regHnd.redraw = true;
+	//RegionHandler::progress.enabled = false;
+	//RegionHandler::redraw = true;
 }
 
 void Config::backup	(Control *c, bool bigstep, bool add, u32 *pointer){
@@ -196,8 +196,8 @@ void Config::save (Control *c, bool bigstep, bool add, u32 *pointer){
 	//0x6F
 
 	Progress::disable();
-	//regHnd.progress.enabled = false;
-	//regHnd.redraw = true;
+	//RegionHandler::progress.enabled = false;
+	//RegionHandler::redraw = true;
 }
 
 void Config::format (Control *c, bool bigstep, bool add, u32 *pointer){
@@ -213,10 +213,10 @@ void Config::format (Control *c, bool bigstep, bool add, u32 *pointer){
 void Config::defaults (Control *c, bool bigstep, bool add, u32 *pointer){
 	int i;
 		
-	#define SETTING(a, v)		{VAR_CFG.a = v; VAR_CFG.loadCount++;regHnd.update(1);}
+	#define SETTING(a, v)		{VAR_CFG.a = v; VAR_CFG.loadCount++;RegionHandler::update(1);}
 	VAR_CFG.loadCount = 0;
 
-	// regHnd.progress.set(0, 233, STATUS_DEFAULTS, STATUS_SETTINGS, &VAR_CFG.loadCount);
+	// RegionHandler::progress.set(0, 233, STATUS_DEFAULTS, STATUS_SETTINGS, &VAR_CFG.loadCount);
 	Progress::enable(0, 233, STATUS_DEFAULTS, STATUS_SETTINGS, &VAR_CFG.loadCount);
 
 	for(i=0; i<16; i++) {
@@ -289,15 +289,15 @@ void Config::defaults (Control *c, bool bigstep, bool add, u32 *pointer){
 	SRAM.songDefaults( true );
 
 	Progress::disable();
-	regHnd.redraw = true;
+	RegionHandler::redraw = true;
 }
 
 void Config::reset (Control *c, bool bigstep, bool add, u32 *pointer){
 	ReallyDialog::enable();
 	if( ReallyDialog::result ) 
 		Sys::reset();
-	regHnd.redraw = true;
-	regHnd.update(0);
+	RegionHandler::redraw = true;
+	RegionHandler::update(0);
 }
 
 void Config::reinit (Control *c, bool bigstep, bool add, u32 *pointer){
@@ -305,14 +305,14 @@ void Config::reinit (Control *c, bool bigstep, bool add, u32 *pointer){
 	SRAM.sharedDataSave( true );
 }
 
-void Config::memMap( RegionHandler* rh ){
+void Config::memMap(  ){
 
 }
 
-void Config::update( RegionHandler* rh ){
-	if( regHnd.redraw ){
+void Config::update(  ){
+	if( RegionHandler::redraw ){
 		Gpu::ascii( 34, 1, "Build date", COLOR_DARK_BLUE);
 		Gpu::ascii( 34, 2, TIMESTAMP, COLOR_DARK_CYAN 	);
-		regHnd.redraw = false;
+		RegionHandler::redraw = false;
 	}
 }

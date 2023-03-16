@@ -59,6 +59,6 @@ void Memory::get(u8 blocks){
 void Memory::free(u16 addr){
 }
 
-void Memory::update( RegionHandler* rh ){
+void Memory::update(  ){
 	// REGION Callback for Memory Submenu in CFG Screen
 }

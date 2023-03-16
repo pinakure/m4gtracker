@@ -4,7 +4,10 @@
 #include "../modules/key/key.hpp"
 #include "../modules/spu/sequencer.hpp"
 
-u16 ReallyDialog::background = 0x19;
+u16 	ReallyDialog::background 	= 0x19;
+bool 	ReallyDialog::result		= false;
+bool 	ReallyDialog::enabled		= false;
+bool 	ReallyDialog::highlight		= false;
 
 void ReallyDialog::draw(){
 	Gpu::blit(MAP_CACHE, 0x13, 0x0, 12, 6, 0x09, 0x5);

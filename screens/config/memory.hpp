@@ -22,7 +22,7 @@ class Memory {
 		static void test	( );
 		static void get		(u8 blocks);
 		static void free	(u16 addr);
-		static void update	( RegionHandler* rh );
+		static void update	(  );
 };
 
 extern const Callback cb_cfg_prefetch;

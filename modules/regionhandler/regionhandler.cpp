@@ -10,29 +10,39 @@
 #include "../../screens/config.hpp"
 #include "../../data/data.hpp"
 
-RegionHandler regHnd;
+const unsigned short*	RegionHandler::map0;
+const unsigned short*	RegionHandler::map1;
+const unsigned short*	RegionHandler::map2;
 
-bool ReallyDialog::result;
-bool ReallyDialog::enabled;
-bool ReallyDialog::highlight;
+Cache*					RegionHandler::dirty;
+Region*					RegionHandler::region;
+Control*				RegionHandler::control;
+bool 					RegionHandler::redraw;
+bool 					RegionHandler::new_region;
+u32 					RegionHandler::messages[1024];
+s32 					RegionHandler::messagecount;
+u8 						RegionHandler::viewportLastValue;
 
-void RegionHandler::dispatchCallback( const Callback *cb, const Control *ctl, u8 add, u8 bigstep, u16 msg, u32 *pointer ){
+void RegionHandler::dispatchCallback( const Callback *cb, const Control *ctl, u8 add, u8 bigstep, u16 msg ){
 	const Callback *c = cb;	
 	while(c){
 		if(c->msg == msg){
-			c->callback((Control*)ctl, add, bigstep, (u32*)c->var);//pointer);
+			c->callback((Control*)ctl, add, bigstep, (u32*)c->var);
 			return;
 		}
 		c=c->next;
 	}	
 }
 
-RegionHandler::RegionHandler(){
+void RegionHandler::init(){
 	memset(messages, 0, sizeof(u32)*1024);
 	region 			= NULL;
 	redraw 			= true;
-	messagecount 		= 0;
+	messagecount 	= 0;
 	Progress::disable();
+}
+
+RegionHandler::RegionHandler(){
 }
 
 void RegionHandler::dispatchMessages(){
@@ -72,7 +82,7 @@ void RegionHandler::dispatchMessages(){
 					if(region == &REGION_MAP_3_TRK) { Tracker::dispatchMessage ( m ); } else 
 					if(region == &REGION_MAP_2_PAT) { PatEdit::dispatchMessage ( m ); } else 
 					if(region == &REGION_MAP_2_INS) { InstEdit::dispatchMessage( m ); } else 
-					regHnd.controlClear	( (Control*)pv );
+					RegionHandler::controlClear	( (Control*)pv );
 				break;
 				
 			case MESSAGE_MODIFY_ADD		: controlModify	( ((Control*)pv) , true  , false ); break;
@@ -81,7 +91,7 @@ void RegionHandler::dispatchMessages(){
 			case MESSAGE_MODIFY_BIGSUB	: controlModify	( ((Control*)pv) , false , true	 ); break;
 				
 			/* Redraw */
-			case MESSAGE_REDRAW_REGION	: this->redraw = true; break;
+			case MESSAGE_REDRAW_REGION	: redraw = true; break;
 			case MESSAGE_REDRAW_CONTROL	: drawControl( ((Control*)pv) ); break;
 			case MESSAGE_REDRAW_DISPLAY	: drawDisplay( ((Display*)pv) ); break;
 			case MESSAGE_REDRAW_VIEWPORT: 
@@ -256,7 +266,7 @@ void RegionHandler::updateViewport(const Viewport *v, u8 x, u8 y){
 	if(!v->regions)return;
 	
 	if(v->regions[*v->var % v->count]->updater)
-		v->regions[*v->var % v->count]->updater(this);
+		v->regions[*v->var % v->count]->updater();
 	
 	if(viewportLastValue != *v->var){
 		drawViewport(v, x<0xFF?x:v->x, y<0xFF?y:v->y, v->regions[*v->var]);
@@ -301,7 +311,7 @@ void RegionHandler::loadControls(const Region *r){
 			
 			c++;
 		}
-		//dispatchCallback(control->callback, control, false, false, EVENT_FOCUS, NULL);
+		//dispatchCallback(control->callback, control, false, false, EVENT_FOCUS);
 	}
 }
 
@@ -342,7 +352,7 @@ void RegionHandler::jumpToControl(const Control *c){
 	Control *o = control;
 	control = (Control*)c;
 	
-	dispatchCallback(c->callback, c, false, false, EVENT_FOCUS, (u32*)this);
+	dispatchCallback(c->callback, c, false, false, EVENT_FOCUS);
 	sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)o);
 	sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)control);
 }
@@ -355,18 +365,18 @@ void RegionHandler::controlTrigger(const Control *c, u16 q){
 		default					: //Debug::error(c->callback->msg);
 								  break;
 		
-		case EVENT_KEY_A		: dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_A	, (u32*)this);
+		case EVENT_KEY_A		: dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_A	);
 								  break;
-		case EVENT_KEY_B		: dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_B	, (u32*)this);
+		case EVENT_KEY_B		: dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_B	);
 								  break;
 		
-		case EVENT_KEYUP_A		: KEYFORCENOINPUT(); dispatchCallback(c->callback, c, true, true, EVENT_KEYUP_A  	, (u32*)this); KEYFORCENOINPUT(); break;
-		case EVENT_KEYUP_B		: KEYFORCENOINPUT(); dispatchCallback(c->callback, c, true, true, EVENT_KEYUP_B  	, (u32*)this); KEYFORCENOINPUT(); break;
-		case EVENT_KEYDOWN_A	: KEYFORCENOINPUT(); dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_A	, (u32*)this); break;
-		case EVENT_KEYDOWN_B	: KEYFORCENOINPUT(); dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_B, (u32*)this); break;
+		case EVENT_KEYUP_A		: KEYFORCENOINPUT(); dispatchCallback(c->callback, c, true, true, EVENT_KEYUP_A  	); KEYFORCENOINPUT(); break;
+		case EVENT_KEYUP_B		: KEYFORCENOINPUT(); dispatchCallback(c->callback, c, true, true, EVENT_KEYUP_B  	); KEYFORCENOINPUT(); break;
+		case EVENT_KEYDOWN_A	: KEYFORCENOINPUT(); dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_A	); break;
+		case EVENT_KEYDOWN_B	: KEYFORCENOINPUT(); dispatchCallback(c->callback, c, true, true, EVENT_KEYDOWN_B	); break;
 	}
 	
-	/*control->callback(control, true, true, (u32*)this); */
+	/*control->callback(control, true, true, ); */
 	sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)c);
 	
 }
@@ -382,7 +392,7 @@ void RegionHandler::controlClear(const Control *c){
 
 void RegionHandler::controlModify(const Control *c, bool big, bool add){
 	if( !c->callback || Clip::visible ) return;
-	dispatchCallback(c->callback, c, add, big, EVENT_MODIFY_B, (u32*)this);
+	dispatchCallback(c->callback, c, add, big, EVENT_MODIFY_B );
 	sendMessage(MESSAGE_REDRAW_CONTROL | (unsigned)c);
 }
 
@@ -391,10 +401,10 @@ void RegionHandler::update( u8 delta ){
 	// Handle modal progress dialog, if enableds
 	if(Progress::update()) return;
 	
-	if(region->updater)region->updater(this);
+	if(region->updater)region->updater();
 	
 	// If there is any viewport, it will override message queu and control list
-	this->updateViewport(region->viewport, region->xadd, region->yadd);			
+	updateViewport(region->viewport, region->xadd, region->yadd);			
 	
 	//this allows a updater to detect wether or not the region has just been redrawn (useful on entry)
 	redraw=false; //<--- on redraw, move back to that method if you notice any redraw bug or glitch. 

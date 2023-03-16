@@ -271,14 +271,14 @@ void Clip::show(){
 	redraw  			= true;
 	action  			= CLIP_NONE;
 	
-	if(!regHnd.control) Debug::panic("No regHnd.control", (u32*)&regHnd );
+	if(!RegionHandler::control) Debug::panic("No RegionHandler::control", (u32*)&RegionHandler::control );
 }
 
 void Clip::hide(){
 	if( !visible ) return;
 	redraw = false;
 	visible = false;
-	regHnd.draw();
+	RegionHandler::draw();
 
 	if( AT_TRACKER_SCREEN ){
 		for(int i=0; i<6; i++){
@@ -411,20 +411,20 @@ void Clip::drawMask( int color ){
 	return AT_TRACKER_SCREEN ? drawMaskTrk( color ) : drawMaskPat( color );
 }
 
-void Clip::draw( RegionHandler *rh ){
+void Clip::draw(  ){
 	redraw = false;
 	if( !visible ){
-		rh->draw();
+		RegionHandler::draw();
 		return;
 	}
 	blink_monitor = Gpu::blink;
 	int cc = VAR_CFG.CURRENTCHANNEL;
 	cc = ( cc < 5 ) ? cc *= 4 : 6; 
  	if(AT_TRACKER_SCREEN){
-		rh->drawCache(cc+10, 3, &CACHE_CLIPBOARD2, 0, false);
+		RegionHandler::drawCache(cc+10, 3, &CACHE_CLIPBOARD2, 0, false);
 		Gpu::set(0, cc+12 + int(positions[ (int)action ][0]), 5 + int(positions[ (int)action ][1]), Gpu::blink ? 0x14 : 0x13);
 	} else {
-		rh->drawCache(26, 0, &CACHE_CLIPBOARD2, 0, false);
+		RegionHandler::drawCache(26, 0, &CACHE_CLIPBOARD2, 0, false);
 		Gpu::set(0, 28 + int(positions[ (int)action ][0]), 2 + int(positions[ (int)action ][1]), Gpu::blink ? 0x14 : 0x13);
 		Gpu::set(1, 29, 4, 0x0f);
 		Gpu::set(1, 26, 3, 0x08);
@@ -436,17 +436,17 @@ void Clip::draw( RegionHandler *rh ){
 }
 
 
-void Clip::update(RegionHandler *rh){
+void Clip::update(){
 	
 	Notifier::update();
 	
 	Gpu::blinkUpdate(8);
 	
 	// Draw if needed...
-	if((visible) && ( redraw || rh->redraw || ( blink_monitor != Gpu::blink ) )) draw( rh );
+	if((visible) && ( redraw || RegionHandler::redraw || ( blink_monitor != Gpu::blink ) )) draw( );
 	// Or erase when needed
 	if( redraw && !visible ){
-		rh->draw();
+		RegionHandler::draw();
 		redraw = false;
 	}
 }

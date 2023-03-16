@@ -25,7 +25,7 @@ bool 	AlphaDialog::redraw		= false;
 void AlphaDialog::getBigString(Control *c, bool bigstep, bool add, u32 *pointer){
 	AlphaDialog::enable(true, c->var, c->x, c->y);
 	KEYFORCENOINPUT();
-	regHnd.redraw=true;
+	RegionHandler::redraw=true;
 }
 
 /* Invokes AlphaNumeric input modal dialog, and sets its return var */
@@ -33,7 +33,7 @@ void AlphaDialog::getBigString(Control *c, bool bigstep, bool add, u32 *pointer)
 void AlphaDialog::getString(Control *c, bool bigstep, bool add, u32 *pointer){
 	AlphaDialog::enable(false, c->var, c->x, c->y);
 	KEYFORCENOINPUT();
-	regHnd.redraw=true;
+	RegionHandler::redraw=true;
 }
 	
 void AlphaDialog::add(){

@@ -37,7 +37,7 @@ class Piano{
 		MEM_IN_EWRAM static u8 vars[ CONTROL_LIVE2_MAX ];	
 		MEM_IN_EWRAM static u8 last_value;
 
-		static void update( RegionHandler* rh );
+		static void update(  );
 };
 
 extern const Control LIVE2_CONTROLS[CONTROL_LIVE2_MAX];

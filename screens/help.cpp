@@ -144,7 +144,7 @@ void Help::updateButtons(){
 	button_moved = false;
 }
 
-void Help::update(RegionHandler* rh){
+void Help::update(){
 	
 	if( KEYDOWN_B		) { Help::activateBack(); }
 	if( KEYDOWN_A		) { Help::activateButton(); }
@@ -152,7 +152,7 @@ void Help::update(RegionHandler* rh){
 	if( KEYDOWN_LEFT	) Help::prevButton	(); else if( KEYDOWN_RIGHT	) Help::nextButton();
 
 	// Propagate Region redraw flag
-	if( rh->redraw ){
+	if( RegionHandler::redraw ){
 		data_redraw = true;
 	}
 

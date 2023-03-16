@@ -1,6 +1,5 @@
 #include "snake.hpp" 
 #include "../modules/gpu/gpu.hpp"
-#include "../modules/gpu/virtualscreen.hpp"
 #include "../modules/key/key.hpp"
 #include "../helpers.hpp"
 #include "../modules/spu/sequencer.hpp"
@@ -16,8 +15,8 @@ u8 			SnakeGame::tick;
 u8 			SnakeGame::speed;
 SnakeDirs 	SnakeGame::direction;
 SnakeDirs 	SnakeGame::nextdirection;
-u8 			SnakeGame::data[32*32];
-SnakeCell 	SnakeGame::cells[32];
+u8 			SnakeGame::data[ VIRTUALSCREEN_WIDTH * VIRTUALSCREEN_HEIGHT ];
+SnakeCell 	SnakeGame::cells[ MAX_SNAKE_LENGTH ];
 SnakeCell 	SnakeGame::fruit;
 u8 			SnakeGame::lives 		= 3;
 u8 			SnakeGame::level		= 0;
@@ -240,7 +239,7 @@ void SnakeGame::move(){
 	cells[0].y &= 31;
 	
 	// Grow if needed
-	if(grow && (SnakeGame::length < 32)){
+	if(grow && (SnakeGame::length < MAX_SNAKE_LENGTH)){
 		cells[ SnakeGame::length ].x = grow_x;
 		cells[ SnakeGame::length ].y = grow_y;
 		redraw_hud = true;
@@ -249,14 +248,14 @@ void SnakeGame::move(){
 	grow = false;
 }
 
-void SnakeGame::update( RegionHandler* rh){
+void SnakeGame::update( ){
 	
 	
 	// Process input 
-	if( KEYPRESS_LEFT  && ( direction !=SNAKE_RIGHT) ) nextdirection = SNAKE_LEFT  ; else
-	if( KEYPRESS_UP    	&& ( direction !=SNAKE_DOWN ) ) nextdirection = SNAKE_UP	  ; else
-	if( KEYPRESS_RIGHT && ( direction !=SNAKE_LEFT ) ) nextdirection = SNAKE_RIGHT ; else
-	if( KEYPRESS_DOWN 	&& ( direction !=SNAKE_UP   ) ) nextdirection = SNAKE_DOWN  ;
+	if( KEYPRESS_LEFT 	&& ( direction !=SNAKE_RIGHT	) ) nextdirection = SNAKE_LEFT  	; else
+	if( KEYPRESS_UP   	&& ( direction !=SNAKE_DOWN 	) ) nextdirection = SNAKE_UP		; else
+	if( KEYPRESS_RIGHT	&& ( direction !=SNAKE_LEFT 	) ) nextdirection = SNAKE_RIGHT 	; else
+	if( KEYPRESS_DOWN 	&& ( direction !=SNAKE_UP   	) ) nextdirection = SNAKE_DOWN  	;
 	
 	if( KEYPRESS_A ) eat();
 	//if( KEYPRESS_A ) newFruit();
@@ -278,8 +277,6 @@ void SnakeGame::update( RegionHandler* rh){
 		direction = nextdirection;
 		tick = tickLevel>>turbo;
 	}
-	
-	// Render, if needed	
 	
 	// Render, if needed	
 	

@@ -27,7 +27,7 @@ const Control LINKMODE_CONTROLS[ CONTROL_LINKMODE_MAX ] = {
 #undef VAR
 #undef CTL
 
-void LinkMode::update( RegionHandler* rh ){
+void LinkMode::update(  ){
 	const Region *c = &REGION_MAP_4_LINKSTATUS;	
 	Gpu::blitAlt(MAPDATA + ((MAP_CFG * 3) << 12), c->x, c->y, 0xb, 0xf, c->width, c->height);
 	switch( VAR_CFG.LINKMODE.LINKMODE ){
@@ -40,8 +40,8 @@ void LinkMode::update( RegionHandler* rh ){
 
 void LinkMode::toggleMaster(Control *c, bool bigstep, bool add, u32 *pointer){
 	modify1BIT( c, bigstep, add, pointer);
-	LinkMode::update(&regHnd);
-	regHnd.drawControl(&LINKMODE_CONTROLS[ CONTROL_LINKMODE_MASTER]);
+	LinkMode::update();
+	RegionHandler::drawControl(&LINKMODE_CONTROLS[ CONTROL_LINKMODE_MASTER]);
 }
 
 void LinkMode::songRecv( Control *c, bool bigstep, bool add, u32 *pointer ){
@@ -52,5 +52,5 @@ void LinkMode::songSend( Control *c, bool bigstep, bool add, u32 *pointer ){
 	
 }
 
-void LinkMode::monitor( RegionHandler* rh ){
+void LinkMode::monitor(  ){
 }

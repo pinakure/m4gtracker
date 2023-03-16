@@ -10,7 +10,7 @@
 
 class RegionHandler;
 
-#define REDRAW(a)	rh->sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&rh->region->displays[a])&0x0fffffff);
+#define REDRAW(a)	RegionHandler::sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&RegionHandler::region->displays[a])&0x0fffffff);
 
 typedef struct sRegion Region;
 
@@ -32,7 +32,7 @@ typedef struct sRegion {
 	const Display*		displays;		// Array of existing displays
 	Control*			focus;			// Which one of the controls is the active
 	u8*					controlVars;	// Copy of the values being monitored by controls, to know when to redraw
-	void(*updater)(RegionHandler *rh);	
+	void(*updater)();	
 	const Viewport*		viewport;		// If not NULL, viewport to be processed with this region
 }Region;
 

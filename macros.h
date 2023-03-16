@@ -10,20 +10,20 @@
 #define BUTTON_ALTER							KEY_A	
 #define BUTTON_NAVIGATE						KEY_SELECT
 
-#define AT_INSTRUMENT_SCREEN					(regHnd.region == &REGION_MAP_2_INS)
-#define AT_TRACKER_SCREEN					(regHnd.region == &REGION_MAP_3_TRK)
-#define AT_PATTERN_SCREEN					(regHnd.region == &REGION_MAP_2_PAT)
+#define AT_INSTRUMENT_SCREEN					(RegionHandler::region == &REGION_MAP_2_INS)
+#define AT_TRACKER_SCREEN					(RegionHandler::region == &REGION_MAP_3_TRK)
+#define AT_PATTERN_SCREEN					(RegionHandler::region == &REGION_MAP_2_PAT)
 
 
 #define TRACKER_ACTIVE_COLUMN (											 \
-	(regHnd.control->cache == &CACHE_NOTES						) ? 0 : \
-	(regHnd.control->cache == &CACHE_HEXADECIMAL				) ? 2 : \
-	(regHnd.control->cache == &CACHE_COMMANDS					) ? 3 : \
-	(regHnd.control->cache == &CACHE_HEXADECIMAL_INSTRUMENT	) ? 4 : \
-	(regHnd.control->cache == &CACHE_HEXADECIMAL_TWOTILES		) ? 1 : \
+	(RegionHandler::control->cache == &CACHE_NOTES						) ? 0 : \
+	(RegionHandler::control->cache == &CACHE_HEXADECIMAL				) ? 2 : \
+	(RegionHandler::control->cache == &CACHE_COMMANDS					) ? 3 : \
+	(RegionHandler::control->cache == &CACHE_HEXADECIMAL_INSTRUMENT	) ? 4 : \
+	(RegionHandler::control->cache == &CACHE_HEXADECIMAL_TWOTILES		) ? 1 : \
 	1 																		 \
 )
-#define TRACKER_ACTIVE_ROW					(regHnd.control->y - 4)
+#define TRACKER_ACTIVE_ROW					(RegionHandler::control->y - 4)
 #define TRACKER_ACTIVE_CHANNEL				VAR_CFG.CURRENTCHANNEL
 #define PATTERN_ACTIVE_COLUMN				TRACKER_ACTIVE_CHANNEL
 #define PATTERN_ACTIVE_CHANNEL				PATTERN_ACTIVE_COLUMN
@@ -52,7 +52,7 @@
 
 #define OK() {													\
 	VAR_CFG.loadCount++;											\
-	regHnd.update(1);												\
+	RegionHandler::update(1);												\
 	DECIMAL_DOUBLE(28,1,9, SRAM.position-1);					\
 }
 

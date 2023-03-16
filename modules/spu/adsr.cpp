@@ -19,7 +19,7 @@ u8 		Adsr::smp_table    [ ADSR_TABLE_LENGTH ];
 
 void Adsr::drawX4( u8 adsr_tables[ 4 ][ ADSR_TABLE_LENGTH ] , u8 adsr_position ){
 	
-	if( regHnd.region != &REGION_MAP_2_INS ) return;
+	if( RegionHandler::region != &REGION_MAP_2_INS ) return;
 	
 	if( ( last_position == adsr_position ) || redraw ) return;
 	last_position = adsr_position;
@@ -56,7 +56,7 @@ void Adsr::drawX4( u8 adsr_tables[ 4 ][ ADSR_TABLE_LENGTH ] , u8 adsr_position )
 }
 
 void Adsr::draw( u8 adsr_table[ ADSR_TABLE_LENGTH ] , u8 adsr_position ){
-	if( regHnd.region != &REGION_MAP_2_INS ) return;
+	if( RegionHandler::region != &REGION_MAP_2_INS ) return;
 	
 	if( ( last_position == adsr_position ) || redraw ) return;
 	last_position = adsr_position;

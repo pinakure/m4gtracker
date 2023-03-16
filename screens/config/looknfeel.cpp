@@ -68,7 +68,7 @@ void LookNFeel::logoFade(){
 	Synth::lfo = 0x00;
 	
 	while( freeze < 0xfff>>4 ){
-		regHnd.drawVerticalCache(8,7,&CACHE_LOGOTYPE,0,0);
+		RegionHandler::drawVerticalCache(8,7,&CACHE_LOGOTYPE,0,0);
 		//KEYUPDATE();
 		MOSAIC_CNT = 0xFF - ((freeze )&0xFF);
 		if( VAR_CFG.LOOKNFEEL.STARTUPSFX ) {
@@ -110,7 +110,7 @@ void LookNFeel::logoWait(){
 	
 	Gpu::loadPalette();
 	while( (freeze < 2048) && !KEYACTIVITY() ){
-		regHnd.drawVerticalCache(8,7,&CACHE_LOGOTYPE,0,0);
+		RegionHandler::drawVerticalCache(8,7,&CACHE_LOGOTYPE,0,0);
 		KEYUPDATE();
 		rotateGfx(); 
 		freeze++;
@@ -126,7 +126,7 @@ void LookNFeel::init(){
 }
 
 // Called when a look and feel value is changed
-void LookNFeel::update( RegionHandler* rh ){
+void LookNFeel::update(  ){
 	static u8 lastBorder = VAR_CFG.LOOKNFEEL.BORDER;
 	static u8 lastFont = VAR_CFG.LOOKNFEEL.FONT;
 	
@@ -148,6 +148,6 @@ void LookNFeel::update( RegionHandler* rh ){
 	#undef ROWSIZE	
 }
 
-void LookNFeel::credits( RegionHandler* rh ){
+void LookNFeel::credits(  ){
 
 }

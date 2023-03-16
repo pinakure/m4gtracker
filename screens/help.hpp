@@ -144,7 +144,7 @@ class Help {
 		static void activateBack();
 		static void activateButton();
 		static void updateButtons();
-		static void update( RegionHandler* rh );
+		static void update(  );
 		
 };
 

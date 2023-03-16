@@ -4,6 +4,7 @@
 #include "../agb.h"
 
 #include "../modules/regionhandler/regionhandler.hpp"
+#include "../modules/gpu/virtualscreen.hpp"
 
 typedef enum eSnakeDirs {
 	SNAKE_UP,
@@ -16,6 +17,8 @@ typedef struct sSnakeCell{
 	u8 x;
 	u8 y;
 } SnakeCell;
+
+#define MAX_SNAKE_LENGTH 	64
 
 class SnakeGame {
 	private:
@@ -46,8 +49,8 @@ class SnakeGame {
 		
 		static bool 		grow;
 			
-		static u8 			data[32*32];
-		static SnakeCell 	cells[32];
+		static u8 			data[ VIRTUALSCREEN_WIDTH * VIRTUALSCREEN_HEIGHT ];
+		static SnakeCell 	cells[ MAX_SNAKE_LENGTH ];
 		static SnakeCell 	fruit;
 
 		static void init();
@@ -60,7 +63,7 @@ class SnakeGame {
 		static void sound();
 		static void hit();
 		static void newFruit();
-		static void update( RegionHandler* rh );
+		static void update(  );
 		
 		
 };

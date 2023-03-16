@@ -22,8 +22,8 @@ class LookNFeel {
 		static void init	( );
 		static void logoWait( );
 		static void logoFade( );
-		static void update	( RegionHandler* rh );
-		static void credits	( RegionHandler* rh );
+		static void update	(  );
+		static void credits	(  );
 		
 };
 

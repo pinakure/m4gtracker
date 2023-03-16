@@ -58,8 +58,8 @@ class Clip {
 		static ClipboardAction 		action;
 		
 		static void init			();
-		static void draw			( RegionHandler *rh );
-		static void update			( RegionHandler *rh );
+		static void draw			(  );
+		static void update			(  );
 		static void show			();
 		static void hide			();
 		static void activate		();

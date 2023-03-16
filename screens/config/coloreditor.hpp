@@ -9,7 +9,7 @@
 class ColorEditor {
 	public:
 		static void show	( Control *c = NULL, bool bigstep=0, bool add=0, u32 *pointer=NULL );
-		static void update	( RegionHandler* rh );
+		static void update	(  );
 		
 };
 

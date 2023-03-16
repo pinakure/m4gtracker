@@ -18,7 +18,7 @@ bool Progress::update(){
 	
 	if( redraw ){
 		if( redraw > 1 ){
-			regHnd.drawCache(10, 5, &CACHE_DLG_PROGRESS_SMALL, 0, 0);
+			RegionHandler::drawCache(10, 5, &CACHE_DLG_PROGRESS_SMALL, 0, 0);
 			STATUS(11, 6, 6, upperLine);
 			STATUS(11, 8, 7, lowerLine);
 		}

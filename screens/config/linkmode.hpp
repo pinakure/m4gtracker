@@ -20,8 +20,8 @@ enum E_LINKMODE_CONTROLS {
 
 class LinkMode {
 	public:
-		static void update			( RegionHandler *rh );
-		static void monitor 		( RegionHandler *rh );
+		static void update			(  );
+		static void monitor 		(  );
 		static void songRecv		( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void songSend 		( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void toggleMaster	( Control *c, bool bigstep, bool add, u32 *pointer );

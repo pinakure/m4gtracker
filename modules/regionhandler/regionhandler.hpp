@@ -15,44 +15,43 @@ class RegionHandler {
 	private:
 		
 	public:
-		const unsigned short *map0;
-		const unsigned short *map1;
-		const unsigned short *map2;
+		static const unsigned short*	map0;
+		static const unsigned short*	map1;
+		static const unsigned short*	map2;
 		
-		Cache*		dirty;
-		Region*		region;
-		Control*	control; 		//focused control
-		bool 		redraw;  		// used to notify the loaded region it must be redrawn
-		bool 		new_region;  	// turned on @ load, screen responsible of reading this var must turn it off
+		static Cache*					dirty;
+		static Region*					region;
+		static Control*					control; 		//focused control
+		static bool 					redraw;  		// used to notify the loaded region it must be redrawn
+		static bool 					new_region;  	// turned on @ load, screen responsible of reading this var must turn it off
+		static u32 						messages[1024];
+		static s32 						messagecount;
+		static u8 						viewportLastValue;// <--- warning!: this disrupts recursive functionality!
 		
-		u32 		messages[1024];
-		s32 		messagecount;
+		RegionHandler					( );
+		static void	init				( );
+		static void dispatchMessages			( );
+		static void draw						( );
 		
-		u8 			viewportLastValue;// <--- warning!: this disrupts recursive functionality!
-		
-		RegionHandler();
-		void dispatchMessages();
-		void dispatchCallback( const Callback *cb, const Control *ctl, u8 add, u8 bigstep, u16 msg, u32 *pointer );
-		void sendMessage(u32 message);
-		void load(const Region *r);
-		void drawCache(u8 x, u8 y, const Cache *c, u8 var, bool highlight);
-		void drawVerticalCache(u8 x, u8 y, const Cache *c, u8 var, bool highlight);
-		void drawControl(const Control *c);
-		void drawDisplay(const Display *d);
-		void updateViewport(const Viewport *v, u8 x, u8 y);
-		void loadControls(const Region *r);
-		void loadDisplays(const Region *r);
-		void drawViewport(const Viewport *v, u8 x, u8 y, const Region *r);
-		void draw();
-		void jumpToControl(const Control *c);
-		void controlTrigger(const Control *c, u16 q);
-		void controlClear(const Control *c);
-		void controlModify(const Control *c, bool big, bool add);
-		void update(u8 delta);
+		static void sendMessage			( u32 message										);
+		static void load				( const Region *r									);
+		static void drawCache			( u8 x, u8 y, const Cache *c, u8 var, bool highlight);
+		static void drawVerticalCache	( u8 x, u8 y, const Cache *c, u8 var, bool highlight);
+		static void drawControl			( const Control *c									);
+		static void drawDisplay			( const Display *d									);
+		static void updateViewport		( const Viewport *v, u8 x, u8 y						);
+		static void loadControls		( const Region *r									);
+		static void loadDisplays		( const Region *r									);
+		static void drawViewport		( const Viewport *v, u8 x, u8 y, const Region *r	);
+		static void jumpToControl		( const Control *c									);
+		static void controlTrigger		( const Control *c, u16 q							);
+		static void controlClear		( const Control *c									);
+		static void controlModify		( const Control *c, bool big, bool add				);
+		static void update				( u8 delta											);
+
+		static void dispatchCallback	( const Callback *cb, const Control *ctl, u8 add, u8 bigstep, u16 msg );
 };
 
-#define OnNewRegion( f ) if(rh->redraw){ f };
-
-extern RegionHandler regHnd;
+#define OnNewRegion( f ) if(RegionHandler::redraw){ f };
 
 #endif
