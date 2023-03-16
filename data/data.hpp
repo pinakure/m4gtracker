@@ -9,6 +9,7 @@
 #include "channel.hpp"
 #include "regions.hpp"
 #include "caches.hpp"
+#include "layers.hpp"
 #include "displays.hpp"
 #include "controls.hpp"
 #include "../callbacks/callbacks.h"

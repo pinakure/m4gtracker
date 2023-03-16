@@ -1,6 +1,6 @@
 #include "tracker.hpp"
 #include "../data/data.hpp"
-#include "../data/helpers.hpp"
+#include "../helpers.hpp"
 #include "../modules/gpu/gpu.hpp"
 #include "../modules/key/key.hpp"
 #include "../modules/spu/mixer.hpp"

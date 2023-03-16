@@ -2,7 +2,7 @@
 
 #include "../debug.hpp"
 #include "../data/data.hpp"
-#include "../data/helpers.hpp"
+#include "../helpers.hpp"
 #include "../macros.h"
 #include "../modules/regionhandler/regionhandler.hpp"
 #include "../modules/spu/synth.hpp"

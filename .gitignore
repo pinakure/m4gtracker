@@ -231,3 +231,4 @@ screens/instedit.o
 screens/help.o
 screens/console.o
 debug.o
+helpers.o

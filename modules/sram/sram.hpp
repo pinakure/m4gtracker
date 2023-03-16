@@ -3,7 +3,7 @@
 
 #include "../../agb.h"
 #include "../../macros.h"
-#include "../../data/helpers.hpp"
+#include "../../helpers.hpp"
 #include "../gpu/gpu.hpp"
 #include "../spu/sequencer.hpp"
 #include "../../screens/tracker.hpp"

@@ -1,6 +1,6 @@
 #include "caches.hpp"
 
-#include "helpers.hpp"
+#include "../helpers.hpp"
 
 const Cache CACHE_DIRTY_MAP_1 = { 			/*e*/ NULL, 						/*m*/ 0x00, /*x*/ 0x19, /*y*/ 0x32, /*w*/ 0x0E, /*h*/ 0x0E, /*iw*/ 0x0E, /*ih*/ 0x0E, /*pa*/ 0x02, /*pi*/ 0x06, false };
 const Cache CACHE_BUFFER = { 				/*e*/ NULL, 						/*m*/ 0x00, /*x*/ 0x27, /*y*/ 0x14, /*w*/ 0x19, /*h*/ 0x2C, /*iw*/ 0x18, /*ih*/ 0x2C, /*pa*/ 0x02, /*pi*/ 0x06, true };

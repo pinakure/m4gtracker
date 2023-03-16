@@ -1,8 +1,8 @@
 #include "gpu.hpp"
 #include "virtualscreen.hpp"
-#include "../../debug.hpp"
-#include "../../data/helpers.hpp"
+#include "../../helpers.hpp"
 #include "../../data/caches.hpp"
+#include "../../debug.hpp"
 
 const unsigned short*	Gpu::MAP0;
 const unsigned short*	Gpu::MAP1;

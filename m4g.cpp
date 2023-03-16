@@ -1,8 +1,7 @@
 #include "m4g.hpp"
-#include "data/helpers.hpp"
+#include "debug.hpp"
+#include "helpers.hpp"
 #include "modules/modules.hpp"
-#include "modules/regionhandler/regionhandler.cpp"
-#include "callbacks.cpp"
 #include "screens/config.hpp"
 
 

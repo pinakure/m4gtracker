@@ -1,6 +1,14 @@
 #include "regionhandler.hpp"
+#include "../key/key.hpp"
+#include "../gpu/gpu.hpp"
+#include "../clip/clip.hpp"
 #include "../../debug.hpp"
 #include "../../screens/live.hpp"
+#include "../../screens/tracker.hpp"
+#include "../../screens/patedit.hpp"
+#include "../../screens/instedit.hpp"
+#include "../../screens/config.hpp"
+#include "../../data/data.hpp"
 
 RegionHandler regHnd;
 

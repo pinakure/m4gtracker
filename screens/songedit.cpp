@@ -4,7 +4,7 @@
 
 #include "../debug.hpp"
 #include "../data/data.hpp"
-#include "../data/helpers.hpp"
+#include "../helpers.hpp"
 #include "../modules/sram/sram.hpp"
 #include "../modules/spu/sequencer.hpp"
 #include "../modules/gpu/gpu.hpp"

@@ -8,6 +8,7 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 		modules/sram/sram.o \
 		modules/clip/clip.o \
 		modules/key/key.o \
+		modules/regionhandler/regionhandler.o \
 		modules/gpu/virtualscreen.o \
 		modules/gpu/gpu.o \
 		modules/net/net.o \
@@ -43,6 +44,7 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 		dialogs/really.o \
 		dialogs/alpha.o \
 		dialogs/progress.o \
+		helpers.o \
 		debug.o \
 		m4g.o 
 
@@ -139,13 +141,7 @@ clean-modules:
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/key/*.o *.i *.ii *.m4h	
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/clip/*.o *.i *.ii *.m4h	
 
-clean-callbacks: clean-modules
-	@echo -------------------------------------------------------------------------------
-	@echo Cleaning callbacks
-	@echo -------------------------------------------------------------------------------
-	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f callbacks/*.o *.i *.ii *.m4h	
-
-clean-data: clean-callbacks
+clean-data: clean-modules
 	@echo -------------------------------------------------------------------------------
 	@echo Cleaning data
 	@echo -------------------------------------------------------------------------------

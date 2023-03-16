@@ -38,7 +38,7 @@
 // #define VSYNC
 		
 #include "data/enum.h"
-#include "data/helpers.hpp"
+#include "helpers.hpp"
 #include "macros.h"
 
 #include "data/datatypes.h"

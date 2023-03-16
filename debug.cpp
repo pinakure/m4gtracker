@@ -1,11 +1,11 @@
 #include "debug.hpp"
+#include "helpers.hpp"
 
 #include "screens/songedit.hpp"
 #include "modules/gpu/gpu.hpp"
 #include "modules/sys/sys.hpp"
 #include "modules/key/key.hpp"
 #include "modules/sram/sram.hpp"
-#include "data/helpers.hpp"
 #include "screens/config.hpp"
 #include "data/enum.h"
 #include "data/data.hpp"

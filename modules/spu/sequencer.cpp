@@ -2,10 +2,10 @@
 #include "mixer.hpp"
 #include "../net/net.hpp"
 #include "../sram/sram.hpp"
+#include "../../helpers.hpp"
 #include "../../screens/songedit.hpp"
 #include "../../data/channel.hpp"
 #include "../../data/song.hpp"
-#include "../../data/helpers.hpp"
 #include "../../data/config.hpp"
 #include "../../screens/tracker.hpp"
 
