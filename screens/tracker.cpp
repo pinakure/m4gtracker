@@ -1,7 +1,6 @@
 #include "tracker.hpp"
 #include "config.hpp"
 #include "../data/data.hpp"
-#include "../helpers.hpp"
 #include "../modules/gpu/gpu.hpp"
 #include "../modules/key/key.hpp"
 #include "../modules/spu/mixer.hpp"
@@ -12,29 +11,9 @@
 #include "../modules/spu/sequencer.hpp"
 #include "../macros.h"
 
-const Callback cb_cfg_finetune		= { modify4BIT					, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.FINETUNE		, NULL };
-const Callback cb_cfg_prelisten		= { modify1BIT					, EVENT_KEYDOWN_B	, &VAR_CFG.TRACKER.PRELISTEN	, NULL };
-const Callback cb_cfg_transpose		= { modify8BIT					, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.TRANSPOSE	, NULL };
-const Callback cb_cfg_inputmode		= { modify1BIT					, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.INPUTMODE	, NULL };
-const Callback cb_cfg_soundbias		= { modify8BIT					, EVENT_MODIFY_B	, &VAR_CFG.TRACKER.SOUNDBIAS	, NULL };
-const Callback cb_cfg_mixer			= { Mixer::show					, EVENT_KEYUP_B		, NULL 							, NULL };
-
-#define CTL(a) &TRACKER_CONTROLS[CONTROL_TRACKER_##a]
-#define VAR(a) ((u8*)&(VAR_CFG.TRACKER.a))
-const Control TRACKER_CONTROLS[CONTROL_TRACKER_MAX] = { 
-//  				{ x		, y   	, up				, right				, down				, left			, cache						, var						, callback				},
-/* MENU4		*/	{ 0x04 	, 0x04 	, NULL				, CTL(FINETUNE)		, NULL				, NULL			, NULL						, (u8*)&(VAR_CFG.MENUSLOT)	, &Config::menuindex	}, 
-/* finetune		*/	{ 0x1b 	, 0x06 	, CTL(MIXER)		, CTL(FINETUNE)		, CTL(PRELISTEN)	, CTL(MENU4)	, &CACHE_HEXADECIMAL		, VAR(FINETUNE)				, &cb_cfg_finetune		},
-/* prelisten	*/	{ 0x1b 	, 0x07 	, CTL(FINETUNE)		, CTL(PRELISTEN)	, CTL(TRANSPOSE)	, CTL(MENU4)	, &CACHE_CHECK				, VAR(PRELISTEN)			, &cb_cfg_prelisten		},
-/* transpose	*/	{ 0x1b 	, 0x08 	, CTL(PRELISTEN)	, CTL(TRANSPOSE)	, CTL(INPUTMODE)	, CTL(MENU4)	, &CACHE_HEXADECIMAL_DOUBLE	, VAR(TRANSPOSE)			, &cb_cfg_transpose		},
-/* inputmode	*/	{ 0x1a 	, 0x09 	, CTL(TRANSPOSE)	, CTL(INPUTMODE)	, CTL(SOUNDBIAS)	, CTL(MENU4)	, &CACHE_INPUT_TYPE			, VAR(INPUTMODE)			, &cb_cfg_inputmode		},
-/* soundbias	*/	{ 0x1b 	, 0x0a 	, CTL(INPUTMODE)	, CTL(SOUNDBIAS)	, CTL(MIXER)		, CTL(MENU4)	, &CACHE_HEXADECIMAL_DOUBLE	, VAR(SOUNDBIAS)			, &cb_cfg_soundbias		},
-/* defaults		*/	{ 0x1b 	, 0x0b 	, CTL(SOUNDBIAS)	, CTL(MIXER)		, CTL(FINETUNE)		, CTL(MENU4)	, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_mixer			},
-CONTROL_TERMINATOR
-};
-#undef VAR
-#undef CTL
-
+#include "tracker/callbacks.c"
+#include "tracker/controls.c"
+#include "tracker/displays.c"
 
 //move to Channel if more apropiate
 const u8 Tracker::columns[ CHANNEL_COUNT ][ CHANNEL_COUNT ]	= {
@@ -310,124 +289,6 @@ void Tracker::updateTable(  ){
 
 }
 
-#define CB_CHAN_KEY(c,a)	const Callback cb_ch##c##_keypaste_0##a = { pasteNote	    , EVENT_KEYDOWN_B 		, &VAR_CELLS[ 0x##c ].KEY[ 0x##a ], NULL						};	\
-							const Callback cb_ch##c##_key_0##a 		= { modifyNote		, EVENT_MODIFY_B 		, &VAR_CELLS[ 0x##c ].KEY[ 0x##a ], &cb_ch##c##_keypaste_0##a 	};
-#define CB_CHAN_INS(c,a)	const Callback cb_ch##c##_inspaste_0##a = { pasteInst		, EVENT_KEYDOWN_B 		, &VAR_CELLS[ 0x##c ].INS[ 0x##a ], NULL						};	\
-							const Callback cb_ch##c##_ins_0##a 		= { modifyInst		, EVENT_MODIFY_B 		, &VAR_CELLS[ 0x##c ].INS[ 0x##a ], &cb_ch##c##_inspaste_0##a 	};
-#define CB_CHAN_VOL(c,a)	const Callback cb_ch##c##_volpaste_0##a = { pasteVolume		, EVENT_KEYDOWN_B 		, &VAR_CELLS[ 0x##c ].VOL[ 0x##a ], NULL						};	\
-							const Callback cb_ch##c##_vol_0##a 		= { modifyVolume	, EVENT_MODIFY_B 		, &VAR_CELLS[ 0x##c ].VOL[ 0x##a ], &cb_ch##c##_volpaste_0##a	}; 
-#define CB_CHAN_CMD(c,a)	const Callback cb_ch##c##_cmdpaste_0##a = { pasteCommand	, EVENT_KEYDOWN_B 		, &VAR_CELLS[ 0x##c ].CMD[ 0x##a ], NULL						};	\
-							const Callback cb_ch##c##_cmd_0##a 		= { modifyCommand	, EVENT_MODIFY_B 		, &VAR_CELLS[ 0x##c ].CMD[ 0x##a ], &cb_ch##c##_cmdpaste_0##a 	}; 
-#define CB_CHAN_VAL(c,a)	const Callback cb_ch##c##_valpaste_0##a = { pasteValue		, EVENT_KEYDOWN_B 		, &VAR_CELLS[ 0x##c ].VAL[ 0x##a ], NULL						};	\
-							const Callback cb_ch##c##_val_0##a 		= { modifyValue		, EVENT_MODIFY_B 		, &VAR_CELLS[ 0x##c ].VAL[ 0x##a ], &cb_ch##c##_valpaste_0##a	}; 
-CB_CHAN_VAL(0, 0);	CB_CHAN_CMD(0, 0);	CB_CHAN_VOL(0, 0);	CB_CHAN_INS(0, 0);	CB_CHAN_KEY(0, 0);
-CB_CHAN_VAL(0, 1);	CB_CHAN_CMD(0, 1);	CB_CHAN_VOL(0, 1);	CB_CHAN_INS(0, 1);	CB_CHAN_KEY(0, 1);
-CB_CHAN_VAL(0, 2);	CB_CHAN_CMD(0, 2);	CB_CHAN_VOL(0, 2);	CB_CHAN_INS(0, 2);	CB_CHAN_KEY(0, 2);
-CB_CHAN_VAL(0, 3);	CB_CHAN_CMD(0, 3);	CB_CHAN_VOL(0, 3);	CB_CHAN_INS(0, 3);	CB_CHAN_KEY(0, 3);
-CB_CHAN_VAL(0, 4);	CB_CHAN_CMD(0, 4);	CB_CHAN_VOL(0, 4);	CB_CHAN_INS(0, 4);	CB_CHAN_KEY(0, 4);
-CB_CHAN_VAL(0, 5);	CB_CHAN_CMD(0, 5);	CB_CHAN_VOL(0, 5);	CB_CHAN_INS(0, 5);	CB_CHAN_KEY(0, 5);
-CB_CHAN_VAL(0, 6);	CB_CHAN_CMD(0, 6);	CB_CHAN_VOL(0, 6);	CB_CHAN_INS(0, 6);	CB_CHAN_KEY(0, 6);
-CB_CHAN_VAL(0, 7);	CB_CHAN_CMD(0, 7);	CB_CHAN_VOL(0, 7);	CB_CHAN_INS(0, 7);	CB_CHAN_KEY(0, 7);
-CB_CHAN_VAL(0, 8);	CB_CHAN_CMD(0, 8);	CB_CHAN_VOL(0, 8);	CB_CHAN_INS(0, 8);	CB_CHAN_KEY(0, 8);
-CB_CHAN_VAL(0, 9);	CB_CHAN_CMD(0, 9);	CB_CHAN_VOL(0, 9);	CB_CHAN_INS(0, 9);	CB_CHAN_KEY(0, 9);
-CB_CHAN_VAL(0, A);	CB_CHAN_CMD(0, A);	CB_CHAN_VOL(0, A);	CB_CHAN_INS(0, A);	CB_CHAN_KEY(0, A);
-CB_CHAN_VAL(0, B);	CB_CHAN_CMD(0, B);	CB_CHAN_VOL(0, B);	CB_CHAN_INS(0, B);	CB_CHAN_KEY(0, B);
-CB_CHAN_VAL(0, C);	CB_CHAN_CMD(0, C);	CB_CHAN_VOL(0, C);	CB_CHAN_INS(0, C);	CB_CHAN_KEY(0, C);
-CB_CHAN_VAL(0, D);	CB_CHAN_CMD(0, D);	CB_CHAN_VOL(0, D);	CB_CHAN_INS(0, D);	CB_CHAN_KEY(0, D);
-CB_CHAN_VAL(0, E);	CB_CHAN_CMD(0, E);	CB_CHAN_VOL(0, E);	CB_CHAN_INS(0, E);	CB_CHAN_KEY(0, E);
-CB_CHAN_VAL(0, F);	CB_CHAN_CMD(0, F);	CB_CHAN_VOL(0, F);	CB_CHAN_INS(0, F);	CB_CHAN_KEY(0, F);
-
-CB_CHAN_VAL(1, 0);	CB_CHAN_CMD(1, 0);	CB_CHAN_VOL(1, 0);	CB_CHAN_INS(1, 0);	CB_CHAN_KEY(1, 0);
-CB_CHAN_VAL(1, 1);	CB_CHAN_CMD(1, 1);	CB_CHAN_VOL(1, 1);	CB_CHAN_INS(1, 1);	CB_CHAN_KEY(1, 1);
-CB_CHAN_VAL(1, 2);	CB_CHAN_CMD(1, 2);	CB_CHAN_VOL(1, 2);	CB_CHAN_INS(1, 2);	CB_CHAN_KEY(1, 2);
-CB_CHAN_VAL(1, 3);	CB_CHAN_CMD(1, 3);	CB_CHAN_VOL(1, 3);	CB_CHAN_INS(1, 3);	CB_CHAN_KEY(1, 3);
-CB_CHAN_VAL(1, 4);	CB_CHAN_CMD(1, 4);	CB_CHAN_VOL(1, 4);	CB_CHAN_INS(1, 4);	CB_CHAN_KEY(1, 4);
-CB_CHAN_VAL(1, 5);	CB_CHAN_CMD(1, 5);	CB_CHAN_VOL(1, 5);	CB_CHAN_INS(1, 5);	CB_CHAN_KEY(1, 5);
-CB_CHAN_VAL(1, 6);	CB_CHAN_CMD(1, 6);	CB_CHAN_VOL(1, 6);	CB_CHAN_INS(1, 6);	CB_CHAN_KEY(1, 6);
-CB_CHAN_VAL(1, 7);	CB_CHAN_CMD(1, 7);	CB_CHAN_VOL(1, 7);	CB_CHAN_INS(1, 7);	CB_CHAN_KEY(1, 7);
-CB_CHAN_VAL(1, 8);	CB_CHAN_CMD(1, 8);	CB_CHAN_VOL(1, 8);	CB_CHAN_INS(1, 8);	CB_CHAN_KEY(1, 8);
-CB_CHAN_VAL(1, 9);	CB_CHAN_CMD(1, 9);	CB_CHAN_VOL(1, 9);	CB_CHAN_INS(1, 9);	CB_CHAN_KEY(1, 9);
-CB_CHAN_VAL(1, A);	CB_CHAN_CMD(1, A);	CB_CHAN_VOL(1, A);	CB_CHAN_INS(1, A);	CB_CHAN_KEY(1, A);
-CB_CHAN_VAL(1, B);	CB_CHAN_CMD(1, B);	CB_CHAN_VOL(1, B);	CB_CHAN_INS(1, B);	CB_CHAN_KEY(1, B);
-CB_CHAN_VAL(1, C);	CB_CHAN_CMD(1, C);	CB_CHAN_VOL(1, C);	CB_CHAN_INS(1, C);	CB_CHAN_KEY(1, C);
-CB_CHAN_VAL(1, D);	CB_CHAN_CMD(1, D);	CB_CHAN_VOL(1, D);	CB_CHAN_INS(1, D);	CB_CHAN_KEY(1, D);
-CB_CHAN_VAL(1, E);	CB_CHAN_CMD(1, E);	CB_CHAN_VOL(1, E);	CB_CHAN_INS(1, E);	CB_CHAN_KEY(1, E);
-CB_CHAN_VAL(1, F);	CB_CHAN_CMD(1, F);	CB_CHAN_VOL(1, F);	CB_CHAN_INS(1, F);	CB_CHAN_KEY(1, F);
-
-CB_CHAN_VAL(2, 0);	CB_CHAN_CMD(2, 0);	CB_CHAN_VOL(2, 0);	CB_CHAN_INS(2, 0);	CB_CHAN_KEY(2, 0);
-CB_CHAN_VAL(2, 1);	CB_CHAN_CMD(2, 1);	CB_CHAN_VOL(2, 1);	CB_CHAN_INS(2, 1);	CB_CHAN_KEY(2, 1);
-CB_CHAN_VAL(2, 2);	CB_CHAN_CMD(2, 2);	CB_CHAN_VOL(2, 2);	CB_CHAN_INS(2, 2);	CB_CHAN_KEY(2, 2);
-CB_CHAN_VAL(2, 3);	CB_CHAN_CMD(2, 3);	CB_CHAN_VOL(2, 3);	CB_CHAN_INS(2, 3);	CB_CHAN_KEY(2, 3);
-CB_CHAN_VAL(2, 4);	CB_CHAN_CMD(2, 4);	CB_CHAN_VOL(2, 4);	CB_CHAN_INS(2, 4);	CB_CHAN_KEY(2, 4);
-CB_CHAN_VAL(2, 5);	CB_CHAN_CMD(2, 5);	CB_CHAN_VOL(2, 5);	CB_CHAN_INS(2, 5);	CB_CHAN_KEY(2, 5);
-CB_CHAN_VAL(2, 6);	CB_CHAN_CMD(2, 6);	CB_CHAN_VOL(2, 6);	CB_CHAN_INS(2, 6);	CB_CHAN_KEY(2, 6);
-CB_CHAN_VAL(2, 7);	CB_CHAN_CMD(2, 7);	CB_CHAN_VOL(2, 7);	CB_CHAN_INS(2, 7);	CB_CHAN_KEY(2, 7);
-CB_CHAN_VAL(2, 8);	CB_CHAN_CMD(2, 8);	CB_CHAN_VOL(2, 8);	CB_CHAN_INS(2, 8);	CB_CHAN_KEY(2, 8);
-CB_CHAN_VAL(2, 9);	CB_CHAN_CMD(2, 9);	CB_CHAN_VOL(2, 9);	CB_CHAN_INS(2, 9);	CB_CHAN_KEY(2, 9);
-CB_CHAN_VAL(2, A);	CB_CHAN_CMD(2, A);	CB_CHAN_VOL(2, A);	CB_CHAN_INS(2, A);	CB_CHAN_KEY(2, A);
-CB_CHAN_VAL(2, B);	CB_CHAN_CMD(2, B);	CB_CHAN_VOL(2, B);	CB_CHAN_INS(2, B);	CB_CHAN_KEY(2, B);
-CB_CHAN_VAL(2, C);	CB_CHAN_CMD(2, C);	CB_CHAN_VOL(2, C);	CB_CHAN_INS(2, C);	CB_CHAN_KEY(2, C);
-CB_CHAN_VAL(2, D);	CB_CHAN_CMD(2, D);	CB_CHAN_VOL(2, D);	CB_CHAN_INS(2, D);	CB_CHAN_KEY(2, D);
-CB_CHAN_VAL(2, E);	CB_CHAN_CMD(2, E);	CB_CHAN_VOL(2, E);	CB_CHAN_INS(2, E);	CB_CHAN_KEY(2, E);
-CB_CHAN_VAL(2, F);	CB_CHAN_CMD(2, F);	CB_CHAN_VOL(2, F);	CB_CHAN_INS(2, F);	CB_CHAN_KEY(2, F);
-
-CB_CHAN_VAL(3, 0);	CB_CHAN_CMD(3, 0);	CB_CHAN_VOL(3, 0);	CB_CHAN_INS(3, 0);	CB_CHAN_KEY(3, 0);
-CB_CHAN_VAL(3, 1);	CB_CHAN_CMD(3, 1);	CB_CHAN_VOL(3, 1);	CB_CHAN_INS(3, 1);	CB_CHAN_KEY(3, 1);
-CB_CHAN_VAL(3, 2);	CB_CHAN_CMD(3, 2);	CB_CHAN_VOL(3, 2);	CB_CHAN_INS(3, 2);	CB_CHAN_KEY(3, 2);
-CB_CHAN_VAL(3, 3);	CB_CHAN_CMD(3, 3);	CB_CHAN_VOL(3, 3);	CB_CHAN_INS(3, 3);	CB_CHAN_KEY(3, 3);
-CB_CHAN_VAL(3, 4);	CB_CHAN_CMD(3, 4);	CB_CHAN_VOL(3, 4);	CB_CHAN_INS(3, 4);	CB_CHAN_KEY(3, 4);
-CB_CHAN_VAL(3, 5);	CB_CHAN_CMD(3, 5);	CB_CHAN_VOL(3, 5);	CB_CHAN_INS(3, 5);	CB_CHAN_KEY(3, 5);
-CB_CHAN_VAL(3, 6);	CB_CHAN_CMD(3, 6);	CB_CHAN_VOL(3, 6);	CB_CHAN_INS(3, 6);	CB_CHAN_KEY(3, 6);
-CB_CHAN_VAL(3, 7);	CB_CHAN_CMD(3, 7);	CB_CHAN_VOL(3, 7);	CB_CHAN_INS(3, 7);	CB_CHAN_KEY(3, 7);
-CB_CHAN_VAL(3, 8);	CB_CHAN_CMD(3, 8);	CB_CHAN_VOL(3, 8);	CB_CHAN_INS(3, 8);	CB_CHAN_KEY(3, 8);
-CB_CHAN_VAL(3, 9);	CB_CHAN_CMD(3, 9);	CB_CHAN_VOL(3, 9);	CB_CHAN_INS(3, 9);	CB_CHAN_KEY(3, 9);
-CB_CHAN_VAL(3, A);	CB_CHAN_CMD(3, A);	CB_CHAN_VOL(3, A);	CB_CHAN_INS(3, A);	CB_CHAN_KEY(3, A);
-CB_CHAN_VAL(3, B);	CB_CHAN_CMD(3, B);	CB_CHAN_VOL(3, B);	CB_CHAN_INS(3, B);	CB_CHAN_KEY(3, B);
-CB_CHAN_VAL(3, C);	CB_CHAN_CMD(3, C);	CB_CHAN_VOL(3, C);	CB_CHAN_INS(3, C);	CB_CHAN_KEY(3, C);
-CB_CHAN_VAL(3, D);	CB_CHAN_CMD(3, D);	CB_CHAN_VOL(3, D);	CB_CHAN_INS(3, D);	CB_CHAN_KEY(3, D);
-CB_CHAN_VAL(3, E);	CB_CHAN_CMD(3, E);	CB_CHAN_VOL(3, E);	CB_CHAN_INS(3, E);	CB_CHAN_KEY(3, E);
-CB_CHAN_VAL(3, F);	CB_CHAN_CMD(3, F);	CB_CHAN_VOL(3, F);	CB_CHAN_INS(3, F);	CB_CHAN_KEY(3, F);
-
-CB_CHAN_VAL(4, 0);	CB_CHAN_CMD(4, 0);	CB_CHAN_VOL(4, 0);	CB_CHAN_INS(4, 0);	CB_CHAN_KEY(4, 0);
-CB_CHAN_VAL(4, 1);	CB_CHAN_CMD(4, 1);	CB_CHAN_VOL(4, 1);	CB_CHAN_INS(4, 1);	CB_CHAN_KEY(4, 1);
-CB_CHAN_VAL(4, 2);	CB_CHAN_CMD(4, 2);	CB_CHAN_VOL(4, 2);	CB_CHAN_INS(4, 2);	CB_CHAN_KEY(4, 2);
-CB_CHAN_VAL(4, 3);	CB_CHAN_CMD(4, 3);	CB_CHAN_VOL(4, 3);	CB_CHAN_INS(4, 3);	CB_CHAN_KEY(4, 3);
-CB_CHAN_VAL(4, 4);	CB_CHAN_CMD(4, 4);	CB_CHAN_VOL(4, 4);	CB_CHAN_INS(4, 4);	CB_CHAN_KEY(4, 4);
-CB_CHAN_VAL(4, 5);	CB_CHAN_CMD(4, 5);	CB_CHAN_VOL(4, 5);	CB_CHAN_INS(4, 5);	CB_CHAN_KEY(4, 5);
-CB_CHAN_VAL(4, 6);	CB_CHAN_CMD(4, 6);	CB_CHAN_VOL(4, 6);	CB_CHAN_INS(4, 6);	CB_CHAN_KEY(4, 6);
-CB_CHAN_VAL(4, 7);	CB_CHAN_CMD(4, 7);	CB_CHAN_VOL(4, 7);	CB_CHAN_INS(4, 7);	CB_CHAN_KEY(4, 7);
-CB_CHAN_VAL(4, 8);	CB_CHAN_CMD(4, 8);	CB_CHAN_VOL(4, 8);	CB_CHAN_INS(4, 8);	CB_CHAN_KEY(4, 8);
-CB_CHAN_VAL(4, 9);	CB_CHAN_CMD(4, 9);	CB_CHAN_VOL(4, 9);	CB_CHAN_INS(4, 9);	CB_CHAN_KEY(4, 9);
-CB_CHAN_VAL(4, A);	CB_CHAN_CMD(4, A);	CB_CHAN_VOL(4, A);	CB_CHAN_INS(4, A);	CB_CHAN_KEY(4, A);
-CB_CHAN_VAL(4, B);	CB_CHAN_CMD(4, B);	CB_CHAN_VOL(4, B);	CB_CHAN_INS(4, B);	CB_CHAN_KEY(4, B);
-CB_CHAN_VAL(4, C);	CB_CHAN_CMD(4, C);	CB_CHAN_VOL(4, C);	CB_CHAN_INS(4, C);	CB_CHAN_KEY(4, C);
-CB_CHAN_VAL(4, D);	CB_CHAN_CMD(4, D);	CB_CHAN_VOL(4, D);	CB_CHAN_INS(4, D);	CB_CHAN_KEY(4, D);
-CB_CHAN_VAL(4, E);	CB_CHAN_CMD(4, E);	CB_CHAN_VOL(4, E);	CB_CHAN_INS(4, E);	CB_CHAN_KEY(4, E);
-CB_CHAN_VAL(4, F);	CB_CHAN_CMD(4, F);	CB_CHAN_VOL(4, F);	CB_CHAN_INS(4, F);	CB_CHAN_KEY(4, F);
-
-CB_CHAN_VAL(5, 0);	CB_CHAN_CMD(5, 0);	CB_CHAN_VOL(5, 0);	CB_CHAN_INS(5, 0);	CB_CHAN_KEY(5, 0);
-CB_CHAN_VAL(5, 1);	CB_CHAN_CMD(5, 1);	CB_CHAN_VOL(5, 1);	CB_CHAN_INS(5, 1);	CB_CHAN_KEY(5, 1);
-CB_CHAN_VAL(5, 2);	CB_CHAN_CMD(5, 2);	CB_CHAN_VOL(5, 2);	CB_CHAN_INS(5, 2);	CB_CHAN_KEY(5, 2);
-CB_CHAN_VAL(5, 3);	CB_CHAN_CMD(5, 3);	CB_CHAN_VOL(5, 3);	CB_CHAN_INS(5, 3);	CB_CHAN_KEY(5, 3);
-CB_CHAN_VAL(5, 4);	CB_CHAN_CMD(5, 4);	CB_CHAN_VOL(5, 4);	CB_CHAN_INS(5, 4);	CB_CHAN_KEY(5, 4);
-CB_CHAN_VAL(5, 5);	CB_CHAN_CMD(5, 5);	CB_CHAN_VOL(5, 5);	CB_CHAN_INS(5, 5);	CB_CHAN_KEY(5, 5);
-CB_CHAN_VAL(5, 6);	CB_CHAN_CMD(5, 6);	CB_CHAN_VOL(5, 6);	CB_CHAN_INS(5, 6);	CB_CHAN_KEY(5, 6);
-CB_CHAN_VAL(5, 7);	CB_CHAN_CMD(5, 7);	CB_CHAN_VOL(5, 7);	CB_CHAN_INS(5, 7);	CB_CHAN_KEY(5, 7);
-CB_CHAN_VAL(5, 8);	CB_CHAN_CMD(5, 8);	CB_CHAN_VOL(5, 8);	CB_CHAN_INS(5, 8);	CB_CHAN_KEY(5, 8);
-CB_CHAN_VAL(5, 9);	CB_CHAN_CMD(5, 9);	CB_CHAN_VOL(5, 9);	CB_CHAN_INS(5, 9);	CB_CHAN_KEY(5, 9);
-CB_CHAN_VAL(5, A);	CB_CHAN_CMD(5, A);	CB_CHAN_VOL(5, A);	CB_CHAN_INS(5, A);	CB_CHAN_KEY(5, A);
-CB_CHAN_VAL(5, B);	CB_CHAN_CMD(5, B);	CB_CHAN_VOL(5, B);	CB_CHAN_INS(5, B);	CB_CHAN_KEY(5, B);
-CB_CHAN_VAL(5, C);	CB_CHAN_CMD(5, C);	CB_CHAN_VOL(5, C);	CB_CHAN_INS(5, C);	CB_CHAN_KEY(5, C);
-CB_CHAN_VAL(5, D);	CB_CHAN_CMD(5, D);	CB_CHAN_VOL(5, D);	CB_CHAN_INS(5, D);	CB_CHAN_KEY(5, D);
-CB_CHAN_VAL(5, E);	CB_CHAN_CMD(5, E);	CB_CHAN_VOL(5, E);	CB_CHAN_INS(5, E);	CB_CHAN_KEY(5, E);
-CB_CHAN_VAL(5, F);	CB_CHAN_CMD(5, F);	CB_CHAN_VOL(5, F);	CB_CHAN_INS(5, F);	CB_CHAN_KEY(5, F);
-
-#undef CB_CHAN_VAL
-#undef CB_CHAN_CMD
-#undef CB_CHAN_VOL
-#undef CB_CHAN_INS
-#undef CB_CHAN_KEY
-
 void Tracker::update(  ){
 	const Region *c = &REGION_MAP_4_CHANNELMIXER;	
 	Gpu::blitAlt(MAPDATA + ((MAP_CFG * 3) << 12), c->x, c->y, 0xb, 0xf, c->width, c->height);
@@ -544,8 +405,8 @@ void Tracker::transpose( int q ){
 }
 
 void Tracker::processInput( ){
-			if ( KEYDOWN_LEFT 	) transpose( -1 );
-	else 	if ( KEYDOWN_RIGHT 	) transpose(  1 );
-	else 	if ( KEYDOWN_UP     	) shift( -1 );
-	else 	if ( KEYDOWN_DOWN  	) shift(  1 );
+		 if ( KEYDOWN_LEFT 	) transpose	( -1 );
+	else if ( KEYDOWN_RIGHT ) transpose	(  1 );
+	else if ( KEYDOWN_UP    ) shift		( -1 );
+	else if ( KEYDOWN_DOWN  ) shift		(  1 );
 }

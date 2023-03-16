@@ -23,6 +23,9 @@ class Config {
 		static void update		(  );
 };
 
+extern const Callback 	cb_reset;
+extern const Callback 	cb_no_callback;
+
 #include "config/linkmode.hpp"
 #include "config/looknfeel.hpp"
 #include "config/coloreditor.hpp"

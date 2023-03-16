@@ -241,3 +241,4 @@ helpers.s
 modules/regionhandler/cursor.o
 m4g.sav
 m4g.bin
+data/control.o

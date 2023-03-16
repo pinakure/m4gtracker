@@ -1,7 +1,6 @@
 #include "patedit.hpp"
 
 #include "../data/data.hpp"
-#include "../helpers.hpp"
 #include "../modules/key/key.hpp"
 #include "../modules/gpu/gpu.hpp"
 #include "../modules/spu/mixer.hpp"

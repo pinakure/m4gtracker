@@ -16,7 +16,7 @@
 |\  M4Geek, 2015-2015														  /|
 |\                     Project Codename:    M4GEEK-01                         /|
 |\                     Project Startday: 21 / 08 / 2015                       /|
-|\  CODER:                                                               /|
+|\  CODER:                                                              	  /|
 |\    Smiker (Albert P.)                                                      /|
 |\  C ASSESSOR:                                                               /|
 |\    Mitikoro (Mike L.)                                                      /|
@@ -38,19 +38,16 @@
 // #define VSYNC
 		
 #include "data/enum.h"
-#include "helpers.hpp"
 #include "macros.h"
 
 #include "data/datatypes.h"
 
 #include "data/variables.h"
-#include "callbacks/callbacks.h"
-
 
 #include "data/tables.hpp"
 #include "data/caches.hpp"
-#include "data/controls.hpp"
-#include "data/displays.hpp"
+#include "data/control.hpp"
+#include "data/display.hpp"
 #include "data/regions.hpp"
 #include "data/viewports.hpp"
 #include "data/layers.hpp"

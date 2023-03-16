@@ -1,8 +1,8 @@
 #include "progress.hpp" 
 #include "../debug.hpp"
-#include "../helpers.hpp" 
 #include "../data/caches.hpp" 
 #include "../modules/regionhandler/regionhandler.hpp" 
+#include "../modules/gpu/gpu.hpp" 
 
 u32 				Progress::max;
 u32 				Progress::current;

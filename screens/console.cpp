@@ -1,6 +1,5 @@
 #include "../agb.h"
 #include "../modules/gpu/gpu.hpp"
-#include "../helpers.hpp"
 #include "../debug.hpp"
 
 #ifndef NDEBUG

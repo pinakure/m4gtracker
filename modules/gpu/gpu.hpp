@@ -153,4 +153,35 @@ class Gpu {
 	static void	drawDialog	( u8 x, u8 y, u8 width					, u8 height	, const char *caption=NULL );
 };
 
+void STRING						( bool big, u8 x , u8 y , u8* data				);
+void HEXADECIMAL				( 			u8 x , u8 y	, u16 color	, u16 value );
+void HEXADECIMAL_DOUBLE			( 			u8 x , u8 y	, u16 color	, u16 value );
+void HEXADECIMAL_DOUBLE_DASH	( 			u8 x , u8 y	, u16 color	, u16 value );
+void HEXADECIMAL_INSTRUMENT		( 			u8 x , u8 y	, u16 color	, u16 value );
+void HEXADECIMAL_TWOTILES		( 			u8 x , u8 y	, u16 color	, u16 value );
+void DECIMAL					( 			u8 x , u8 y	, u16 color	, u16 value );
+void DECIMAL_DOUBLE				( 			u8 x , u8 y	, u16 color	, u16 value );
+void DECIMAL_TWOTILES			( 			u8 x , u8 y	, u16 color	, u16 value );
+void DECIMAL_DOUBLE_TWOTILES	( 			u8 x , u8 y	, u16 color	, u16 value );
+void NIBBLE						( 			u8 x , u8 y	, u16 color	, u16 value );
+void PROGRESS					( 			u8 x , u8 y	, u16 color	, u16 value );
+void WAVE_DOUBLE				( 			u8 x , u8 y	, u16 color	, u16 value );
+void PIXEL						( 			u8 x , u8 y	, u16 color	, u16 value );
+void WAVE_SINGLE				( 			u8 x , u8 y	, u16 color	, u16 value );
+void BIGHEX						( 			u8 x , u8 y	, u16 color	, u16 value );
+void BIGDEC						( 			u8 x , u8 y	, u16 color	, u16 value );
+void BIGTEXT					( 			u8 x , u8 y	, u16 color	, u16 value );
+void TEXT						( 			u8 x , u8 y	, u16 color	, u16 value );
+void VUMETER_V3					( 			u8 x , u8 y	, u16 color	, u16 value );
+void VUMETER_H3					( 			u8 x , u8 y	, u16 color	, u16 value );
+void VUMETER_H1					( 			u8 x , u8 y	, u16 color	, u16 value );
+void VUMETER_V1					( 			u8 x , u8 y	, u16 color	, u16 value );
+void COMMAND					( 			u8 x , u8 y	, u16 color	, u16 value );
+void NOTE						( 			u8 x , u8 y	, u16 color	, u16 value );
+void TABLEPOS					( 			u8 x , u8 y	, u16 color	, u16 value );
+void VISPOS1					( 			u8 x , u8 y	, u16 color	, u16 value );
+void VISPOS2					( 			u8 x , u8 y	, u16 color	, u16 value );
+void STATUS						( 			u8 x , u8 y	, u16 color	, u16 value );
+
+
 #endif 

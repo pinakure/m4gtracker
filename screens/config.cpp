@@ -14,8 +14,9 @@
 #include "../screens/live.hpp"
 
 // Callback used @ Slot change
-const Callback 	Config::menuindex = { modify5VAL , EVENT_MODIFY_B , &VAR_CFG.MENUSLOT , NULL };
-
+const Callback 	Config::menuindex 	= { modify5VAL 		, EVENT_MODIFY_B 			, &VAR_CFG.MENUSLOT , NULL };
+const Callback 	cb_reset		  	= { Config::reset 	, EVENT_PANIC 				, NULL 				, NULL };
+const Callback 	cb_no_callback		= { NULL			, 0x0000 /* No key presses*/, NULL /* No var */	, NULL };/* Last element */
 
 void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 	int i, di;

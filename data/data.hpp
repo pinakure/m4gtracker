@@ -10,9 +10,7 @@
 #include "regions.hpp"
 #include "caches.hpp"
 #include "layers.hpp"
-#include "displays.hpp"
-#include "controls.hpp"
-#include "../callbacks/callbacks.h"
+#include "control.hpp"
 
 extern MEM_IN_EWRAM Song			VAR_SONG;
 extern MEM_IN_EWRAM Input 			VAR_INPUT; 

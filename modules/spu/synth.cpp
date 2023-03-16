@@ -1,7 +1,6 @@
 #include "synth.hpp"
 #include "mixer.hpp"
 #include "../../debug.hpp"
-#include "../../helpers.hpp"
 #include "../../data/channel.hpp"
 #include "../../data/config.hpp"
 #include "../../data/song.hpp"

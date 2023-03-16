@@ -5,7 +5,7 @@
 
 #include "../../data/enum.h"
 #include "../../data/caches.hpp"
-#include "../../data/controls.hpp"
+#include "../../data/control.hpp"
 #include "../../data/regions.hpp"
 #include "../../dialogs/progress.hpp"
 #include "../../dialogs/alpha.hpp"

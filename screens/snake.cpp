@@ -1,7 +1,6 @@
 #include "snake.hpp" 
 #include "../modules/gpu/gpu.hpp"
 #include "../modules/key/key.hpp"
-#include "../helpers.hpp"
 #include "../modules/spu/sequencer.hpp"
 #include "../modules/spu/mixer.hpp"
 #include "../modules/spu/synth.hpp"

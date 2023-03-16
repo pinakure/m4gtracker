@@ -23,8 +23,7 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 		data/palette.o \
 		data/caches.o \
 		data/regions.o \
-		data/controls.o \
-		data/displays.o \
+		data/control.o \
 		data/viewports.o \
 		screens/config.o \
 		screens/config/coloreditor.o \
@@ -45,7 +44,6 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 		dialogs/really.o \
 		dialogs/alpha.o \
 		dialogs/progress.o \
-		helpers.o \
 		debug.o \
 		m4g.o 
 
