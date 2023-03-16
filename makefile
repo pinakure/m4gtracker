@@ -8,7 +8,6 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 		modules/sram/sram.o \
 		modules/clip/clip.o \
 		modules/key/key.o \
-		modules/mem/mem.o \
 		modules/gpu/virtualscreen.o \
 		modules/gpu/gpu.o \
 		modules/net/net.o \
@@ -25,21 +24,23 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 		data/controls.o \
 		data/displays.o \
 		data/viewports.o \
+		screens/config.o \
+		screens/config/coloreditor.o \
+		screens/config/looknfeel.o \
+		screens/config/linkmode.o \
+		screens/config/behavior.o \
+		screens/config/memory.o \
+		screens/tracker.o \
+		screens/live.o \
+		screens/live/piano.o \
+		screens/live/performance.o \
 		callbacks/sng.o \
-		callbacks/liv1.o \
-		callbacks/liv2.o \
 		callbacks/pat.o \
 		callbacks/console.o \
 		callbacks/debug.o \
 		callbacks/hlp.o \
 		callbacks/snk.o \
 		callbacks/ins.o \
-		callbacks/trk.o \
-		callbacks/cfg.o \
-		callbacks/linkmode.o \
-		callbacks/looknfeel.o \
-		callbacks/behavior.o \
-		callbacks/coloreditor.o \
 		dialogs/really.o \
 		dialogs/alpha.o \
 		dialogs/progress.o \
@@ -156,7 +157,20 @@ clean-dialogs: clean-data
 	@echo -------------------------------------------------------------------------------
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f dialogs/*.o *.i *.ii *.m4h	
 
-clean: clean-dialogs
+clean-screens: clean-dialogs
+	@echo -------------------------------------------------------------------------------
+	@echo Cleaning screens
+	@echo -------------------------------------------------------------------------------
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f screens/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f screens/config/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f screens/tracker/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f screens/sngedit/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f screens/live/*.o *.i *.ii *.m4h	
+	#$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f screens/instedit/*.o *.i *.ii *.m4h	
+	#$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f screens/patedit/*.o *.i *.ii *.m4h	
+	
+
+clean: clean-screens
 	@echo -------------------------------------------------------------------------------
 	@echo Cleaning program code
 	@echo -------------------------------------------------------------------------------

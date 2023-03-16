@@ -1,19 +1,20 @@
 #include "sys.hpp"
 #include "../../data/input.hpp"
-#include "../../callbacks/snk.hpp"
+#include "../../callbacks/snk.hpp"//#include "../../screens/snake.hpp"
 #include "../../callbacks/debug.hpp"
-#include "../../callbacks/trk.hpp"
-#include "../../callbacks/sng.hpp"
-#include "../../callbacks/pat.hpp"
+#include "../../screens/config.hpp"
+#include "../../screens/tracker.hpp"
+#include "../../screens/live.hpp"
+
+#include "../../callbacks/sng.hpp"//#include "../../screens/sngedit.hpp"
+#include "../../callbacks/pat.hpp"//#include "../../screens/patedit.hpp"
 #include "../spu/sequencer.hpp"
 #include "../spu/synth.hpp"
 #include "../spu/mixer.hpp"
 #include "../net/net.hpp"
 #include "../int/int.hpp"
-#include "../mem/mem.hpp"
 #include "../sram/sram.hpp"
 #include "../tim/tim.hpp"
-#include "../../callbacks/cfg.hpp"
 #include "../clip/clip.hpp"
 #include "../key/key.hpp"
 #include "../../data/data.hpp"
@@ -48,7 +49,7 @@ void Sys::init(){
 	/* Low level initialization								*/
 	/*!-----------------------------------------------*/
 	Interrupt::init();	
-	Mem::init();
+	Memory::init();
 	Sram::init();
 	Gpu::init();
 	
@@ -126,26 +127,26 @@ void Sys::init(){
 #define BUTTON_R			(kb & 0x0100)
 #define BUTTON_L			(kb & 0x0200)
 #define BUTTON_RIGHT		(kb & 0x0010)
-#define BUTTON_LEFT		(kb & 0x0020)
+#define BUTTON_LEFT			(kb & 0x0020)
 #define BUTTON_UP			(kb & 0x0040)
-#define BUTTON_DOWN		(kb & 0x0080)
+#define BUTTON_DOWN			(kb & 0x0080)
 
 #define KEYBOARD_A			0x0001
 #define KEYBOARD_B			0x0004
-#define KEYBOARD_SELECT	0x0010
-#define KEYBOARD_START	0x0040
+#define KEYBOARD_SELECT		0x0010
+#define KEYBOARD_START		0x0040
 #define KEYBOARD_R			0x0100
 #define KEYBOARD_L			0x0400
 #define CURSOR_RIGHT		0x01
-#define CURSOR_LEFT		0x04
+#define CURSOR_LEFT			0x04
 #define CURSOR_UP			0x10
-#define CURSOR_DOWN		0x40
+#define CURSOR_DOWN			0x40
 
 void Sys::updateInput(){
 	u32 msg = 0;
 
 	/* IGNORE this update function if LIVE1 lock var is true */
-	if(VAR_LIVE.PERFORM.LOCK)return;
+	if(Live::PERFORM.LOCK)return;
 	
 	
 	/* ------------------------------------------------------------------------

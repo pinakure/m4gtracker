@@ -7,7 +7,7 @@
 #include "../../data/song.hpp"
 #include "../../data/helpers.hpp"
 #include "../../data/config.hpp"
-#include "../../callbacks/trk.hpp"
+#include "../../screens/tracker.hpp"
 
 extern "C" { int CheckBPMClock(int timerTarget); }; /* Since these are ASM instructions, we have to ensure CPP does not mangle them! */
 

@@ -157,8 +157,6 @@ void SongEdit::save( Control *c, bool bigstep, bool add, u32 *pointer ){
 }
 
 void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
-	#define INSTRUMENT_COUNT 		0x40
-	#define PATTERN_COUNT				0x80
 	#define PATTERN_TOTAL 			9216 // 6 SONGS * 6 CHANNELS * 256 places to check 256*6*6
 	#define INSTRUMENT_TOTAL 		128016.0f	
 	
@@ -226,7 +224,7 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 			
 			// FOR EACH ORDER (PATTERNPOS)
 			u8* p_order 		= p_channel->ORDER;			
-			for( u8* p_order_end = p_order + 256; p_order < p_order_end ; p_order++){
+			for( u8* p_order_end = p_order + ORDER_COUNT; p_order < p_order_end ; p_order++){
 				DECIMAL_DOUBLE( 20	, 8	, COLOR_CYAN, (u8)( q * inc));
 				inc++;
 				if( used_patterns[ *p_order ] ) continue;
@@ -260,14 +258,13 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 	/*HACK*/Gpu::set(2, 20	,10, (COLOR_CYAN<<12) | 0x300);// put 1 on 100...
 	
 
-	Gpu::ascii( 8 << 1 	, 11	, " Avail. Instruments" 	, COLOR_WHITE 	);
-	Gpu::ascii( 8 << 1 	, 12	, " Avail. Patterns" 		, COLOR_WHITE 	);
-	DECIMAL_DOUBLE( 20	, 11	, COLOR_CYAN, unused_instrument_count	  	);
-	Gpu::set(2, 19 , 12	, (COLOR_CYAN<<12) | 0x90 + (unused_pattern_count / 100)	);
-	DECIMAL_DOUBLE( 20	, 12	, COLOR_CYAN, unused_pattern_count		  	);
+	Gpu::ascii		( 8 << 1 	, 11	, " Avail. Instruments" , COLOR_WHITE 												);
+	Gpu::ascii		( 8 << 1 	, 12	, " Avail. Patterns" 	, COLOR_WHITE 												);
+	DECIMAL_DOUBLE	( 20		, 11	, COLOR_CYAN			, unused_instrument_count	  								);
+	Gpu::set		( 2			, 19 	, 12					, (COLOR_CYAN<<12) | 0x90 + (unused_pattern_count / 100)	);
+	DECIMAL_DOUBLE	( 20		, 12	, COLOR_CYAN			, unused_pattern_count		  								);
 	// Save shared data (Instruments and Patterns)
-	
-	
+		
 	SRAM.sharedDataSave( false );
 	VAR_CFG.SLOT = previous_slot;
 	SRAM.songLoad( false );
@@ -278,9 +275,7 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 	regHnd.redraw = 1;
 	regHnd.update(1);
 	#undef PATTERN_TOTAL
-	#undef PATTERN_COUNT
 	#undef INSTRUMENT_TOTAL
-	#undef INSTRUMENT_COUNT
 }
 
 void SongEdit::select( Control *c, bool bigstep, bool add, u32 *pointer ){

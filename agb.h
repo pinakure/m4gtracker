@@ -6,7 +6,6 @@
 #ifndef AGBLIB_H
 
 	// If this is defined, each pattern will not have individual transpose setting
-	//#define NSONGTRANSPOSE
 	#include <stdarg.h>
 	#include <stdlib.h>
 	#include "string.h"

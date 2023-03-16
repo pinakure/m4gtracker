@@ -15,4 +15,6 @@ typedef struct _Display {
 	bool redraw;					// If true, this display will be rendered again next redraw check time
 }Display;
 
+#define DISPLAY_TERMINATOR 		{ 0xff, 0xff, 0x0, NULL, NULL, false, false }
+
 #endif

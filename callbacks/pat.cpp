@@ -14,14 +14,14 @@
 #define COLUMN04	21
 #define COLUMN05	25
 
-const 	u8 	NUMBERS[16] 				= { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-const 	u8 	PatEdit::arrow_position[6] 	= { COLUMN00 - 2, COLUMN01 - 2, COLUMN02 - 2, COLUMN03 - 2, COLUMN04 - 2, COLUMN05 - 2 };
-const 	u16 PatEdit::channel_symbols[6] = { 0x7035, 0x7035, 0x7036, 0x7037, 0x7038, 0x7039 };
-u8 			PatEdit::bookmark_row 		= 0;
-u8 			PatEdit::bookmarks[6] 		= {0,0,0,0,0,0};
-bool 		PatEdit::solo_clean 		= false;
-bool 		PatEdit::clean 				= false;
-u16 		PatEdit::icon_time 			= 0;
+const 	u8 	NUMBERS[ 0x10 ]								= { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };// I know it's obvious, but this a coding trick to gain some cycles somewhere
+const 	u8 	PatEdit::arrow_position	[ CHANNEL_COUNT ] 	= { COLUMN00 - 2, COLUMN01 - 2, COLUMN02 - 2, COLUMN03 - 2, COLUMN04 - 2, COLUMN05 - 2 };
+const 	u16 PatEdit::channel_symbols[ CHANNEL_COUNT ] 	= { 0x7035, 0x7035, 0x7036, 0x7037, 0x7038, 0x7039 };
+u8 			PatEdit::bookmark_row 						= 0;
+u8 			PatEdit::bookmarks		[ CHANNEL_COUNT ] 	= { 0 , 0 , 0 , 0 , 0 , 0 };
+bool 		PatEdit::solo_clean 						= false;
+bool 		PatEdit::clean 								= false;
+u16 		PatEdit::icon_time 							= 0;
 
 #define CTL(a) 			&PAT_CONTROLS[CONTROL_PAT_##a]
 #define VAR(index, a) 	((u8*)&(VAR_PATTERN[index].a))
@@ -62,7 +62,6 @@ void transposeCH4_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_C
 void transposeCH5_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 5;	PatEdit::bookmark_row = *(u8*)pointer;}
 
 
-#ifndef NSONGTRANSPOSE
 //TRANSPOSE
 #define CB_TRANSPOSE(c, a)																																				\
 const Callback cb_transpose_focus_##c##_0##a = { transposeCH##c##_focus	, EVENT_FOCUS 		, (u32*)&NUMBERS[0x0##a] 				, NULL					 		 }; \
@@ -86,112 +85,9 @@ CB_TRANSPOSE(0, E);		CB_TRANSPOSE(1, E);		CB_TRANSPOSE(2, E);		CB_TRANSPOSE(3, E
 CB_TRANSPOSE(0, F);		CB_TRANSPOSE(1, F);		CB_TRANSPOSE(2, F);		CB_TRANSPOSE(3, F);		CB_TRANSPOSE(4, F);		CB_TRANSPOSE(5, F);
 #undef CB_TRANSPOSE
 
-#endif
 
 
 const Control PAT_CONTROLS[ CONTROL_PAT_MAX ] = { 
-//	{ x	 		, y		, up					, right					, down					, left					, cache							, var						, callback			},
-	#ifdef NSONGTRANSPOSE
-	{ COLUMN00 	, 0x04 	, CTL( SOLO_LEFT_02	  ) , CTL( PATTERNS_B_00  ) , CTL( PATTERNS_A_01  ) , CTL( PATTERNS_F_00  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[  0 ]  ) , &cb_patterns_0_00	},
-	{ COLUMN00 	, 0x05 	, CTL( PATTERNS_A_00  )	, CTL( PATTERNS_B_01  ) , CTL( PATTERNS_A_02  ) , CTL( PATTERNS_F_01  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[  1 ]  ) , &cb_patterns_0_01	},
-	{ COLUMN00 	, 0x06 	, CTL( PATTERNS_A_01  )	, CTL( PATTERNS_B_02  ) , CTL( PATTERNS_A_03  ) , CTL( PATTERNS_F_02  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[  2 ]  ) , &cb_patterns_0_02	},
-	{ COLUMN00 	, 0x07 	, CTL( PATTERNS_A_02  )	, CTL( PATTERNS_B_03  ) , CTL( PATTERNS_A_04  ) , CTL( PATTERNS_F_03  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[  3 ]  ) , &cb_patterns_0_03	},
-	{ COLUMN00 	, 0x08 	, CTL( PATTERNS_A_03  )	, CTL( PATTERNS_B_04  ) , CTL( PATTERNS_A_05  ) , CTL( PATTERNS_F_04  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[  4 ]  ) , &cb_patterns_0_04	},
-	{ COLUMN00 	, 0x09 	, CTL( PATTERNS_A_04  )	, CTL( PATTERNS_B_05  ) , CTL( PATTERNS_A_06  ) , CTL( PATTERNS_F_05  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[  5 ]  ) , &cb_patterns_0_05	},
-	{ COLUMN00 	, 0x0a 	, CTL( PATTERNS_A_05  )	, CTL( PATTERNS_B_06  ) , CTL( PATTERNS_A_07  ) , CTL( PATTERNS_F_06  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[  6 ]  ) , &cb_patterns_0_06	},
-	{ COLUMN00 	, 0x0b 	, CTL( PATTERNS_A_06  )	, CTL( PATTERNS_B_07  ) , CTL( PATTERNS_A_08  ) , CTL( PATTERNS_F_07  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[  7 ]  ) , &cb_patterns_0_07	},
-	{ COLUMN00 	, 0x0c 	, CTL( PATTERNS_A_07  )	, CTL( PATTERNS_B_08  ) , CTL( PATTERNS_A_09  ) , CTL( PATTERNS_F_08  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[  8 ]  ) , &cb_patterns_0_08	},
-	{ COLUMN00 	, 0x0d 	, CTL( PATTERNS_A_08  )	, CTL( PATTERNS_B_09  ) , CTL( PATTERNS_A_0A  ) , CTL( PATTERNS_F_09  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[  9 ]  ) , &cb_patterns_0_09	},
-	{ COLUMN00 	, 0x0e 	, CTL( PATTERNS_A_09  )	, CTL( PATTERNS_B_0A  ) , CTL( PATTERNS_A_0B  ) , CTL( PATTERNS_F_0A  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[ 10 ]  ) , &cb_patterns_0_0A	},
-	{ COLUMN00 	, 0x0f 	, CTL( PATTERNS_A_0A  )	, CTL( PATTERNS_B_0B  ) , CTL( PATTERNS_A_0C  ) , CTL( PATTERNS_F_0B  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[ 11 ]  ) , &cb_patterns_0_0B	},
-	{ COLUMN00 	, 0x10 	, CTL( PATTERNS_A_0B  )	, CTL( PATTERNS_B_0C  ) , CTL( PATTERNS_A_0D  ) , CTL( PATTERNS_F_0C  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[ 12 ]  ) , &cb_patterns_0_0C	},
-	{ COLUMN00 	, 0x11 	, CTL( PATTERNS_A_0C  )	, CTL( PATTERNS_B_0D  ) , CTL( PATTERNS_A_0E  ) , CTL( PATTERNS_F_0D  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[ 13 ]  ) , &cb_patterns_0_0D	},
-	{ COLUMN00 	, 0x12 	, CTL( PATTERNS_A_0D  )	, CTL( PATTERNS_B_0E  ) , CTL( PATTERNS_A_0F  ) , CTL( PATTERNS_F_0E  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[ 14 ]  ) , &cb_patterns_0_0E	},
-	{ COLUMN00 	, 0x13 	, CTL( PATTERNS_A_0E  )	, CTL( PATTERNS_B_0F  ) , CTL( SOLO_LEFT_00   ) , CTL( PATTERNS_F_0F  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[ 15 ]  ) , &cb_patterns_0_0F	},
-	{ COLUMN01 	, 0x04 	, CTL( SOLO_LEFT_02   ) 	, CTL( PATTERNS_C_00  ) , CTL( PATTERNS_B_01  ) , CTL( PATTERNS_A_00  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[  0 ]  ) , &cb_patterns_1_00	},
-	{ COLUMN01 	, 0x05 	, CTL( PATTERNS_B_00  )	, CTL( PATTERNS_C_01  ) , CTL( PATTERNS_B_02  ) , CTL( PATTERNS_A_01  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[  1 ]  ) , &cb_patterns_1_01	},
-	{ COLUMN01 	, 0x06 	, CTL( PATTERNS_B_01  )	, CTL( PATTERNS_C_02  ) , CTL( PATTERNS_B_03  ) , CTL( PATTERNS_A_02  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[  2 ]  ) , &cb_patterns_1_02	},
-	{ COLUMN01 	, 0x07 	, CTL( PATTERNS_B_02  )	, CTL( PATTERNS_C_03  ) , CTL( PATTERNS_B_04  ) , CTL( PATTERNS_A_03  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[  3 ]  ) , &cb_patterns_1_03	},
-	{ COLUMN01 	, 0x08 	, CTL( PATTERNS_B_03  )	, CTL( PATTERNS_C_04  ) , CTL( PATTERNS_B_05  ) , CTL( PATTERNS_A_04  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[  4 ]  ) , &cb_patterns_1_04	},
-	{ COLUMN01 	, 0x09 	, CTL( PATTERNS_B_04  )	, CTL( PATTERNS_C_05  ) , CTL( PATTERNS_B_06  ) , CTL( PATTERNS_A_05  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[  5 ]  ) , &cb_patterns_1_05	},
-	{ COLUMN01 	, 0x0a 	, CTL( PATTERNS_B_05  )	, CTL( PATTERNS_C_06  ) , CTL( PATTERNS_B_07  ) , CTL( PATTERNS_A_06  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[  6 ]  ) , &cb_patterns_1_06	},
-	{ COLUMN01 	, 0x0b 	, CTL( PATTERNS_B_06  )	, CTL( PATTERNS_C_07  ) , CTL( PATTERNS_B_08  ) , CTL( PATTERNS_A_07  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[  7 ]  ) , &cb_patterns_1_07	},
-	{ COLUMN01 	, 0x0c 	, CTL( PATTERNS_B_07  )	, CTL( PATTERNS_C_08  ) , CTL( PATTERNS_B_09  ) , CTL( PATTERNS_A_08  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[  8 ]  ) , &cb_patterns_1_08	},
-	{ COLUMN01 	, 0x0d 	, CTL( PATTERNS_B_08  )	, CTL( PATTERNS_C_09  ) , CTL( PATTERNS_B_0A  ) , CTL( PATTERNS_A_09  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[  9 ]  ) , &cb_patterns_1_09	},
-	{ COLUMN01 	, 0x0e 	, CTL( PATTERNS_B_09  )	, CTL( PATTERNS_C_0A  ) , CTL( PATTERNS_B_0B  ) , CTL( PATTERNS_A_0A  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[ 10 ]  ) , &cb_patterns_1_0A	},
-	{ COLUMN01 	, 0x0f 	, CTL( PATTERNS_B_0A  )	, CTL( PATTERNS_C_0B  ) , CTL( PATTERNS_B_0C  ) , CTL( PATTERNS_A_0B  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[ 11 ]  ) , &cb_patterns_1_0B	},
-	{ COLUMN01 	, 0x10 	, CTL( PATTERNS_B_0B  )	, CTL( PATTERNS_C_0C  ) , CTL( PATTERNS_B_0D  ) , CTL( PATTERNS_A_0C  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[ 12 ]  ) , &cb_patterns_1_0C	},
-	{ COLUMN01 	, 0x11 	, CTL( PATTERNS_B_0C  )	, CTL( PATTERNS_C_0D  ) , CTL( PATTERNS_B_0E  ) , CTL( PATTERNS_A_0D  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[ 13 ]  ) , &cb_patterns_1_0D	},
-	{ COLUMN01 	, 0x12 	, CTL( PATTERNS_B_0D  )	, CTL( PATTERNS_C_0E  ) , CTL( PATTERNS_B_0F  ) , CTL( PATTERNS_A_0E  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[ 14 ]  ) , &cb_patterns_1_0E	},
-	{ COLUMN01 	, 0x13 	, CTL( PATTERNS_B_0E  )	, CTL( PATTERNS_C_0F  ) , CTL( SOLO_LEFT_00   ) , CTL( PATTERNS_A_0F  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 1 , ORDER[ 15 ]  ) , &cb_patterns_1_0F	},
-	{ COLUMN02 	, 0x04 	, CTL( SOLO_LEFT_02   ) 	, CTL( PATTERNS_D_00  ) , CTL( PATTERNS_C_01  ) , CTL( PATTERNS_B_00  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[  0 ]  ) , &cb_patterns_2_00	}, 
-	{ COLUMN02 	, 0x05 	, CTL( PATTERNS_C_00  )	, CTL( PATTERNS_D_01  ) , CTL( PATTERNS_C_02  ) , CTL( PATTERNS_B_01  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[  1 ]  ) , &cb_patterns_2_01	}, 
-	{ COLUMN02 	, 0x06 	, CTL( PATTERNS_C_01  )	, CTL( PATTERNS_D_02  ) , CTL( PATTERNS_C_03  ) , CTL( PATTERNS_B_02  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[  2 ]  ) , &cb_patterns_2_02	}, 
-	{ COLUMN02 	, 0x07 	, CTL( PATTERNS_C_02  )	, CTL( PATTERNS_D_03  ) , CTL( PATTERNS_C_04  ) , CTL( PATTERNS_B_03  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[  3 ]  ) , &cb_patterns_2_03	}, 
-	{ COLUMN02 	, 0x08 	, CTL( PATTERNS_C_03  )	, CTL( PATTERNS_D_04  ) , CTL( PATTERNS_C_05  ) , CTL( PATTERNS_B_04  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[  4 ]  ) , &cb_patterns_2_04	}, 
-	{ COLUMN02 	, 0x09 	, CTL( PATTERNS_C_04  )	, CTL( PATTERNS_D_05  ) , CTL( PATTERNS_C_06  ) , CTL( PATTERNS_B_05  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[  5 ]  ) , &cb_patterns_2_05	}, 
-	{ COLUMN02 	, 0x0a 	, CTL( PATTERNS_C_05  )	, CTL( PATTERNS_D_06  ) , CTL( PATTERNS_C_07  ) , CTL( PATTERNS_B_06  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[  6 ]  ) , &cb_patterns_2_06	}, 
-	{ COLUMN02 	, 0x0b 	, CTL( PATTERNS_C_06  )	, CTL( PATTERNS_D_07  ) , CTL( PATTERNS_C_08  ) , CTL( PATTERNS_B_07  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[  7 ]  ) , &cb_patterns_2_07	}, 
-	{ COLUMN02 	, 0x0c 	, CTL( PATTERNS_C_07  )	, CTL( PATTERNS_D_08  ) , CTL( PATTERNS_C_09  ) , CTL( PATTERNS_B_08  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[  8 ]  ) , &cb_patterns_2_08	}, 
-	{ COLUMN02 	, 0x0d 	, CTL( PATTERNS_C_08  )	, CTL( PATTERNS_D_09  ) , CTL( PATTERNS_C_0A  ) , CTL( PATTERNS_B_09  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[  9 ]  ) , &cb_patterns_2_09	}, 
-	{ COLUMN02 	, 0x0e 	, CTL( PATTERNS_C_09  )	, CTL( PATTERNS_D_0A  ) , CTL( PATTERNS_C_0B  ) , CTL( PATTERNS_B_0A  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[ 10 ]  ) , &cb_patterns_2_0A	}, 
-	{ COLUMN02 	, 0x0f 	, CTL( PATTERNS_C_0A  )	, CTL( PATTERNS_D_0B  ) , CTL( PATTERNS_C_0C  ) , CTL( PATTERNS_B_0B  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[ 11 ]  ) , &cb_patterns_2_0B	}, 
-	{ COLUMN02 	, 0x10 	, CTL( PATTERNS_C_0B  )	, CTL( PATTERNS_D_0C  ) , CTL( PATTERNS_C_0D  ) , CTL( PATTERNS_B_0C  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[ 12 ]  ) , &cb_patterns_2_0C	}, 
-	{ COLUMN02 	, 0x11 	, CTL( PATTERNS_C_0C  )	, CTL( PATTERNS_D_0D  ) , CTL( PATTERNS_C_0E  ) , CTL( PATTERNS_B_0D  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[ 13 ]  ) , &cb_patterns_2_0D	}, 
-	{ COLUMN02 	, 0x12 	, CTL( PATTERNS_C_0D  )	, CTL( PATTERNS_D_0E  ) , CTL( PATTERNS_C_0F  ) , CTL( PATTERNS_B_0E  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[ 14 ]  ) , &cb_patterns_2_0E	}, 
-	{ COLUMN02 	, 0x13 	, CTL( PATTERNS_C_0E  )	, CTL( PATTERNS_D_0F  ) , CTL( SOLO_LEFT_00   ) , CTL( PATTERNS_B_0F  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 2 , ORDER[ 15 ]  ) , &cb_patterns_2_0F	}, 
-	{ COLUMN03 	, 0x04 	, CTL( MUTE_LEFT_02   ) 	, CTL( PATTERNS_E_00  ) , CTL( PATTERNS_D_01  ) , CTL( PATTERNS_C_00  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[  0 ]  ) , &cb_patterns_3_00	},  
-	{ COLUMN03 	, 0x05 	, CTL( PATTERNS_D_00  )	, CTL( PATTERNS_E_01  ) , CTL( PATTERNS_D_02  ) , CTL( PATTERNS_C_01  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[  1 ]  ) , &cb_patterns_3_01	},  
-	{ COLUMN03 	, 0x06 	, CTL( PATTERNS_D_01  )	, CTL( PATTERNS_E_02  ) , CTL( PATTERNS_D_03  ) , CTL( PATTERNS_C_02  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[  2 ]  ) , &cb_patterns_3_02	},  
-	{ COLUMN03 	, 0x07 	, CTL( PATTERNS_D_02  )	, CTL( PATTERNS_E_03  ) , CTL( PATTERNS_D_04  ) , CTL( PATTERNS_C_03  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[  3 ]  ) , &cb_patterns_3_03	},  
-	{ COLUMN03 	, 0x08 	, CTL( PATTERNS_D_03  )	, CTL( PATTERNS_E_04  ) , CTL( PATTERNS_D_05  ) , CTL( PATTERNS_C_04  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[  4 ]  ) , &cb_patterns_3_04	},  
-	{ COLUMN03 	, 0x09 	, CTL( PATTERNS_D_04  )	, CTL( PATTERNS_E_05  ) , CTL( PATTERNS_D_06  ) , CTL( PATTERNS_C_05  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[  5 ]  ) , &cb_patterns_3_05	},  
-	{ COLUMN03 	, 0x0a 	, CTL( PATTERNS_D_05  )	, CTL( PATTERNS_E_06  ) , CTL( PATTERNS_D_07  ) , CTL( PATTERNS_C_06  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[  6 ]  ) , &cb_patterns_3_06	},  
-	{ COLUMN03 	, 0x0b 	, CTL( PATTERNS_D_06  )	, CTL( PATTERNS_E_07  ) , CTL( PATTERNS_D_08  ) , CTL( PATTERNS_C_07  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[  7 ]  ) , &cb_patterns_3_07	},  
-	{ COLUMN03 	, 0x0c 	, CTL( PATTERNS_D_07  )	, CTL( PATTERNS_E_08  ) , CTL( PATTERNS_D_09  ) , CTL( PATTERNS_C_08  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[  8 ]  ) , &cb_patterns_3_08	},  
-	{ COLUMN03 	, 0x0d 	, CTL( PATTERNS_D_08  )	, CTL( PATTERNS_E_09  ) , CTL( PATTERNS_D_0A  ) , CTL( PATTERNS_C_09  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[  9 ]  ) , &cb_patterns_3_09	},  
-	{ COLUMN03 	, 0x0e 	, CTL( PATTERNS_D_09  )	, CTL( PATTERNS_E_0A  ) , CTL( PATTERNS_D_0B  ) , CTL( PATTERNS_C_0A  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[ 10 ]  ) , &cb_patterns_3_0A	},  
-	{ COLUMN03 	, 0x0f 	, CTL( PATTERNS_D_0A  )	, CTL( PATTERNS_E_0B  ) , CTL( PATTERNS_D_0C  ) , CTL( PATTERNS_C_0B  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[ 11 ]  ) , &cb_patterns_3_0B	},  
-	{ COLUMN03 	, 0x10 	, CTL( PATTERNS_D_0B  )	, CTL( PATTERNS_E_0C  ) , CTL( PATTERNS_D_0D  ) , CTL( PATTERNS_C_0C  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[ 12 ]  ) , &cb_patterns_3_0C	},  
-	{ COLUMN03 	, 0x11 	, CTL( PATTERNS_D_0C  )	, CTL( PATTERNS_E_0D  ) , CTL( PATTERNS_D_0E  ) , CTL( PATTERNS_C_0D  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[ 13 ]  ) , &cb_patterns_3_0D	},  
-	{ COLUMN03 	, 0x12 	, CTL( PATTERNS_D_0D  )	, CTL( PATTERNS_E_0E  ) , CTL( PATTERNS_D_0F  ) , CTL( PATTERNS_C_0E  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[ 14 ]  ) , &cb_patterns_3_0E	},  
-	{ COLUMN03 	, 0x13 	, CTL( PATTERNS_D_0E  )	, CTL( PATTERNS_E_0F  ) , CTL( MUTE_LEFT_00   ) , CTL( PATTERNS_C_0F  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 3 , ORDER[ 15 ]  ) , &cb_patterns_3_0F	},  
-	{ COLUMN04 	, 0x04 	, CTL( MUTE_RIGHT_02  )	, CTL( PATTERNS_F_00  ) , CTL( PATTERNS_E_01  ) , CTL( PATTERNS_D_00  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 4 , ORDER[  0 ]  ) , &cb_patterns_4_00	},  
-	{ COLUMN04 	, 0x05 	, CTL( PATTERNS_E_00  )	, CTL( PATTERNS_F_01  ) , CTL( PATTERNS_E_02  ) , CTL( PATTERNS_D_01  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 4 , ORDER[  1 ]  ) , &cb_patterns_4_01	},  
-	{ COLUMN04 	, 0x06 	, CTL( PATTERNS_E_01  )	, CTL( PATTERNS_F_02  ) , CTL( PATTERNS_E_03  ) , CTL( PATTERNS_D_02  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 4 , ORDER[  2 ]  ) , &cb_patterns_4_02	},  
-	{ COLUMN04 	, 0x07 	, CTL( PATTERNS_E_02  )	, CTL( PATTERNS_F_03  ) , CTL( PATTERNS_E_04  ) , CTL( PATTERNS_D_03  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 4 , ORDER[  3 ]  ) , &cb_patterns_4_03	},  
-	{ COLUMN04 	, 0x08 	, CTL( PATTERNS_E_03  )	, CTL( PATTERNS_F_04  ) , CTL( PATTERNS_E_05  ) , CTL( PATTERNS_D_04  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 4 , ORDER[  4 ]  ) , &cb_patterns_4_04	},  
-	{ COLUMN04 	, 0x09 	, CTL( PATTERNS_E_04  )	, CTL( PATTERNS_F_05  ) , CTL( PATTERNS_E_06  ) , CTL( PATTERNS_D_05  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 4 , ORDER[  5 ]  ) , &cb_patterns_4_05	},  
-	{ COLUMN04 	, 0x0a 	, CTL( PATTERNS_E_05  )	, CTL( PATTERNS_F_06  ) , CTL( PATTERNS_E_07  ) , CTL( PATTERNS_D_06  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 4 , ORDER[  6 ]  ) , &cb_patterns_4_06	},  
-	{ COLUMN04 	, 0x0b 	, CTL( PATTERNS_E_06  )	, CTL( PATTERNS_F_07  ) , CTL( PATTERNS_E_08  ) , CTL( PATTERNS_D_07  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 4 , ORDER[  7 ]  ) , &cb_patterns_4_07	},  
-	{ COLUMN04 	, 0x0c 	, CTL( PATTERNS_E_07  )	, CTL( PATTERNS_F_08  ) , CTL( PATTERNS_E_09  ) , CTL( PATTERNS_D_08  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 4 , ORDER[  8 ]  ) , &cb_patterns_4_08	},  
-	{ COLUMN04 	, 0x0d 	, CTL( PATTERNS_E_08  )	, CTL( PATTERNS_F_09  ) , CTL( PATTERNS_E_0A  ) , CTL( PATTERNS_D_09  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 4 , ORDER[  9 ]  ) , &cb_patterns_4_09	},  
-	{ COLUMN04 	, 0x0e 	, CTL( PATTERNS_E_09  )	, CTL( PATTERNS_F_0A  ) , CTL( PATTERNS_E_0B  ) , CTL( PATTERNS_D_0A  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 4 , ORDER[ 10 ]  ) , &cb_patterns_4_0A	},  
-	{ COLUMN04 	, 0x0f 	, CTL( PATTERNS_E_0A  )	, CTL( PATTERNS_F_0B  ) , CTL( PATTERNS_E_0C  ) , CTL( PATTERNS_D_0B  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 4 , ORDER[ 11 ]  ) , &cb_patterns_4_0B	},  
-	{ COLUMN04 	, 0x10 	, CTL( PATTERNS_E_0B  )	, CTL( PATTERNS_F_0C  ) , CTL( PATTERNS_E_0D  ) , CTL( PATTERNS_D_0C  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 4 , ORDER[ 12 ]  ) , &cb_patterns_4_0C	},  
-	{ COLUMN04 	, 0x11 	, CTL( PATTERNS_E_0C  )	, CTL( PATTERNS_F_0D  ) , CTL( PATTERNS_E_0E  ) , CTL( PATTERNS_D_0D  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 4 , ORDER[ 13 ]  ) , &cb_patterns_4_0D	},  
-	{ COLUMN04 	, 0x12 	, CTL( PATTERNS_E_0D  )	, CTL( PATTERNS_F_0E  ) , CTL( PATTERNS_E_0F  ) , CTL( PATTERNS_D_0E  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 4 , ORDER[ 14 ]  ) , &cb_patterns_4_0E	},  
-	{ COLUMN04 	, 0x13 	, CTL( PATTERNS_E_0E  )	, CTL( PATTERNS_F_0F  ) , CTL( MUTE_RIGHT_00  ) , CTL( PATTERNS_D_0F  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 4 , ORDER[ 15 ]  ) , &cb_patterns_4_0F	},  
-	{ COLUMN05 	, 0x04 	, CTL( SOLO_RIGHT_02  )	, CTL( PATTERNS_A_00  ) , CTL( PATTERNS_F_01  ) , CTL( PATTERNS_E_00  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 5 , ORDER[  0 ]  ) , &cb_patterns_5_00	},  
-	{ COLUMN05 	, 0x05 	, CTL( PATTERNS_F_00  )	, CTL( PATTERNS_A_01  ) , CTL( PATTERNS_F_02  ) , CTL( PATTERNS_E_01  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 5 , ORDER[  1 ]  ) , &cb_patterns_5_01	},  
-	{ COLUMN05 	, 0x06 	, CTL( PATTERNS_F_01  )	, CTL( PATTERNS_A_02  ) , CTL( PATTERNS_F_03  ) , CTL( PATTERNS_E_02  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 5 , ORDER[  2 ]  ) , &cb_patterns_5_02	},  
-	{ COLUMN05 	, 0x07 	, CTL( PATTERNS_F_02  )	, CTL( PATTERNS_A_03  ) , CTL( PATTERNS_F_04  ) , CTL( PATTERNS_E_03  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 5 , ORDER[  3 ]  ) , &cb_patterns_5_03	},  
-	{ COLUMN05 	, 0x08 	, CTL( PATTERNS_F_03  )	, CTL( PATTERNS_A_04  ) , CTL( PATTERNS_F_05  ) , CTL( PATTERNS_E_04  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 5 , ORDER[  4 ]  ) , &cb_patterns_5_04	},  
-	{ COLUMN05 	, 0x09 	, CTL( PATTERNS_F_04  )	, CTL( PATTERNS_A_05  ) , CTL( PATTERNS_F_06  ) , CTL( PATTERNS_E_05  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 5 , ORDER[  5 ]  ) , &cb_patterns_5_05	},  
-	{ COLUMN05 	, 0x0a 	, CTL( PATTERNS_F_05  )	, CTL( PATTERNS_A_06  ) , CTL( PATTERNS_F_07  ) , CTL( PATTERNS_E_06  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 5 , ORDER[  6 ]  ) , &cb_patterns_5_06	},  
-	{ COLUMN05 	, 0x0b 	, CTL( PATTERNS_F_06  )	, CTL( PATTERNS_A_07  ) , CTL( PATTERNS_F_08  ) , CTL( PATTERNS_E_07  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 5 , ORDER[  7 ]  ) , &cb_patterns_5_07	},  
-	{ COLUMN05 	, 0x0c 	, CTL( PATTERNS_F_07  )	, CTL( PATTERNS_A_08  ) , CTL( PATTERNS_F_09  ) , CTL( PATTERNS_E_08  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 5 , ORDER[  8 ]  ) , &cb_patterns_5_08	},  
-	{ COLUMN05 	, 0x0d 	, CTL( PATTERNS_F_08  )	, CTL( PATTERNS_A_09  ) , CTL( PATTERNS_F_0A  ) , CTL( PATTERNS_E_09  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 5 , ORDER[  9 ]  ) , &cb_patterns_5_09	},  
-	{ COLUMN05 	, 0x0e 	, CTL( PATTERNS_F_09  )	, CTL( PATTERNS_A_0A  ) , CTL( PATTERNS_F_0B  ) , CTL( PATTERNS_E_0A  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 5 , ORDER[ 10 ]  ) , &cb_patterns_5_0A	},  
-	{ COLUMN05 	, 0x0f 	, CTL( PATTERNS_F_0A  )	, CTL( PATTERNS_A_0B  ) , CTL( PATTERNS_F_0C  ) , CTL( PATTERNS_E_0B  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 5 , ORDER[ 11 ]  ) , &cb_patterns_5_0B	},  
-	{ COLUMN05 	, 0x10 	, CTL( PATTERNS_F_0B  )	, CTL( PATTERNS_A_0C  ) , CTL( PATTERNS_F_0D  ) , CTL( PATTERNS_E_0C  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 5 , ORDER[ 12 ]  ) , &cb_patterns_5_0C	},  
-	{ COLUMN05 	, 0x11 	, CTL( PATTERNS_F_0C  )	, CTL( PATTERNS_A_0D  ) , CTL( PATTERNS_F_0E  ) , CTL( PATTERNS_E_0D  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 5 , ORDER[ 13 ]  ) , &cb_patterns_5_0D	},  
-	{ COLUMN05 	, 0x12 	, CTL( PATTERNS_F_0D  )	, CTL( PATTERNS_A_0E  ) , CTL( PATTERNS_F_0F  ) , CTL( PATTERNS_E_0E  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 5 , ORDER[ 14 ]  ) , &cb_patterns_5_0E	},  
-	{ COLUMN05 	, 0x13 	, CTL( PATTERNS_F_0E  )	, CTL( PATTERNS_A_0F  ) , CTL( SOLO_RIGHT_00  ) , CTL( PATTERNS_E_0F  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 5 , ORDER[ 15 ]  ) , &cb_patterns_5_0F	},  
-
-	#endif
-	#ifndef NSONGTRANSPOSE
-	
 //	{ x	 		, y		, up					, right					, down					, left					, cache							, var						, callback			},
 	{ COLUMN00 	, 0x04 	, CTL( SOLO_LEFT_02	  ) , CTL( TRANSPOSE_B_00  ) , CTL( PATTERNS_A_01  ) , CTL( TRANSPOSE_A_00  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[  0 ]  ) , &cb_patterns_0_00	},
 	{ COLUMN00 	, 0x05 	, CTL( PATTERNS_A_00  )	, CTL( TRANSPOSE_B_01  ) , CTL( PATTERNS_A_02  ) , CTL( TRANSPOSE_A_01  ) , &CACHE_HEXADECIMAL_DOUBLE_DASH, VAR( 0 , ORDER[  1 ]  ) , &cb_patterns_0_01	},
@@ -387,7 +283,7 @@ const Control PAT_CONTROLS[ CONTROL_PAT_MAX ] = {
 	{ COLUMN05-1, 0x11 	, CTL( TRANSPOSE_F_0C )	, CTL( PATTERNS_F_0D  ) , CTL( TRANSPOSE_F_0E ) , CTL( PATTERNS_E_0D  ) , &CACHE_HEXADECIMAL_DOUBLE		, VAR( 5 ,TRANSPOSE[ 13 ]), &cb_transpose_5_0D	},  
 	{ COLUMN05-1, 0x12 	, CTL( TRANSPOSE_F_0D )	, CTL( PATTERNS_F_0E  ) , CTL( TRANSPOSE_F_0F ) , CTL( PATTERNS_E_0E  ) , &CACHE_HEXADECIMAL_DOUBLE		, VAR( 5 ,TRANSPOSE[ 14 ]), &cb_transpose_5_0E	},  
 	{ COLUMN05-1, 0x13 	, CTL( TRANSPOSE_F_0E )	, CTL( PATTERNS_F_0F  ) , CTL( SOLO_RIGHT_00  ) , CTL( PATTERNS_E_0F  ) , &CACHE_HEXADECIMAL_DOUBLE		, VAR( 5 ,TRANSPOSE[ 15 ]), &cb_transpose_5_0F	},  
-	#endif
+
 	{ 0x0c  	, 0x00 	, CTL( PATTERNS_C_0F  )	, CTL( MUTE_LEFT_00   ) , CTL( SOLO_LEFT_01   ) , CTL( SOLO_RIGHT_00  ) , &CACHE_ARROW_LEFT				, NULL					  , &cb_pat_solo_0		},
 	{ 0x0c  	, 0x01 	, CTL( SOLO_LEFT_00   )	, CTL( MUTE_LEFT_01   ) , CTL( SOLO_LEFT_02   ) , CTL( SOLO_RIGHT_01  ) , &CACHE_ARROW_LEFT				, NULL					  , &cb_pat_solo_1		},
 	{ 0x0c  	, 0x02 	, CTL( SOLO_LEFT_01   )	, CTL( MUTE_LEFT_02   ) , CTL( PATTERNS_C_00  ) , CTL( SOLO_RIGHT_02  ) , &CACHE_ARROW_LEFT				, NULL					  , &cb_pat_solo_2		},
@@ -432,9 +328,7 @@ void PatEdit::copy( u8 channel_index ){
 	
 	for(int i=0; i<16;i++){		
 		VAR_SONG.PATTERNS[ channel_index ].ORDER[ VAR_CFG.ORDERPOSITION + i ] = VAR_PATTERN[ channel_index ].ORDER[ i ];
-		#ifndef NSONGTRANSPOSE
 		VAR_SONG.PATTERNS[ channel_index ].TRANSPOSE[ VAR_CFG.ORDERPOSITION + i ] = VAR_PATTERN[ channel_index ].TRANSPOSE[ i ];
-		#endif
 	}
 	
 	PatEdit::sync();
@@ -507,12 +401,12 @@ void PatEdit::update(RegionHandler* rh){
 	
 	Clip::update( rh );
 	/*
-	static u8 last_peak[6] = { 0, 0, 0, 0, 0, 0 };
+	static u8 last_peak[ CHANNEL_COUNT ] = { 0, 0, 0, 0, 0, 0 };
 	
 	static int cooldown = 0;
 	
 	
-	u8 level[6] = {
+	u8 level[ CHANNEL_COUNT ] = {
 		(VAR_CHANNEL[0].VOLUME?VAR_CHANNEL[0].VOLUME:VAR_CHANNEL[0].volume)>>1, 
 		(VAR_CHANNEL[1].VOLUME?VAR_CHANNEL[1].VOLUME:VAR_CHANNEL[1].volume)>>1, 
 		(VAR_CHANNEL[2].VOLUME?VAR_CHANNEL[2].VOLUME:VAR_CHANNEL[2].volume)>>1, 
@@ -521,7 +415,7 @@ void PatEdit::update(RegionHandler* rh){
 		(VAR_CHANNEL[5].VOLUME?VAR_CHANNEL[5].VOLUME:VAR_CHANNEL[5].volume)>>1, 
 	};
 	
-	static u8 peak[6] = {
+	static u8 peak[ CHANNEL_COUNT ] = {
 		last_peak[0] < level[0] ? level[0] : last_peak[0]>0 ? last_peak[0]-1 : last_peak[0],
 		last_peak[1] < level[1] ? level[1] : last_peak[1]>0 ? last_peak[1]-1 : last_peak[1],
 		last_peak[2] < level[2] ? level[2] : last_peak[2]>0 ? last_peak[2]-1 : last_peak[2],
@@ -530,7 +424,7 @@ void PatEdit::update(RegionHandler* rh){
 		last_peak[5] < level[5] ? level[5] : last_peak[5]>0 ? last_peak[5]-1 : last_peak[5]
 	};
 	
-	const u8 coords[6][2]={
+	const u8 coords[ CHANNEL_COUNT ][2]={
 		{ 16, 0 },
 		{ 16, 1 },
 		{ 16, 2 },
@@ -660,7 +554,7 @@ void PatEdit::mute(Control *c, bool bigstep, bool add, u32 *pointer){
 	PatEdit::solo_clean = false; 
 }
 
-// Reloads VAR_SONG.PATTERN[6][--16--] into visible VARIABLE lookup vars (VAR_PATTERN[6][16])
+// Reloads VAR_SONG.PATTERN[ CHANNEL_COUNT ][--16--] into visible VARIABLE lookup vars (VAR_PATTERN[ CHANNEL_COUNT ][16])
 void PatEdit::sync( bool verbose ){
 	
 	const Control *ctl = &PAT_CONTROLS[ 0 ];
@@ -669,9 +563,7 @@ void PatEdit::sync( bool verbose ){
 			/* ------------------------------------------------------------
 			Copy data from VISIBLE CONTROL VARS -> Song Data Order Memory*/
 			VAR_PATTERN[ c ].ORDER[ i ] 		= VAR_SONG.PATTERNS[ c ].ORDER[ i + VAR_CFG.ORDERPOSITION ];
-			//#ifndef NSONGTRANSPOSE
 			VAR_PATTERN[ c ].TRANSPOSE[ i ] = VAR_SONG.PATTERNS[ c ].TRANSPOSE[ i + VAR_CFG.ORDERPOSITION ];
-			//#endif
 			/* ------------------------------------------------------------
 			Manually draw the controls (good to avoid message overflow)  */
 			if( verbose ) {
@@ -722,7 +614,7 @@ void PatEdit::dispatchMessage(u32 msg){
 				//TODO: pagination using B + something + LEFT
 				/* ------------------------------------------------------------
 				Clear Arrows when pattern scrolls down 						 */
-				for(int c=0, x=0; c<6;c++){
+				for(int c=0, x=0; c < CHANNEL_COUNT;c++){
 					x = VAR_CHANNEL[c].POSITION - VAR_CFG.ORDERPOSITION;
 					if((x<=15)&&(x>=0))Gpu::set(2, PatEdit::arrow_position[c], 4+x, 0x00FC);
 				}
@@ -740,12 +632,12 @@ void PatEdit::dispatchMessage(u32 msg){
 			
 		/* Scroll down */
 		case MESSAGE_OTHER_NEXT: 
-			/* about the 240 below, it is 256 patterns - 16 visible entries */
-			if(VAR_CFG.ORDERPOSITION < modifier ? 240 : 224 ){ 
+			/* about the 240 below, it is ORDER_COUNT patterns - 0x10 visible entries */
+			if(VAR_CFG.ORDERPOSITION < modifier ? ( ORDER_COUNT - 0x10 ) : ( ORDER_COUNT - 0x20 ) ){ 
 				//TODO: pagination using B + something + RIGHT
 				/* ------------------------------------------------------------
 				Clear Arrows when pattern scrolls down 						 */
-				for(int c=0, x=0; c<6;c++){
+				for(int c=0, x=0; c < CHANNEL_COUNT ;c++){
 					x = VAR_CHANNEL[c].POSITION - VAR_CFG.ORDERPOSITION;
 					if((x<=15)&&(x>=0))Gpu::set(2, PatEdit::arrow_position[c], 4+x, 0x00FC);
 				}
@@ -769,7 +661,7 @@ void PatEdit::shift( int q, u8 starting_point ){
 
 	u16 carry = VAR_SONG.PATTERNS[ TRACKER_ACTIVE_CHANNEL ].ORDER[ expr ? starting_point : 255 ];
 	
-	for(int i = starting_point; i<256; i++){
+	for(int i = starting_point; i<ORDER_COUNT; i++){
 		VAR_SONG.PATTERNS[ TRACKER_ACTIVE_CHANNEL ].ORDER[ expr ? i&0xFF : (0xFF-starting_point) - (i&0xFF) ] = VAR_SONG.PATTERNS[ TRACKER_ACTIVE_CHANNEL ].ORDER[ expr ? (i+1)&0xFF : (0xFF-starting_point) - ((i+1)&0xFF) ];
 	} 
 	VAR_SONG.PATTERNS[ TRACKER_ACTIVE_CHANNEL ].ORDER[ expr ? 0xFF : starting_point] = carry;
@@ -780,8 +672,7 @@ void PatEdit::shift( int q, u8 starting_point ){
 
 void PatEdit::transpose( int q ){
 	Notifier::icon( 0x306D, q > 0 ? 0x308C : 0x308E, 0x8A);
-	#ifndef NSONGTRANSPOSE
-	for(int i = 0; i<256; i++){
+	for(int i = 0; i < ORDER_COUNT; i++){
 		// Abort if lowest note would overflow on transpose down
 		if( ( VAR_SONG.PATTERNS[ TRACKER_ACTIVE_CHANNEL ].TRANSPOSE[ i ] + q ) == 0x00 ) return;
 		// Abort if highest note would overflow on transpose down
@@ -789,12 +680,11 @@ void PatEdit::transpose( int q ){
 	}
 	Notifier::icon( 0x0, 0x706D, q > 0 ? 0x408C : 0x408E);
 	
-	for(int i = 0; i<256; i++){
+	for(int i = 0; i<ORDER_COUNT; i++){
 		VAR_SONG.PATTERNS[ TRACKER_ACTIVE_CHANNEL ].TRANSPOSE[ i ] += q;
 	}
 	// Save changes and Show changes in screen
 	PatEdit::sync();	
-	#endif
 }
 
 void PatEdit::processInput( ){

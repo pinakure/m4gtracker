@@ -2,7 +2,7 @@
 #include "data.hpp"
 #include "../modules/regionhandler/regionhandler.hpp"
 #include "../modules/spu/sequencer.hpp"
-#include "../callbacks/trk.hpp"
+#include "../screens/tracker.hpp"
 #include "../modules/spu/mixer.hpp"
 #include "../modules/key/key.hpp"
 #include "../macros.h"
@@ -157,73 +157,8 @@ Use as example LinkMode class at Config screen
 
 */
 
-
-//********************************************//
-// CONFIG SCREEN::Viewport Regions' Controls  //
-//********************************************// 
-#define THIS(a) &LOOKNFEEL_CONTROLS[CONTROL_LOOKNFEEL_##a]
-#define THISVAR(a) ((u8*)&(VAR_CFG.LOOKNFEEL.a))
-const Control LOOKNFEEL_CONTROLS[CONTROL_LOOKNFEEL_MAX] = { 
-	//  x    y      up						right					down					left					cache						var						callback	
-	{	0x04 , 0x04 , NULL					, THIS(INTERFACE)		, NULL					, NULL					, NULL						, (u8*)&(VAR_CFG.MENUSLOT)	, &cb_cfg_menuindex		},
-	{	0x19 , 0x06 , THIS(EDITPAL)			, THIS(INTERFACE)		, THIS(FONT)			, THIS(MENU1)			, &CACHE_INTERFACE			, THISVAR(INTERFACE)		, &cb_cfg_interface		},
-	{	0x17 , 0x07 , THIS(INTERFACE)		, THIS(FONT)			, THIS(BORDER)			, THIS(MENU1)			, &CACHE_FONTSTYLE			, THISVAR(FONT)				, &cb_cfg_font			},
-	{	0x17 , 0x08 , THIS(FONT)			, THIS(BORDER)			, THIS(SHOWLOGO)		, THIS(MENU1)			, &CACHE_BORDERSTYLE		, THISVAR(BORDER)			, &cb_cfg_border			},
-	{	0x1b , 0x09 , THIS(BORDER)			, THIS(SHOWLOGO)		, THIS(STARTSFX)		, THIS(MENU1)			, &CACHE_CHECK				, THISVAR(SHOWLOGO)			, &cb_cfg_showlogo		},
-	{	0x1b , 0x0a , THIS(SHOWLOGO)		, THIS(STARTSFX)		, THIS(EDITPAL)			, THIS(MENU1)			, &CACHE_CHECK				, THISVAR(STARTUPSFX)		, &cb_cfg_startupsfx		},
-	{	0x1b , 0x0b , THIS(STARTSFX)		, THIS(EDITPAL)			, THIS(INTERFACE)		, THIS(MENU1)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_coloreditor	},
-	CONTROL_TERMINATOR
-};
-#undef THISVAR
-#undef THIS
-
-#define CTL(a) &BEHAVIOR_CONTROLS[CONTROL_BEHAVIOR_##a]
-#define VAR(a) ((u8*)&(VAR_CFG.BEHAVIOR.a))
-const Control BEHAVIOR_CONTROLS[CONTROL_BEHAVIOR_MAX] = { 
-//				{	x	 , y     , up					 , right				 , down					 , left					 , cache				, var						 , callback
-/* MENU3	*/ 	{	0x04 , 0x04	, NULL					 , CTL( AUTOLOAD		), NULL					 , NULL					 , NULL					, (u8*)&(VAR_CFG.MENUSLOT	), &cb_cfg_menuindex	}, 
-/* AUTOLOAD	*/	{	0x1b , 0x06	, CTL( DEFAULTS			), CTL( AUTOLOAD		), CTL( AUTOSAVE		), CTL( MENU3			), &CACHE_CHECK			, VAR( AUTOLOAD				), &cb_cfg_autoload	 	}, 
-/* autosave	*/	{	0x1b , 0x07	, CTL( AUTOLOAD			), CTL( AUTOSAVE		), CTL( KEYRATE			), CTL( MENU3			), &CACHE_CHECK			, VAR( AUTOSAVE				), &cb_cfg_autosave		}, 
-/* keyrate	*/	{	0x1b , 0x08	, CTL( AUTOSAVE			), CTL( KEYRATE			), CTL( SAVE			), CTL( MENU3			), &CACHE_HEXADECIMAL	, VAR( KEYRATE				), &cb_cfg_keyrate		}, 
-/* save		*/	{	0x1b , 0x09	, CTL( KEYRATE			), CTL( SAVE			), CTL( LOAD			), CTL( MENU3			), &CACHE_ARROW_LEFT	, NULL						 , &cb_cfg_saveconfig	}, 
-/* load		*/	{	0x1b , 0x0a	, CTL( SAVE 			), CTL( LOAD			), CTL( DEFAULTS		), CTL( MENU3			), &CACHE_ARROW_LEFT	, NULL						 , &cb_cfg_loadconfig	}, 
-/* defaults	*/	{	0x1b , 0x0b	, CTL( LOAD 			), CTL( DEFAULTS		), CTL( AUTOLOAD		), CTL( MENU3			), &CACHE_ARROW_LEFT	, NULL						 , &cb_cfg_initconfig	}, 
-				CONTROL_TERMINATOR
-};
-#undef VAR
-#undef CTL
 	
-#define THIS(a) &TRACKER_CONTROLS[CONTROL_TRACKER_##a]
-#define THISVAR(a) ((u8*)&(VAR_CFG.TRACKER.a))
-const Control TRACKER_CONTROLS[CONTROL_TRACKER_MAX] = { 
-	//  x	 y     	up						right					down					left					cache						var							callback
-	{	0x04 , 0x04 , NULL					, THIS(FINETUNE)		, NULL					, NULL					, NULL						, (u8*)&(VAR_CFG.MENUSLOT)	, &cb_cfg_menuindex		}, /*MENU4*/ 
-	{	0x1b , 0x06 , THIS(MIXER)			, THIS(FINETUNE)		, THIS(PRELISTEN)		, THIS(MENU4)			, &CACHE_HEXADECIMAL		, THISVAR(FINETUNE)			, &cb_cfg_finetune		}, /*finetune*/
-	{	0x1b , 0x07 , THIS(FINETUNE)		, THIS(PRELISTEN)		, THIS(TRANSPOSE)		, THIS(MENU4)			, &CACHE_CHECK				, THISVAR(PRELISTEN)		, &cb_cfg_prelisten		}, /*prelisten*/
-	{	0x1b , 0x08 , THIS(PRELISTEN)		, THIS(TRANSPOSE)		, THIS(INPUTMODE)		, THIS(MENU4)			, &CACHE_HEXADECIMAL_DOUBLE	, THISVAR(TRANSPOSE)		, &cb_cfg_transpose		}, /*transpose*/
-	{	0x1a , 0x09 , THIS(TRANSPOSE)		, THIS(INPUTMODE)		, THIS(SOUNDBIAS)		, THIS(MENU4)			, &CACHE_INPUT_TYPE			, THISVAR(INPUTMODE)		, &cb_cfg_inputmode		}, /*inputmode*/
-	{	0x1b , 0x0a , THIS(INPUTMODE)		, THIS(SOUNDBIAS)		, THIS(MIXER)			, THIS(MENU4)			, &CACHE_HEXADECIMAL_DOUBLE	, THISVAR(SOUNDBIAS)		, &cb_cfg_soundbias		}, /*soundbias*/
-	{	0x1b , 0x0b , THIS(SOUNDBIAS)		, THIS(MIXER)			, THIS(FINETUNE)		, THIS(MENU4)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_mixer			}, /*defaults*/
-	CONTROL_TERMINATOR
-};
-#undef THISVAR
-#undef THIS
 
-#define THIS(a) &MEMORY_CONTROLS[CONTROL_MEMORY_##a]
-#define THISVAR(a) ((u8*)&(VAR_CFG.MEMORY.a))
-const Control MEMORY_CONTROLS[CONTROL_MEMORY_MAX] = { 
-	//  x    y     	up						right					down					left					cache						var							callback
-	{	0x04 , 0x04 , NULL					, THIS(PREFETCH)		, NULL					, NULL					, NULL						, (u8*)&(VAR_CFG.MENUSLOT)	, &cb_cfg_menuindex		}, /*MENU5*/ 
-	{	0x1b , 0x06 , THIS(RESET)			, THIS(PREFETCH)		, THIS(SLOTUSAGE)		, THIS(MENU5)			, &CACHE_CHECK				, THISVAR(PREF)				, &cb_cfg_prefetch		}, /*prefetch*/
-	{	0x1b , 0x07 , THIS(PREFETCH)		, THIS(SLOTUSAGE)		, THIS(PURGESONGS)		, THIS(MENU5)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_backup			}, /*slotusage ->backup*/
-	{	0x1b , 0x08 , THIS(SLOTUSAGE)		, THIS(PURGESONGS)		, THIS(MEMORYTEST)		, THIS(MENU5)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_revert			}, /*purgesongs -> revert*/
-	{	0x1b , 0x09 , THIS(PURGESONGS)		, THIS(MEMORYTEST)		, THIS(REINIT)			, THIS(MENU5)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_memorytest		}, /*memorytest*/
-	{	0x1b , 0x0a , THIS(MEMORYTEST)		, THIS(REINIT)			, THIS(RESET)			, THIS(MENU5)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_format			}, /*reinit*/
-	{	0x1b , 0x0b , THIS(REINIT)			, THIS(RESET)			, THIS(PREFETCH)		, THIS(MENU5)			, &CACHE_ARROW_LEFT			, NULL						, &cb_cfg_reset			}, /*reset*/
-	CONTROL_TERMINATOR
-};
-#undef THISVAR
-#undef THIS
 
 #define INSTRUM(a) ((u8*)&(VAR_INSTRUMENT.a))
 #define THIS(a) &INS_PWM_CONTROLS[CONTROL_INS_PWM_##a]

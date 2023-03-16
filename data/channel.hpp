@@ -2,9 +2,11 @@
 #define CHANNEL_HPP
 
 #include "../agb.h"
-#include "patterncell.hpp"
+//#include "patterncell.hpp"
+//#include "pattern.hpp"
 
 typedef struct sChannel Channel;
+typedef struct sPatternCell PatternCell;
 
 typedef struct sChannel {
 	bool 				mute;
@@ -16,8 +18,8 @@ typedef struct sChannel {
 	u8 					value;
 	u8 					volume;
 
-	PatternCell		*CELL;
-	PatternCell		*NEXTCELL;
+	PatternCell			*CELL;
+	PatternCell			*NEXTCELL;
 	u8					VOLUME /*5*/;
 	u8					lastpeak /*4*/;
 	u8					peak /*4*/;
@@ -53,6 +55,7 @@ typedef enum eChannelTypes {
 	CHANNEL_SMP,
 };
 
-extern Channel VAR_CHANNEL[6];
+#define CHANNEL_COUNT 			6
+extern Channel VAR_CHANNEL[ CHANNEL_COUNT ];
 
 #endif

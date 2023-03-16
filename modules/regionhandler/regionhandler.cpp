@@ -1,5 +1,6 @@
 #include "regionhandler.hpp"
 #include "../../callbacks/debug.hpp"
+#include "../../screens/live.hpp"
 
 RegionHandler regHnd;
 
@@ -328,7 +329,7 @@ void RegionHandler::draw(){
 
 void RegionHandler::jumpToControl(const Control *c){
 	
-	if( VAR_LIVE.PERFORM.LOCK || Clip::visible || !c ) return;
+	if( Live::PERFORM.LOCK || Clip::visible || !c ) return;
 	
 	Control *o = control;
 	control = (Control*)c;

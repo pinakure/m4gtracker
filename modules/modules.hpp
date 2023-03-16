@@ -4,7 +4,6 @@
 #include "net/net.hpp"
 #include "spu/spu.hpp"
 #include "gpu/gpu.hpp"
-#include "mem/mem.hpp"
 #include "key/key.hpp"
 #include "sram/sram.hpp"
 #include "clip/clip.hpp"

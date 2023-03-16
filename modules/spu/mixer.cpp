@@ -103,17 +103,18 @@ const u16 DSOUND_FREQ_TABLE[] = {
 
 };
 
-MEM_IN_EWRAM s8 sound_mix_buffer[SMP_BUFFER_SIZE*4];
+MEM_IN_EWRAM s8 sound_mix_buffer[ SMP_BUFFER_SIZE*4 ];
 SoundBuffer		sound_buffer;
-SoundChannel	channel[2];
+// SoundChannel	channel[ VIRTUAL_CHANNEL_COUNT ];
+SoundChannel	Mixer::channel[ VIRTUAL_CHANNEL_COUNT ];
 u32*			smp_data;
 u32 			smp_data_size;
 char*			smp_name;
 
-int 			Mixer::last_level[6];
+int 			Mixer::last_level[ CHANNEL_COUNT ];
 int 			Mixer::level;
-int 			Mixer::key_note[6];
-int 			Mixer::new_note[6];
+int 			Mixer::key_note[ CHANNEL_COUNT ];
+int 			Mixer::new_note[ CHANNEL_COUNT ];
 bool 			Mixer::enable_metronome = false;
 bool 			Mixer::enabled = false;
 

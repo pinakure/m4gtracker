@@ -4,6 +4,7 @@
 #include "../../agb.h"
 
 #include "../../data/control.hpp"
+#include "../../data/channel.hpp"
 #include "../regionhandler/regionhandler.hpp"
 
 
@@ -20,6 +21,8 @@
 #define DMA1_CHI		(*(vu16*)0x40000C6) //SOUNDCNT_H
 #define DMA1_CLO		(*(vu16*)0x4000082) //SOUNDCNT_H
 
+
+#define VIRTUAL_CHANNEL_COUNT 	2
 
 //#define SMP_BUFFER_SIZE			304
 #define SMP_BUFFER_SIZE			96
@@ -39,7 +42,7 @@ typedef struct _soundChannel {
    u32 inc;
    u32 vol;
 } SoundChannel;
-extern SoundChannel channel[2];
+// extern SoundChannel channel[ VIRTUAL_CHANNEL_COUNT ];
 
 class Mixer {
 	private:
@@ -57,14 +60,15 @@ class Mixer {
 		static void disableFmw();
 		static void disableSmp();
 
+		static SoundChannel channel[ VIRTUAL_CHANNEL_COUNT ];
 	public:
 		static bool enable_metronome;
 		static bool enabled;
 		
-		static int last_level[6];
+		static int last_level[ CHANNEL_COUNT ];
 		static int level;
-		static int key_note[6];
-		static int new_note[6];
+		static int key_note[ CHANNEL_COUNT ];
+		static int new_note[ CHANNEL_COUNT ];
 
 		static void init();
 		static void mix();

@@ -6,7 +6,7 @@
 #include "../modules/key/key.hpp"
 #include "../modules/sram/sram.hpp"
 #include "../data/helpers.hpp"
-#include "../callbacks/cfg.hpp"
+#include "../screens/config.hpp"
 #include "../data/enum.h"
 #include "../data/data.hpp"
 #include "../modules/spu/mixer.hpp"
@@ -124,7 +124,7 @@ void Debug::watchArray	( const char *varname , void** array, u8 size ){
 	arrays[ 0 ].timer 		= 0; 
 	arrays[ 0 ].redraw 		= true; 
 	
-	for( int i = 0; i<16; i++ ){
+	for( int i = 0; i < 0x10 ; i++ ){
 		arrays[ 0 ].last_value[ i ] = 0xFFFF; 
 	}
 	
@@ -180,6 +180,10 @@ void Debug::drawFrame( u8 pos_x, u8 pos_y, u8 width, u8 height, const char *titl
 }
 
 void Debug::watchUpdateArray( u8 index ){
+	/*
+	DO NOT USE
+	*/
+	/*!
 	ArrayWatch *aw = &arrays[ index ];
 	
 	if( aw->timer > 1 ) aw->timer--;
@@ -189,16 +193,16 @@ void Debug::watchUpdateArray( u8 index ){
 	}
 	
 	// Cast variables in array to every posible value
-	static u8	u8value[16];
-	static u16	u16value[16]; 
-	static u32	u32value[16]; 
-	static u32 last_value[16]; 
+	static u8	u8value		[0x10];
+	static u16	u16value	[0x10]; 
+	static u32	u32value	[0x10]; 
+	static u32 last_value	[0x10]; 
 	
 	// Only let updation when variable value has change
-	for( int i=0; i<16; i++){
-		u8value			[ i ]  = 0;//*((  u8** ) aw->array)[i];
-		u16value		[ i ]  = VAR_CELLS[ 1 ].KEY[ i ];//*(( u16** ) aw->array)[i];
-		u32value		[ i ]  = 0;//*(( u32** ) aw->array)[i];
+	for( int i=0; i < 0x10 ; i++ ){
+		u8value			[ i ]  = 0;// *((  u8** ) aw->array)[i];
+		u16value		[ i ]  = VAR_CELLS[ 1 ].KEY[ i ];// *(( u16** ) aw->array)[i];
+		u32value		[ i ]  = 0;// *(( u32** ) aw->array)[i];
 		last_value		[ i ]  = aw->last_value[ i ];
 		aw->last_value	[ i ]  = u32value[ i ];
 		if( last_value	[ i ] != u32value[ i ] ) {
@@ -262,6 +266,7 @@ void Debug::watchUpdateArray( u8 index ){
 			
 		}
 	}
+	*/
 }
 
 void Debug::watchUpdate( u8 index ){
@@ -649,7 +654,7 @@ void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 
 	Song *s = &VAR_SONG;
 
-	for( VAR_CFG.SLOT=0, p=0; VAR_CFG.SLOT<0x6; VAR_CFG.SLOT++){
+	for( VAR_CFG.SLOT=0, p=0; VAR_CFG.SLOT < SONG_SLOT_COUNT; VAR_CFG.SLOT++ ){
 		
 		// Set title 
 		for(int a=0; a<14;a++){
@@ -664,16 +669,14 @@ void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 			s->GROOVE.STEP[ i ] = (0x80 + (i&0xF));
 		}
 		
-		for( int c=0; c<0x06; c++){
-			for(int i=0; i < 256; i++ ){
+		for( int c=0; c < CHANNEL_COUNT; c++){
+			for(int i=0; i < ORDER_COUNT; i++ ){
 				u8 val = 0x40 + (p & 0x3f);
 				s->PATTERNS[ c ].ORDER[ i ] = val;
-				#ifndef NSONGTRANSPOSE
 				s->PATTERNS[ c ].TRANSPOSE[ i ] = val;
-				#endif
 				console.update();
 				if( (p&0xF) == 0){
-					float q = ( float( p ) / float( 0xFF * 6 * 6 ) );
+					float q = ( float( p ) / float( ( ORDER_COUNT-1 ) * SONG_SLOT_COUNT * CHANNEL_COUNT ) );
 					console.percent(q);
 					progressbar.render(q, false);
 				}
@@ -686,11 +689,11 @@ void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 	console.percent(1.0f);
 	
 	console.print( "Reading song memory..." );
-	for( VAR_CFG.SLOT=0, p = 0; VAR_CFG.SLOT<0x6; VAR_CFG.SLOT++){
+	for( VAR_CFG.SLOT=0, p = 0; VAR_CFG.SLOT < SONG_SLOT_COUNT; VAR_CFG.SLOT++){
 		
 		SRAM.songLoad(false);
 		
-		for(int a=0; a < 14; a++){
+		for(int a=0; a < 14 ; a++){
 			ASSERT( s->TITLE[a]==VAR_CFG.SLOT);
 			ASSERT( s->ARTIST[a]==a);
 		}
@@ -702,16 +705,14 @@ void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 			ASSERT( s->GROOVE.STEP[ i ] == (0x80 + (i&0xF)));
 		}
 		
-		for( int c=0; c<0x06; c++){
-			for(int i=0; i<256; i++ ){
+		for( int c=0; c<CHANNEL_COUNT; c++){
+			for(int i=0; i<ORDER_COUNT; i++ ){
 				u8 val = 0x40 + (p & 0x3f);
 				ASSERT( s->PATTERNS[c].ORDER[ i ] == val );
-				#ifndef NSONGTRANSPOSE
 				ASSERT( s->PATTERNS[c].TRANSPOSE[i] == val);
-				#endif
 				console.update();
 				if( (p&0xF)==0){
-					float q = ( float( p ) / float( 0xFF * 6 * 6 ) );
+					float q = ( float( p ) / float( ( ORDER_COUNT-1 ) * SONG_SLOT_COUNT * CHANNEL_COUNT ) );
 					console.percent( q );
 					progressbar.render(q, true);
 				}

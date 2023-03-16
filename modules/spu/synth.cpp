@@ -94,23 +94,24 @@ void Synth::init(){
 }
 
 void Synth::noteOnPwm1( Channel* channel ){
-	u16 freq 	= PWM_FREQ_TABLE[ 
-					channel->key 
-					+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
-					// + channel->transpose 
-					+ VAR_SONG.PATTERNS[0].TRANSPOSE[ channel->POSITION] 
-					+ VAR_SONG.TRANSPOSE 
-				  ] 
+	u8 key = channel->key 
+		+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
+		 + channel->transpose 
+		+ VAR_SONG.PATTERNS[0].TRANSPOSE[ channel->POSITION ] 
+		+ VAR_SONG.TRANSPOSE ;
+				  
+	u16 freq 	= PWM_FREQ_TABLE[ key ]  
 				+ channel->fine_tune
 				+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
 	SOUND1CNT_H = 0x8000 | freq;
+	
 	channel->retrig = false;			
 }
 
 void Synth::noteOnPwm2( Channel* channel ){
 	u16 freq 	= PWM_FREQ_TABLE[ 
 					channel->key 
-					//+ channel->transpose 
+					+ channel->transpose 
 					+ VAR_SONG.PATTERNS[1].TRANSPOSE[ channel->POSITION] 
 					+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
 					+ VAR_SONG.TRANSPOSE 
@@ -124,7 +125,7 @@ void Synth::noteOnPwm2( Channel* channel ){
 void Synth::noteOnNze( Channel* channel ){
 	u16 freq 	= PWM_FREQ_TABLE[ 
 					channel->key 
-					//+ channel->transpose
+					+ channel->transpose
 					+ VAR_SONG.PATTERNS[2].TRANSPOSE[ channel->POSITION] 
 					+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
 					+ VAR_SONG.TRANSPOSE 
@@ -808,7 +809,7 @@ void Synth::polysynth( u16 input ){
 	u8 duty = (lfo>>6) & 0x03; // 2 bit : 6
 	u8 step = 0x3; //input & 0x07; // 3 bit : 8
 	u8 edir = 0x0800;		// 1 bit : 11
-	u8 vol[6]   = {
+	u8 vol[ CHANNEL_COUNT ]   = {
 		0xFF - (input>>5),
 		(input>>8)*4,
 		input>>5,
@@ -816,7 +817,7 @@ void Synth::polysynth( u16 input ){
 		input>>5,
 		input>>5,
 	};
-	u16 freq[6] = {
+	u16 freq[ CHANNEL_COUNT ] = {
 		PWM_FREQ_TABLE[ input>>(input%8) ],
 		PWM_FREQ_TABLE[ input   ] +(lfo),
 		PWM_FREQ_TABLE[ input+7 ] + lfo*lfo,

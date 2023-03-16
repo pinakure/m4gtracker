@@ -50,7 +50,7 @@ void VirtualScreen::init( ){
 
 void VirtualScreen::load(const bool *dat) {
 	i=-1;
-	for(;++i<1024;){
+	for(;++i < VIRTUALSCREEN_SIZE ;){
 		if(*dat) set(i & 31, i>>5);
 		dat++;
 	}
@@ -59,7 +59,7 @@ void VirtualScreen::load(const bool *dat) {
 void VirtualScreen::clear(){
 	i=-1;
 	d = data;
-	for(;++i<256;){
+	for(; ++i < REALSCREEN_SIZE ; ){
 		*d = 0x60;
 		d++;
 	}

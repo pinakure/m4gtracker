@@ -3,13 +3,14 @@
 
 #include "../agb.h"
 #include "../modules/regionhandler/regionhandler.hpp"
+#include "../data/channel.hpp"
 
 class PatEdit {
 	public:
-		static const	u8 		arrow_position[6];
-		static const	u16 	channel_symbols[6];
+		static const	u8 		arrow_position	[ CHANNEL_COUNT ];
+		static const	u16 	channel_symbols	[ CHANNEL_COUNT ];
+		static 			u8 		bookmarks		[ CHANNEL_COUNT ];
 		static 			u8 		bookmark_row;
-		static 			u8 		bookmarks[6];
 		static 			bool 	solo_clean;
 		static 			bool 	clean;
 		static 			u16  	icon_time;

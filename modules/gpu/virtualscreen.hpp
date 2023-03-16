@@ -5,6 +5,8 @@
 
 #define VIRTUALSCREEN_WIDTH 	32
 #define VIRTUALSCREEN_HEIGHT 	32
+#define VIRTUALSCREEN_SIZE 		1024 // (virtualscreen_width) * (virtualscreen_height)
+#define REALSCREEN_SIZE			256 // (virtualscreen_width>>1) * (virtualscreen_height>>1) 		
 
 class VirtualScreen {
 	private:

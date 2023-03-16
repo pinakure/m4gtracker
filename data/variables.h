@@ -4,5 +4,4 @@
 #include "settings.hpp"
 #include "instrument.hpp"
 #include "config.hpp"
-#include "live.hpp"
 #include "channel.hpp"

@@ -9,6 +9,7 @@
 
 #define SONG_SLOT_COUNT 	6
 
+
 class SongEdit {
 	public:
 		static MEM_IN_EWRAM bool has_data[ SONG_SLOT_COUNT ];
@@ -57,5 +58,7 @@ extern const Callback cb_sng_groove_0C;
 extern const Callback cb_sng_groove_0D;
 extern const Callback cb_sng_groove_0E;
 extern const Callback cb_sng_groove_0F;
+
+extern const Control SNG_CONTROLS[CONTROL_SNG_MAX];
 
 #endif

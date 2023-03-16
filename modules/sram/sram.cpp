@@ -2,9 +2,12 @@
 
 Sram SRAM;
 
+#include "../../screens/live.hpp"
+#include "../../data/pattern.hpp"
 #include "../../callbacks/ins.hpp"
 #include "../../callbacks/pat.hpp"
-#include "../../callbacks/trk.hpp"
+#include "../../callbacks/sng.hpp"
+#include "../../screens/tracker.hpp"
 #include "../../callbacks/debug.hpp"
 
 u8* Sram::sram;
@@ -120,49 +123,39 @@ void Sram::songSave( bool verbose ){
 	forward	( SONG_DETAILS_SIZE * VAR_CFG.SLOT );
 
 	// Write Song details
-	/*1*/ write		( VAR_SONG.TRANSPOSE);
-	/*2*/ write		( VAR_SONG.BPM);
-	/*3*/ writeNibbles( VAR_SONG.PATTERNLENGTH, VAR_SONG.GROOVE.LENGTH);
-	/*4*/ write		( (VAR_SONG.GROOVE.ENABLE <<2) | VAR_SONG.NOTEMPTY);//6 bit left unused!!
+	/*1*/ write			( VAR_SONG.TRANSPOSE );
+	/*2*/ write			( VAR_SONG.BPM );
+	/*3*/ writeNibbles	( VAR_SONG.PATTERNLENGTH, VAR_SONG.GROOVE.LENGTH );
+	/*4*/ write			( ( VAR_SONG.GROOVE.ENABLE << 2 ) | VAR_SONG.NOTEMPTY );//6 bit left unused!!
 		
 	// Write Artist and title
-	for(i=0; i<14;i++){
+	for( i = 0 ; i < 14 ; i++ ){
 		/*18*/write	( VAR_SONG.TITLE	[ i ] );
 		/*32*/write	( VAR_SONG.ARTIST	[ i ] );
 	} 
 
 	//0x140
 	seek	( DATA_BASE_ADDRESS );
-	forward ( SONG_DETAILS_SIZE * 6 );
+	forward ( SONG_DETAILS_SIZE * SONG_SLOT_COUNT );
 	forward ( GROOVE_TABLE_SIZE * VAR_CFG.SLOT);
 	if( verbose ) drawPosition(27, 2, 2);	
 	
 	// Write Groove Steps
-	for(i=0; i<16; i++){
+	for(i=0; i<0x10; i++){
 		write( VAR_SONG.GROOVE.STEP[ i ] );
 	}
 	
 	//0x1A0
-	seek(DATA_BASE_ADDRESS + (SONG_DETAILS_SIZE * 6) + ( GROOVE_TABLE_SIZE * 6 ) );
+	seek(DATA_BASE_ADDRESS + (SONG_DETAILS_SIZE * SONG_SLOT_COUNT) + ( GROOVE_TABLE_SIZE * SONG_SLOT_COUNT ) );
 	forward( PATTERN_DATA_SIZE * VAR_CFG.SLOT );
 	if( verbose ) drawPosition(27, 3, 2);	
 	//seek(0x200);
 		
-	for(i=0; i<256; i++){
-		write(VAR_SONG.PATTERNS[0].ORDER[i]);
-		write(VAR_SONG.PATTERNS[1].ORDER[i]);
-		write(VAR_SONG.PATTERNS[2].ORDER[i]);
-		write(VAR_SONG.PATTERNS[3].ORDER[i]);
-		write(VAR_SONG.PATTERNS[4].ORDER[i]);
-		write(VAR_SONG.PATTERNS[5].ORDER[i]);
-		#ifndef NSONGTRANSPOSE
-		write(VAR_SONG.PATTERNS[0].TRANSPOSE[i]);
-		write(VAR_SONG.PATTERNS[1].TRANSPOSE[i]);
-		write(VAR_SONG.PATTERNS[2].TRANSPOSE[i]);
-		write(VAR_SONG.PATTERNS[3].TRANSPOSE[i]);
-		write(VAR_SONG.PATTERNS[4].TRANSPOSE[i]);
-		write(VAR_SONG.PATTERNS[5].TRANSPOSE[i]);
-		#endif
+	for(i=0; i<ORDER_COUNT; i++){
+		for(int c=0; i<CHANNEL_COUNT; c++){
+			write(VAR_SONG.PATTERNS[ c ].ORDER		[ i ] );
+			write(VAR_SONG.PATTERNS[ c ].TRANSPOSE	[ i ] );
+		}
 	}
 	
 	if( verbose ) drawPosition(27, 4, 2);	
@@ -196,37 +189,26 @@ void Sram::songLoad( bool verbose ){
 	} 
 
 		seek	( DATA_BASE_ADDRESS );
-	forward ( SONG_DETAILS_SIZE * 6 );
+	forward ( SONG_DETAILS_SIZE * SONG_SLOT_COUNT );
 	forward ( GROOVE_TABLE_SIZE * VAR_CFG.SLOT);
 	if( verbose ) drawPosition(27, 2, 6);	
 	
-	for(i=0; i<16; i++){
+	for(i=0; i < 0x10; i++){
 		readByte( VAR_SONG.GROOVE.STEP[i] );
 	}
 		
 	//1A0
-	seek(DATA_BASE_ADDRESS + (SONG_DETAILS_SIZE * 6) + ( GROOVE_TABLE_SIZE * 6 ) );
+	seek(DATA_BASE_ADDRESS + (SONG_DETAILS_SIZE * SONG_SLOT_COUNT) + ( GROOVE_TABLE_SIZE * SONG_SLOT_COUNT ) );
 	forward( PATTERN_DATA_SIZE * VAR_CFG.SLOT );
 	if( verbose ) drawPosition(27, 3, 6);	
 	//seek(0x200);
 	
-	for(i=0; i<256; i++){
-		VAR_SONG.PATTERNS[0].ORDER[i] = read();
-		VAR_SONG.PATTERNS[1].ORDER[i] = read();
-		VAR_SONG.PATTERNS[2].ORDER[i] = read();
-		VAR_SONG.PATTERNS[3].ORDER[i] = read();
-		VAR_SONG.PATTERNS[4].ORDER[i] = read();
-		VAR_SONG.PATTERNS[5].ORDER[i] = read();
-		#ifndef NSONGTRANSPOSE
-		VAR_SONG.PATTERNS[0].TRANSPOSE[i] = read();
-		VAR_SONG.PATTERNS[1].TRANSPOSE[i] = read();
-		VAR_SONG.PATTERNS[2].TRANSPOSE[i] = read();
-		VAR_SONG.PATTERNS[3].TRANSPOSE[i] = read();
-		VAR_SONG.PATTERNS[4].TRANSPOSE[i] = read();
-		VAR_SONG.PATTERNS[5].TRANSPOSE[i] = read();
-		#endif
+	for(i=0; i < ORDER_COUNT; i++ ){
+		for( int c=0; c < CHANNEL_COUNT; c++ ){
+			VAR_SONG.PATTERNS[ c ].ORDER	[ i ] = read();
+			VAR_SONG.PATTERNS[ c ].TRANSPOSE[ i ] = read();
+		}
 	}
-	
 
 	PatEdit::syncPosition( VAR_CFG.ORDERPOSITION );
 	Tracker::syncPattern();
@@ -235,7 +217,7 @@ void Sram::songLoad( bool verbose ){
 	
 	sharedDataLoad( verbose );
 	// Update controls to show recently loaded data
-	for(int i=0; i<6; i++){
+	for(int i=0; i<CHANNEL_COUNT; i++){
 		Tracker::syncChannel(i);
 	}
 
@@ -251,47 +233,46 @@ void Sram::songDefaults( bool verbose ){
 		VAR_SONG.ARTIST[i] = 0xFF;
 	}
 	Sequencer::setTempo(0x80);
-	VAR_SONG.BPM = 0x80;
-	VAR_SONG.PATTERNLENGTH = 0xF;
+	VAR_SONG.BPM 			= 0x80;
+	VAR_SONG.PATTERNLENGTH 	= 0xF;
+	VAR_SONG.TRANSPOSE 		= 0x00;
 	
-	for(i=0; i<6; i++){
+	for(i=0; i < CHANNEL_COUNT ; i++){
 		VAR_INSTRUMENT.NAME[i] = 0xFF;
 	}
 	
 	// Pattern data clear
-	for(i=0; i<128; i++){
-		for(di=0; di<16; di++){
-			VAR_DATA[i].KEY[di] = 0;
-			VAR_DATA[i].INS[di] = 0;
-			VAR_DATA[i].VOL[di] = 0;
-			VAR_DATA[i].CMD[di] = 0;
-			VAR_DATA[i].VAL[di] = 0;
+	for(i=0; i<PATTERN_COUNT; i++){
+		for(di=0; di<0x10; di++){
+			VAR_DATA[ i ].KEY[ di ] = 0;
+			VAR_DATA[ i ].INS[ di ] = 0;
+			VAR_DATA[ i ].VOL[ di ] = 0;
+			VAR_DATA[ i ].CMD[ di ] = 0;
+			VAR_DATA[ i ].VAL[ di ] = 0;
 		}
 	}
 
 	// Live Perform table clear
 	for(i=0; i<8; i++){
-		VAR_LIVE.PERFORM.LEFT.KEY[i] = 0;
-		VAR_LIVE.PERFORM.LEFT.INS[i] = 0;
-		VAR_LIVE.PERFORM.LEFT.CHAN[i] = 0;
-		VAR_LIVE.PERFORM.LEFT.VOL[i] = 0;
-		VAR_LIVE.PERFORM.LEFT.CMD[i] = 0;
-		VAR_LIVE.PERFORM.LEFT.VAL[i] = 0;
-		VAR_LIVE.PERFORM.RIGHT.KEY[i] = 0;
-		VAR_LIVE.PERFORM.RIGHT.INS[i] = 0;
-		VAR_LIVE.PERFORM.RIGHT.CHAN[i] = 0;
-		VAR_LIVE.PERFORM.RIGHT.VOL[i] = 0;
-		VAR_LIVE.PERFORM.RIGHT.CMD[i] = 0;
-		VAR_LIVE.PERFORM.RIGHT.VAL[i] = 0;
+		Live::PERFORM.LEFT.KEY	[ i ] = 0;
+		Live::PERFORM.LEFT.INS	[ i ] = 0;
+		Live::PERFORM.LEFT.CHAN	[ i ] = 0;
+		Live::PERFORM.LEFT.VOL	[ i ] = 0;
+		Live::PERFORM.LEFT.CMD	[ i ] = 0;
+		Live::PERFORM.LEFT.VAL	[ i ] = 0;
+		Live::PERFORM.RIGHT.KEY	[ i ] = 0;
+		Live::PERFORM.RIGHT.INS	[ i ] = 0;
+		Live::PERFORM.RIGHT.CHAN	[ i ] = 0;
+		Live::PERFORM.RIGHT.VOL	[ i ] = 0;
+		Live::PERFORM.RIGHT.CMD	[ i ] = 0;
+		Live::PERFORM.RIGHT.VAL	[ i ] = 0;
 	}
 
 	// Empty Order chains
-	for(i=0; i<6; i++){
-		for(di=0; di<256; di++){
+	for(i=0; i<CHANNEL_COUNT; i++){
+		for(di=0; di<PATTERN_COUNT; di++){
 			VAR_SONG.PATTERNS[i].ORDER[di] = 0;
-			#ifndef NSONGTRANSPOSE
 			VAR_SONG.PATTERNS[i].TRANSPOSE[di] = 0;
-			#endif
 		}
 		VAR_SONG.PATTERNS[i].POSITION = 0;
 	}	
@@ -301,13 +282,13 @@ void Sram::sharedDataSave( bool verbose ){
 	int i, di;
 	// Dump pattern data
 	seek(0x2700);
-	for(i=0;i<128;i++){
-		for(di=0;di<16;di++){
-			write(VAR_DATA[i].KEY[di]);
-			write(VAR_DATA[i].INS[di]);
-			write(VAR_DATA[i].VOL[di]);
-			write(VAR_DATA[i].CMD[di]);
-			write(VAR_DATA[i].VAL[di]);
+	for( i=0 ; i < PATTERN_COUNT; i++ ){
+		for(di=0;di<0x10;di++){
+			write( VAR_DATA[ i ].KEY[ di ]);
+			write( VAR_DATA[ i ].INS[ di ]);
+			write( VAR_DATA[ i ].VOL[ di ]);
+			write( VAR_DATA[ i ].CMD[ di ]);
+			write( VAR_DATA[ i ].VAL[ di ]);
 		}
 	}	
 	
@@ -318,21 +299,22 @@ void Sram::sharedDataSave( bool verbose ){
 	//Dump instruments (these are shared along all songs)
 	InstEdit::copy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT]);
 
-	for(i=0; i<64; i++){
-		write(VAR_INSTRUMENTS[i].TYPE);
-		for(di=0; di<6; di++){
-			write(VAR_INSTRUMENTS[i].NAME[di]);
+	Instrument *instrument = VAR_INSTRUMENTS;
+	for( i=0; i < INSTRUMENT_COUNT; i++, instrument++ ){
+		write( instrument->TYPE);
+		for( di=0; di < CHANNEL_COUNT; di++ ){
+			write( instrument->NAME[ di ] );
 		}
-		for(di=0; di<32; di++){
-			write(VAR_INSTRUMENTS[i].SETTINGS[di]);
+		for( di=0; di < SETTINGS_SIZE; di++ ){
+			write( instrument->SETTINGS[ di ] );
 		}
-		for(di=0; di<16; di++){
-			write(VAR_INSTRUMENTS[i].TABLE.TRANSPOSE[di]);
-			write(VAR_INSTRUMENTS[i].TABLE.VOLUME[di]);
-			write(VAR_INSTRUMENTS[i].TABLE.COMMAND[0][di]);
-			write(VAR_INSTRUMENTS[i].TABLE.COMMAND[1][di]);
-			write(VAR_INSTRUMENTS[i].TABLE.VALUE[0][di]);
-			write(VAR_INSTRUMENTS[i].TABLE.VALUE[1][di]);
+		for( di=0; di < 0x10; di++ ){
+			write( instrument->TABLE.TRANSPOSE	  [ di ] );
+			write( instrument->TABLE.VOLUME		  [ di ] );
+			write( instrument->TABLE.COMMAND [ 0 ][ di ] );
+			write( instrument->TABLE.COMMAND [ 1 ][ di ] );
+			write( instrument->TABLE.VALUE   [ 0 ][ di ] );
+			write( instrument->TABLE.VALUE   [ 1 ][ di ] );
 		}
 	}
 
@@ -345,13 +327,13 @@ void Sram::sharedDataLoad( bool verbose ){
 	seek(0x2700);
 
 	// Pattern data
-	for(i=0;i<128;i++){
-		for(di=0;di<16;di++){
-			VAR_DATA[i].KEY[di] = read();
-			VAR_DATA[i].INS[di] = read();
-			VAR_DATA[i].VOL[di] = read();
-			VAR_DATA[i].CMD[di] = read();
-			VAR_DATA[i].VAL[di] = read();
+	for( i=0 ;i < PATTERN_COUNT; i++ ){
+		for( di=0; di<0x10; di++ ){
+			VAR_DATA[ i ].KEY[ di ] = read();
+			VAR_DATA[ i ].INS[ di ] = read();
+			VAR_DATA[ i ].VOL[ di ] = read();
+			VAR_DATA[ i ].CMD[ di ] = read();
+			VAR_DATA[ i ].VAL[ di ] = read();
 		}
 	}	
 	
@@ -360,22 +342,26 @@ void Sram::sharedDataLoad( bool verbose ){
 	seek(0x5100);
 	
 	//Load instruments (these are shared along all songs)
-	for(i=0; i<64; i++){
-		VAR_INSTRUMENTS[i].TYPE = read();
-		for(di=0; di<6; di++){
-			VAR_INSTRUMENTS[i].NAME[di] = read();
+	Instrument *instrument = VAR_INSTRUMENTS;
+	for( i=0; i < INSTRUMENT_COUNT; i++, instrument++ ){
+		instrument->TYPE = read();
+		for( di=0; di < CHANNEL_COUNT; di++ ){
+			instrument->NAME[di] = read();
 		}
-		for(di=0; di<32; di++){
-			VAR_INSTRUMENTS[i].SETTINGS[di] = read();
+		// Load settings bytes (also shared among different types on same instrument)
+		for( di=0; di < SETTINGS_SIZE; di++ ){
+			instrument->SETTINGS[di] = read();
 		}
+		
 		// Dump instrument table
-		for(di=0; di<16; di++){
-			VAR_INSTRUMENTS[i].TABLE.TRANSPOSE[di] 	= read();
-			VAR_INSTRUMENTS[i].TABLE.VOLUME[di] 	= read();
-			VAR_INSTRUMENTS[i].TABLE.COMMAND[0][di] = read();
-			VAR_INSTRUMENTS[i].TABLE.COMMAND[1][di] = read();
-			VAR_INSTRUMENTS[i].TABLE.VALUE[0][di] 	= read();
-			VAR_INSTRUMENTS[i].TABLE.VALUE[1][di] 	= read();
+		for(di=0; di < 0x10; di++){
+			/*!OPTIMIZABLE!*/
+			instrument->TABLE.TRANSPOSE	[di] 	= read();
+			instrument->TABLE.VOLUME	[di] 	= read();
+			instrument->TABLE.COMMAND	[0][di] = read();
+			instrument->TABLE.COMMAND	[1][di] = read();
+			instrument->TABLE.VALUE		[0][di] = read();
+			instrument->TABLE.VALUE		[1][di] = read();
 		}
 	}
 
