@@ -235,3 +235,9 @@ helpers.o
 helpers.s
 asm/libgbfs.o
 *.snm
+cursor.s
+helpers.s
+helpers.s
+modules/regionhandler/cursor.o
+m4g.sav
+m4g.bin

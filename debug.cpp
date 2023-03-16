@@ -39,7 +39,6 @@ void Debug::runTests(){
 	}
 	//error(0xCAFECAFE, true);
 	//error(0xCAFECAFE, false);
-	//HALT
 }
 
 VariableWatch	Debug::variables[4];
@@ -620,9 +619,9 @@ void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 	
 	// Fill SRAM with known values 
 	console.print("Filling SRAM 0x0000 ~ "STRINGIFY( SRAM_SIZE ) );
-	SRAM.seek(0);
+	Sram::seek(0);
 	for( int i=0, p=0; i < SRAM_SIZE ; i++,p++){
-		SRAM.write(0x80 + (i&0xF));
+		Sram::write(0x80 + (i&0xF));
 		if( (i &0xF) == 0){
 			float q = ( float( p ) / float( SRAM_SIZE ) );
 			progressbar.render( q, false );
@@ -634,9 +633,9 @@ void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 	
 	// Check values written persistence
 	console.print("Checking SRAM Integrity...");
-	SRAM.seek(0);
+	Sram::seek(0);
 	for( int i=0, p=0; i < SRAM_SIZE ; i++,p++){
-		ASSERT(SRAM.read() == (0x80 + (i&0xF)));
+		ASSERT(Sram::read() == (0x80 + (i&0xF)));
 		if( (i &0xF) == 0){
 			float q = ( float( p ) / float( SRAM_SIZE ) );
 			progressbar.render( q, true );
@@ -684,14 +683,14 @@ void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 			}
 		}		
 
-		SRAM.songSave(false);
+		Sram::songSave(false);
 	}
 	console.percent(1.0f);
 	
 	console.print( "Reading song memory..." );
 	for( VAR_CFG.SLOT=0, p = 0; VAR_CFG.SLOT < SONG_SLOT_COUNT; VAR_CFG.SLOT++){
 		
-		SRAM.songLoad(false);
+		Sram::songLoad(false);
 		
 		for(int a=0; a < 14 ; a++){
 			ASSERT( s->TITLE[a]==VAR_CFG.SLOT);

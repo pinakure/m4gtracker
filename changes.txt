@@ -125,3 +125,9 @@ Made VirtualScreen static
 Replaced gpu instance with Gpu static class
 
 
+-------------
+16-03-2023
+-------------
+Fixed issue causing the program to not boot if no valid SRAM data was present.
+Fixed issue causing warnings on No$GBA due to 8 bit writes to VRAM, which are illegal
+Basic power saving ( still not activable anywhere, but will be under CFG->behavior )

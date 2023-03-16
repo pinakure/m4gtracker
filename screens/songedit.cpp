@@ -7,10 +7,9 @@
 #include "../helpers.hpp"
 #include "../modules/sram/sram.hpp"
 #include "../modules/spu/sequencer.hpp"
+#include "../modules/spu/mixer.hpp"
 #include "../modules/gpu/gpu.hpp"
 #include "../modules/key/key.hpp"
-
-
 
 #define CALLBACK(n, c, t, v, nx)			const Callback n = { c , t , v, nx}
 #define CB_SNG_GROOVE(a)						CALLBACK(cb_sng_groove_0##a, modify8BIT	, EVENT_MODIFY_B, &VAR_SONG.GROOVE.STEP[0x##a],	NULL)
@@ -138,7 +137,7 @@ void SongEdit::update(  ){
 void SongEdit::load( Control *c, bool bigstep, bool add, u32 *pointer ){
 	// Set really confirm callback to FlashManager->save
 	// Set regionHander in modal really dialog mode
-	SRAM.songLoad( true );
+	Sram::songLoad( true );
 	SongEdit::has_data[ 0 ] = false;
 	SongEdit::has_data[ 1 ] = false;
 	SongEdit::has_data[ 2 ] = false;
@@ -153,12 +152,15 @@ void SongEdit::load( Control *c, bool bigstep, bool add, u32 *pointer ){
 void SongEdit::save( Control *c, bool bigstep, bool add, u32 *pointer ){
 	// Set really confirm callback to FlashManager->save
 	// Set regionHander in modal really dialog mode
-	SRAM.songSave( true );	
+	Sram::songSave( true );	
 }
 
 void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 	#define PATTERN_TOTAL 			9216 // 6 SONGS * 6 CHANNELS * 256 places to check 256*6*6
 	#define INSTRUMENT_TOTAL 		128016.0f	
+	
+	Sequencer::stop();
+	Mixer::stop();
 	
 	float inc								= 0;
 	bool 	used_instruments			[ INSTRUMENT_COUNT ];
@@ -181,7 +183,7 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 	
 	KEYFORCENOINPUT();
 	
-	SRAM.songSave( false );
+	Sram::songSave( false );
 	
 	// Set all items as unused 
 	for(int i=1/*ignore first index*/; i<INSTRUMENT_COUNT; i++){
@@ -216,7 +218,7 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 	
 	// FOR EACH SONG
 	for( VAR_CFG.SLOT=0; VAR_CFG.SLOT < SONG_SLOT_COUNT; VAR_CFG.SLOT++){
-		SRAM.songLoad( false );
+		Sram::songLoad( false );
 		
 		// FOR EACH CHANNEL IN SONG
 		Pattern*	p_channel 		= VAR_SONG.PATTERNS;
@@ -265,9 +267,9 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 	DECIMAL_DOUBLE	( 20		, 12	, COLOR_CYAN			, unused_pattern_count		  								);
 	// Save shared data (Instruments and Patterns)
 		
-	SRAM.sharedDataSave( false );
+	Sram::sharedDataSave( false );
 	VAR_CFG.SLOT = previous_slot;
-	SRAM.songLoad( false );
+	Sram::songLoad( false );
 
 	Gpu::bigString( 7, 15, "PRESS ANY BUTTON");
 	
@@ -290,11 +292,11 @@ void SongEdit::erase( Control *c, bool bigstep, bool add, u32 *pointer ){
 	if( ReallyDialog::result ){
 		VAR_CFG.loadCount = 0;		
 		// Clear SongData
-		SRAM.songDefaults( true );
+		Sram::songDefaults( true );
 		// Load shared data
-		SRAM.sharedDataLoad( true );
+		Sram::sharedDataLoad( true );
 		// Save empty song
-		SRAM.songSave( true );
+		Sram::songSave( true );
 		/*HACK*/while( KEYDOWN_A || KEYUP_A || KEYPRESS_A ){ KEYUPDATE(); }
 	}
 	/*HACK*/while( KEYDOWN_B || KEYUP_B || KEYPRESS_B ){ KEYUPDATE(); }

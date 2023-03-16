@@ -20,33 +20,68 @@ extern "C" {
 };
 
 void readByte( u8 &byte ){
-	byte = SRAM.read();
+	byte = Sram::read();
 }
 
 void readNibbles(u8 &nibble1, u8 &nibble2, u8 mask){
-	u8 h = SRAM.read();
+	u8 h = Sram::read();
 	nibble1 = (h >> 4) & mask;
 	nibble2 = h & mask;
 }
 void writeNibbles(u8 nibble1, u8 nibble2, u8 mask){
-	SRAM.write(((nibble1 & mask) << 4) | (nibble2 & mask));
+	Sram::write(((nibble1 & mask) << 4) | (nibble2 & mask));
 }
 
 void readFields( const BitField fields[8] ) {
-	u8 byte = SRAM.read();
+	u8 byte = Sram::read();
 	for( int i=0; i<8; i++){
 		if( !fields[ i ].var ) continue;
 		u8 mask = ( 2 << (fields[ i ].width-1) ) - 1;
 		*fields[ i ].var = (byte >> fields[ i ].position) & mask;
 	}	
 }
+#include "../key/key.hpp"
+
+bool Sram::checkSignature(){
+	// If header does not match m4geek signature, erase SRAM, then save settings
+	seek(0);
+	
+	if( read32() == M4GEEK_SIGNATURE)
+		if( read  () == M4G_VERSION		) return true;
+
+	Gpu::drawDialog(0,0,30,20, " Bad SRAM Signature ");
+	Gpu::ascii(3, 2,"Invalid SRAM data read.", COLOR_CYAN);
+	Gpu::ascii(3, 4,"Format of the data stored in this gamepak backup RAM");
+	Gpu::ascii(3, 5,"does not match the expected structure for this version.");
+	Gpu::ascii(3, 7,"If you had data from a previous version in this SRAM,");
+	Gpu::ascii(3, 8,"please turn off the unit and try to extract the data ");
+	Gpu::ascii(3, 9,"using a external SRAM manager, upload it to the tool");
+	Gpu::ascii(3,10,"              www.m4gtracker.com. ", COLOR_CYAN);
+	Gpu::ascii(3,10,"           at ");
+	Gpu::ascii(3,10,"m4gpatcher", COLOR_CYAN);
+	Gpu::ascii(3,12,"You may then download a updated version of your data,");
+	Gpu::ascii(3,13,"which will be usable with this version, as long as the");
+	Gpu::ascii(3,14,"original SRAM file contains valid M4GTracker save data.");
+	Gpu::ascii(3,17,"Press a button to ignore this and overwrite SRAM data.", COLOR_YELLOW);
+	while(!KEYACTIVITY()){ KEYUPDATE(); }
+	// Gpu::clear(0x3);
+	Gpu::drawDialog(1,1,28,12," Initialize SRAM");
+	Gpu::ascii(5, 3,"                the contents in the SRAM", COLOR_YELLOW);
+	Gpu::ascii(5, 3,"          ERASE", COLOR_RED);
+	Gpu::ascii(5, 3,"This will", COLOR_YELLOW);
+	Gpu::ascii(5, 4,"This action cannot be undone", COLOR_ORANGE);
+	Key::forceNoInput();
+	ReallyDialog::enable();
+	if(!ReallyDialog::result)asm("swi 00");
+	Gpu::clear(0x0);
+	return false;
+}
 
 void Sram::init(){
 	// Set WAITCNT (Waitstate controller) to 8 wait cycle mode	
 	
 	waitstateBackup = PORT(0x4000204);
-	// TODO: Read first 8 bytes
-	// If header does not match m4geek signature, erase SRAM, then save settings
+	
 	
 	// Set SRAM Write cursor to 0.
 	seek(0);
@@ -162,14 +197,13 @@ void Sram::songSave( bool verbose ){
 	sharedDataSave( verbose );
 }
 
-
+#include "../key/key.hpp"
 
 void Sram::songLoad( bool verbose ){
 	int i;
 	u8 h;
-	
-	
-	seek		( DATA_BASE_ADDRESS );
+		
+	seek	( DATA_BASE_ADDRESS );
 	forward	( SONG_DETAILS_SIZE * VAR_CFG.SLOT);
 	
 	// Song details
@@ -187,7 +221,7 @@ void Sram::songLoad( bool verbose ){
 		VAR_SONG.ARTIST[i] = read();
 	} 
 
-		seek	( DATA_BASE_ADDRESS );
+	seek	( DATA_BASE_ADDRESS );
 	forward ( SONG_DETAILS_SIZE * SONG_SLOT_COUNT );
 	forward ( GROOVE_TABLE_SIZE * VAR_CFG.SLOT);
 	if( verbose ) drawPosition(27, 2, 6);	

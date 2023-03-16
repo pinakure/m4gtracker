@@ -3,6 +3,7 @@
 #include "../modules/key/key.hpp"
 #include "../modules/spu/sequencer.hpp"
 #include "../modules/regionhandler/regionhandler.hpp"
+#include "../modules/sys/sys.hpp"
 
 u8 		AlphaDialog::buffer[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 u8 		AlphaDialog::maxlen		= 0;	
@@ -24,7 +25,7 @@ bool 	AlphaDialog::redraw		= false;
 // Also Sets regionHander in modal alphanumeric dialog mode, max string len 14
 void AlphaDialog::getBigString(Control *c, bool bigstep, bool add, u32 *pointer){
 	AlphaDialog::enable(true, c->var, c->x, c->y);
-	KEYFORCENOINPUT();
+	Sys::forceNoInput();
 	RegionHandler::redraw=true;
 }
 
@@ -32,7 +33,7 @@ void AlphaDialog::getBigString(Control *c, bool bigstep, bool add, u32 *pointer)
 // Also Sets regionHander in modal alphanumeric dialog mode, max string len 6
 void AlphaDialog::getString(Control *c, bool bigstep, bool add, u32 *pointer){
 	AlphaDialog::enable(false, c->var, c->x, c->y);
-	KEYFORCENOINPUT();
+	Sys::forceNoInput();
 	RegionHandler::redraw=true;
 }
 	

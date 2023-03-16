@@ -15,6 +15,7 @@ class Sys {
 		static void update();
 		static void updateInput();
 		static void setScreen( eScreens screen );
+		static void forceNoInput(); // Same as Key::forceNoInput, but this version allows audio processing to be executed while waiting for the keys to be released
 };
 
 extern Sys sys;

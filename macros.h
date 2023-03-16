@@ -43,17 +43,17 @@
 #define EXPECT( a, up, down ) {									\
 	VAR_CFG.loadCount = 0;										\
 	Progress::enable( 											\
-		0, a, 														\
-		STATUS_##up, 												\
+		0, a, 													\
+		STATUS_##up, 											\
 		STATUS_##down, 											\
 		&VAR_CFG.loadCount										\
-	);																\
+	);															\
 }
 
 #define OK() {													\
 	VAR_CFG.loadCount++;											\
 	RegionHandler::update(1);												\
-	DECIMAL_DOUBLE(28,1,9, SRAM.position-1);					\
+	DECIMAL_DOUBLE(28,1,9, Sram::position-1);					\
 }
 
 #define PRINTPOINTER( x, y, c, a ) {								\

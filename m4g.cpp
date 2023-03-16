@@ -4,6 +4,7 @@
 #include "modules/modules.hpp"
 #include "screens/config.hpp"
 
+#define SWI(a)   asm("swi "#a);
 
 vu32 							SYS_TIMER			= 0;
 u32								SYS_PROFILEDTIME	= 0;
@@ -48,12 +49,12 @@ int main(void){
 				// IF SOMETHING GOES WRONG WITH TIMERS OR AUDIO, TRY ENABLING THIS:
 				if(!Gpu::isVblank()	) { lock = false	; continue; }
 	 			if(!lock					) { lock = true	; continue; }
-				adsadas
 			#endif
 			Sys::update();			
 			RegionHandler::update(1);
 			DEBUG_UPDATE();
 			RegionHandler::new_region = false;
+			if( VAR_CFG.BEHAVIOR.POWERSAVING ) SWI( 0x02 );
 		};
 	}
 	return 0;

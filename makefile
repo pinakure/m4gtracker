@@ -8,6 +8,7 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 		modules/sram/sram.o \
 		modules/clip/clip.o \
 		modules/key/key.o \
+		modules/regionhandler/cursor.o \
 		modules/regionhandler/regionhandler.o \
 		modules/gpu/virtualscreen.o \
 		modules/gpu/gpu.o \
@@ -129,6 +130,7 @@ clean-modules:
 	@echo Cleaning up modules
 	@echo -------------------------------------------------------------------------------
 	 -f modules/int/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/regionhandler/*.o *.i *.ii *.m4h	
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/tim/*.o *.i *.ii *.m4h	
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/sys/*.o *.i *.ii *.m4h	
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/clip/*.o *.i *.ii *.m4h	

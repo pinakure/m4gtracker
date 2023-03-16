@@ -28,8 +28,8 @@ void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 		{ &VAR_CFG.TRACKER.HEADERTYPE		, 4 , 	1 },
 		{ &VAR_CFG.TRACKER.INPUTMODE		, 3 , 	1 },
 		{ &VAR_CFG.TRACKER.PRELISTEN		, 2 , 	1 },
+		{ &VAR_CFG.BEHAVIOR.POWERSAVING		, 1 , 	1 },
 		{ &VAR_CFG.BEHAVIOR.AUTOSAVE		, 0 , 	1 },
-		{ NULL								, 0 ,   0 }, 
 		{ NULL								, 0 ,   0 }, 
 	};
 		
@@ -40,16 +40,18 @@ void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 		{ &VAR_CFG.LOOKNFEEL.INTERFACE  	, 4 , 	1 },
 		{ &VAR_CFG.LOOKNFEEL.FONT			, 2 , 	2 },
 		{ &VAR_CFG.LOOKNFEEL.BORDER 		, 0 , 	2 },
-		{ NULL								, 0 ,  0 }, 
-		{ NULL								, 0 ,  0 }, 
+		{ NULL								, 0 ,   0 }, 
+		{ NULL								, 0 ,   0 }, 
 	};
 
+	
 	EXPECT(10, SAVING, SETTINGS);
 	
+	
 	// Check Signature and version
-	SRAM.seek(0);
-	if(SRAM.read32	() != M4GEEK_SIGNATURE	) return Config::defaults(c, 0, 0, pointer);
-	if(SRAM.read	() != M4G_VERSION		) return Config::defaults(c, 0, 0, pointer);
+	Sram::seek(0);
+	if(! Sram::checkSignature() ) return Config::format( c, 0, 0, pointer );
+	Sram::seek(5);
 	
 	// Palette colors
 	for(i=0;i<8; i++){
@@ -85,35 +87,35 @@ void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 	//46dec
 	
 	// Live Settings and tables
-	SRAM.seek(47);
+	Sram::seek(47);
 	for( i=0 ; i < 8 ; i++ ){
-		w = SRAM.read16();
+		w = Sram::read16();
 		Live::PERFORM.LEFT.KEY	[i] = EXTRACT( w, 9, 0x7F);
 		Live::PERFORM.LEFT.INS	[i] = EXTRACT( w, 5, 0x3F);
 		Live::PERFORM.LEFT.CMD	[i] = w & 0x1F;
 
-		w = SRAM.read16();
+		w = Sram::read16();
 		Live::PERFORM.RIGHT.KEY	[i] = EXTRACT( w, 9, 0x7F);
 		Live::PERFORM.RIGHT.INS	[i] = EXTRACT( w, 5, 0x3F);
 		Live::PERFORM.RIGHT.CMD	[i] = w & 0x1F;
 		
-		h = SRAM.read();
+		h = Sram::read();
 		Live::PERFORM.LEFT.CHAN	[i] = EXTRACT( h, 4, 0xF);
 		Live::PERFORM.LEFT.VOL	[i] = h & 0xF;
 		
-		h = SRAM.read();
+		h = Sram::read();
 		Live::PERFORM.RIGHT.CHAN	[i] = EXTRACT( h, 4, 0xF);
 		Live::PERFORM.RIGHT.VOL	[i] = h & 0xF;
 		
-		Live::PERFORM.LEFT.VAL	[i] = SRAM.read();
-		Live::PERFORM.RIGHT.VAL	[i] = SRAM.read();
+		Live::PERFORM.LEFT.VAL	[i] = Sram::read();
+		Live::PERFORM.RIGHT.VAL	[i] = Sram::read();
 	}
 	
 	//0x6F
-	//SRAM.drawPosition(27, 1, 7);
+	//Sram::drawPosition(27, 1, 7);
 	
 	// Load default song values (overriden if autoload was true on load)
-	SRAM.songDefaults( false );
+	Sram::songDefaults( false );
 	
 	// Force skins and fonts to be reloaded
 	VAR_CFG.RELOADSKIN = true;
@@ -136,63 +138,63 @@ void Config::revert (Control *c, bool bigstep, bool add, u32 *pointer){
 
 void Config::save (Control *c, bool bigstep, bool add, u32 *pointer){
 	int i, di;
-	SRAM.seek(0);
+	Sram::seek(0);
 	EXPECT(10, SAVING, SETTINGS);
 	
 	// Signature and version
-	SRAM.write32(M4GEEK_SIGNATURE); //signature (cafe aces)
-	SRAM.write(M4G_VERSION);		//version
+	Sram::write32(M4GEEK_SIGNATURE); //signature (cafe aces)
+	Sram::write(M4G_VERSION);		//version
 	
 	// Palette colors
 	for(i=0;i<8; i++){
 		di = i<<1;
-		SRAM.write(VAR_CFG.PAL[ di ].R << 4 | VAR_CFG.PAL[ di ].G);  
-		SRAM.write(VAR_CFG.PAL[ di ].B << 4 | VAR_CFG.PAL[di+1].R);			
-		SRAM.write(VAR_CFG.PAL[di+1].G << 4 | VAR_CFG.PAL[di+1].B);
+		Sram::write(VAR_CFG.PAL[ di ].R << 4 | VAR_CFG.PAL[ di ].G);  
+		Sram::write(VAR_CFG.PAL[ di ].B << 4 | VAR_CFG.PAL[di+1].R);			
+		Sram::write(VAR_CFG.PAL[di+1].G << 4 | VAR_CFG.PAL[di+1].B);
 	}
 		
 		
 	// Look And Feel
-	SRAM.write( (VAR_CFG.BEHAVIOR.AUTOLOAD<<7) | (VAR_CFG.LOOKNFEEL.STARTUPSFX<<6) | (VAR_CFG.LOOKNFEEL.SHOWLOGO << 5) | (VAR_CFG.LOOKNFEEL.INTERFACE<<0x4) | (VAR_CFG.LOOKNFEEL.FONT << 2) | VAR_CFG.LOOKNFEEL.BORDER);
+	Sram::write( (VAR_CFG.BEHAVIOR.AUTOLOAD<<7) | (VAR_CFG.LOOKNFEEL.STARTUPSFX<<6) | (VAR_CFG.LOOKNFEEL.SHOWLOGO << 5) | (VAR_CFG.LOOKNFEEL.INTERFACE<<0x4) | (VAR_CFG.LOOKNFEEL.FONT << 2) | VAR_CFG.LOOKNFEEL.BORDER);
 	
 	// Link mode
-	SRAM.write(VAR_CFG.LINKMODE.LINKMODE);
-	SRAM.write(VAR_CFG.LINKMODE.MASTERCLOCK);
-	SRAM.write(VAR_CFG.LINKMODE.SYNCRATE);
-	SRAM.write(VAR_CFG.LINKMODE.SYNCTICKS);
+	Sram::write(VAR_CFG.LINKMODE.LINKMODE);
+	Sram::write(VAR_CFG.LINKMODE.MASTERCLOCK);
+	Sram::write(VAR_CFG.LINKMODE.SYNCRATE);
+	Sram::write(VAR_CFG.LINKMODE.SYNCTICKS);
 	
 	// Behavior
-	SRAM.write(VAR_CFG.BEHAVIOR.KEYRATE);
-	SRAM.write(  (Live::PERFORM.RETRIG<<6) | (VAR_CFG.MEMORY.PREF<<5)  | (VAR_CFG.TRACKER.HEADERTYPE<<4) | (VAR_CFG.TRACKER.INPUTMODE<<3) | (VAR_CFG.TRACKER.PRELISTEN<<2) | VAR_CFG.BEHAVIOR.AUTOSAVE );/* 1 EXTRA BIT LEFT */
+	Sram::write(VAR_CFG.BEHAVIOR.KEYRATE);
+	Sram::write(  (Live::PERFORM.RETRIG<<6) | (VAR_CFG.MEMORY.PREF<<5)  | (VAR_CFG.TRACKER.HEADERTYPE<<4) | (VAR_CFG.TRACKER.INPUTMODE<<3) | (VAR_CFG.TRACKER.PRELISTEN<<2) | (VAR_CFG.BEHAVIOR.POWERSAVING<<1) |VAR_CFG.BEHAVIOR.AUTOSAVE );/* 1 EXTRA BIT LEFT */
 	
 	// Tracker
-	SRAM.write(VAR_CFG.TRACKER.TRANSPOSE);
-	SRAM.write(VAR_CFG.TRACKER.SOUNDBIAS);
-	SRAM.write( (Live::PERFORM.SPEED<<4) |(VAR_CFG.TRACKER.FINETUNE & 0x0F));
-	SRAM.write((Live::PERFORM.QUANTIZE<<4) | Live::PIANO.QUANTIZE);
+	Sram::write(VAR_CFG.TRACKER.TRANSPOSE);
+	Sram::write(VAR_CFG.TRACKER.SOUNDBIAS);
+	Sram::write( (Live::PERFORM.SPEED<<4) |(VAR_CFG.TRACKER.FINETUNE & 0x0F));
+	Sram::write((Live::PERFORM.QUANTIZE<<4) | Live::PIANO.QUANTIZE);
 	//40 bytes
 	
-	SRAM.write((Live::PIANO.OCTAVE<<4) | Live::PIANO.MODE);
-	SRAM.write(Live::PIANO.TRANSPOSE);
+	Sram::write((Live::PIANO.OCTAVE<<4) | Live::PIANO.MODE);
+	Sram::write(Live::PIANO.TRANSPOSE);
 	for(i=0; i<2; i++){
-		SRAM.write(Live::PIANO.CHANNEL[i]);
-		SRAM.write(Live::PIANO.MIDICHAN[i]);
+		Sram::write(Live::PIANO.CHANNEL[i]);
+		Sram::write(Live::PIANO.MIDICHAN[i]);
 	}
 
 	//46dec
 	
 	// Dump Live Settings and tables
-	SRAM.seek(47);
+	Sram::seek(47);
 	for(i=0;i<8;i++){		
-		SRAM.write16(((Live::PERFORM.LEFT.KEY[i]&0x7f)<<9) | ((Live::PERFORM.LEFT.INS[i]&0x3f)<<5) | (Live::PERFORM.LEFT.CMD[i]&0x1f));
-		SRAM.write16(((Live::PERFORM.RIGHT.KEY[i]&0x7f)<<9) | ((Live::PERFORM.RIGHT.INS[i]&0x3f)<<5) | (Live::PERFORM.RIGHT.CMD[i]&0x1f));
-		SRAM.write(((Live::PERFORM.LEFT.CHAN[i]&0x0f)<<4) | (Live::PERFORM.LEFT.VOL[i]&0x0f));
-		SRAM.write(((Live::PERFORM.RIGHT.CHAN[i]&0x0f)<<4) | (Live::PERFORM.RIGHT.VOL[i]&0x0f));
-		SRAM.write(Live::PERFORM.LEFT.VAL[i]);
-		SRAM.write(Live::PERFORM.RIGHT.VAL[i]);
+		Sram::write16(((Live::PERFORM.LEFT.KEY[i]&0x7f)<<9) | ((Live::PERFORM.LEFT.INS[i]&0x3f)<<5) | (Live::PERFORM.LEFT.CMD[i]&0x1f));
+		Sram::write16(((Live::PERFORM.RIGHT.KEY[i]&0x7f)<<9) | ((Live::PERFORM.RIGHT.INS[i]&0x3f)<<5) | (Live::PERFORM.RIGHT.CMD[i]&0x1f));
+		Sram::write(((Live::PERFORM.LEFT.CHAN[i]&0x0f)<<4) | (Live::PERFORM.LEFT.VOL[i]&0x0f));
+		Sram::write(((Live::PERFORM.RIGHT.CHAN[i]&0x0f)<<4) | (Live::PERFORM.RIGHT.VOL[i]&0x0f));
+		Sram::write(Live::PERFORM.LEFT.VAL[i]);
+		Sram::write(Live::PERFORM.RIGHT.VAL[i]);
 	}
 	
-	//SRAM.drawPosition(27, 1, 7);
+	//Sram::drawPosition(27, 1, 7);
 	//0x6F
 
 	Progress::disable();
@@ -205,7 +207,7 @@ void Config::format (Control *c, bool bigstep, bool add, u32 *pointer){
 		ReallyDialog::enable();
 		if( !ReallyDialog::result ) return;
 	}
-	SRAM.erase();
+	Sram::erase();
 	Config::defaults(c, 0,0,pointer);
 	Config::save(c, 0,0,pointer);	
 }
@@ -213,35 +215,17 @@ void Config::format (Control *c, bool bigstep, bool add, u32 *pointer){
 void Config::defaults (Control *c, bool bigstep, bool add, u32 *pointer){
 	int i;
 		
-	#define SETTING(a, v)		{VAR_CFG.a = v; VAR_CFG.loadCount++;RegionHandler::update(1);}
+	#define SETTING(a, v)		{VAR_CFG.a = v; VAR_CFG.loadCount++;/*RegionHandler::update(1);*/}
 	VAR_CFG.loadCount = 0;
 
 	// RegionHandler::progress.set(0, 233, STATUS_DEFAULTS, STATUS_SETTINGS, &VAR_CFG.loadCount);
 	Progress::enable(0, 233, STATUS_DEFAULTS, STATUS_SETTINGS, &VAR_CFG.loadCount);
-
+	
 	for(i=0; i<16; i++) {
 		SETTING(PAL[i].R, 0x00);
 		SETTING(PAL[i].G, 0x00);
 		SETTING(PAL[i].B, 0x00);
-		
-		SETTING(GROOVE.STEP[i], 0x00);
-		SETTING(INSTRUMENTTABLE.TRANSPOSE[i], 0x80);
-		SETTING(INSTRUMENTTABLE.VOLUME[i], 0xF);
-		SETTING(INSTRUMENTTABLE.COMMAND[0][i], 0);
-		SETTING(INSTRUMENTTABLE.COMMAND[1][i], 0);
-		SETTING(INSTRUMENTTABLE.VALUE[0][i], 0x00);
-		SETTING(INSTRUMENTTABLE.VALUE[1][i], 0x00);
-		
 	}
-	//160
-	SETTING(INSTRUMENTTABLE.JUMP[0], 0x0F);
-	SETTING(INSTRUMENTTABLE.JUMP[1], 0x0F);
-	SETTING(INSTRUMENTTABLE.POSITION[0], 0x00);
-	SETTING(INSTRUMENTTABLE.POSITION[1], 0x00);
-	SETTING(INSTRUMENTTABLE.PLAYING, 0x00);
-	//165
-	SETTING(GROOVE.ENABLE, 0x0);
-	SETTING(GROOVE.LENGTH, 0x0);
 	//167
 	SETTING(LOOKNFEEL.INTERFACE, 0x00);
 	SETTING(LOOKNFEEL.FONT, 0x00);
@@ -254,10 +238,11 @@ void Config::defaults (Control *c, bool bigstep, bool add, u32 *pointer){
 	SETTING(LINKMODE.SYNCRATE	, 0x00); //0-16
 	SETTING(LINKMODE.SYNCTICKS	, 0x00); //0-255
 	//176
-	SETTING(BEHAVIOR.AUTOLOAD, 0x01);
-	SETTING(BEHAVIOR.KEYRATE, 0x08);
-	SETTING(BEHAVIOR.AUTOSAVE, 0x00);
-	SETTING(BEHAVIOR.VISTYPE, 0); //0 vis - 1 table
+	SETTING(BEHAVIOR.AUTOLOAD	, 0x01);
+	SETTING(BEHAVIOR.KEYRATE	, 0x08);
+	SETTING(BEHAVIOR.POWERSAVING, 0x00);
+	SETTING(BEHAVIOR.AUTOSAVE	, 0x00);
+	SETTING(BEHAVIOR.VISTYPE	, 0); //0 vis - 1 table
 	//180
 	SETTING(TRACKER.FINETUNE, 0x0);
 	SETTING(TRACKER.PRELISTEN, 0x1);
@@ -286,7 +271,7 @@ void Config::defaults (Control *c, bool bigstep, bool add, u32 *pointer){
 	}//205
 	#undef SETTING
 	
-	SRAM.songDefaults( true );
+	Sram::songDefaults( true );
 
 	Progress::disable();
 	RegionHandler::redraw = true;
@@ -302,7 +287,7 @@ void Config::reset (Control *c, bool bigstep, bool add, u32 *pointer){
 
 void Config::reinit (Control *c, bool bigstep, bool add, u32 *pointer){
 	Config::format(c, 0,0,pointer);
-	SRAM.sharedDataSave( true );
+	Sram::sharedDataSave( true );
 }
 
 void Config::memMap(  ){

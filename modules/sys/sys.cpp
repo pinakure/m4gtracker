@@ -51,10 +51,11 @@ void Sys::init(){
 	/*!-----------------------------------------------*/
 	/* Low level initialization								*/
 	/*!-----------------------------------------------*/
-	Interrupt::init();	
-	Memory::init();
-	Sram::init();
-	Gpu::init();
+	Interrupt	::init();	
+	Memory		::init();
+	Sram		::init();
+	Gpu			::init();
+	
 	
 	// Enable interrupts
 	Interrupt::enable( IRQ_VBLANK );
@@ -83,7 +84,7 @@ void Sys::init(){
 	
 	// First of all load config
 	Config::load();
-	
+
 	// Initialize Input registers
 	KEYINIT();
 	
@@ -316,3 +317,11 @@ void Sys::update(){
 	//if( KEYPRESS_R ) VirtualScreen::draw(14,2);
 }
 
+void Sys::forceNoInput(){
+	while( KEYACTIVITY() ){ 
+		Sequencer::update();	
+		KEYUPDATE();
+		// IMPORTANT: Avoid calling updateInput() here, as it would retrigger the command which has brought us here in first instance and cause a deadlock
+		// updateInput();	
+	}
+}

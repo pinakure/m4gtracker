@@ -37,30 +37,30 @@ class Sram {
 		static u8 *sram;
 		
 	public:
-		static int position;
-		static u16 waitstateBackup;
+		static int 	position;
+		static u16 	waitstateBackup;
 	
 		static void	init				( );
 		static void	erase				( );
 		static void	seek				( int p );
-		static void	forward			( int p );
+		static void	forward				( int p );
 		static u8  	read				( );
-		static u16 	read16			( );
-		static u32	read32			( );
+		static u16 	read16				( );
+		static u32	read32				( );
 		static void	write				( u8	);
-		static void	write16			( u16 	);
-		static void	write32			( u32 	);
- 
-		static void 	songLoad			( bool verbose );
-		static void 	songSave			( bool verbose );
-		static void 	songDefaults		( bool verbose );
-		static void 	sharedDataLoad	( bool verbose );
-		static void 	sharedDataSave	( bool verbose );
+		static void	write16				( u16 	);
+		static void	write32				( u32 	);
+	
+		static void	songLoad			( bool verbose );
+		static void	songSave			( bool verbose );
+		static void	songDefaults		( bool verbose );
+		static void	sharedDataLoad		( bool verbose );
+		static void	sharedDataSave		( bool verbose );
 
+		static bool checkSignature		( );
+		
 		static void	drawPosition		( u8 x, u8 y,u8 color );
 };
-
-extern Sram SRAM;
 
 extern void readByte		( u8 &byte );
 extern void readNibbles	( u8 &nibble1	, u8 &nibble2	, u8 mask = 0xF );

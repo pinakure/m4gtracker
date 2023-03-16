@@ -11,6 +11,8 @@
 #include "../../dialogs/alpha.hpp"
 #include "../../dialogs/really.hpp"
 
+#include "cursor.hpp"
+
 class RegionHandler {
 	private:
 		

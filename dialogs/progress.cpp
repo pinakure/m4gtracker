@@ -1,4 +1,5 @@
 #include "progress.hpp" 
+#include "../debug.hpp"
 #include "../helpers.hpp" 
 #include "../data/caches.hpp" 
 #include "../modules/regionhandler/regionhandler.hpp" 
@@ -50,6 +51,7 @@ void Progress::disable(){
 	enabled 	= false;
 	redraw 	= 0;
 }
+
 
 void Progress::enable(u32 value, u32 max_value, E_StatusStrings uLine, E_StatusStrings lLine, u32 *new_var){
 	enabled 	= true;

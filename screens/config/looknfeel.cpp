@@ -91,11 +91,11 @@ void LookNFeel::logoFade(){
 					b = 0;
 				}
 				c1 = (b << 10) | (g << 5) | r;
-				*(u8*)(BG_PALETTE+(i*0x8)) = c1;
-				*(u8*)(BG_PALETTE+(i*0x8)+0x04) = 0xFFFF-c1;
+				*(u16*)(BG_PALETTE+(i*0x8)) = c1;
+				*(u16*)(BG_PALETTE+(i*0x8)+0x04) = 0xFFFF-c1;
 			}		
 		}
-			rotateGfx();
+		rotateGfx();
 	}
 	if( VAR_CFG.LOOKNFEEL.STARTUPSFX ) Mixer::stop();
 	
