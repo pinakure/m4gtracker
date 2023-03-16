@@ -30,20 +30,20 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 		screens/config/linkmode.o \
 		screens/config/behavior.o \
 		screens/config/memory.o \
+		screens/console.o \
+		screens/snake.o \
 		screens/tracker.o \
+		screens/patedit.o \
+		screens/instedit.o \
+		screens/songedit.o \
 		screens/live.o \
 		screens/live/piano.o \
 		screens/live/performance.o \
-		callbacks/sng.o \
-		callbacks/pat.o \
-		callbacks/console.o \
-		callbacks/debug.o \
-		callbacks/hlp.o \
-		callbacks/snk.o \
-		callbacks/ins.o \
+		screens/help.o \
 		dialogs/really.o \
 		dialogs/alpha.o \
 		dialogs/progress.o \
+		debug.o \
 		m4g.o 
 
 HAM_VERSION_MAJOR = 2
@@ -164,10 +164,10 @@ clean-screens: clean-dialogs
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f screens/*.o *.i *.ii *.m4h	
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f screens/config/*.o *.i *.ii *.m4h	
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f screens/tracker/*.o *.i *.ii *.m4h	
-	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f screens/sngedit/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f screens/songedit/*.o *.i *.ii *.m4h	
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f screens/live/*.o *.i *.ii *.m4h	
-	#$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f screens/instedit/*.o *.i *.ii *.m4h	
-	#$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f screens/patedit/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f screens/instedit/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f screens/patedit/*.o *.i *.ii *.m4h	
 	
 
 clean: clean-screens

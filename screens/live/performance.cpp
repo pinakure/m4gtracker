@@ -2,13 +2,13 @@
 #include "../../data/data.hpp"
 #include "../../modules/key/key.hpp"
 
-u8 			Performance::vars[ CONTROL_LIVE1_MAX ];	
-LiveTable	Performance::LEFT;
-LiveTable	Performance::RIGHT;
-u8 			Performance::RETRIG;
-u8 			Performance::SPEED /*4*/;
-u8	 		Performance::QUANTIZE /*3*/;
-u8			Performance::LOCK;
+MEM_IN_EWRAM u8 		Performance::vars[ CONTROL_LIVE1_MAX ];	
+MEM_IN_EWRAM LiveTable	Performance::LEFT;
+MEM_IN_EWRAM LiveTable	Performance::RIGHT;
+MEM_IN_EWRAM u8 		Performance::RETRIG;
+MEM_IN_EWRAM u8 		Performance::SPEED /*4*/;
+MEM_IN_EWRAM u8	 		Performance::QUANTIZE /*3*/;
+MEM_IN_EWRAM u8			Performance::LOCK;
 
 const Display LIVE1_DISPLAYS[LIVE1_DISPLAY_MAX] = { 
 //					{ x		, y		, invert	, cache					, var								 , active		, redraw  	},

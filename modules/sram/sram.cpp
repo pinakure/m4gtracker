@@ -4,11 +4,11 @@ Sram SRAM;
 
 #include "../../screens/live.hpp"
 #include "../../data/pattern.hpp"
-#include "../../callbacks/ins.hpp"
-#include "../../callbacks/pat.hpp"
-#include "../../callbacks/sng.hpp"
+#include "../../screens/instedit.hpp"
+#include "../../screens/patedit.hpp"
+#include "../../screens/songedit.hpp"
 #include "../../screens/tracker.hpp"
-#include "../../callbacks/debug.hpp"
+#include "../../debug.hpp"
 
 u8* Sram::sram;
 int Sram::position;

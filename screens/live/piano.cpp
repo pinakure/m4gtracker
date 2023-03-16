@@ -1,15 +1,15 @@
 #include "../live.hpp"
 #include "../../data/data.hpp"
 
-u8 	Piano::last_value = 0xFFFF;
-u8 	Piano::vars[ CONTROL_LIVE2_MAX ];	
+MEM_IN_EWRAM u8 	Piano::last_value = 0xFFFF;
+MEM_IN_EWRAM u8 	Piano::vars[ CONTROL_LIVE2_MAX ];	
 
-u8 	Piano::MODE; 	//2
-u8 	Piano::OCTAVE; 	//4
-u8 	Piano::QUANTIZE; //3
-u8 	Piano::TRANSPOSE;
-u8 	Piano::CHANNEL[2];
-u8 	Piano::MIDICHAN[2];
+MEM_IN_EWRAM u8 	Piano::MODE; 	//2
+MEM_IN_EWRAM u8 	Piano::OCTAVE; 	//4
+MEM_IN_EWRAM u8 	Piano::QUANTIZE; //3
+MEM_IN_EWRAM u8 	Piano::TRANSPOSE;
+MEM_IN_EWRAM u8 	Piano::CHANNEL[2];
+MEM_IN_EWRAM u8 	Piano::MIDICHAN[2];
 
 const Display LIVE2_DISPLAYS[LIVE2_DISPLAY_MAX] = { 
 //				  	{ x	  ,	y		, invert	, cache					, var							 	 , active		, redraw	},

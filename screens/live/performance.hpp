@@ -74,13 +74,13 @@ typedef struct sLiveTable {
 
 class Performance{
 	public:
-		static LiveTable	LEFT;
-		static LiveTable	RIGHT;
-		static u8 			RETRIG;
-		static u8 			SPEED /*4*/;
-		static u8	 		QUANTIZE /*3*/;
-		static u8			LOCK;
-		static u8 			vars[ CONTROL_LIVE1_MAX ];	
+		MEM_IN_EWRAM static LiveTable	LEFT;
+		MEM_IN_EWRAM static LiveTable	RIGHT;
+		MEM_IN_EWRAM static u8 			RETRIG;
+		MEM_IN_EWRAM static u8 			SPEED /*4*/;
+		MEM_IN_EWRAM static u8	 		QUANTIZE /*3*/;
+		MEM_IN_EWRAM static u8			LOCK;
+		MEM_IN_EWRAM static u8 			vars[ CONTROL_LIVE1_MAX ];	
 
 		static void update( RegionHandler* rh );
 };
@@ -88,17 +88,4 @@ class Performance{
 extern const Control LIVE1_CONTROLS[ CONTROL_LIVE1_MAX ];
 extern const Display LIVE1_DISPLAYS[ LIVE1_DISPLAY_MAX ];
 
-/*
-extern const Callback cb_live_retrig;
-extern const Callback cb_live_speed;	
-extern const Callback cb_live_quantize1;
-extern const Callback cb_live_chan1;
-extern const Callback cb_live_chan2;
-extern const Callback cb_live_mode;
-extern const Callback cb_live_octave;
-extern const Callback cb_live_transpose;
-extern const Callback cb_live_quantize2;
-extern const Callback cb_live_midichan1;
-extern const Callback cb_live_midichan2;
-*/
 #endif 

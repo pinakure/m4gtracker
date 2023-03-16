@@ -1,6 +1,6 @@
 #include "mixer.hpp"
 #include "../../data/channel.hpp"
-#include "../../callbacks/debug.hpp"
+#include "../../debug.hpp"
 #include "../../data/settings.hpp"
 
 const u16 DSOUND_FREQ_TABLE[] = {
@@ -154,7 +154,7 @@ void Mixer::init(){
 
 #include "../../data/instrument.hpp"
 #include "../../data/settings.hpp"
-#include "../../callbacks/ins.hpp"
+#include "../../screens/instedit.hpp"
 
 void Mixer::mix(){
    size_t i;

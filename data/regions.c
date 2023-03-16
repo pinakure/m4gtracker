@@ -18,13 +18,13 @@ void updateCHANNEL5(RegionHandler* rh);
 void updatePROGRESS(RegionHandler* rh);
 
 
-#include "../callbacks/debug.hpp"
-#include "../callbacks/ins.hpp"//#include "../screens/instedit.hpp"
-#include "../callbacks/pat.hpp"//#include "../screens/patedit.hpp"
+#include "../debug.hpp"
+#include "../screens/instedit.hpp"
+#include "../screens/patedit.hpp"
 #include "../screens/tracker.hpp"
-#include "../callbacks/sng.hpp"//#include "../screens/songedit.hpp"
-#include "../callbacks/hlp.hpp"//#include "../screens/help.hpp"
-#include "../callbacks/snk.hpp"//#include "../screens/snake.hpp"
+#include "../screens/songedit.hpp"
+#include "../screens/help.hpp"
+#include "../screens/snake.hpp"
 #include "../screens/live/performance.hpp"
 #include "../screens/live/piano.hpp"
 #include "../screens/live.hpp"

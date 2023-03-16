@@ -3,7 +3,7 @@
 #include "../gpu/gpu.hpp"
 #include "../gpu/virtualscreen.hpp"
 #include "../regionhandler/regionhandler.hpp"
-#include "../../callbacks/debug.hpp"
+#include "../../debug.hpp"
 #include "../../data/instrument.hpp"
 
 u8 		Adsr::last_position						= 0;

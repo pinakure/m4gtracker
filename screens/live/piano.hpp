@@ -28,28 +28,18 @@ enum E_LIVE2_DISPLAYS {
 class Piano{
 	public:
 	public: 
-		static u8 MODE; 	//2
-		static u8 OCTAVE; 	//4
-		static u8 QUANTIZE; //3
-		static u8 TRANSPOSE;
-		static u8 CHANNEL	[2];
-		static u8 MIDICHAN	[2];
+		MEM_IN_EWRAM static u8 MODE; 	//2
+		MEM_IN_EWRAM static u8 OCTAVE; 	//4
+		MEM_IN_EWRAM static u8 QUANTIZE; //3
+		MEM_IN_EWRAM static u8 TRANSPOSE;
+		MEM_IN_EWRAM static u8 CHANNEL	[2];
+		MEM_IN_EWRAM static u8 MIDICHAN	[2];
+		MEM_IN_EWRAM static u8 vars[ CONTROL_LIVE2_MAX ];	
+		MEM_IN_EWRAM static u8 last_value;
 
-	
-		static u8 	vars[ CONTROL_LIVE2_MAX ];	
-		static u8 	last_value;
 		static void update( RegionHandler* rh );
 };
-/*
-extern const Callback cb_live_chan1;
-extern const Callback cb_live_chan2;
-extern const Callback cb_live_mode;
-extern const Callback cb_live_octave;
-extern const Callback cb_live_transpose;
-extern const Callback cb_live_quantize2;
-extern const Callback cb_live_midichan1;
-extern const Callback cb_live_midichan2;
-*/
+
 extern const Control LIVE2_CONTROLS[CONTROL_LIVE2_MAX];
 extern const Display LIVE2_DISPLAYS[LIVE2_DISPLAY_MAX]; 
 

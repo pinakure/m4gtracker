@@ -1,7 +1,5 @@
 #include "displays.hpp"
 #include "data.hpp"
-#include "../callbacks/sng.hpp"
-
 /*
 
 FILE DEPRECATED:
@@ -10,22 +8,8 @@ Use as example Live screen
 
 */
 
-const Display SNG_DISPLAYS[SNG_DISPLAY_MAX] = { 
-//					{ x	   , y		, invert	, cache					, var								, active	, redraw	},
-/*	SLOT00		*/	{ 0x23 , 0x07	, false		, &CACHE_SONGSTATUS		, (u8*)&( SongEdit::has_data[ 0 ]  ), false		, false 	},
-/*	SLOT01		*/	{ 0x23 , 0x09	, false		, &CACHE_SONGSTATUS		, (u8*)&( SongEdit::has_data[ 1 ]  ), false		, false 	},
-/*	SLOT02		*/	{ 0x23 , 0x0b	, false		, &CACHE_SONGSTATUS		, (u8*)&( SongEdit::has_data[ 2 ]  ), false		, false 	},
-/*	SLOT03		*/	{ 0x23 , 0x0d	, false		, &CACHE_SONGSTATUS		, (u8*)&( SongEdit::has_data[ 3 ]  ), false		, false 	},
-/*	SLOT04		*/	{ 0x23 , 0x0f	, false		, &CACHE_SONGSTATUS		, (u8*)&( SongEdit::has_data[ 4 ]  ), false		, false 	},
-/*	SLOT05		*/	{ 0x23 , 0x11	, false		, &CACHE_SONGSTATUS		, (u8*)&( SongEdit::has_data[ 5 ]  ), false		, false 	},
-DISPLAY_TERMINATOR
-};
 
 
-const Display PAT_DISPLAYS[PAT_DISPLAY_MAX] = { 
-//					{ x	   , y		, invert	, cache					, var								, active	, redraw	},
-DISPLAY_TERMINATOR
-};
 	
 const Display TABLE_DISPLAYS[TABLE_DISPLAY_MAX] = { 
 //					{ x	   	, y		, invert	, cache					, var											, active	, redraw	},

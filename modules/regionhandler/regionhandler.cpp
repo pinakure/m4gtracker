@@ -1,5 +1,5 @@
 #include "regionhandler.hpp"
-#include "../../callbacks/debug.hpp"
+#include "../../debug.hpp"
 #include "../../screens/live.hpp"
 
 RegionHandler regHnd;

@@ -1,6 +1,6 @@
 #include "gpu.hpp"
 #include "virtualscreen.hpp"
-#include "../../callbacks/debug.hpp"
+#include "../../debug.hpp"
 #include "../../data/helpers.hpp"
 #include "../../data/caches.hpp"
 

@@ -1,6 +1,6 @@
 #include "synth.hpp"
 #include "mixer.hpp"
-#include "../../callbacks/debug.hpp"
+#include "../../debug.hpp"
 #include "../../data/channel.hpp"
 #include "../../data/config.hpp"
 #include "../../data/song.hpp"
@@ -9,7 +9,7 @@
 #include "../../data/settings.hpp"
 #include "../../data/instrument.hpp"
 #include "../../data/instrument.hpp"
-#include "../../callbacks/ins.hpp"
+#include "../../screens/instedit.hpp"
 #include "../../modules/gpu/gpu.hpp"
 
 static bool swap_bank = false;

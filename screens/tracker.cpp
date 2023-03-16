@@ -7,7 +7,7 @@
 #include "../modules/clip/clip.hpp"
 #include "../data/viewports.hpp"
 #include "../data/channel.hpp"
-#include "../callbacks/debug.hpp"
+#include "../debug.hpp"
 #include "../modules/spu/sequencer.hpp"
 #include "../macros.h"
 

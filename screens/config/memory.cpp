@@ -1,5 +1,5 @@
 #include "../config.hpp"
-#include "../../callbacks/debug.hpp"
+#include "../../debug.hpp"
 #include "../../data/data.hpp"
 
 const Callback cb_cfg_prefetch		= { modify1BIT					, EVENT_KEYDOWN_B	, &VAR_CFG.MEMORY.PREF	 		, NULL };

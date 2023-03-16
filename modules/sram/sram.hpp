@@ -7,10 +7,8 @@
 #include "../gpu/gpu.hpp"
 #include "../spu/sequencer.hpp"
 #include "../../screens/tracker.hpp"
-// #include "../../screens/patedit.hpp"
-// #include "../../screens/instedit.hpp"
-#include "../../callbacks/pat.hpp"
-#include "../../callbacks/ins.hpp"
+#include "../../screens/patedit.hpp"
+#include "../../screens/instedit.hpp"
 #include "../../data/data.hpp"
 
 #define DEVICE_EEPROM		0x0000

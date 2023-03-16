@@ -27,15 +27,6 @@ class LookNFeel {
 		
 };
 
-/*
-extern const Callback cb_cfg_interface;
-extern const Callback cb_cfg_font;
-extern const Callback cb_cfg_border;
-extern const Callback cb_cfg_showlogo;
-extern const Callback cb_cfg_startupsfx;
-extern const Callback cb_cfg_coloreditor;
-*/
-
 extern const Control LOOKNFEEL_CONTROLS[CONTROL_LOOKNFEEL_MAX];
 
 #endif

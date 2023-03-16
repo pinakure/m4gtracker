@@ -220,3 +220,14 @@ performance.s
 memory.s
 live.s
 config.s
+instedit.s
+patedit.s
+songedit.s
+snake.s
+screens/songedit.o
+screens/snake.o
+screens/patedit.o
+screens/instedit.o
+screens/help.o
+screens/console.o
+debug.o

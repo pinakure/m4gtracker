@@ -1,6 +1,6 @@
 #include "really.hpp"
 #include "../modules/gpu/gpu.hpp"
-#include "../callbacks/debug.hpp"
+#include "../debug.hpp"
 #include "../modules/key/key.hpp"
 #include "../modules/spu/sequencer.hpp"
 

@@ -9,7 +9,7 @@
 #include "../modules/spu/synth.hpp"
 #include "../modules/gpu/gpu.hpp"
 #include "../modules/key/key.hpp"
-#include "../callbacks/debug.hpp"
+#include "../debug.hpp"
 #include "../data/data.hpp"
 #include "../screens/live.hpp"
 

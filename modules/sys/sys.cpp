@@ -1,13 +1,18 @@
 #include "sys.hpp"
+
+#include "../../macros.h"
+#include "../../debug.hpp"
+
+#include "../../data/data.hpp"
 #include "../../data/input.hpp"
-#include "../../callbacks/snk.hpp"//#include "../../screens/snake.hpp"
-#include "../../callbacks/debug.hpp"
+
+#include "../../screens/snake.hpp"
 #include "../../screens/config.hpp"
 #include "../../screens/tracker.hpp"
 #include "../../screens/live.hpp"
+#include "../../screens/songedit.hpp"
+#include "../../screens/patedit.hpp"
 
-#include "../../callbacks/sng.hpp"//#include "../../screens/sngedit.hpp"
-#include "../../callbacks/pat.hpp"//#include "../../screens/patedit.hpp"
 #include "../spu/sequencer.hpp"
 #include "../spu/synth.hpp"
 #include "../spu/mixer.hpp"
@@ -17,8 +22,6 @@
 #include "../tim/tim.hpp"
 #include "../clip/clip.hpp"
 #include "../key/key.hpp"
-#include "../../data/data.hpp"
-#include "../../macros.h"
 
 u16 	Sys::keyboard;
 u8  	Sys::cursor;
