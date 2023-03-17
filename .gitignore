@@ -242,3 +242,9 @@ modules/regionhandler/cursor.o
 m4g.sav
 m4g.bin
 data/control.o
+channel.s
+control.s
+control.s
+data/channel.o
+data/song.o
+song.s
