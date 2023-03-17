@@ -72,111 +72,119 @@ void Synth::init(){
 	REG_SOUND3CNT_H = SOUND3OUTPUT1;
 
 	// Bind channel specific update trigger callbacks
-	for(int i=0; i<6; i++){
-		Channel *c 		= &VAR_CHANNEL[i];
-		c->transpose 	= 0;
-		c->retrig	 	= false;
-		c->reset	 	= false;
-		c->fine_tune	= 0;
-		
-		switch(i){
-			case 0: c->trigger = &Synth::triggerPwm1;break;
-			case 1: c->trigger = &Synth::triggerPwm2;break;
-			case 2: c->trigger = &Synth::triggerNze;break;
-			case 3: c->trigger = &Synth::triggerWav;break;
-			case 4: c->trigger = &Synth::triggerFmw;break;
-			case 5: c->trigger = &Synth::triggerSmp;break;
-		}
+	Channel *channel = VAR_CHANNEL;
+	Channel *target = channel + CHANNEL_COUNT;
+	for(int i=0; channel<target; i++, channel++ ){
+		channel->init( i );
 	}
 
 	lfo = 0;
 }
 
+void Synth::noteOffPwm1( Channel* channel ){
+}
+void Synth::noteOffPwm2( Channel* channel ){
+}
+void Synth::noteOffNze ( Channel* channel ){
+}
+void Synth::noteOffWav ( Channel* channel ){
+}
+void Synth::noteOffFmw ( Channel* channel ){
+}
+void Synth::noteOffSmp ( Channel* channel ){
+}
+
+
 void Synth::noteOnPwm1( Channel* channel ){
-	u8 key = channel->key 
-		+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
-		 + channel->transpose 
-		+ VAR_SONG.PATTERNS[0].TRANSPOSE[ channel->POSITION ] 
-		+ VAR_SONG.TRANSPOSE ;
+	u8 key 	= channel->key 
+			+ channel->transpose 
+			+ channel->song_patterns->TRANSPOSE[ channel->POSITION ] 
+			+ VAR_SONG.TRANSPOSE 
+			+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 );
 				  
-	u16 freq 	= PWM_FREQ_TABLE[ key ]  
-				+ channel->fine_tune
-				+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
-	SOUND1CNT_H = 0x8000 | freq;
-	
+	u16 frq = PWM_FREQ_TABLE[ key ]  
+			+ channel->fine_tune
+			+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
+			
+	SOUND1CNT_H = 0x8000 | frq;	
 	channel->retrig = false;			
 }
 
 void Synth::noteOnPwm2( Channel* channel ){
-	u16 freq 	= PWM_FREQ_TABLE[ 
-					channel->key 
-					+ channel->transpose 
-					+ VAR_SONG.PATTERNS[1].TRANSPOSE[ channel->POSITION] 
-					+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
-					+ VAR_SONG.TRANSPOSE 
-				  ] 
-				+ channel->fine_tune
-				+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
-	SOUND2CNT_H = 0x8000 | freq;
+	u8 key 	= channel->key 
+			+ channel->transpose 
+			+ channel->song_patterns->TRANSPOSE[ channel->POSITION ] 
+			+ VAR_SONG.TRANSPOSE
+			+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 );
+			
+	u16 frq = PWM_FREQ_TABLE[ key ] 
+			+ channel->fine_tune
+			+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
+			
+	SOUND2CNT_H = 0x8000 | frq;
 	channel->retrig = false;			
 }
 
 void Synth::noteOnNze( Channel* channel ){
-	u16 freq 	= PWM_FREQ_TABLE[ 
-					channel->key 
-					+ channel->transpose
-					+ VAR_SONG.PATTERNS[2].TRANSPOSE[ channel->POSITION] 
-					+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
-					+ VAR_SONG.TRANSPOSE 
-				  ] 
-				+ channel->fine_tune
-				+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
-	SOUND4CNT_H = 0xc000 | freq;
+	u8 key	= channel->key 
+			+ channel->transpose
+			+ channel->song_patterns->TRANSPOSE[ channel->POSITION ] 
+			+ VAR_SONG.TRANSPOSE 
+			+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 );
+		  
+	u16 frq	= PWM_FREQ_TABLE[ key ]
+			+ channel->fine_tune
+			+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
+	
+	SOUND4CNT_H = 0xc000 | frq;
 	channel->retrig = false;
 }
 
 void Synth::noteOnWav( Channel* channel ){
-	u16 freq 	= PWM_FREQ_TABLE[ 
-					channel->key 
-					+ channel->transpose
-					+ VAR_SONG.PATTERNS[3].TRANSPOSE[ channel->POSITION] 
-					+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
-					+ VAR_SONG.TRANSPOSE 
-				  ]	
-				+ channel->fine_tune
-				+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
-	REG_SOUND3CNT_X = SOUND3INIT | SOUND3PLAYLOOP | freq; 
+	u8 key	= channel->key 
+			+ channel->transpose
+			+ channel->song_patterns->TRANSPOSE[ channel->POSITION ] 
+			+ VAR_SONG.TRANSPOSE 
+			+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 );
+		
+	u16 frq = PWM_FREQ_TABLE[ key ]	
+			+ channel->fine_tune
+			+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
+	
+	REG_SOUND3CNT_X = SOUND3INIT | SOUND3PLAYLOOP | frq;
 	//REG_SOUNDCNT_L = 0xFFff;			
 	channel->retrig = false;
 }
 
 void Synth::noteOnFmw( Channel* channel ){
-	u16 freq 	= DSOUND_FREQ_TABLE[ 
-					channel->key 
-					//+ channel->transpose 
-					+ VAR_SONG.PATTERNS[4].TRANSPOSE[ channel->POSITION] 
-					+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
-					+ VAR_SONG.TRANSPOSE 
-				  ] 
-				+ channel->fine_tune 
-				+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
-	//DECIMAL_DOUBLE_TWOTILES(0,2,0xFF,freq);
+	u8 key	= channel->key 
+			+ channel->transpose
+			+ channel->song_patterns->TRANSPOSE[ channel->POSITION ] 
+			+ VAR_SONG.TRANSPOSE 
+			+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 );
+				  
+	u16 frq	= DSOUND_FREQ_TABLE[ key ]
+			+ channel->fine_tune 
+			+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
+	
+	//DECIMAL_DOUBLE_TWOTILES(0,2,0xFF,frq);
 		
-	Mixer::noteOn1( freq );
+	Mixer::noteOn1( frq );
 	channel->retrig = false;
 }
 
 void Synth::noteOnSmp( Channel* channel ){
-	u16 freq 	= PWM_FREQ_TABLE[ 
-					channel->key 
-					// + channel->transpose
-					+ VAR_SONG.PATTERNS[5].TRANSPOSE[ channel->POSITION] 
-					+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 ) 
-					+ VAR_SONG.TRANSPOSE 
-				  ] 
-				+ channel->fine_tune
-				+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
-	Mixer::noteOn2( freq );
+	u8 key	= channel->key 
+			+ channel->transpose
+			+ channel->song_patterns->TRANSPOSE[ channel->POSITION ] 
+			+ VAR_SONG.TRANSPOSE 
+			+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 );
+	
+	u16 frq	= DSOUND_FREQ_TABLE[ key ] 
+			+ channel->fine_tune
+			+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
+	
+	Mixer::noteOn2( frq );
 	channel->retrig = false;
 }
 

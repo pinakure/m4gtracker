@@ -215,7 +215,9 @@ void Config::format (Control *c, bool bigstep, bool add, u32 *pointer){
 
 void Config::defaults (Control *c, bool bigstep, bool add, u32 *pointer){
 	int i;
-		
+
+	Song::slot = 0;
+	
 	#define SETTING(a, v)		{VAR_CFG.a = v; VAR_CFG.loadCount++;/*RegionHandler::update(1);*/}
 	VAR_CFG.loadCount = 0;
 
@@ -253,7 +255,6 @@ void Config::defaults (Control *c, bool bigstep, bool add, u32 *pointer){
 	SETTING(TRACKER.HEADERTYPE, 0x0); //N-U
 	//186
 	SETTING(MEMORY.PREF, 0x1); //READONLY
-	SETTING(SLOT, 0);
 	SETTING(MENUSLOT, 0);//45items.-
 	SETTING(INSTRUMENTVISTYPE, 0);//45items.-
 	//190

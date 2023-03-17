@@ -62,6 +62,8 @@ class Mixer {
 
 		static SoundChannel channel[ VIRTUAL_CHANNEL_COUNT ];
 	public:
+		friend class Channel;
+		
 		static bool enable_metronome;
 		static bool enabled;
 		

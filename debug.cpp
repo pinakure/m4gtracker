@@ -652,11 +652,11 @@ void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 
 	Song *s = &VAR_SONG;
 
-	for( VAR_CFG.SLOT=0, p=0; VAR_CFG.SLOT < SONG_SLOT_COUNT; VAR_CFG.SLOT++ ){
+	for( Song::slot=0, p=0; Song::slot < SONG_SLOT_COUNT; Song::slot++ ){
 		
 		// Set title 
 		for(int a=0; a<14;a++){
-			s->TITLE	[ a ] = VAR_CFG.SLOT;
+			s->TITLE	[ a ] = Song::slot;
 			s->ARTIST	[ a ] = a;
 		}
 		
@@ -687,12 +687,12 @@ void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 	console.percent(1.0f);
 	
 	console.print( "Reading song memory..." );
-	for( VAR_CFG.SLOT=0, p = 0; VAR_CFG.SLOT < SONG_SLOT_COUNT; VAR_CFG.SLOT++){
+	for( Song::slot=0, p = 0; Song::slot < SONG_SLOT_COUNT; Song::slot++){
 		
 		Sram::songLoad(false);
 		
 		for(int a=0; a < 14 ; a++){
-			ASSERT( s->TITLE[a]==VAR_CFG.SLOT);
+			ASSERT( s->TITLE[a]==Song::slot);
 			ASSERT( s->ARTIST[a]==a);
 		}
 		
@@ -721,7 +721,7 @@ void Debug::memoryTest(Control* c, bool bigstep, bool add, u32* pointer ){
 	console.percent( 1.0f );
 
 	// Reset slot to first item
-	VAR_CFG.SLOT = 0;
+	Song::slot = 0;
 	
 	console.print("Checks passed successfully."	, COLOR_GREEN );
 	console.wait( 1 );

@@ -57,12 +57,8 @@ typedef struct _CFG {
 	CFG_BEHAVIOR 	BEHAVIOR;
 	CFG_TRACKER		TRACKER;
 	CFG_MEMORY		MEMORY;
-	u8 				SLOT /*3*/;//Currently selected song
 	u8				MENUSLOT /*3*/;	
-	//u8	 			PROGRESS /*6*/;
 	u8	 			INSTRUMENTVISTYPE;
-	// GrooveTable		GROOVE; 			// Pointer to the table being edited/displayed on INS screeen // DEPRECATED
-	//TableCell 		INSTRUMENTTABLE; 	// Pointer to the table being edited/displayed on INS screeen
 	u8 				CURRENTCHANNEL /*3*/;
 	u8 				CURRENTINSTRUMENT 	/*6*/;
 	u8 				ORDERPOSITION; 		// Index where the PAT screen begins to display pattern orders

@@ -2,13 +2,29 @@
 #define CHANNEL_HPP
 
 #include "../agb.h"
-//#include "patterncell.hpp"
-//#include "pattern.hpp"
 
-typedef struct sChannel Channel;
-typedef struct sPatternCell PatternCell;
+#include "control.hpp"
+#include "pattern.hpp"
+#include "instrument.hpp"
 
-typedef struct sChannel {
+#define CHANNEL_COUNT 			6
+
+typedef enum eChannelTypes {
+	CHANNEL_PWM1,
+	CHANNEL_PWM2,
+	CHANNEL_NZE,
+	CHANNEL_WAV,
+	CHANNEL_FMW,
+	CHANNEL_SMP,
+}ChannelType;
+
+
+
+class Channel {
+public:
+	ChannelType 		type;
+	u8 					index;
+
 	bool 				mute;
 	bool				solo;
 
@@ -42,20 +58,30 @@ typedef struct sChannel {
 	u8 					tsp_position;
 	u8 					vol_position;
 		
-	void 				(*trigger)(Channel*);
-		
-}Channel;
-
-typedef enum eChannelTypes {
-	CHANNEL_PWM1,
-	CHANNEL_PWM2,
-	CHANNEL_NZE,
-	CHANNEL_WAV,
-	CHANNEL_FMW,
-	CHANNEL_SMP,
+	Pattern*			pattern;		// Replaces VAR_PATTERN	[ 6 ] GLOBAL -> Rename to Pattern
+	Pattern*			song_patterns;	// Replaces VAR_SONG.PATTERNS[ 6 ] GLOBAL -> Rename to Order
+	PatternCell* 		cells;			// Replaces VAR_CELL	[ 6 ] GLOBAL -> Rename to cell
+	Instrument*			instrument;
+	
+	void 				(*trigger	)(Channel*);
+	void 				(*noteOn	)(Channel*);
+	void 				(*noteOff	)(Channel*);
+	void 				(*enable	)();
+	void 				(*disable	)();
+	
+	void init( u8 channel_index );
+	
+	
+	
+	const Control*		tracker_controls[ CHANNEL_COUNT ];		// TRK screen, 6 Channels
+	/*
+	Control*			pattern_controls[ CHANNEL_COUNT ];		// PAT screen, 6 ORDER channels
+	Control*			transpose_controls[ CHANNEL_COUNT ];	// PAT screen, 6 TRANSPOSE channels 
+	*/
 };
 
-#define CHANNEL_COUNT 			6
-extern Channel VAR_CHANNEL[ CHANNEL_COUNT ];
+extern Channel 		VAR_CHANNEL	[ CHANNEL_COUNT ];
+extern PatternCell 	VAR_CELLS	[ CHANNEL_COUNT ]; // Current pattern cells, 6 pointers dereferenced
+extern Pattern 		VAR_PATTERN	[ CHANNEL_COUNT ]; // EDITABLE BY USER
 
 #endif

@@ -3,21 +3,22 @@
 
 #include "../agb.h"
 #include "groovetable.hpp"
-#include "pattern.hpp"
+#include "channel.hpp"
 
-typedef struct sSong {
-	GrooveTable		GROOVE;
-	PatternCell 	DATA[ PATTERN_COUNT ];//This should BE ON PATTERN STRUCTURE!!!*/
-	Pattern			PATTERNS[ CHANNEL_COUNT ];//orders and pattern for each
-	u8				TRANSPOSE;
-	u8				BPM;
-	u8				PATTERNLENGTH; //4
-	u8				TITLE[14];
-	char			ARTIST[14];
-	u8 				TAPTICKS;
-	bool			NOTEMPTY;		// If true, song has data
-}Song;
+class Song {
+	public:
+		MEM_IN_EWRAM static u8	slot;
+		GrooveTable				GROOVE;
+		Pattern					PATTERNS[ CHANNEL_COUNT ]; // STORED PATTERNS FOR THIS SONG
+		u8						TRANSPOSE;
+		u8						BPM;
+		u8						PATTERNLENGTH; //4
+		u8						TITLE[14];
+		char					ARTIST[14];
+		u8 						TAPTICKS;
+		bool					NOTEMPTY;		// If true, song has data
+};
 
-extern Song VAR_SONG; //Current loaded song ( unpacked and copied from SRAM active slot )
+extern MEM_IN_EWRAM Song VAR_SONG; //Current loaded song ( unpacked and copied from SRAM active slot )
 
 #endif 

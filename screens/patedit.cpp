@@ -40,49 +40,49 @@ const Callback cb_pat_mute_5 = { PatEdit::mute , EVENT_KEYUP_B	, NULL 	, NULL 	}
 
 // TRANSPOSE
 
-void transposeCH0_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 0 ); }
-void transposeCH1_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 1 ); }
-void transposeCH2_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 2 ); }
-void transposeCH3_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 3 ); }
-void transposeCH4_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 4 ); }
-void transposeCH5_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 5 ); }
+void transposeCH0_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_PWM1  ] ); }
+void transposeCH1_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_PWM2  ] ); }
+void transposeCH2_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_NZE   ] ); }
+void transposeCH3_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_WAV   ] ); }
+void transposeCH4_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_FMW   ] ); }
+void transposeCH5_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_SMP   ] ); }
 
-void transposeCH0_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 0 ); }
-void transposeCH1_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 1 ); }
-void transposeCH2_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 2 ); }
-void transposeCH3_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 3 ); }
-void transposeCH4_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 4 ); }
-void transposeCH5_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 5 ); }
+void transposeCH0_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_PWM1 ] ); }
+void transposeCH1_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_PWM2 ] ); }
+void transposeCH2_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_NZE  ] ); }
+void transposeCH3_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_WAV  ] ); }
+void transposeCH4_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_FMW  ] ); }
+void transposeCH5_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_SMP  ] ); }
 
-void transposeCH0_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 0; PatEdit::bookmark_row = *(u8*)pointer;}
-void transposeCH1_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 1; PatEdit::bookmark_row = *(u8*)pointer;}
-void transposeCH2_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 2;	PatEdit::bookmark_row = *(u8*)pointer;}
-void transposeCH3_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 3;	PatEdit::bookmark_row = *(u8*)pointer;}
-void transposeCH4_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 4;	PatEdit::bookmark_row = *(u8*)pointer;}
-void transposeCH5_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 5;	PatEdit::bookmark_row = *(u8*)pointer;}
+void transposeCH0_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = (u8)CHANNEL_PWM1 ; PatEdit::bookmark_row = *(u8*)pointer;}
+void transposeCH1_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = (u8)CHANNEL_PWM2 ; PatEdit::bookmark_row = *(u8*)pointer;}
+void transposeCH2_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = (u8)CHANNEL_NZE  ;	PatEdit::bookmark_row = *(u8*)pointer;}
+void transposeCH3_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = (u8)CHANNEL_WAV  ;	PatEdit::bookmark_row = *(u8*)pointer;}
+void transposeCH4_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = (u8)CHANNEL_FMW  ;	PatEdit::bookmark_row = *(u8*)pointer;}
+void transposeCH5_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = (u8)CHANNEL_SMP  ;	PatEdit::bookmark_row = *(u8*)pointer;}
 
 // PATTERNS 
 
-void patternCH0_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 0 ); }
-void patternCH1_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 1 ); }
-void patternCH2_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 2 ); }
-void patternCH3_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 3 ); }
-void patternCH4_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 4 ); }
-void patternCH5_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 5 ); }
+void patternCH0_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_PWM1 ] ); }
+void patternCH1_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_PWM2 ] ); }
+void patternCH2_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_NZE  ] ); }
+void patternCH3_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_WAV  ] ); }
+void patternCH4_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_FMW  ] ); }
+void patternCH5_alter(Control *c, bool bigstep, bool add, u32 *pointer){	modify7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_SMP  ] ); }
 
-void patternCH0_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 0 ); }
-void patternCH1_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 1 ); }
-void patternCH2_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 2 ); }
-void patternCH3_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 3 ); }
-void patternCH4_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 4 ); }
-void patternCH5_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( 5 ); }
+void patternCH0_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_PWM1 ] ); }
+void patternCH1_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_PWM2 ] ); }
+void patternCH2_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_NZE  ] ); }
+void patternCH3_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_WAV  ] ); }
+void patternCH4_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_FMW  ] ); }
+void patternCH5_paste(Control *c, bool bigstep, bool add, u32 *pointer){	paste7BIT(c, bigstep, add, pointer); 	PatEdit::copy( &VAR_CHANNEL[ CHANNEL_SMP  ] ); }
 
-void patternCH0_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 0; PatEdit::bookmark_row = *(u8*)pointer;}
-void patternCH1_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 1; PatEdit::bookmark_row = *(u8*)pointer;}
-void patternCH2_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 2;	PatEdit::bookmark_row = *(u8*)pointer;}
-void patternCH3_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 3;	PatEdit::bookmark_row = *(u8*)pointer;}
-void patternCH4_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 4;	PatEdit::bookmark_row = *(u8*)pointer;}
-void patternCH5_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = 5;	PatEdit::bookmark_row = *(u8*)pointer;}
+void patternCH0_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = (u8)CHANNEL_PWM1 ; PatEdit::bookmark_row = *(u8*)pointer;}
+void patternCH1_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = (u8)CHANNEL_PWM2 ; PatEdit::bookmark_row = *(u8*)pointer;}
+void patternCH2_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = (u8)CHANNEL_NZE  ;	PatEdit::bookmark_row = *(u8*)pointer;}
+void patternCH3_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = (u8)CHANNEL_WAV  ;	PatEdit::bookmark_row = *(u8*)pointer;}
+void patternCH4_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = (u8)CHANNEL_FMW  ;	PatEdit::bookmark_row = *(u8*)pointer;}
+void patternCH5_focus(Control *c, bool bigstep, bool add, u32 *pointer){	VAR_CFG.CURRENTCHANNEL = (u8)CHANNEL_SMP  ;	PatEdit::bookmark_row = *(u8*)pointer;}
 
 
 //TRANSPOSE
@@ -354,32 +354,80 @@ DISPLAY_TERMINATOR
 };
 
 void PatEdit::syncPosition( u8 position ){
-	// Called each time VAR_CFG.ORDERPOSITION CHANGES
-	for( int i=0, p; i < 16; i++ ){
-		p = i+position;
-		VAR_PATTERN[0].ORDER[i]  	= VAR_SONG.PATTERNS[0].ORDER[p];
-		VAR_PATTERN[1].ORDER[i]  	= VAR_SONG.PATTERNS[1].ORDER[p];
-		VAR_PATTERN[2].ORDER[i]  	= VAR_SONG.PATTERNS[2].ORDER[p];
-		VAR_PATTERN[3].ORDER[i]  	= VAR_SONG.PATTERNS[3].ORDER[p];
-		VAR_PATTERN[4].ORDER[i]  	= VAR_SONG.PATTERNS[4].ORDER[p];
-		VAR_PATTERN[5].ORDER[i]  	= VAR_SONG.PATTERNS[5].ORDER[p];
-		VAR_PATTERN[0].TRANSPOSE[i]  = VAR_SONG.PATTERNS[0].TRANSPOSE[p];
-		VAR_PATTERN[1].TRANSPOSE[i]  = VAR_SONG.PATTERNS[1].TRANSPOSE[p];
-		VAR_PATTERN[2].TRANSPOSE[i]  = VAR_SONG.PATTERNS[2].TRANSPOSE[p];
-		VAR_PATTERN[3].TRANSPOSE[i]  = VAR_SONG.PATTERNS[3].TRANSPOSE[p];
-		VAR_PATTERN[4].TRANSPOSE[i]  = VAR_SONG.PATTERNS[4].TRANSPOSE[p];
-		VAR_PATTERN[5].TRANSPOSE[i]  = VAR_SONG.PATTERNS[5].TRANSPOSE[p];
+	// Called each time VAR_CFG.ORDERPOSITION CHANGES, so it must be FAST
+	Channel *channel = VAR_CHANNEL;
+	u8* src0 = channel->song_patterns->ORDER + position;
+	u8* src6 = channel->song_patterns->TRANSPOSE + position;
+	u8* dst0 = channel->pattern->ORDER;
+	u8* dst6 = channel->pattern->TRANSPOSE;
+	channel++;
+	u8* src1 = channel->song_patterns->ORDER + position;
+	u8* src7 = channel->song_patterns->TRANSPOSE + position;
+	u8* dst1 = channel->pattern->ORDER;
+	u8* dst7 = channel->pattern->TRANSPOSE;
+	channel++;
+	u8* src2 = channel->song_patterns->ORDER + position;
+	u8* src8 = channel->song_patterns->TRANSPOSE + position;
+	u8* dst2 = channel->pattern->ORDER;
+	u8* dst8 = channel->pattern->TRANSPOSE;
+	channel++;
+	u8* src3 = channel->song_patterns->ORDER + position;
+	u8* src9 = channel->song_patterns->TRANSPOSE + position;
+	u8* dst3 = channel->pattern->ORDER;
+	u8* dst9 = channel->pattern->TRANSPOSE;
+	channel++;
+	u8* src4 = channel->song_patterns->ORDER + position;
+	u8* srcA = channel->song_patterns->TRANSPOSE + position;
+	u8* dst4 = channel->pattern->ORDER;
+	u8* dstA = channel->pattern->TRANSPOSE;
+	channel++;
+	u8* src5 = channel->song_patterns->ORDER + position;
+	u8* srcB = channel->song_patterns->TRANSPOSE + position;
+	u8* dst5 = channel->pattern->ORDER;
+	u8* dstB = channel->pattern->TRANSPOSE;
+	
+	for( int i=0; i < 0x10; i++ ){
+		*dst0  = *src0;
+		*dst1  = *src1;
+		*dst2  = *src2;
+		*dst3  = *src3;
+		*dst4  = *src4;
+		*dst5  = *src5;
+		*dst6  = *src6;
+		*dst7  = *src7;
+		*dst8  = *src8;
+		*dst9  = *src9;
+		*dstA  = *srcA;
+		*dstB  = *srcB;
+		dst0++ ;  src0++;
+		dst1++ ;  src1++;
+		dst2++ ;  src2++;
+		dst3++ ;  src3++;
+		dst4++ ;  src4++;
+		dst5++ ;  src5++;
+		dst6++ ;  src6++;
+		dst7++ ;  src7++;
+		dst8++ ;  src8++;
+		dst9++ ;  src9++;
+		dstA++ ;  srcA++;
+		dstB++ ;  srcB++;			
 	}
 }
 
-void PatEdit::copy( u8 channel_index ){
+void PatEdit::copy( Channel *channel ){
 	// Called on value change @ PATtern editor
-	VAR_CFG.CURRENTCHANNEL = channel_index;
-	// *REGION_MAP_3_TRK.viewport->var = channel;	
+	VAR_CFG.CURRENTCHANNEL = channel->index;
 	
-	for(int i=0; i<16;i++){		
-		VAR_SONG.PATTERNS[ channel_index ].ORDER[ VAR_CFG.ORDERPOSITION + i ] = VAR_PATTERN[ channel_index ].ORDER[ i ];
-		VAR_SONG.PATTERNS[ channel_index ].TRANSPOSE[ VAR_CFG.ORDERPOSITION + i ] = VAR_PATTERN[ channel_index ].TRANSPOSE[ i ];
+	u8* o_dst = channel->song_patterns->ORDER 		+ VAR_CFG.ORDERPOSITION;
+	u8* t_dst = channel->song_patterns->TRANSPOSE	+ VAR_CFG.ORDERPOSITION;
+	u8* o_src = channel->pattern->ORDER;
+	u8* t_src = channel->pattern->TRANSPOSE;
+	
+	for(int i=0; i<0x10;i++){		
+		*o_dst = *o_src; // Copy order	 	
+		*t_dst = *t_src; // Copy transpose 
+		o_dst++;t_dst++;
+		o_src++;t_src++;
 	}
 	
 	PatEdit::sync();
@@ -561,13 +609,24 @@ void PatEdit::mute(Control *c, bool bigstep, bool add, u32 *pointer){
 // Reloads VAR_SONG.PATTERN[ CHANNEL_COUNT ][--16--] into visible VARIABLE lookup vars (VAR_PATTERN[ CHANNEL_COUNT ][16])
 void PatEdit::sync( bool verbose ){
 	
-	const Control *ctl = &PAT_CONTROLS[ 0 ];
-	for(u16 c=0; c<6;c++){
-		for(u16 i=0; i<16;i++){
-			/* ------------------------------------------------------------
-			Copy data from VISIBLE CONTROL VARS -> Song Data Order Memory*/
-			VAR_PATTERN[ c ].ORDER[ i ] 		= VAR_SONG.PATTERNS[ c ].ORDER[ i + VAR_CFG.ORDERPOSITION ];
-			VAR_PATTERN[ c ].TRANSPOSE[ i ] = VAR_SONG.PATTERNS[ c ].TRANSPOSE[ i + VAR_CFG.ORDERPOSITION ];
+	const Control *ctl 	= PAT_CONTROLS;
+	Channel *channel 	= VAR_CHANNEL;
+	
+	for(Channel *target 	= channel + CHANNEL_COUNT; channel < target ; channel++ ){
+		u8 *dst_tsp = channel->pattern->TRANSPOSE;
+		u8 *dst_ord = channel->pattern->ORDER;
+		u8 *src_ord = channel->song_patterns->ORDER + VAR_CFG.ORDERPOSITION;
+		u8 *src_tsp = channel->song_patterns->TRANSPOSE + VAR_CFG.ORDERPOSITION;
+		for(u16 i=0; i<0x10;i++){
+			// Copy data from VISIBLE CONTROL VARS -> Song Data Order Memory*/
+/*			channel->pattern->ORDER[ i ] 	 = VAR_SONG.PATTERNS[ c ].ORDER[ i + VAR_CFG.ORDERPOSITION ];
+			channel->pattern->TRANSPOSE[ i ] = VAR_SONG.PATTERNS[ c ].TRANSPOSE[ i + VAR_CFG.ORDERPOSITION ];
+												    |
+												    |
+													V														*/
+			*dst_tsp = *src_tsp;
+			*dst_ord = *src_ord;
+			
 			/* ------------------------------------------------------------
 			Manually draw the controls (good to avoid message overflow)  */
 			if( verbose ) {
@@ -578,9 +637,11 @@ void PatEdit::sync( bool verbose ){
 			Ensure the pattern order tags at the sides get updated later */
 			PatEdit::clean = false;
 			// ------------------------------------------------------------
-			ctl++;
+			ctl++;			
+			dst_tsp++; src_tsp++;
+			dst_ord++; src_ord++;
 		}
-		VAR_CHANNEL[ c ].transpose = VAR_SONG.PATTERNS[ c ].TRANSPOSE[ VAR_CHANNEL[c].POSITION ] ;
+		channel->transpose = channel->song_patterns->TRANSPOSE[ channel->POSITION ] ;
 	}
 }
 
@@ -588,6 +649,8 @@ void PatEdit::dispatchMessage(u32 msg){
 	u8 x, y;
 	
 	bool modifier = KEYPRESS_SELECT;
+	
+	Channel *channel = &VAR_CHANNEL[TRACKER_ACTIVE_CHANNEL];
 	
 	switch(msg){
 		case MESSAGE_CANCEL: // Erase
@@ -602,8 +665,8 @@ void PatEdit::dispatchMessage(u32 msg){
 				// Scroll from this point on up to the end
 				shift( -1, y );
 			} else RegionHandler::controlClear	( RegionHandler::control );
-			copy( TRACKER_ACTIVE_CHANNEL ); 			
-			VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ].LASTPOSITION = VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ].POSITION;
+			copy( channel ); 			
+			channel->LASTPOSITION = channel->POSITION;
 			sync();
 			dispatchMessage		( MESSAGE_OTHER_REFRESH_DATA );
 			clean = false;
@@ -663,39 +726,48 @@ void PatEdit::shift( int q, u8 starting_point ){
 	bool expr = (q<0);
 	Notifier::icon( 0, 0x7112, expr ? 0x408C : 0x408E);
 
-	u16 carry = VAR_SONG.PATTERNS[ TRACKER_ACTIVE_CHANNEL ].ORDER[ expr ? starting_point : 255 ];
+	Channel *channel = &VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ];
+	u16 carry = channel->song_patterns->ORDER[ expr ? starting_point : 255 ];
 	
 	for(int i = starting_point; i<ORDER_COUNT; i++){
-		VAR_SONG.PATTERNS[ TRACKER_ACTIVE_CHANNEL ].ORDER[ expr ? i&0xFF : (0xFF-starting_point) - (i&0xFF) ] = VAR_SONG.PATTERNS[ TRACKER_ACTIVE_CHANNEL ].ORDER[ expr ? (i+1)&0xFF : (0xFF-starting_point) - ((i+1)&0xFF) ];
+		channel->song_patterns->ORDER[ expr ? i&0xFF : (0xFF-starting_point) - (i&0xFF) ] = channel->song_patterns->ORDER[ expr ? (i+1)&0xFF : (0xFF-starting_point) - ((i+1)&0xFF) ];
 	} 
-	VAR_SONG.PATTERNS[ TRACKER_ACTIVE_CHANNEL ].ORDER[ expr ? 0xFF : starting_point] = carry;
+	channel->song_patterns->ORDER[ expr ? 0xFF : starting_point] = carry;
 	
 	// Save changes and Show changes in screen
 	PatEdit::sync();	
 }
 
 void PatEdit::transpose( int q ){
+	
+	Channel *channel = &VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ];
+	
 	Notifier::icon( 0x306D, q > 0 ? 0x308C : 0x308E, 0x8A);
+	u8* tsp = channel->song_patterns->TRANSPOSE;
+	
 	for(int i = 0; i < ORDER_COUNT; i++){
 		// Abort if lowest note would overflow on transpose down
-		if( ( VAR_SONG.PATTERNS[ TRACKER_ACTIVE_CHANNEL ].TRANSPOSE[ i ] + q ) == 0x00 ) return;
+		if( ( (*tsp) + q ) == 0x00 ) return;
 		// Abort if highest note would overflow on transpose down
-		if( ( VAR_SONG.PATTERNS[ TRACKER_ACTIVE_CHANNEL ].TRANSPOSE[ i ] + q ) == 0xFF ) return;
+		if( ( (*tsp) + q ) == 0xFF ) return;
+		tsp++;
 	}
 	Notifier::icon( 0x0, 0x706D, q > 0 ? 0x408C : 0x408E);
 	
+	tsp = channel->song_patterns->TRANSPOSE;
 	for(int i = 0; i<ORDER_COUNT; i++){
-		VAR_SONG.PATTERNS[ TRACKER_ACTIVE_CHANNEL ].TRANSPOSE[ i ] += q;
+		*tsp += q;
+		tsp++;
 	}
 	// Save changes and Show changes in screen
 	PatEdit::sync();	
 }
 
 void PatEdit::processInput( ){
-			if ( KEYDOWN_LEFT 	) transpose( -1 ); 
-	else 	if ( KEYDOWN_RIGHT 	) transpose(  1 );
-	else 	if ( KEYDOWN_UP    	) shift( -1 );
-	else 	if ( KEYDOWN_DOWN  	) shift(  1 );
+		 if ( KEYDOWN_LEFT 	) transpose	( -1 ); 
+	else if ( KEYDOWN_RIGHT	) transpose	(  1 );
+	else if ( KEYDOWN_UP   	) shift		( -1 );
+	else if ( KEYDOWN_DOWN 	) shift		(  1 );
 }
 
 /* Delete pattern from pattern shared data */

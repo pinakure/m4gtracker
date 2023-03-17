@@ -15,6 +15,4 @@ typedef struct sPattern{
 	u8				POSITION;	//Internal position
 }Pattern;
 
-extern Pattern VAR_PATTERN[ CHANNEL_COUNT ]; // Each of the 6 pattern lists on PAT screen 
-
 #endif

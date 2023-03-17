@@ -24,6 +24,8 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 		data/caches.o \
 		data/regions.o \
 		data/control.o \
+		data/song.o \
+		data/channel.o \
 		data/viewports.o \
 		screens/config.o \
 		screens/config/coloreditor.o \
@@ -89,19 +91,22 @@ $(PROGNAME).gba : $(PROGNAME).elf
 	$(OBJCOPY) -v -O binary $(PROGNAME).elf $(PROGNAME).gba
 
 %.o : %.c
-	$(CC) -o $@ $(CFLAGS) $<
-
+	@$(CC) -o $@ $(CFLAGS) $<
+	@echo "  C -> $@"
 %.o : %.cpp
-	$(CC) -o $@ $(CFLAGS) $<
-
+	@$(CC) -o $@ $(CFLAGS) $<
+	@echo "CPP -> $@"
+	
 %.o : %.s
 	$(AS) -o $@ $(ASFLAGS) $<
-
+	@echo "ASM -> $@"
+	
 $(PROGNAME).elf : $(OFILES)
+	@echo OK!
 	@echo -------------------------------------------------------------------------------
 	@echo Linking
 	@echo -------------------------------------------------------------------------------
-	$(LD) $(LDFLAGS) -o $(PROGNAME).elf $(OFILES) $(LDLIBS)
+	@$(LD) $(LDFLAGS) -o $(PROGNAME).elf $(OFILES) $(LDLIBS)
 
 index.m4h: index.hml
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f *.o *.i *.ii *.m4h	
@@ -308,5 +313,5 @@ clean: clean-screens
 	@echo Cleaning program code
 	@echo -------------------------------------------------------------------------------
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f *.o *.i *.ii *.m4h	
-	@echo --------------------------------------------------------------------------------------------------------------------------------------------------------------
+	@echo -------------------------------------------------------------------------------
 

@@ -155,7 +155,7 @@ void Sram::songSave( bool verbose ){
 	int i;
 	
 	seek	( DATA_BASE_ADDRESS );
-	forward	( SONG_DETAILS_SIZE * VAR_CFG.SLOT );
+	forward	( SONG_DETAILS_SIZE * Song::slot );
 
 	// Write Song details
 	/*1*/ write			( VAR_SONG.TRANSPOSE );
@@ -170,9 +170,9 @@ void Sram::songSave( bool verbose ){
 	} 
 
 	//0x140
-	seek	( DATA_BASE_ADDRESS );
-	forward ( SONG_DETAILS_SIZE * SONG_SLOT_COUNT );
-	forward ( GROOVE_TABLE_SIZE * VAR_CFG.SLOT);
+	seek	( DATA_BASE_ADDRESS 					);
+	forward ( SONG_DETAILS_SIZE * SONG_SLOT_COUNT 	);
+	forward ( GROOVE_TABLE_SIZE * Song::slot 		);
 	if( verbose ) drawPosition(27, 2, 2);	
 	
 	// Write Groove Steps
@@ -181,15 +181,30 @@ void Sram::songSave( bool verbose ){
 	}
 	
 	//0x1A0
-	seek(DATA_BASE_ADDRESS + (SONG_DETAILS_SIZE * SONG_SLOT_COUNT) + ( GROOVE_TABLE_SIZE * SONG_SLOT_COUNT ) );
-	forward( PATTERN_DATA_SIZE * VAR_CFG.SLOT );
+	seek	( DATA_BASE_ADDRESS + (SONG_DETAILS_SIZE * SONG_SLOT_COUNT) + ( GROOVE_TABLE_SIZE * SONG_SLOT_COUNT ) );
+	forward	( PATTERN_DATA_SIZE * Song::slot );
 	if( verbose ) drawPosition(27, 3, 2);	
 	//seek(0x200);
+
+/*	for(i=0; i < ORDER_COUNT; i++ ){
+		for( int c=0; c < CHANNEL_COUNT; c++ ){
+			//write( VAR_SONG.PATTERNS[ c ].ORDER	[ i ]	);
+			//write( VAR_SONG.PATTERNS[ c ].TRANSPOSE[ i ]);
+		}					|
+	}						|
+							|
+							V									*/	
+	static u8 *ord;	
+	static u8 *tsp;
+	Channel *target = VAR_CHANNEL+CHANNEL_COUNT;
+	for(Channel* channel = VAR_CHANNEL; channel<target; channel++){
 		
-	for(i=0; i<ORDER_COUNT; i++){
-		for(int c=0; c<CHANNEL_COUNT; c++){
-			write(VAR_SONG.PATTERNS[ c ].ORDER		[ i ] );
-			write(VAR_SONG.PATTERNS[ c ].TRANSPOSE	[ i ] );
+		ord = channel->song_patterns->ORDER;
+		tsp = channel->song_patterns->TRANSPOSE;
+		
+		for(u8 *tgt=ord+ORDER_COUNT; ord<tgt; ord++, tsp++){/* 0 - 255 */
+			write( *ord	);
+			write( *tsp	);
 		}
 	}
 
@@ -204,7 +219,7 @@ void Sram::songLoad( bool verbose ){
 	u8 h;
 		
 	seek	( DATA_BASE_ADDRESS );
-	forward	( SONG_DETAILS_SIZE * VAR_CFG.SLOT);
+	forward	( SONG_DETAILS_SIZE * Song::slot );
 	
 	// Song details
 	readByte( VAR_SONG.TRANSPOSE );
@@ -222,8 +237,8 @@ void Sram::songLoad( bool verbose ){
 	} 
 
 	seek	( DATA_BASE_ADDRESS );
-	forward ( SONG_DETAILS_SIZE * SONG_SLOT_COUNT );
-	forward ( GROOVE_TABLE_SIZE * VAR_CFG.SLOT);
+	forward ( SONG_DETAILS_SIZE * SONG_SLOT_COUNT 	);
+	forward ( GROOVE_TABLE_SIZE * Song::slot 		);
 	if( verbose ) drawPosition(27, 2, 6);	
 	
 	for(i=0; i < 0x10; i++){
@@ -231,17 +246,34 @@ void Sram::songLoad( bool verbose ){
 	}
 		
 	//1A0
-	seek(DATA_BASE_ADDRESS + (SONG_DETAILS_SIZE * SONG_SLOT_COUNT) + ( GROOVE_TABLE_SIZE * SONG_SLOT_COUNT ) );
-	forward( PATTERN_DATA_SIZE * VAR_CFG.SLOT );
+	seek(DATA_BASE_ADDRESS + (SONG_DETAILS_SIZE * SONG_SLOT_COUNT ) + ( GROOVE_TABLE_SIZE * SONG_SLOT_COUNT ) );
+	forward( PATTERN_DATA_SIZE * Song::slot );
 	if( verbose ) drawPosition(27, 3, 6);	
 	//seek(0x200);
-	
-	for(i=0; i < ORDER_COUNT; i++ ){
+
+
+/*	for(i=0; i < ORDER_COUNT; i++ ){
 		for( int c=0; c < CHANNEL_COUNT; c++ ){
-			VAR_SONG.PATTERNS[ c ].ORDER	[ i ] = read();
-			VAR_SONG.PATTERNS[ c ].TRANSPOSE[ i ] = read();
+			//VAR_SONG.PATTERNS[ c ].ORDER	[ i ] = read();
+			//VAR_SONG.PATTERNS[ c ].TRANSPOSE[ i ] = read();
+		}					|
+	}						|
+							|
+							V									*/	
+	static u8 *ord;	
+	static u8 *tsp;
+	Channel *target = VAR_CHANNEL+CHANNEL_COUNT;
+	for(Channel* channel = VAR_CHANNEL; channel<target; channel++){
+		
+		ord = channel->song_patterns->ORDER;
+		tsp = channel->song_patterns->TRANSPOSE;
+		
+		for(u8 *tgt=ord+ORDER_COUNT; ord<tgt; ord++, tsp++){/* 0 - 255 */
+			*ord = read();
+			*tsp = read();
 		}
 	}
+
 
 	PatEdit::syncPosition( VAR_CFG.ORDERPOSITION );
 	Tracker::syncPattern();
@@ -258,6 +290,8 @@ void Sram::songLoad( bool verbose ){
 	PatEdit::sync(verbose);
 }
 
+#define INSTRUMENT_NAME_SIZE 		6
+
 void Sram::songDefaults( bool verbose ){
 	int i,di;
 	
@@ -270,7 +304,7 @@ void Sram::songDefaults( bool verbose ){
 	VAR_SONG.PATTERNLENGTH 	= 0xF;
 	VAR_SONG.TRANSPOSE 		= 0x00;
 	
-	for(i=0; i < CHANNEL_COUNT ; i++){
+	for(i=0; i < INSTRUMENT_NAME_SIZE ; i++){
 		VAR_INSTRUMENT.NAME[i] = 0xFF;
 	}
 	

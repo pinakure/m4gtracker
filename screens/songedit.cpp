@@ -24,7 +24,7 @@ const Callback cb_sng_load			= { SongEdit::load				, EVENT_KEYUP_B 	, NULL 					
 const Callback cb_sng_patlength		= { modify4BIT					, EVENT_MODIFY_B	, &VAR_SONG.PATTERNLENGTH 	, NULL };
 const Callback cb_sng_purge			= { SongEdit::purge				, EVENT_KEYUP_B 	, NULL 						, NULL };
 const Callback cb_sng_save			= { SongEdit::save				, EVENT_KEYUP_B 	, NULL 						, NULL };
-const Callback cb_sng_slot			= { SongEdit::select			, EVENT_MODIFY_B	, &VAR_CFG.SLOT				, NULL };
+const Callback cb_sng_slot			= { SongEdit::select			, EVENT_MODIFY_B	, &Song::slot				, NULL };
 const Callback cb_sng_tempotap		= { SongEdit::tapTempo			, EVENT_KEYDOWN_B	, NULL						, NULL };
 const Callback cb_sng_title			= { AlphaDialog::getBigString 	, EVENT_KEYDOWN_B	, &VAR_SONG.TITLE			, NULL };
 const Callback cb_sng_transpose		= { modify8BIT					, EVENT_MODIFY_B	, &VAR_SONG.TRANSPOSE		, NULL };
@@ -50,12 +50,12 @@ const Control SNG_CONTROLS[ CONTROL_SNG_MAX ] = {
 	{ 0x10 	, 0x12	, CTL( GROOVE_09		) 	, CTL( GROOVE_0E	) 	, CTL( LOAD				) , CTL( GROOVE_0C		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x6 ] 	) 	, &cb_sng_groove_06 	},
 	{ 0x15 	, 0x12	, CTL( GROOVE_0A		) 	, CTL( GROOVE_0F	) 	, CTL( LOAD				) , CTL( GROOVE_0D		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0xA ] 	) 	, &cb_sng_groove_0A 	},
 	{ 0x1a 	, 0x12	, CTL( GROOVE_0B		) 	, CTL( SONGSELECTOR	) 	, CTL( LOAD				) , CTL( GROOVE_0E		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0xE ] 	) 	, &cb_sng_groove_0E 	},
-	{ 0x04 	, 0x07	, CTL( SONGSELECTOR		) 	, CTL( ARTIST		) 	, CTL( SONGSELECTOR		) , CTL( ARTIST			) , &CACHE_SONGSLOTS				, (u8*)&( VAR_CFG.SLOT	  	) 	, &cb_sng_slot			},
+	{ 0x04 	, 0x07	, CTL( SONGSELECTOR		) 	, CTL( ARTIST		) 	, CTL( SONGSELECTOR		) , CTL( ARTIST			) , &CACHE_SONGSLOTS				, (u8*)&( Song::slot	  	) 	, &cb_sng_slot			},
 	{ 0x0d 	, 0x01	, CTL( GROOVE_0F		) 	, CTL( SONGSELECTOR	) 	, CTL( SAVE				) , CTL( SONGSELECTOR	) , &CACHE_ARROW_LEFT				, NULL							, &cb_sng_load			},
 	{ 0x0d 	, 0x02	, CTL( LOAD				) 	, CTL( SONGSELECTOR	) 	, CTL( PURGE			) , CTL( SONGSELECTOR	) , &CACHE_ARROW_LEFT				, NULL							, &cb_sng_save			},
 	{ 0x0d 	, 0x03	, CTL( SAVE				) 	, CTL( SONGSELECTOR	) 	, CTL( ERASE			) , CTL( SONGSELECTOR	) , &CACHE_ARROW_LEFT				, NULL							, &cb_sng_purge			},
 	{ 0x0d 	, 0x04	, CTL( PURGE			) 	, CTL( SONGSELECTOR	) 	, CTL( SLOT 			) , CTL( SONGSELECTOR	) , &CACHE_ARROW_LEFT				, NULL							, &cb_sng_erase			},
-	{ 0x0d 	, 0x05	, CTL( ERASE			) 	, CTL( SONGSELECTOR	) 	, CTL( ARTIST			) , CTL( SONGSELECTOR	) , &CACHE_HEXADECIMAL				, (u8*)&( VAR_CFG.SLOT		)	, &cb_sng_slot			},
+	{ 0x0d 	, 0x05	, CTL( ERASE			) 	, CTL( SONGSELECTOR	) 	, CTL( ARTIST			) , CTL( SONGSELECTOR	) , &CACHE_HEXADECIMAL				, (u8*)&( Song::slot		)	, &cb_sng_slot			},
 	{ 0x0f 	, 0x07	, CTL( SLOT				) 	, CTL( SONGSELECTOR	) 	, CTL( TITLE			) , CTL( SONGSELECTOR	) , &CACHE_TEXT						, VAR( ARTIST				) 	, &cb_sng_artist		},
 	{ 0x0f 	, 0x08	, CTL( ARTIST			) 	, CTL( SONGSELECTOR	) 	, CTL( BPM				) , CTL( SONGSELECTOR	) , &CACHE_TEXT						, VAR( TITLE				) 	, &cb_sng_title			},
 	{ 0x1c 	, 0x0a	, CTL( BPM				) 	, CTL( SONGSELECTOR	) 	, CTL( TRANSPOSE		) , CTL( SONGSELECTOR	) , &CACHE_ARROW_LEFT				, NULL							, &cb_sng_tempotap		},
@@ -143,7 +143,7 @@ void SongEdit::load( Control *c, bool bigstep, bool add, u32 *pointer ){
 	SongEdit::has_data[ 3 ] = false;
 	SongEdit::has_data[ 4 ] = false;
 	SongEdit::has_data[ 5 ] = false;
-	SongEdit::has_data[ VAR_CFG.SLOT ] = true;
+	SongEdit::has_data[ Song::slot ] = true;
 	
 	RegionHandler::redraw = true;
 }
@@ -166,7 +166,7 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 	bool 	used_patterns				[ PATTERN_COUNT		];
 	u8 		unused_instrument_count 	= INSTRUMENT_COUNT;
 	u8 		unused_pattern_count 		= PATTERN_COUNT;
-	u8 		previous_slot 				= VAR_CFG.SLOT;
+	u8 		previous_slot 				= Song::slot;
 	
 	ReallyDialog::enable();
 	if(!ReallyDialog::result) {
@@ -216,7 +216,7 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 	q 		= 100.0f / float(PATTERN_TOTAL);
 	
 	// FOR EACH SONG
-	for( VAR_CFG.SLOT=0; VAR_CFG.SLOT < SONG_SLOT_COUNT; VAR_CFG.SLOT++){
+	for( Song::slot=0; Song::slot < SONG_SLOT_COUNT; Song::slot++ ){
 		Sram::songLoad( false );
 		
 		// FOR EACH CHANNEL IN SONG
@@ -267,7 +267,7 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 	// Save shared data (Instruments and Patterns)
 		
 	Sram::sharedDataSave( false );
-	VAR_CFG.SLOT = previous_slot;
+	Song::slot = previous_slot;
 	Sram::songLoad( false );
 
 	Gpu::bigString( 7, 15, "PRESS ANY BUTTON");
@@ -281,9 +281,9 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 
 void SongEdit::select( Control *c, bool bigstep, bool add, u32 *pointer ){
 	modify6VAL( c, bigstep, add, pointer );
-	SongEdit::redrawCtl	( CONTROL_SNG_SONGSELECTOR   );
-	SongEdit::focusCtl		( CONTROL_SNG_SONGSELECTOR 	);
-	SongEdit::redrawCtl	( CONTROL_SNG_SLOT				);
+	SongEdit::redrawCtl	( CONTROL_SNG_SONGSELECTOR  );
+	SongEdit::focusCtl	( CONTROL_SNG_SONGSELECTOR	);
+	SongEdit::redrawCtl	( CONTROL_SNG_SLOT			);
 }
 
 void SongEdit::erase( Control *c, bool bigstep, bool add, u32 *pointer ){

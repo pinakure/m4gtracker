@@ -79,7 +79,7 @@ class PatEdit {
 
 		static void sync				( bool verbose = true ); // sync pattern data and optionally redraw controls 
 		static void syncPosition		( u8 position );
-		static void copy				( u8 channel );
+		static void copy				( Channel *channel );
 		static void globalUpdate		(  );
 		static void update				(  );
 		static void dispatchMessage		( u32 msg );

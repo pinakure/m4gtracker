@@ -5,8 +5,6 @@
 
 #define ORDER_COUNT				0x100
 #define PATTERN_COUNT			0x80
-
-#include "channel.hpp"
 	
 typedef struct sPatternCell {
 	u8 				KEY[ 0x10 ] /*7*/;
@@ -16,7 +14,6 @@ typedef struct sPatternCell {
 	u8				VAL[ 0x10 ];
 }PatternCell;
 
-extern PatternCell VAR_CELLS[ CHANNEL_COUNT ]; // Current pattern cells, 6 pointers dereferenced
 extern PatternCell VAR_DATA	[ PATTERN_COUNT ];
 
 #endif
