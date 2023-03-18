@@ -556,7 +556,7 @@ void Synth::renderFmw( SETTINGS_FMW *fmw, u8 vol){
 	FB[14] += fmw->WAVEDATA[14];//>>1;
 	FB[15] += fmw->WAVEDATA[15];//>>1;
 	
-	loadFmw( fmw->WAVEDATA , 8 + (fmw->MULT>>1));
+	loadFmw( fmw->WAVEDATA , 8 + (fmw->DISTORTION>>1));
 }
 
 /*###########################################################################*/

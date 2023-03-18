@@ -131,3 +131,25 @@ Replaced gpu instance with Gpu static class
 Fixed issue causing the program to not boot if no valid SRAM data was present.
 Fixed issue causing warnings on No$GBA due to 8 bit writes to VRAM, which are illegal
 Basic power saving ( still not activable anywhere, but will be under CFG->behavior )
+
+-------------
+17-03-2023
+-------------
+Stop groove table arrows if no groove enabled
+Apply Pattern length setting to groove table
+Renamed Tempo tap to Reset bar @ SNG
+Replaced CFG.MEMORY.BACKUP by CFG.BEHAVIOR.POWERSAVING
+Snake HiScore Backup
+Enhanced Navigation & UX @ SNG Groovetable
+Moved OSC Type to Upper tile @ WAV
+Added Gate x4 @ WAV
+------------
+ 18-03-2023
+------------
+Removed MULT parameter from FMW instruments
+Removed MIX% parameter from WAV instruments
+Added DIST (distortion) parameter to FMW instruments
+Added DIST (distortion) parameter to WAV instruments
+Placed OP type controls with each matching OP @FMW
+Added GATE x4 controls to FMW
+Enhanced Navigation @ FMW Inst Screen

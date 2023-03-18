@@ -62,6 +62,7 @@ static u32 random(){
 }
 	
 void SnakeGame::init(){
+	// If Config::load was called prior init, hiscore must have its value already set
 	randomSeed(1024);
 	lives 		= 0;
 	sound_timer = 0;
@@ -99,7 +100,6 @@ void SnakeGame::start(){
 	lives 			= 3;
 	score			= 0;	
 	level			= 0;
-	hiscore			= 123456789;
 	last_lives 		= 0xFF;
 	last_level 		= 0xFF;
 	last_length		= 0xFFFF;

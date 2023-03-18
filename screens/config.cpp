@@ -11,8 +11,9 @@
 #include "../modules/key/key.hpp"
 #include "../debug.hpp"
 #include "../data/data.hpp"
-#include "../screens/live.hpp"
-
+#include "live.hpp"
+#include "snake.hpp"
+#define Snake SnakeGame
 // Callback used @ Slot change
 const Callback 	Config::menuindex 	= { modify5VAL 		, EVENT_MODIFY_B 			, &VAR_CFG.MENUSLOT , NULL };
 const Callback 	cb_reset		  	= { Config::reset 	, EVENT_PANIC 				, NULL 				, NULL };
@@ -115,6 +116,9 @@ void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 	//0x6F
 	//Sram::drawPosition(27, 1, 7);
 	
+	// Read snake hiscore
+	Snake::hiscore = Sram::read32( );
+	
 	// Load default song values (overriden if autoload was true on load)
 	Sram::songDefaults( false );
 	
@@ -197,6 +201,9 @@ void Config::save (Control *c, bool bigstep, bool add, u32 *pointer){
 	
 	//Sram::drawPosition(27, 1, 7);
 	//0x6F
+	// Write snake hiscore
+	Sram::write32( Snake::hiscore );
+
 
 	Progress::disable();
 	//RegionHandler::progress.enabled = false;

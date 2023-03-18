@@ -384,7 +384,7 @@ void Sram::sharedDataSave( bool verbose ){
 			write( instrument->TABLE.VALUE   [ 1 ][ di ] );
 		}
 	}
-
+		
 	if( verbose ) drawPosition(27, 5, 2);	
 }
 
@@ -431,7 +431,8 @@ void Sram::sharedDataLoad( bool verbose ){
 			instrument->TABLE.VALUE		[1][di] = read();
 		}
 	}
-
+	
+	
 	InstEdit::copy(&VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT], &VAR_INSTRUMENT);
 	
 	Sequencer::setTempo( VAR_SONG.BPM );

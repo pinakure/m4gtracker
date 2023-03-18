@@ -65,11 +65,15 @@ const Callback cb_ins_vol_0F 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR
 /* WAV instrument settings --------------------------------------------------------------------------------------------------- */            	
 const Callback cb_ins_phase		  		 = { InstEdit::modBit		, EVENT_KEYDOWN_B 	, &VAR_WAV.PHASE	 			, NULL };
 const Callback cb_ins_am		  		 = { InstEdit::modBit		, EVENT_KEYDOWN_B 	, &VAR_WAV.AM		 			, NULL };
-const Callback cb_ins_mixpercent  		 = { InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_WAV.MIXPERCENT 			, NULL };
+const Callback cb_ins_distortion  		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_WAV.DISTORTION 			, NULL };
 const Callback cb_ins_wav_op1type 		 = { InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_WAV.OP1_TYPE				, NULL };
 const Callback cb_ins_wav_op2type 		 = { InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_WAV.OP2_TYPE				, NULL };
 const Callback cb_ins_wav_op3type 		 = { InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_WAV.OP3_TYPE				, NULL };
 const Callback cb_ins_wav_op4type 		 = { InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_WAV.OP4_TYPE				, NULL };
+const Callback cb_ins_wav_op1gate 		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_WAV.OP1_GATE				, NULL };
+const Callback cb_ins_wav_op2gate 		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_WAV.OP2_GATE				, NULL };
+const Callback cb_ins_wav_op3gate 		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_WAV.OP3_GATE				, NULL };
+const Callback cb_ins_wav_op4gate 		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_WAV.OP4_GATE				, NULL };
 // WAV ADSR OP#1
 const Callback cb_ins_wav_op1adsr_0		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP1_ADSR		[ 0x0 ]	, NULL };
 const Callback cb_ins_wav_op1adsr_1		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP1_ADSR		[ 0x1 ]	, NULL };
@@ -99,11 +103,15 @@ const Callback cb_ins_wav_preset4		 = { InstEdit::wavPreset	, EVENT_KEYUP_B		, &
 const Callback cb_ins_wav_preset5		 = { InstEdit::wavPreset	, EVENT_KEYUP_B		, &VAR_WAV.WAVPRESET	[ 0x5 ] , NULL };
 /* FMW instrument settings --------------------------------------------------------------------------------------------------- */            	
 const Callback cb_ins_algorithm			 = { InstEdit::modAlgorithm	, EVENT_MODIFY_B 	, &VAR_FMW.ALGORITHM			, NULL };
-const Callback cb_ins_fm_mult			 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_FMW.MULT					, NULL };
+const Callback cb_ins_fm_distortion		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_FMW.DISTORTION			, NULL };
 const Callback cb_ins_fm_op1type		 = { InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_FMW.OP1_TYPE				, NULL };
 const Callback cb_ins_fm_op2type		 = { InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_FMW.OP2_TYPE				, NULL };
 const Callback cb_ins_fm_op3type		 = { InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_FMW.OP3_TYPE				, NULL };
 const Callback cb_ins_fm_op4type		 = { InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_FMW.OP4_TYPE				, NULL };
+const Callback cb_ins_fm_op1gate		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_FMW.OP1_GATE				, NULL };
+const Callback cb_ins_fm_op2gate		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_FMW.OP2_GATE				, NULL };
+const Callback cb_ins_fm_op3gate		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_FMW.OP3_GATE				, NULL };
+const Callback cb_ins_fm_op4gate		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_FMW.OP4_GATE				, NULL };
 // FMW ADSR OP#1
 const Callback cb_ins_fm_op1adsr_0		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP1_ADSR		[ 0x0 ]	, NULL };
 const Callback cb_ins_fm_op1adsr_1		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP1_ADSR		[ 0x1 ]	, NULL };
@@ -400,24 +408,26 @@ void InstEdit::pack( Instrument* i ){
 			return;
 			
 		case INSTRUMENT_TYPE_WAV:
-			i->SETTINGS[0] = (VAR_WAV.PHASE<<6) | (VAR_WAV.AM<<5) | VAR_WAV.MIXPERCENT; 
-			i->SETTINGS[1] = (VAR_WAV.OP1_TYPE<<3) | VAR_WAV.OP2_TYPE; 
-			i->SETTINGS[2] = (VAR_WAV.OP3_TYPE<<3) | VAR_WAV.OP4_TYPE;			
+			i->SETTINGS[ SETTING_WAV_PHASE 								] = (VAR_WAV.PHASE<<6) | (VAR_WAV.AM<<5) | VAR_WAV.DISTORTION; 
+			i->SETTINGS[ SETTING_WAV_OP1_TYPE | SETTING_WAV_OP2_TYPE 	] = (VAR_WAV.OP1_TYPE<<3) | VAR_WAV.OP2_TYPE; 
+			i->SETTINGS[ SETTING_WAV_OP3_TYPE | SETTING_WAV_OP4_TYPE 	] = (VAR_WAV.OP3_TYPE<<3) | VAR_WAV.OP4_TYPE;			
 			for(c=0; c<4; c++){
 				di = c<<1;
-				i->SETTINGS[3+di] = (VAR_WAV.OP1_ADSR[c]<<4) | VAR_WAV.OP2_ADSR[c]; 
-				i->SETTINGS[4+di] = (VAR_WAV.OP3_ADSR[c]<<4) | VAR_WAV.OP4_ADSR[c]; 
+				i->SETTINGS[ ( SETTING_WAV_OP1_ADSR_1 | SETTING_WAV_OP2_ADSR_1 ) + di ] = (VAR_WAV.OP1_ADSR[c]<<4) | VAR_WAV.OP2_ADSR[c]; 
+				i->SETTINGS[ ( SETTING_WAV_OP3_ADSR_1 | SETTING_WAV_OP4_ADSR_1 ) + di ] = (VAR_WAV.OP3_ADSR[c]<<4) | VAR_WAV.OP4_ADSR[c]; 
 			}
 			for(c=0; c<8; c++){
 				di = c<<1;
-				i->SETTINGS[11+c] = (VAR_WAV.WAVEDATA[ di ]<<4) | VAR_WAV.WAVEDATA[di+1];
+				i->SETTINGS[ SETTING_WAV_WAVEDATA0 + c ] = (VAR_WAV.WAVEDATA[ di ]<<4) | VAR_WAV.WAVEDATA[di+1];
 			}
+			i->SETTINGS[ ( SETTING_WAV_OP1_GATE | SETTING_WAV_OP2_GATE ) ] = (VAR_WAV.OP1_GATE<<4) | VAR_WAV.OP2_GATE; 
+			i->SETTINGS[ ( SETTING_WAV_OP3_GATE | SETTING_WAV_OP4_GATE ) ] = (VAR_WAV.OP3_GATE<<4) | VAR_WAV.OP4_GATE; 
 			return;
 
 		case INSTRUMENT_TYPE_FMW:
-			i->SETTINGS[0] = (VAR_FMW.MULT << 3) | VAR_FMW.ALGORITHM;
-			i->SETTINGS[1] = (VAR_FMW.OP1_TYPE<<3) | VAR_FMW.OP2_TYPE;
-			i->SETTINGS[2] = (VAR_FMW.OP3_TYPE<<3) | VAR_FMW.OP4_TYPE;
+			i->SETTINGS[0] = ( VAR_FMW.DISTORTION << 3 ) | VAR_FMW.ALGORITHM;
+			i->SETTINGS[1] = ( VAR_FMW.OP1_TYPE	 << 3 ) | VAR_FMW.OP2_TYPE;
+			i->SETTINGS[2] = ( VAR_FMW.OP3_TYPE	 << 3 ) | VAR_FMW.OP4_TYPE;
 			for(c=0; c<4; c++){
 				di = c<<1;
 				i->SETTINGS[3+di] = (VAR_FMW.OP1_ADSR[c]<<4) | VAR_FMW.OP2_ADSR[c];
@@ -447,7 +457,7 @@ void InstEdit::pack( Instrument* i ){
 SETTINGS_FMW InstEdit::unpackFmw( Instrument *i ){
 	SETTINGS_FMW ret;
 	int c, di;
-	ret.MULT 			= EXTRACT(i->SETTINGS[0], 3, 0xF);	// 4
+	ret.DISTORTION		= EXTRACT(i->SETTINGS[0], 3, 0xF);	// 4
 	ret.ALGORITHM 		= i->SETTINGS[0] & 0x7;				// 3
 	ret.OP1_TYPE 		= EXTRACT(i->SETTINGS[1], 3, 0x7);	// 3
 	ret.OP2_TYPE 		= i->SETTINGS[1] & 0x7;				// 3
@@ -465,6 +475,11 @@ SETTINGS_FMW InstEdit::unpackFmw( Instrument *i ){
 		ret.WAVEDATA[ di ] = EXTRACT(i->SETTINGS[11 + c], 4, 0xF);	// 4x8
 		ret.WAVEDATA[di+1] = i->SETTINGS[11 + c] & 0xF;				// 4x8
 	}
+	ret.OP1_GATE = EXTRACT(i->SETTINGS[SETTING_FMW_OP1_GATE], 4, 0xF);	// 4
+	ret.OP2_GATE = 		   i->SETTINGS[SETTING_FMW_OP2_GATE] & 0xF;				// 4
+	ret.OP3_GATE = EXTRACT(i->SETTINGS[SETTING_FMW_OP3_GATE], 4, 0xF);	// 4
+	ret.OP4_GATE = 		   i->SETTINGS[SETTING_FMW_OP4_GATE] & 0xF;				// 4
+	
 	return ret;
 }
 
@@ -494,7 +509,7 @@ SETTINGS_WAV InstEdit::unpackWav( Instrument *i ){
 	int c, di;
 	ret.PHASE			= EXTRACT(i->SETTINGS[0], 6, 0x1);	// 1
 	ret.AM				= EXTRACT(i->SETTINGS[0], 5, 0x1);	// 1
-	ret.MIXPERCENT		= i->SETTINGS[0] & 0xF;				// 4
+	ret.DISTORTION		= i->SETTINGS[0] & 0xF;				// 4
 	ret.OP1_TYPE		= EXTRACT(i->SETTINGS[1], 3, 0x7);	// 3
 	ret.OP2_TYPE		= i->SETTINGS[1] & 0x7;				// 3
 	ret.OP3_TYPE		= EXTRACT(i->SETTINGS[2], 3, 0x7);	// 3
@@ -511,6 +526,10 @@ SETTINGS_WAV InstEdit::unpackWav( Instrument *i ){
 		ret.WAVEDATA[ di ] = EXTRACT(i->SETTINGS[11 + c], 4, 0xF);	// 4x8
 		ret.WAVEDATA[di+1] = i->SETTINGS[11 + c] & 0xF;				// 4x8
 	}
+	ret.OP1_GATE = EXTRACT(i->SETTINGS[SETTING_WAV_OP1_GATE], 4, 0xF);	// 4
+	ret.OP2_GATE = 		   i->SETTINGS[SETTING_WAV_OP2_GATE] & 0xF;				// 4
+	ret.OP3_GATE = EXTRACT(i->SETTINGS[SETTING_WAV_OP3_GATE], 4, 0xF);	// 4
+	ret.OP4_GATE = 		   i->SETTINGS[SETTING_WAV_OP4_GATE] & 0xF;				// 4
 	return ret;
 }
 

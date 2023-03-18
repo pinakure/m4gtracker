@@ -147,7 +147,7 @@ void Sequencer::update(){
 	
 	//Jump to next pattern, or find previous loop entry			     
 	if( !( currentTicks % ( beatsPerBar << 2 ) ) ){
-		VAR_SONG.GROOVE.position=VAR_SONG.GROOVE.position<0XF?VAR_SONG.GROOVE.position+1:0X0;
+		VAR_SONG.GROOVE.position = VAR_SONG.GROOVE.position < VAR_SONG.PATTERNLENGTH ? VAR_SONG.GROOVE.position + 1:0X0;
 		if( updateChannel( 0 ) ) Tracker::syncChannel( 0 ); 
 		if( updateChannel( 1 ) ) Tracker::syncChannel( 1 );
 		if( updateChannel( 2 ) ) Tracker::syncChannel( 2 );

@@ -30,7 +30,7 @@ typedef struct _SETTINGS_PWM {
 typedef struct _SETTINGS_WAV {
 	u8	 			PHASE			;//   	1 : 1
 	u8	 			AM 				;//   	1 : 2
-	u8	 			MIXPERCENT		;//   	4 : 3 
+	u8	 			DISTORTION		;//   	4 : 3 
 	u8 				OP1_TYPE 		;//   	3 : 7
 	u8 				OP1_ADSR[4] 	;//   	4 : 20
 	u8 				OP2_TYPE 		;//   	3 : 24
@@ -38,15 +38,19 @@ typedef struct _SETTINGS_WAV {
 	u8 				OP3_TYPE 		;//   	3 : 31
 	u8 				OP3_ADSR[4] 	;// 	4 : 34
 	u8 				OP4_TYPE 		;//   	3 : 38
-	u8 				OP4_ADSR[4] 	;//      4 : 41
-	u8 				WAVEDATA[16] 	;// 4 x 16 : 45;	
-	void 			*WAVPRESET[5] 	;// 4 x 16 : 109;
+	u8 				OP4_ADSR[4] 	;//     4 : 41
+	u8 				WAVEDATA[16] 	;// 4 x 16 : TRANSIENT ;	
+	void 			*WAVPRESET[5] 	;// 4 x 16 : TRANSIENT ;
 											  //173 BITS
+	u8 				OP1_GATE 		;//   	4 : 45
+	u8 				OP2_GATE 		;//   	4 : 49
+	u8 				OP3_GATE 		;//   	4 : 53
+	u8 				OP4_GATE 		;//   	4 : 57	
 	
 }SETTINGS_WAV;
 
 typedef struct _SETTINGS_FMW {
-	u8 				MULT 			;//      4 : 1
+	u8 				DISTORTION		;//      4 : 1
 	u8 				ALGORITHM 		;//      3 : 5
 	u8 				OP1_TYPE 		;//      3 : 8
 	u8 				OP1_ADSR[4] 	;//      4 : 11
@@ -57,6 +61,10 @@ typedef struct _SETTINGS_FMW {
 	u8 				OP4_TYPE 		;//      3 : 29
 	u8 				OP4_ADSR[4] 	;//      4 : 32
 	u8 				WAVEDATA[16] 	;// 4 x 16 : 36
+	u8 				OP1_GATE 		;//   	4 : 45
+	u8 				OP2_GATE 		;//   	4 : 49
+	u8 				OP3_GATE 		;//   	4 : 53
+	u8 				OP4_GATE 		;//   	4 : 57	
 									// 			100
 }SETTINGS_FMW;
 
