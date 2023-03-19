@@ -1,6 +1,9 @@
 #ifndef MACROS_HPP
 #define MACROS_HPP
 
+
+#define SWI(a)   asm("swi "#a);
+
 #define EXTRACT(packed, position, mask)		( (packed >> position) & mask )
 #define	U8P( a )							( *(  u8*  ) a   )
 #define U16P( a )							( *( u16*  ) a   )
@@ -10,6 +13,12 @@
 #define BUTTON_ALTER						KEY_A	
 #define BUTTON_NAVIGATE						KEY_SELECT
 
+#define AT_PERFORMANCE_SCREEN				(RegionHandler::region == &REGION_MAP_1_LIVE1)
+#define AT_PIANO_SCREEN						(RegionHandler::region == &REGION_MAP_1_LIVE2)
+#define AT_HELP_SCREEN						(RegionHandler::region == &REGION_MAP_1_HLP)
+#define AT_SONG_SCREEN						(RegionHandler::region == &REGION_MAP_2_SNG)
+#define AT_CONFIG_SCREEN					(RegionHandler::region == &REGION_MAP_4_CFG)
+#define AT_SNAKE_SCREEN						(RegionHandler::region == &REGION_MAP_4_SNK)
 #define AT_INSTRUMENT_SCREEN				(RegionHandler::region == &REGION_MAP_2_INS)
 #define AT_TRACKER_SCREEN					(RegionHandler::region == &REGION_MAP_3_TRK)
 #define AT_PATTERN_SCREEN					(RegionHandler::region == &REGION_MAP_2_PAT)

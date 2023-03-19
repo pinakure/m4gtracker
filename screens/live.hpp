@@ -11,7 +11,6 @@ class Live {
 		MEM_IN_EWRAM static Performance		PERFORM;
 		MEM_IN_EWRAM static Piano			PIANO;
 		MEM_IN_EWRAM static u8	 			KEYPRESS[10];
-
 };
 
 #endif 

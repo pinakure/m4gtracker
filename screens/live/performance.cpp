@@ -1,6 +1,13 @@
 #include "../live.hpp"
+#include "../../debug.hpp"
 #include "../../data/data.hpp"
 #include "../../modules/key/key.hpp"
+#include "../../modules/gpu/gpu.hpp"
+#include "../../modules/sys/sys.hpp"
+#include "../../modules/spu/sequencer.hpp"
+#include "../../modules/spu/mixer.hpp"
+#include "../../modules/sram/sram.hpp"
+#include "../../screens/songedit.hpp"
 
 MEM_IN_EWRAM u8 		Performance::vars[ CONTROL_LIVE1_MAX ];	
 MEM_IN_EWRAM LiveTable	Performance::LEFT;
@@ -264,8 +271,15 @@ void Performance::update(  ){
 	if(KEYDOWN_START){
 		RegionHandler::sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&RegionHandler::region->displays[LIVE1_DISPLAY_STATUS_FREE])&0x0fffffff);
 		Live::PERFORM.LOCK ^= 1;
+		if(!Sequencer::playing){
+			if(Live::PERFORM.LOCK) Mixer::start();
+			else Mixer::stop();
+		}
 		RegionHandler::sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&RegionHandler::region->displays[LIVE1_DISPLAY_STATUS_LOCKED])&0x0fffffff);
+		Sys::forceNoInput();
 	}
+	
+	if( !Live::PERFORM.LOCK ) return;
 	
 	if(KEYDOWN_START || KEYUP_START){
 		VAR_INPUT.START = KEYDOWN_START ? 1 : 0;
@@ -276,6 +290,7 @@ void Performance::update(  ){
 		VAR_INPUT.SELECT = KEYDOWN_SELECT ? 1 : 0;
 		RegionHandler::sendMessage(MESSAGE_REDRAW_DISPLAY | (unsigned)(&RegionHandler::region->displays[LIVE1_DISPLAY_SELECT])&0x0fffffff);
 	}
+	
 	
 	#define MONITOR(a)	if( KEYDOWN_##a || KEYUP_##a ) {		\
 							VAR_INPUT.a = KEYDOWN_##a ? 1 : 0;	\
@@ -294,7 +309,99 @@ void Performance::update(  ){
 	
 	#undef MONITOR
 	
-	// We must send signals from this function, any time a note is pressed / released,
-	// and always when Live::PERFORM.LOCK = 1
+	LiveTable *t = VAR_INPUT.SELECT ? &RIGHT : &LEFT;
+	
+	int index = 0;
+	if( KEYDOWN_A 		) index = 1;
+	if( KEYDOWN_B 		) index = 2;
+	if( KEYDOWN_UP 		) index = 3;
+	if( KEYDOWN_RIGHT 	) index = 4;
+	if( KEYDOWN_DOWN 	) index = 5;
+	if( KEYDOWN_LEFT 	) index = 6;
+	if( KEYDOWN_L 		) index = 7;
+	if( KEYDOWN_R 		) index = 8;
+		
+		
+		
+	if( index ){
+		index--;// index is used as boolean and index simultaneously, so we intendendly not using index=0 previously
+		u8 channel_index  = t->CHAN[ index ];
+		Channel *channel = &VAR_CHANNEL[ channel_index ];
+		
+		if( t->KEY[ index ] ) {
+			channel->key  	= t->KEY[ index ];
+			channel->volume = t->VOL[ index ];
+			channel->inst 	= t->INS[ index ];			
+			channel->value 	= t->VAL[ index ];
+			channel->cmd 	= t->CMD[ index ];
+			channel->retrig = true;
+			channel->reset	= true;
+			channel->trigger( channel );
+		} 
+	} 
 	// If quantize is on, signals must be sent fixing their tick to desired quant time
 }	
+
+static u8 iterator;
+
+void Performance::clear(){
+	for( iterator=0; iterator<LIVE_TABLE_LENGTH; iterator++ ){
+		LEFT.KEY	[ iterator ] = 0;
+		LEFT.INS	[ iterator ] = 0;
+		LEFT.CHAN	[ iterator ] = 0;
+		LEFT.VOL	[ iterator ] = 0;
+		LEFT.CMD	[ iterator ] = 0;
+		LEFT.VAL	[ iterator ] = 0;
+		RIGHT.KEY	[ iterator ] = 0;
+		RIGHT.INS	[ iterator ] = 0;
+		RIGHT.CHAN	[ iterator ] = 0;
+		RIGHT.VOL	[ iterator ] = 0;
+		RIGHT.CMD	[ iterator ] = 0;
+		RIGHT.VAL	[ iterator ] = 0;
+	}
+}
+
+void Performance::seek(){
+	Sram::seek		( DATA_BASE_ADDRESS 					); // Address =  0x80
+	Sram::forward 	( SONG_DETAILS_SIZE * SONG_SLOT_COUNT 	); // Address += 0x020 * 6 = 0x0C0 + 0x080 = 0x140 ( 320 )
+	Sram::forward 	( GROOVE_TABLE_SIZE * SONG_SLOT_COUNT	); // Address += 0x010 * 6 = 0x060 + 0x140 = 0x1A0 ( 416 )
+	Sram::forward 	( LIVE_TABLE_SIZE	* Song::slot 		); // Adresss += 0x060 * slot : 96 bytes for live tables
+	Sram::next();	
+}
+
+void Performance::read(){
+	seek();
+	// Load live tables 
+	for( iterator=0; iterator<LIVE_TABLE_LENGTH; iterator++ ){									// 96
+		LEFT.KEY	[ iterator ] = Sram::read();										// 88
+		LEFT.INS	[ iterator ] = Sram::read();										// 80
+		LEFT.CHAN	[ iterator ] = Sram::read();										// 72
+		LEFT.VOL	[ iterator ] = Sram::read();										// 64
+		LEFT.CMD	[ iterator ] = Sram::read();										// 56
+		LEFT.VAL	[ iterator ] = Sram::read();										// 48
+		RIGHT.KEY	[ iterator ] = Sram::read();										// 40
+		RIGHT.INS	[ iterator ] = Sram::read();										// 32
+		RIGHT.CHAN	[ iterator ] = Sram::read();										// 24
+		RIGHT.VOL	[ iterator ] = Sram::read();										// 16
+		RIGHT.CMD	[ iterator ] = Sram::read();										// 8
+		RIGHT.VAL	[ iterator ] = Sram::read();										// 0
+	}
+}
+
+void Performance::write(){
+	seek();
+	for( iterator=0; iterator<LIVE_TABLE_LENGTH; iterator++ ){
+		Sram::write( LEFT.KEY	[ iterator ] );
+		Sram::write( LEFT.INS	[ iterator ] );
+		Sram::write( LEFT.CHAN	[ iterator ] );
+		Sram::write( LEFT.VOL	[ iterator ] );
+		Sram::write( LEFT.CMD	[ iterator ] );
+		Sram::write( LEFT.VAL	[ iterator ] );
+		Sram::write( RIGHT.KEY	[ iterator ] );
+		Sram::write( RIGHT.INS	[ iterator ] );
+		Sram::write( RIGHT.CHAN	[ iterator ] );
+		Sram::write( RIGHT.VOL	[ iterator ] );
+		Sram::write( RIGHT.CMD	[ iterator ] );
+		Sram::write( RIGHT.VAL	[ iterator ] );
+	}
+}

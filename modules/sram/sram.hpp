@@ -20,9 +20,8 @@
 
 
 #define DATA_BASE_ADDRESS 	0x80
-#define SONG_DETAILS_SIZE	0x20
-#define GROOVE_TABLE_SIZE	0x10
-#define PATTERN_DATA_SIZE	(1536+256)
+#define PATTERN_DATA_SIZE	0x2800	// 5 bytes * 16 cells * 128 SHARED patterns 
+#define INSTRUMENT_DATA_SIZE 0x1F80 // should be 0x1DC0, but this allows to round the final size and reserve spare room
 
 
 typedef struct sBitField {
@@ -35,7 +34,14 @@ class Sram {
 	private:
 		static u8 *sram;
 		
+		static u16  size[10];
+		static u16  base[10];
+		static bool verbosity;
+		static u8 	stage;
+		
 	public:
+		static void	prepare();
+		static void	next();
 		static int 	position;
 		static u16 	waitstateBackup;
 	
@@ -61,11 +67,12 @@ class Sram {
 		static void	drawPosition		( u8 x, u8 y,u8 color );
 };
 
-extern void readByte		( u8 &byte );
+extern void readByte	( u8 &byte );
 extern void readNibbles	( u8 &nibble1	, u8 &nibble2	, u8 mask = 0xF );
-extern void writeNibbles	( u8  nibble1	, u8  nibble2 	, u8 mask = 0xF );
+extern void writeNibbles( u8  nibble1	, u8  nibble2 	, u8 mask = 0xF );
 extern void readFields	( const BitField fields[ 8 ] );
 
-#define SRAM_SIZE 0x8000
+// #define SRAM_SIZE 0x8000 // 64 KB SRAM
+#define SRAM_SIZE 0x8000 // 64 KB SRAM. It was 0x8000 before. 
 
 #endif

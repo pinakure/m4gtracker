@@ -23,7 +23,11 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 		data/palette.o \
 		data/caches.o \
 		data/regions.o \
+		data/groovetable.o \
+		data/tablecell.o \
+		data/patterncell.o \
 		data/control.o \
+		data/instrument.o \
 		data/song.o \
 		data/channel.o \
 		data/viewports.o \

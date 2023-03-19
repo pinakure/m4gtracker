@@ -1,5 +1,4 @@
 #include "sys.hpp"
-
 #include "../../macros.h"
 #include "../../debug.hpp"
 
@@ -29,7 +28,7 @@ u8  	Sys::cursor;
 void Sys::reset(){
 	Sequencer::stop();
 	Mixer::stop();
-	asm("swi 00");
+	SWI(26);
 }
 
 void Sys::setScreen( eScreens screen ){
@@ -47,6 +46,11 @@ void Sys::setScreen( eScreens screen ){
 }
 
 void Sys::init(){
+	/*!-----------------------------------------------*/
+	/* Datatypes initialization 					  */
+	/*!-----------------------------------------------*/
+	Instrument::init();
+	PatternCell::init();
 	
 	/*!-----------------------------------------------*/
 	/* Low level initialization								*/
@@ -82,6 +86,11 @@ void Sys::init(){
 	Debug::init();
 	#endif
 	
+	// Default restore SPU Subclasses
+	Sequencer::init( VAR_SONG.BPM );
+	Synth::init();
+	Mixer::init();
+
 	// First of all load config
 	Config::load();
 
@@ -90,12 +99,7 @@ void Sys::init(){
 	
 	// Cleanup clipboard dirt
 	Clip::init();
-	
-	// Default restore SPU Subclasses
-	Sequencer::init( VAR_SONG.BPM );
-	Synth::init();
-	Mixer::init();
-	
+		
 	/*-----------------------------------------------------------*/
 	/* WORKAROUND TBF											 */
 	/* ----------------------------------------------------------*/
@@ -230,7 +234,7 @@ void Sys::updateInput(){
 		START
 		SELECT + START
 	-------------------------------------------------------------------------*/ 
-	if( KEYDOWN_START ) {
+	if( KEYDOWN_START && !AT_PERFORMANCE_SCREEN ) {
 		if( Sequencer::playing ) {
 			Sequencer::stop();
 			return;

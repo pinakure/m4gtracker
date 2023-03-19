@@ -71,7 +71,14 @@ public:
 	
 	void init( u8 channel_index );
 	
-	
+	// SRAM Functions
+	static void 		seek();
+	static void 		clearAll();
+	static void 		readAll();
+	static void 		writeAll();
+	void 				read();
+	void 				write();
+	void 				clear();
 	
 	const Control*		tracker_controls[ CHANNEL_COUNT ];		// TRK screen, 6 Channels
 	/*

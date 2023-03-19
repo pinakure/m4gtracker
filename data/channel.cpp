@@ -1,7 +1,11 @@
 #include "channel.hpp"
+#include "../debug.hpp"
 #include "../modules/spu/synth.hpp"
 #include "../modules/spu/mixer.hpp"
+#include "../modules/sram/sram.hpp"
 #include "../screens/tracker.hpp"
+#include "../screens/songedit.hpp"
+#include "../screens/live/performance.hpp"
 #include "../data/song.hpp"
 
 void Channel::init( u8 channel_index ){
@@ -110,3 +114,78 @@ void Channel::init( u8 channel_index ){
 	}
 }
 
+void Channel::seek(){
+	Sram::seek		( DATA_BASE_ADDRESS 					);// Address =  0x080
+	Sram::forward 	( SONG_DETAILS_SIZE * SONG_SLOT_COUNT 	);// Address += 0x020 * 6 = 0x0C0 + 0x080 = 0x140 ( 320 )
+	Sram::forward 	( GROOVE_TABLE_SIZE * SONG_SLOT_COUNT	);// Address += 0x010 * 6 = 0x060 + 0x140 = 0x1A0 ( 416 )
+	Sram::forward 	( LIVE_TABLE_SIZE	* SONG_SLOT_COUNT	);// Adresss += 0x060 * 6 = 0x240 + 0x1A0 = 0x3E0 ( 992 )
+	Sram::forward 	( ORDER_DATA_SIZE 	* Song::slot 		);// Adresss += 0xC00 * slot : 3072 bytes for pattern data
+	Sram::next();	
+}
+
+void Channel::clearAll(){
+	// Empty Order chains
+	Channel *target = VAR_CHANNEL+CHANNEL_COUNT;
+	for(Channel* channel = VAR_CHANNEL; channel<target; channel++){
+		channel->clear();
+	}
+}
+
+void Channel::readAll(){
+	Channel::seek();
+	
+	Channel *target = VAR_CHANNEL+CHANNEL_COUNT;
+	for(Channel* channel = VAR_CHANNEL; channel<target; channel++){
+		channel->read();
+	}
+}
+
+void Channel::writeAll(){
+	Channel::seek();
+	
+	Channel *target = VAR_CHANNEL+CHANNEL_COUNT;
+	for(Channel* channel = VAR_CHANNEL; channel<target; channel++){
+		channel->write();
+	}
+}
+	
+static u8 *ord;	
+static u8 *tsp;
+static u8 *tgt;	
+	
+void Channel::read(){
+	tsp = song_patterns->TRANSPOSE;
+	ord = song_patterns->ORDER;
+	tgt = ord+ORDER_COUNT; 
+		
+	while( ord < tgt ){ /* 0 - 255 */
+		*ord = Sram::read();
+		*tsp = Sram::read();
+		ord++; tsp++;
+	}
+}
+
+void Channel::write(){
+	tsp = song_patterns->TRANSPOSE;
+	ord = song_patterns->ORDER;
+	tgt = ord+ORDER_COUNT; 
+	
+	while( ord < tgt ){ /* 0 - 255 */
+		Sram::write( *ord );
+		Sram::write( *tsp );
+		ord++; tsp++;
+	}
+}
+
+void Channel::clear(){
+	tsp = song_patterns->TRANSPOSE;
+	ord = song_patterns->ORDER;
+	tgt = ord+ORDER_COUNT; 
+	
+	while( ord < tgt ){ /* 0 - 255 */
+		*ord = 0x00;
+		*tsp = 0x00;
+		ord++; tsp++;
+	}
+	song_patterns->POSITION = 0;
+}

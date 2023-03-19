@@ -414,7 +414,7 @@ void Debug::bsod( const char *title, const char *message1,const char *message2, 
 	
 	while(1){
 		KEYUPDATE();
-		if( KEYDOWN_START ) asm("swi 00");
+		if( KEYDOWN_START ) SWI(26);
 		
 		static bool bm;
 		if(bm != Gpu::blink){
@@ -506,7 +506,7 @@ void Debug::error( int error_code, bool recoverable ){
 			}
 		} else {
 			if( KEYDOWN_START ) {
-				asm("swi 00");
+				SWI(26);
 			}
 		}
 		if((counter & 0xFFF) > 0x800) {

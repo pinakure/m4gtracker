@@ -63,13 +63,16 @@ enum E_LIVE1_DISPLAYS {
 	LIVE1_DISPLAY_MAX 
 };
 
+#define LIVE_TABLE_LENGTH 		8
+#define LIVE_TABLE_SIZE			((6*LIVE_TABLE_LENGTH)*2)
+
 typedef struct sLiveTable {
-	u8				KEY[ 8] /*7*/;
-	u8				INS[ 8] /*6*/;
-	u8				CHAN[8] /*3*/;
-	u8				VOL[ 8] /*4*/;
-	u8				CMD[ 8] /*5*/;
-	u8				VAL[ 8];
+	u8		KEY			[ LIVE_TABLE_LENGTH ];/*7*/
+	u8		INS			[ LIVE_TABLE_LENGTH ];/*6*/
+	u8		CHAN		[ LIVE_TABLE_LENGTH ];/*3*/
+	u8		VOL			[ LIVE_TABLE_LENGTH ];/*4*/
+	u8		CMD			[ LIVE_TABLE_LENGTH ];/*5*/
+	u8		VAL			[ LIVE_TABLE_LENGTH ];/*8*/
 } LiveTable;
 
 class Performance{
@@ -81,8 +84,14 @@ class Performance{
 		MEM_IN_EWRAM static u8	 		QUANTIZE /*3*/;
 		MEM_IN_EWRAM static u8			LOCK;
 		MEM_IN_EWRAM static u8 			vars[ CONTROL_LIVE1_MAX ];	
+		
 
-		static void update(  );
+		static void update	( );
+		
+		static void seek	( );
+		static void clear	( );
+		static void write	( );
+		static void read	( );
 };
 
 extern const Control LIVE1_CONTROLS[ CONTROL_LIVE1_MAX ];

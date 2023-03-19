@@ -5,6 +5,9 @@
 	so feel free to use this libary without giving credit to anybody but you ;) **/
 #ifndef AGBLIB_H
 
+	#define TRANSIENT	
+	#define BACKUP
+
 	// If this is defined, each pattern will not have individual transpose setting
 	#include <stdarg.h>
 	#include <stdlib.h>

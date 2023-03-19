@@ -21,10 +21,10 @@ extern MEM_IN_EWRAM SETTINGS_WAV 	VAR_WAV;
 extern MEM_IN_EWRAM Instrument 		VAR_INSTRUMENT;
 extern MEM_IN_EWRAM CFG 			VAR_CFG;
 extern MEM_IN_EWRAM u8 				VAR_KEY			[ 4 ];
-extern MEM_IN_EWRAM Pattern 		VAR_PATTERN		[ CHANNEL_COUNT ];
-extern MEM_IN_EWRAM Instrument 		VAR_INSTRUMENTS	[ INSTRUMENT_COUNT ];
-extern MEM_IN_EWRAM Channel 		VAR_CHANNEL		[ CHANNEL_COUNT ];
-extern MEM_IN_EWRAM PatternCell 	VAR_CELLS		[ CHANNEL_COUNT ]; 
-extern MEM_IN_EWRAM PatternCell 	VAR_DATA		[ PATTERN_COUNT ]; 
+extern MEM_IN_EWRAM Pattern 		VAR_PATTERN		[ CHANNEL_COUNT 	];
+extern MEM_IN_EWRAM Instrument 		VAR_INSTRUMENTS	[ INSTRUMENT_COUNT 	];
+extern MEM_IN_EWRAM Channel 		VAR_CHANNEL		[ CHANNEL_COUNT 	];
+extern MEM_IN_EWRAM PatternCell 	VAR_CELLS		[ CHANNEL_COUNT 	]; 
+extern MEM_IN_EWRAM PatternCell 	VAR_DATA		[ CELL_COUNT 		]; 
 
 #endif

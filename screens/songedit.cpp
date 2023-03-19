@@ -21,7 +21,7 @@ const Callback cb_sng_bpm			= { SongEdit::setTempo			, EVENT_MODIFY_B	, &VAR_SON
 const Callback cb_sng_erase			= { SongEdit::erase				, EVENT_KEYUP_B 	, NULL 						, NULL };
 const Callback cb_sng_groove		= { SongEdit::toggleGroove		, EVENT_KEYDOWN_B	, &VAR_SONG.GROOVE.ENABLE 	, NULL };
 const Callback cb_sng_load			= { SongEdit::load				, EVENT_KEYUP_B 	, NULL 						, NULL };
-const Callback cb_sng_patlength		= { modify4BIT					, EVENT_MODIFY_B	, &VAR_SONG.PATTERNLENGTH 	, NULL };
+const Callback cb_sng_patlength		= { modify4BIT					, EVENT_MODIFY_B	, &VAR_SONG.GROOVE.length	, NULL };
 const Callback cb_sng_purge			= { SongEdit::purge				, EVENT_KEYUP_B 	, NULL 						, NULL };
 const Callback cb_sng_save			= { SongEdit::save				, EVENT_KEYUP_B 	, NULL 						, NULL };
 const Callback cb_sng_slot			= { SongEdit::select			, EVENT_MODIFY_B	, &Song::slot				, NULL };
@@ -35,24 +35,24 @@ const Callback cb_sng_transpose		= { modify8BIT					, EVENT_MODIFY_B	, &VAR_SONG
 const Control SNG_CONTROLS[ CONTROL_SNG_MAX ] = { 
 //					{ x		, y		, up					  	, right					, down				      , left				  , cache							, var					  		, callback				},
 /* groove_00 	*/	{ 0x0b 	, 0x0f	, CTL( GROOVE_03		) 	, CTL( GROOVE_04	) 	, CTL( GROOVE_01		) , CTL( GROOVE_0C		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x0 ] 	) 	, &cb_sng_groove_00 	},
-/* groove_04 	*/	{ 0x10 	, 0x0f	, CTL( GROOVE_07		) 	, CTL( GROOVE_08	) 	, CTL( GROOVE_05		) , CTL( GROOVE_00		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x3 ] 	) 	, &cb_sng_groove_03 	},
-/* groove_08 	*/	{ 0x15 	, 0x0f	, CTL( GROOVE_0B		) 	, CTL( GROOVE_0C	) 	, CTL( GROOVE_09		) , CTL( GROOVE_04		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x7 ] 	) 	, &cb_sng_groove_07 	},
-/* groove_0C 	*/	{ 0x1a 	, 0x0f	, CTL( PATTERNLENGTH	) 	, CTL( GROOVE_00	) 	, CTL( GROOVE_0D		) , CTL( GROOVE_08		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0xB ] 	) 	, &cb_sng_groove_0B 	},
+/* groove_04 	*/	{ 0x10 	, 0x0f	, CTL( GROOVE_07		) 	, CTL( GROOVE_08	) 	, CTL( GROOVE_05		) , CTL( GROOVE_00		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x4 ] 	) 	, &cb_sng_groove_04 	},
+/* groove_08 	*/	{ 0x15 	, 0x0f	, CTL( GROOVE_0B		) 	, CTL( GROOVE_0C	) 	, CTL( GROOVE_09		) , CTL( GROOVE_04		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x8 ] 	) 	, &cb_sng_groove_08 	},
+/* groove_0C 	*/	{ 0x1a 	, 0x0f	, CTL( GROOVE_LENGTH	) 	, CTL( GROOVE_00	) 	, CTL( GROOVE_0D		) , CTL( GROOVE_08		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0xC ] 	) 	, &cb_sng_groove_0C 	},
 
 /* groove_01 	*/	{ 0x0b 	, 0x10	, CTL( GROOVE_00		) 	, CTL( GROOVE_05	) 	, CTL( GROOVE_02		) , CTL( GROOVE_0D		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x1 ] 	) 	, &cb_sng_groove_01 	},
-/* groove_05 	*/	{ 0x10 	, 0x10	, CTL( GROOVE_04		) 	, CTL( GROOVE_09	) 	, CTL( GROOVE_06		) , CTL( GROOVE_01		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x4 ] 	) 	, &cb_sng_groove_04 	},
-/* groove_09 	*/	{ 0x15 	, 0x10	, CTL( GROOVE_08		) 	, CTL( GROOVE_0D	) 	, CTL( GROOVE_0A		) , CTL( GROOVE_05		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x8 ] 	) 	, &cb_sng_groove_08 	},
-/* groove_0D 	*/	{ 0x1a 	, 0x10	, CTL( GROOVE_0C		) 	, CTL( GROOVE_01	) 	, CTL( GROOVE_0E		) , CTL( GROOVE_09		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0xC ] 	) 	, &cb_sng_groove_0C 	},
+/* groove_05 	*/	{ 0x10 	, 0x10	, CTL( GROOVE_04		) 	, CTL( GROOVE_09	) 	, CTL( GROOVE_06		) , CTL( GROOVE_01		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x5 ] 	) 	, &cb_sng_groove_05 	},
+/* groove_09 	*/	{ 0x15 	, 0x10	, CTL( GROOVE_08		) 	, CTL( GROOVE_0D	) 	, CTL( GROOVE_0A		) , CTL( GROOVE_05		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x9 ] 	) 	, &cb_sng_groove_09 	},
+/* groove_0D 	*/	{ 0x1a 	, 0x10	, CTL( GROOVE_0C		) 	, CTL( GROOVE_01	) 	, CTL( GROOVE_0E		) , CTL( GROOVE_09		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0xD ] 	) 	, &cb_sng_groove_0D 	},
 
 /* groove_02 	*/	{ 0x0b 	, 0x11	, CTL( GROOVE_01		) 	, CTL( GROOVE_06	) 	, CTL( GROOVE_03		) , CTL( GROOVE_0E		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x2 ] 	) 	, &cb_sng_groove_02 	},
-/* groove_06 	*/	{ 0x10 	, 0x11	, CTL( GROOVE_05		) 	, CTL( GROOVE_0A	) 	, CTL( GROOVE_07		) , CTL( GROOVE_02		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x5 ] 	) 	, &cb_sng_groove_05 	},
-/* groove_0A 	*/	{ 0x15 	, 0x11	, CTL( GROOVE_09		) 	, CTL( GROOVE_0E	) 	, CTL( GROOVE_0B		) , CTL( GROOVE_06		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x9 ] 	) 	, &cb_sng_groove_09 	},
-/* groove_0E 	*/	{ 0x1a 	, 0x11	, CTL( GROOVE_0D		) 	, CTL( GROOVE_02	) 	, CTL( GROOVE_0F		) , CTL( GROOVE_0A		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0xD ] 	) 	, &cb_sng_groove_0D 	},
+/* groove_06 	*/	{ 0x10 	, 0x11	, CTL( GROOVE_05		) 	, CTL( GROOVE_0A	) 	, CTL( GROOVE_07		) , CTL( GROOVE_02		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x6 ] 	) 	, &cb_sng_groove_06 	},
+/* groove_0A 	*/	{ 0x15 	, 0x11	, CTL( GROOVE_09		) 	, CTL( GROOVE_0E	) 	, CTL( GROOVE_0B		) , CTL( GROOVE_06		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0xA ] 	) 	, &cb_sng_groove_0A 	},
+/* groove_0E 	*/	{ 0x1a 	, 0x11	, CTL( GROOVE_0D		) 	, CTL( GROOVE_02	) 	, CTL( GROOVE_0F		) , CTL( GROOVE_0A		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0xE ] 	) 	, &cb_sng_groove_0E 	},
 
 /* groove_03 	*/	{ 0x0b 	, 0x12	, CTL( GROOVE_02		) 	, CTL( GROOVE_07	) 	, CTL( GROOVE_00		) , CTL( GROOVE_0F 		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x3 ] 	) 	, &cb_sng_groove_03 	},
-/* groove_07 	*/	{ 0x10 	, 0x12	, CTL( GROOVE_06		) 	, CTL( GROOVE_0B	) 	, CTL( GROOVE_04		) , CTL( GROOVE_03		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x6 ] 	) 	, &cb_sng_groove_06 	},
-/* groove_0B 	*/	{ 0x15 	, 0x12	, CTL( GROOVE_0A		) 	, CTL( GROOVE_0F	) 	, CTL( GROOVE_08		) , CTL( GROOVE_07		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0xA ] 	) 	, &cb_sng_groove_0A 	},
-/* groove_0F 	*/	{ 0x1a 	, 0x12	, CTL( GROOVE_0E		) 	, CTL( GROOVE_03	) 	, CTL( GROOVE_SWITCH	) , CTL( GROOVE_0B		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0xE ] 	) 	, &cb_sng_groove_0E 	},
+/* groove_07 	*/	{ 0x10 	, 0x12	, CTL( GROOVE_06		) 	, CTL( GROOVE_0B	) 	, CTL( GROOVE_04		) , CTL( GROOVE_03		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0x7 ] 	) 	, &cb_sng_groove_07 	},
+/* groove_0B 	*/	{ 0x15 	, 0x12	, CTL( GROOVE_0A		) 	, CTL( GROOVE_0F	) 	, CTL( GROOVE_08		) , CTL( GROOVE_07		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0xB ] 	) 	, &cb_sng_groove_0B 	},
+/* groove_0F 	*/	{ 0x1a 	, 0x12	, CTL( GROOVE_0E		) 	, CTL( GROOVE_03	) 	, CTL( GROOVE_SWITCH	) , CTL( GROOVE_0B		) , &CACHE_HEXADECIMAL_TWOTILES		, VAR( GROOVE.STEP[ 0xF ] 	) 	, &cb_sng_groove_0F 	},
 
 /* slot			*/	{ 0x04 	, 0x07	, CTL( SONGSELECTOR		) 	, CTL( ARTIST		) 	, CTL( SONGSELECTOR		) , CTL( BPM			) , &CACHE_SONGSLOTS				, (u8*)&( Song::slot	  	) 	, &cb_sng_slot			},
 /* load			*/	{ 0x0d 	, 0x01	, CTL( GROOVE_0F		) 	, CTL( SONGSELECTOR	) 	, CTL( SAVE				) , CTL( SONGSELECTOR	) , &CACHE_ARROW_LEFT				, NULL							, &cb_sng_load			},
@@ -63,10 +63,10 @@ const Control SNG_CONTROLS[ CONTROL_SNG_MAX ] = {
 /* artist		*/	{ 0x0f 	, 0x07	, CTL( SLOT				) 	, CTL( BPM			) 	, CTL( TITLE			) , CTL( SONGSELECTOR	) , &CACHE_TEXT						, VAR( ARTIST				) 	, &cb_sng_artist		},
 /* title		*/	{ 0x0f 	, 0x08	, CTL( ARTIST			) 	, CTL( BPM 			) 	, CTL( BPM				) , CTL( SONGSELECTOR	) , &CACHE_TEXT						, VAR( TITLE				) 	, &cb_sng_title			},
 /* tempotap		*/	{ 0x1c 	, 0x0a	, CTL( BPM				) 	, CTL( SONGSELECTOR	) 	, CTL( TRANSPOSE		) , CTL( SONGSELECTOR   ) , &CACHE_ARROW_LEFT				, NULL							, &cb_sng_tempotap		},
-/* patlength	*/	{ 0x1c 	, 0x0e	, CTL( GROOVE_SWITCH	) 	, CTL( GROOVE_00	) 	, CTL( GROOVE_0C		) , CTL( GROOVE_0C		) , &CACHE_HEXADECIMAL				, VAR( PATTERNLENGTH		)	, &cb_sng_patlength		},
+/* patlength	*/	{ 0x1c 	, 0x0e	, CTL( GROOVE_SWITCH	) 	, CTL( GROOVE_00	) 	, CTL( GROOVE_0C		) , CTL( GROOVE_0C		) , &CACHE_HEXADECIMAL				, VAR( GROOVE.length		)	, &cb_sng_patlength		},
 /* transpose	*/	{ 0x1c 	, 0x0b	, CTL( TEMPOTAP			) 	, CTL( SONGSELECTOR	) 	, CTL( GROOVE_SWITCH	) , CTL( SONGSELECTOR	) , &CACHE_HEXADECIMAL_DOUBLE		, VAR( TRANSPOSE			)	, &cb_sng_transpose		},
 /* bpm			*/	{ 0x1b 	, 0x09	, CTL( TITLE			) 	, CTL( SONGSELECTOR	) 	, CTL( TEMPOTAP			) , CTL( ARTIST			) , &CACHE_DECIMAL_DOUBLE_TWOTILES	, VAR( BPM					)	, &cb_sng_bpm			},
-/* groove		*/	{ 0x1c 	, 0x0d	, CTL( TRANSPOSE	 	) 	, CTL( GROOVE_SWITCH) 	, CTL( PATTERNLENGTH	) , CTL( GROOVE_SWITCH	) , &CACHE_CHECK					, VAR( GROOVE.ENABLE		)	, &cb_sng_groove		},
+/* groove		*/	{ 0x1c 	, 0x0d	, CTL( TRANSPOSE	 	) 	, CTL( GROOVE_SWITCH) 	, CTL( GROOVE_LENGTH	) , CTL( GROOVE_SWITCH	) , &CACHE_CHECK					, VAR( GROOVE.ENABLE		)	, &cb_sng_groove		},
 CONTROL_TERMINATOR
 };
 #undef VAR
@@ -78,8 +78,6 @@ const Display SNG_DISPLAYS[SNG_DISPLAY_MAX] = {
 /*	SLOT01		*/	{ 0x23 , 0x09	, false		, &CACHE_SONGSTATUS		, (u8*)&( SongEdit::has_data[ 1 ]  ), false		, false 	},
 /*	SLOT02		*/	{ 0x23 , 0x0b	, false		, &CACHE_SONGSTATUS		, (u8*)&( SongEdit::has_data[ 2 ]  ), false		, false 	},
 /*	SLOT03		*/	{ 0x23 , 0x0d	, false		, &CACHE_SONGSTATUS		, (u8*)&( SongEdit::has_data[ 3 ]  ), false		, false 	},
-/*	SLOT04		*/	{ 0x23 , 0x0f	, false		, &CACHE_SONGSTATUS		, (u8*)&( SongEdit::has_data[ 4 ]  ), false		, false 	},
-/*	SLOT05		*/	{ 0x23 , 0x11	, false		, &CACHE_SONGSTATUS		, (u8*)&( SongEdit::has_data[ 5 ]  ), false		, false 	},
 DISPLAY_TERMINATOR
 };
 
@@ -116,7 +114,7 @@ static int compstr(u8 *a, u8*b, u8 len){
 	return 0;
 }
 
-MEM_IN_EWRAM bool SongEdit::has_data[ SONG_SLOT_COUNT ] = { false, false, false, false, false, false };
+MEM_IN_EWRAM bool SongEdit::has_data[ SONG_SLOT_COUNT ];
 
 void SongEdit::update(  ){
 	const Control *ct = &SNG_CONTROLS[CONTROL_SNG_TITLE];
@@ -166,9 +164,9 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 	
 	float inc								= 0;
 	bool 	used_instruments			[ INSTRUMENT_COUNT ];
-	bool 	used_patterns				[ PATTERN_COUNT		];
+	bool 	used_patterns				[ CELL_COUNT		];
 	u8 		unused_instrument_count 	= INSTRUMENT_COUNT;
-	u8 		unused_pattern_count 		= PATTERN_COUNT;
+	u8 		unused_pattern_count 		= CELL_COUNT;
 	u8 		previous_slot 				= Song::slot;
 	
 	ReallyDialog::enable();
@@ -192,14 +190,14 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 		used_instruments[i]=false;
 	}
 	
-	for(int i=1/*ignore first index*/; i<PATTERN_COUNT; i++){
+	for(int i=1/*ignore first index*/; i<CELL_COUNT; i++){
 		used_patterns[i] =false;
 	}
 
 	// Check for unused instruments
 	Gpu::ascii( 8 << 1 ,	 7	, " Lookup Instruments       %" , COLOR_DARK_CYAN );
-	float q = 100.0f / float(PATTERN_COUNT);
-	for( int pattern = 0; pattern < PATTERN_COUNT ; pattern++ ){
+	float q = 100.0f / float(CELL_COUNT);
+	for( int pattern = 0; pattern < CELL_COUNT ; pattern++ ){
 		DECIMAL_DOUBLE( 20	, 7	, COLOR_CYAN, (u8)( float(pattern) * q  ) );
 		for( int instrument = 0 ; instrument < INSTRUMENT_COUNT ; instrument++ ){
 			u8 *cell = VAR_DATA[pattern].INS;
@@ -252,8 +250,8 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 	
 	// Erase unused patterns
 	Gpu::ascii( 8 << 1 ,	10	, " Erasing Patterns         %" , COLOR_DARK_CYAN );
-	for(int p=1; p<PATTERN_COUNT; p++){
-		DECIMAL_DOUBLE( 20	, 10,COLOR_CYAN, (u8)((float(p) / float(PATTERN_COUNT-1)) * 100.0f));
+	for(int p=1; p<CELL_COUNT; p++){
+		DECIMAL_DOUBLE( 20	, 10,COLOR_CYAN, (u8)((float(p) / float(CELL_COUNT-1)) * 100.0f));
 		if( !used_patterns[ p ] ) continue;
 		PatEdit::clear( p ); 
 		unused_pattern_count--;
@@ -283,7 +281,7 @@ void SongEdit::purge( Control *c, bool bigstep, bool add, u32 *pointer ){
 }
 
 void SongEdit::select( Control *c, bool bigstep, bool add, u32 *pointer ){
-	modify6VAL( c, bigstep, add, pointer );
+	modify2BIT( c, bigstep, add, pointer );
 	SongEdit::redrawCtl	( CONTROL_SNG_SONGSELECTOR  );
 	SongEdit::focusCtl	( CONTROL_SNG_SONGSELECTOR	);
 	SongEdit::redrawCtl	( CONTROL_SNG_SLOT			);

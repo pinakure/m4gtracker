@@ -153,3 +153,5 @@ Added DIST (distortion) parameter to WAV instruments
 Placed OP type controls with each matching OP @FMW
 Added GATE x4 controls to FMW
 Enhanced Navigation @ FMW Inst Screen
+-------
+Live Performance now sends keys and commands to selected channels

@@ -3,8 +3,6 @@
 #include "modules/modules.hpp"
 #include "screens/config.hpp"
 
-#define SWI(a)   asm("swi "#a);
-
 vu32 							SYS_TIMER			= 0;
 u32								SYS_PROFILEDTIME	= 0;
 vu32 							SYS_PROFILETIMER	= 0;
@@ -26,11 +24,11 @@ MEM_IN_EWRAM SETTINGS_SMP 		VAR_SMP;
 MEM_IN_EWRAM SETTINGS_WAV 		VAR_WAV;
 MEM_IN_EWRAM CFG 				VAR_CFG;
 MEM_IN_EWRAM u8 				VAR_KEY			[ 4 ];
-MEM_IN_EWRAM Pattern 			VAR_PATTERN		[ CHANNEL_COUNT ];
-MEM_IN_EWRAM Instrument 		VAR_INSTRUMENTS	[ INSTRUMENT_COUNT ];
-MEM_IN_EWRAM Channel 			VAR_CHANNEL		[ CHANNEL_COUNT ];
-MEM_IN_EWRAM PatternCell 		VAR_CELLS		[ CHANNEL_COUNT ]; 
-MEM_IN_EWRAM PatternCell 		VAR_DATA		[ PATTERN_COUNT ];
+MEM_IN_EWRAM Pattern 			VAR_PATTERN		[ CHANNEL_COUNT 	];
+MEM_IN_EWRAM Instrument 		VAR_INSTRUMENTS	[ INSTRUMENT_COUNT 	];
+MEM_IN_EWRAM Channel 			VAR_CHANNEL		[ CHANNEL_COUNT 	];
+MEM_IN_EWRAM PatternCell 		VAR_CELLS		[ CHANNEL_COUNT 	]; 
+MEM_IN_EWRAM PatternCell 		VAR_DATA		[ CELL_COUNT 		];
 
 int main(void){
 	#ifdef VSYNC
@@ -42,7 +40,7 @@ int main(void){
 	for(;;){
 		
 		Sys::init();
-		
+
 		for(;;){
 			#ifdef VSYNC
 				// IF SOMETHING GOES WRONG WITH TIMERS OR AUDIO, TRY ENABLING THIS:

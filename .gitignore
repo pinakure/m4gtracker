@@ -248,3 +248,11 @@ control.s
 data/channel.o
 data/song.o
 song.s
+data/instrument.o
+data/patterncell.o
+data/tablecell.o
+data/groovetable.o
+groovetable.s
+instrument.s
+patterncell.s
+tablecell.s

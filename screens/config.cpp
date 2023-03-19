@@ -45,11 +45,9 @@ void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 		{ NULL								, 0 ,   0 }, 
 		{ NULL								, 0 ,   0 }, 
 	};
-
 	
 	EXPECT(10, SAVING, SETTINGS);
-	
-	
+		
 	// Check Signature and version
 	Sram::seek(0);
 	if(! Sram::checkSignature() ) return Config::format( c, 0, 0, pointer );
@@ -118,7 +116,7 @@ void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 	
 	// Read snake hiscore
 	Snake::hiscore = Sram::read32( );
-	
+
 	// Load default song values (overriden if autoload was true on load)
 	Sram::songDefaults( false );
 	
