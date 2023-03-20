@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}M4GTracker{% endblock %}
+{% block content %}
+    {% if user.is_authenticated %}
+        HELLO
+        <p><a href="{% url 'logout' %}">Log Out</a></p>
+    {% else %}
+        Please LogIn
+        <p><a href="{% url 'login' %}">Log In</a></p>
+    {% endif %}
+{% endblock %}

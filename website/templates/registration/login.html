@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}M4GTracker : Login{% endblock %}
+{% block content %}
+    <!-- templates/registration/login.html -->
+    <h2>Welcome to <b>M4GTracker.com</b></h2>
+    <p>&nbsp;</p>
+    <b>Please Log In into your account</b>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <form method="post" >
+
+        <img src="{% static 'tileset.png'               %}" style="display: none"/>
+        <img src="{% static 'tileset-black.png'         %}" style="display: none"/>
+        <img src="{% static 'tileset-white.png'         %}" style="display: none"/>
+        <img src="{% static 'tileset-gray.png'          %}" style="display: none"/>
+        <img src="{% static 'tileset-orange.png'        %}" style="display: none"/>
+        <img src="{% static 'tileset-brown.png'         %}" style="display: none"/>
+        <img src="{% static 'tileset-yellow.png'        %}" style="display: none"/>
+        <img src="{% static 'tileset-olive.png'         %}" style="display: none"/>
+        <img src="{% static 'tileset-red.png'           %}" style="display: none"/>
+        <img src="{% static 'tileset-dark_red.png'      %}" style="display: none"/>
+        <img src="{% static 'tileset-green.png'         %}" style="display: none"/>
+        <img src="{% static 'tileset-dark_green.png'    %}" style="display: none"/>
+        <img src="{% static 'tileset-cyan.png'          %}" style="display: none"/>
+        <img src="{% static 'tileset-dark_cyan.png'     %}" style="display: none"/>
+        <img src="{% static 'tileset-blue.png'          %}" style="display: none"/>
+        <img src="{% static 'tileset-dark_blue.png'     %}" style="display: none"/>
+
+        
+
+
+        {% csrf_token %}
+        <div class="waste-half" style="margin: 16px;/*force breaking word*/">
+            {{ form.as_p }}
+        </div>
+        <p>&nbsp;</p>
+        <div class="center waste-half">
+            <button type="submit">Log In&nbsp;<i class="m4gicons mi-arrow-right yellow brown-background"></i></button>
+        </div>
+    </form>
+{% endblock %}

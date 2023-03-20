@@ -1,0 +1,305 @@
+{% load static %}
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        <style>
+            {% include 'font.css' %}
+        </style>
+        <style>
+            /**/
+            :root {
+                --color-olive       :#805c0b;
+                --color-red         :#c00808;
+                --color-dark-green  :#088008;
+                --color-green       :#00FF00;
+                --color-gray        :#828e82;
+                --color-focus       :#0000FF;
+                --color-backlink    :#802c08;
+                --color-link        :#f8b808;
+                --color-boldlink    :#f85808;
+                --color-pushlink    :#680808;
+                --color-bold        :#25f2ff;
+                --color-head        :#f0f8f8;
+                --color-normal      :#0d878c;
+                --color-overscan    :#011;
+                --color-backdrop    :#163a53;
+            }
+            * {
+                line-height     : 8px;
+                box-sizing      : border-box;
+                background      : var( --color-backdrop );
+                color           : var( --color-normal   );
+                outline         : none;
+                border          : none;
+                caret-shape     : block;
+                image-rendering : pixelated;
+            }
+            .logo {
+                /*position        : absolute;*/
+                float           : left;
+                left            : 8px;
+                top             : 8px;
+                margin-right    : 8px;
+                border          : none;
+                width           : 112px;
+                height          : 40px;
+                filter          : hue( 45 );
+                background-size : contain contain;
+                background      : url( "{% static 'logo.png' %}");
+            }
+
+            h2 {
+                color           : var( --color-head     );
+            }
+            h2 b {
+                color           : var( --color-bold     );
+            }
+            
+            button,
+            a:link,
+            a:visited,
+            a:hover{
+                cursor          : pointer;
+                color           : var( --color-link     );
+                text-decoration : none;
+                background-color: var( --color-backlink );
+                padding         : 0px 8px 0px 8px;
+                box-shadow      : 4px 4px 0px #0008 ;
+                margin-top      : 3px;
+                margin-left     : 0px;
+                margin-bottom   : 3px;
+                margin-right    : 3px;
+            }
+            
+            a:hover,
+            button:hover {
+                background-color: var( --color-boldlink);  
+            }
+            
+            a:focus,
+            button:focus {
+                background-color: var( --color-focus);  
+            }
+            
+            a:active,
+            button:active {
+                margin-left     : 3px;
+                margin-top      : 3px;
+                margin-bottom   : 0px;
+                margin-right    : 0px;
+                background-color: var( --color-pushlink);  
+                box-shadow      : 1px 2px 0px #0008 ;
+            }
+            
+            b{
+                color           : var( --color-bold     );
+            }
+            
+            body {
+                border-color    : var( --color-overscan );
+                border-width    : 8px;
+                border-style    : solid;
+                zoom            : 2;
+            }
+
+            input {
+                background-color: var( --color-overscan );
+                box-sizing      : border-box;
+                border          : none;
+                height          : 14px;
+                margin-top      : 1px;
+                margin-bottom   : 1px;
+                width           : 128px;
+                box-shadow      : 1px 2px 0px #0002 ;
+            }
+            input[type=password]{
+                font-family     : monospace;
+                height          : 16px;
+            }
+            
+            label {
+                vertical-align: middle;
+            }
+
+            input:focus {
+                background-color: var( --color-focus );
+                color           : var( --color-link  );
+            }
+
+            .left               { text-align      : left; }
+            .right              { text-align      : right; }
+            .center             { text-align      : center; }
+
+            .waste-half {
+                padding-left    : 25%;
+                padding-right   : 25%;
+            }
+            .waste-quarter {
+                padding-left    : 12.5%;
+                padding-right   : 12.5%;
+            }
+            .full {
+                width: 100%;
+            }
+            table {
+                border-collapse: collapse;
+                border: none;
+            }
+            /*tr, td, table {
+                border: 1px solid #ff0;
+            }*/
+        </style>
+        <style>
+            /* ----------------------------------------------------------------
+             M4GIcons Library 
+            -----------------------------------------------------------------*/
+
+            /* main icon class */ 
+            .m4gicons {
+                background-image: url( "{% static 'tileset-black.png' %}" ); 
+                background-repeat: no-repeat no-repeat;
+                display         : inline-block;
+                position        : relative;
+                width           : 8px;
+                line-height     : 0px;
+                height          : 8px;
+                min-width       : 8px;
+                min-height      : 8px;
+                max-width       : 8px;
+                max-height      : 8px;
+                vertical-align  : bottom;
+                overflow        : hidden;
+            }
+
+            /* icon classes */
+            .m4gicons.mi-arrow-down          { background-position: calc(-1*     14      *8px) calc(-1*      8       *8px); }
+            .m4gicons.mi-arrow-up            { background-position: calc(-1*     12      *8px) calc(-1*      8       *8px); }
+            .m4gicons.mi-arrow-right         { background-position: calc(-1*      0      *8px) calc(-1*      17      *8px); }
+            .m4gicons.mi-arrow-left          { background-position: calc(-1*      0      *8px) calc(-1*      17      *8px); }
+
+            /* background styles */
+            .m4gicons.black-background      { background-image: url( "{% static 'tileset-black.png'         %}" ); }
+            .m4gicons.white-background      { background-image: url( "{% static 'tileset-white.png'         %}" ); }
+            .m4gicons.gray-background       { background-image: url( "{% static 'tileset-gray.png'          %}" ); }
+            .m4gicons.orange-background     { background-image: url( "{% static 'tileset-orange.png'        %}" ); }
+            .m4gicons.brown-background      { background-image: url( "{% static 'tileset-brown.png'         %}" ); }
+            .m4gicons.yellow-background     { background-image: url( "{% static 'tileset-yellow.png'        %}" ); }
+            .m4gicons.olive-background      { background-image: url( "{% static 'tileset-olive.png'         %}" ); }
+            .m4gicons.red-background        { background-image: url( "{% static 'tileset-red.png'           %}" ); }
+            .m4gicons.dark-red-background   { background-image: url( "{% static 'tileset-dark_red.png'      %}" ); }
+            .m4gicons.green-background      { background-image: url( "{% static 'tileset-green.png'         %}" ); }
+            .m4gicons.dark-green-background { background-image: url( "{% static 'tileset-dark_green.png'    %}" ); }
+            .m4gicons.cyan-background       { background-image: url( "{% static 'tileset-cyan.png'          %}" ); }
+            .m4gicons.dark-cyan-background  { background-image: url( "{% static 'tileset-dark_cyan.png'     %}" ); }
+            .m4gicons.blue-background       { background-image: url( "{% static 'tileset-blue.png'          %}" ); }
+            .m4gicons.dark-blue-background  { background-image: url( "{% static 'tileset-dark_blue.png'     %}" ); }
+
+            
+            /* Force every icon inside a Button or link have the same background as the buttons */
+            a .m4gicons                     { background-image: url( "{% static 'tileset-brown.png'         %}" ); }
+            button .m4gicons                { background-image: url( "{% static 'tileset-brown.png'         %}" ); }
+            
+            /* Force every icon inside a Button or link have the same foregrouond color as the buttons */
+            a .m4gicons                     { background-color: var(--color-link                                ); }
+            button .m4gicons                { background-color: var(--color-link                                ); }
+            
+            /* text/icon colors */ 
+            .m4gicons.black                 { background-color: #000000;                                        }
+            .m4gicons.white                 { background-color: var(--color-head                                ); }
+            .m4gicons.gray                  { background-color: var(--color-gray                                ); }
+            .m4gicons.orange                { background-color: var(--color-boldlink                            ); }
+            .m4gicons.brown                 { background-color: var(--color-backlink                            ); }
+            .m4gicons.yellow                { background-color: var(--color-link                                ); }
+            .m4gicons.olive                 { background-color: var(--color-olive                               ); }
+            .m4gicons.red                   { background-color: var(--color-red                                 ); }
+            .m4gicons.dark-red              { background-color: var(--color-pushlink                            ); }
+            .m4gicons.green                 { background-color: var(--color-green                               ); }
+            .m4gicons.dark-green            { background-color: var(--color-dark-green                          ); }    
+            .m4gicons.cyan                  { background-color: var(--color-bold                                ); }
+            .m4gicons.dark-cyan             { background-color: var(--color-normal                              ); }
+            .m4gicons.blue                  { background-color: var(--color-focus                               ); }
+            .m4gicons.dark-blue             { background-color: var(--color-backdrop                            ); }
+                        
+            /* Override : colored icons placed on buttons / links when hovered */
+            a:hover .m4gicons                       , button:hover .m4gicons                        ,
+            a:hover .m4gicons.black-background      , button:hover .m4gicons.black-background       ,
+            a:hover .m4gicons.white-background      , button:hover .m4gicons.white-background       ,
+            a:hover .m4gicons.gray-background       , button:hover .m4gicons.gray-background        ,
+            a:hover .m4gicons.orange-background     , button:hover .m4gicons.orange-background      ,
+            a:hover .m4gicons.brown-background      , button:hover .m4gicons.brown-background       ,
+            a:hover .m4gicons.yellow-background     , button:hover .m4gicons.yellow-background      ,
+            a:hover .m4gicons.olive-background      , button:hover .m4gicons.olive-background       ,
+            a:hover .m4gicons.red-background        , button:hover .m4gicons.red-background         ,
+            a:hover .m4gicons.dark-red-background   , button:hover .m4gicons.dark-red-background    ,
+            a:hover .m4gicons.green-background      , button:hover .m4gicons.green-background       ,
+            a:hover .m4gicons.dark-green-background , button:hover .m4gicons.dark-green-background  ,
+            a:hover .m4gicons.cyan-background       , button:hover .m4gicons.cyan-background        ,
+            a:hover .m4gicons.dark-cyan-background  , button:hover .m4gicons.dark-cyan-background   ,
+            a:hover .m4gicons.blue-background       , button:hover .m4gicons.blue-background        ,
+            a:hover .m4gicons.dark-blue-background  , button:hover .m4gicons.dark-blue-background   {
+                background-image: url( "{% static 'tileset-orange.png'        %}" ); 
+            } 
+
+            /* Override : colored icons placed on buttons / links when focused */
+            a:focus .m4gicons                       , button:focus .m4gicons                        ,
+            a:focus .m4gicons.black-background      , button:focus .m4gicons.black-background       ,
+            a:focus .m4gicons.white-background      , button:focus .m4gicons.white-background       ,
+            a:focus .m4gicons.gray-background       , button:focus .m4gicons.gray-background        ,
+            a:focus .m4gicons.orange-background     , button:focus .m4gicons.orange-background      ,
+            a:focus .m4gicons.brown-background      , button:focus .m4gicons.brown-background       ,
+            a:focus .m4gicons.yellow-background     , button:focus .m4gicons.yellow-background      ,
+            a:focus .m4gicons.olive-background      , button:focus .m4gicons.olive-background       ,
+            a:focus .m4gicons.red-background        , button:focus .m4gicons.red-background         ,
+            a:focus .m4gicons.dark-red-background   , button:focus .m4gicons.dark-red-background    ,
+            a:focus .m4gicons.green-background      , button:focus .m4gicons.green-background       ,
+            a:focus .m4gicons.dark-green-background , button:focus .m4gicons.dark-green-background  ,
+            a:focus .m4gicons.cyan-background       , button:focus .m4gicons.cyan-background        ,
+            a:focus .m4gicons.dark-cyan-background  , button:focus .m4gicons.dark-cyan-background   ,
+            a:focus .m4gicons.blue-background       , button:focus .m4gicons.blue-background        ,
+            a:focus .m4gicons.dark-blue-background  , button:focus .m4gicons.dark-blue-background   { 
+                background-image: url( "{% static 'tileset-blue.png'        %}" ); 
+            }
+            /* Override : colored icons placed on buttons / links when clicked */
+            a:active .m4gicons                      , button:active .m4gicons                       ,
+            a:active .m4gicons.black-background     , button:active .m4gicons.black-background      ,
+            a:active .m4gicons.white-background     , button:active .m4gicons.white-background      ,
+            a:active .m4gicons.gray-background      , button:active .m4gicons.gray-background       ,
+            a:active .m4gicons.orange-background    , button:active .m4gicons.orange-background     ,
+            a:active .m4gicons.brown-background     , button:active .m4gicons.brown-background      ,
+            a:active .m4gicons.yellow-background    , button:active .m4gicons.yellow-background     ,
+            a:active .m4gicons.olive-background     , button:active .m4gicons.olive-background      ,
+            a:active .m4gicons.red-background       , button:active .m4gicons.red-background        ,
+            a:active .m4gicons.dark-red-background  , button:active .m4gicons.dark-red-background   ,
+            a:active .m4gicons.green-background     , button:active .m4gicons.green-background      ,
+            a:active .m4gicons.dark-green-background, button:active .m4gicons.dark-green-background ,
+            a:active .m4gicons.cyan-background      , button:active .m4gicons.cyan-background       ,
+            a:active .m4gicons.dark-cyan-background , button:active .m4gicons.dark-cyan-background  ,
+            a:active .m4gicons.blue-background      , button:active .m4gicons.blue-background       ,    
+            a:active .m4gicons.dark-blue-background , button:active .m4gicons.dark-blue-background  { 
+                background-image: url( "{% static 'tileset-dark_red.png'        %}" ); 
+            }
+        </style>
+    </head>
+    <body>
+        <table class="full" >
+            <thead></thead>
+            <tbody>
+                <tr>
+                    <td style="width: 56px; ">
+                        <div style="cursor: pointer" class="logo" onclick="window.location='/';"></div>
+                    </td>
+                    <td>
+                        {% include 'download-widget.html' %}
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        {% block content %}{% endblock %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </body>
+</html>

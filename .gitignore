@@ -256,3 +256,4 @@ groovetable.s
 instrument.s
 patterncell.s
 tablecell.s
+*.pyc
