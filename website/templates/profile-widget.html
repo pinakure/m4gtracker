@@ -1,0 +1,12 @@
+{% load static %}
+{% if user.is_authenticated %}
+<div style="float: right; padding-right: 8px;">
+
+    <a href="/profile/"><i class="m4gicons mi-at"></i>PROFILE&nbsp;</a>
+    <p>&nbsp;</p>
+    <p><a href="{% url 'logout' %}"><i class="m4gicons mi-times"></i>&nbsp;Log Out</a></p>
+</div>
+{% else %}
+<a href="/accounts/login" ><i class="m4gicons mi-key"></i>&nbsp;LOGIN</a>
+
+{% endif %}

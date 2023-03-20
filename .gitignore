@@ -257,3 +257,4 @@ instrument.s
 patterncell.s
 tablecell.s
 *.pyc
+website/static/m0k1-tileset.bmp

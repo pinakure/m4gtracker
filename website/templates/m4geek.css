@@ -1,0 +1,190 @@
+{% load static %}
+
+:root {
+    --color-olive       :#805c0b;
+    --color-red         :#c00808;
+    --color-dark-green  :#088008;
+    --color-green       :#00FF00;
+    --color-gray        :#828e82;
+    --color-focus       :#0000FF;
+    --color-backlink    :#802c08;
+    --color-link        :#f8b808;
+    --color-boldlink    :#f85808;
+    --color-pushlink    :#680808;
+    --color-bold        :#25f2ff;
+    --color-head        :#f0f8f8;
+    --color-normal      :#0d878c;
+    --color-overscan    :#011;
+    --color-backdrop    :#163a53;
+}
+* {
+    line-height     : 8px;
+    box-sizing      : border-box;
+    background      : var( --color-backdrop );
+    color           : var( --color-normal   );
+    outline         : none;
+    border          : none;
+    caret-shape     : block;
+    image-rendering : pixelated;
+}
+
+html { height: 100%; }
+body { height: 100%; }
+
+.logo {
+    /*position        : absolute;*/
+    float           : left;
+    left            : 8px;
+    top             : 8px;
+    margin-right    : 8px;
+    border          : none;
+    width           : 112px;
+    height          : 40px;
+    filter          : hue( 45 );
+    background-size : contain contain;
+    background      : url( "{% static 'logo.png' %}");
+}
+
+h2 {
+    color           : var( --color-head     );
+}
+h2 b {
+    color           : var( --color-bold     );
+}
+
+hr {
+    margin-top: 4px;
+    margin-bottom: 3px;
+    border: 0.5px solid var(--color-bold);
+}
+
+button,
+a:link,
+a:visited,
+a:hover{
+    cursor          : pointer;
+    color           : var( --color-link     );
+    text-decoration : none;
+    background-color: var( --color-backlink );
+    padding         : 0px 8px 0px 8px;
+    box-shadow      : 4px 4px 0px #0008 ;
+    margin-top      : 3px;
+    margin-left     : 0px;
+    margin-bottom   : 3px;
+    margin-right    : 3px;
+}
+
+a:hover,
+button:hover {
+    background-color: var( --color-boldlink);  
+}
+
+a:focus,
+button:focus {
+    background-color: var( --color-focus);  
+}
+
+a:active,
+button:active {
+    margin-left     : 3px;
+    margin-top      : 3px;
+    margin-bottom   : 3px;
+    margin-right    : 0px;
+    background-color: var( --color-pushlink);  
+    box-shadow      : 1px 2px 0px #0008 ;
+}
+
+b{
+    color           : var( --color-bold     );
+}
+
+body {
+    border-color    : var( --color-overscan );
+    border-width    : 8px;
+    border-style    : solid;
+    zoom            : 2;
+}
+
+input {
+    background-color: var( --color-overscan );
+    box-sizing      : border-box;
+    border          : none;
+    height          : 14px;
+    margin-top      : 1px;
+    margin-bottom   : 1px;
+    width           : 128px;
+    box-shadow      : 1px 2px 0px #0002 ;
+}
+input[type=password]{
+    font-family     : monospace;
+    height          : 16px;
+}
+
+label {
+    vertical-align: middle;
+}
+
+input:focus {
+    background-color: var( --color-focus );
+    color           : var( --color-link  );
+}
+
+.left               { text-align      : left; }
+.right              { text-align      : right; }
+.center             { text-align      : center; }
+
+.waste-half {
+    padding-left    : 25%;
+    padding-right   : 25%;
+}
+.waste-quarter {
+    padding-left    : 12.5%;
+    padding-right   : 12.5%;
+}
+
+.fullheight {
+    height: 100%;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+    display: inline-block;
+}
+
+.fullwidth {
+    width: 100%;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+    display: inline-block;
+}
+
+.scrollable {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.col-12   { float: left; width:   12.5%; }
+.col-37   { float: left; width:   27.5%; }
+.col-62   { float: left; width:   62.5%; }
+.col-87   { float: left; width:   87.5%; }
+.col-5    { float: left; width:      5%; }
+.col-10   { float: left; width:     10%; }
+.col-15   { float: left; width:     15%; }
+.col-20   { float: left; width:     20%; }
+.col-25   { float: left; width:     25%; }
+.col-30   { float: left; width:     30%; }
+.col-35   { float: left; width:     35%; }
+.col-40   { float: left; width:     40%; }
+.col-45   { float: left; width:     45%; }
+.col-50   { float: left; width:     50%; }
+.col-55   { float: left; width:     55%; }
+.col-60   { float: left; width:     60%; }
+.col-65   { float: left; width:     65%; }
+.col-70   { float: left; width:     70%; }
+.col-75   { float: left; width:     75%; }
+.col-80   { float: left; width:     80%; }
+.col-85   { float: left; width:     85%; }
+.col-90   { float: left; width:     90%; }
+.col-95   { float: left; width:     95%; }            
+.col-100  { float: left; width:    100%; }
+.col-33   { float: left; width:     66%; }
+.col-66   { float: left; width:     66%; }
+.col-99   { float: left; width:     99%; }

@@ -5,6 +5,7 @@ from main.views         import home
 
 urlpatterns = [
     path(''		            , home                                  ),
+    path('<slug:slug>/'     , home                                  ),
     path('accounts/'        , include('django.contrib.auth.urls')   ), # login, logout
     path('admin/'	        , admin.site.urls                       ),
 ]
