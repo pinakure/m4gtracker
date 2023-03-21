@@ -4,12 +4,7 @@
 #include "../agb.h"
 #include "groovetable.hpp"
 #include "tablecell.hpp"
-
-typedef struct _CFG_PAL {
-	u8 				R /*4*/;
-	u8 				G /*4*/;
-	u8 				B /*4*/;
-}CFG_PAL;
+#include "color.hpp"
 
 typedef struct _CFG_LOOKNFEEL {
 	u8	 			INTERFACE;
@@ -51,7 +46,7 @@ typedef struct _CFG_MEMORY {
 
 typedef struct _CFG {
 	u32				loadCount;
-	CFG_PAL 		PAL[16];
+	Color 			PAL[16];
 	CFG_LOOKNFEEL	LOOKNFEEL;
 	CFG_LINKMODE	LINKMODE;
 	CFG_BEHAVIOR 	BEHAVIOR;

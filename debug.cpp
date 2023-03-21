@@ -26,6 +26,7 @@ static const u16 color_aft = COLOR_GREEN;
 
 void Debug::runTests(){
 
+
 	return;
 	memoryTest( NULL, 0, 0, NULL);
 		
@@ -414,7 +415,7 @@ void Debug::bsod( const char *title, const char *message1,const char *message2, 
 	
 	while(1){
 		KEYUPDATE();
-		if( KEYDOWN_START ) SWI(26);
+		if( KEYDOWN_START ) SWI(00);
 		
 		static bool bm;
 		if(bm != Gpu::blink){
@@ -506,7 +507,7 @@ void Debug::error( int error_code, bool recoverable ){
 			}
 		} else {
 			if( KEYDOWN_START ) {
-				SWI(26);
+				SWI(00);
 			}
 		}
 		if((counter & 0xFFF) > 0x800) {

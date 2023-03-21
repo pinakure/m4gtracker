@@ -20,7 +20,7 @@ const Callback 	cb_reset		  	= { Config::reset 	, EVENT_PANIC 				, NULL 				, N
 const Callback 	cb_no_callback		= { NULL			, 0x0000 /* No key presses*/, NULL /* No var */	, NULL };/* Last element */
 
 void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
-	int i, di;
+	int i;
 	u16 w;
 	u8 h;
 
@@ -54,12 +54,7 @@ void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 	Sram::seek(5);
 	
 	// Palette colors
-	for(i=0;i<8; i++){
-		di = i<<1;
-		readNibbles( VAR_CFG.PAL[ di ].R, VAR_CFG.PAL[ di ].G);
-		readNibbles( VAR_CFG.PAL[ di ].B, VAR_CFG.PAL[di+1].R);
-		readNibbles( VAR_CFG.PAL[di+1].G, VAR_CFG.PAL[di+1].B);
-	}	
+	ColorEditor::read();
 		
 	/*! Look And Feel																*/
 	readFields	( look_n_feel 														);
@@ -140,7 +135,7 @@ void Config::revert (Control *c, bool bigstep, bool add, u32 *pointer){
 }
 
 void Config::save (Control *c, bool bigstep, bool add, u32 *pointer){
-	int i, di;
+	int i;
 	Sram::seek(0);
 	EXPECT(10, SAVING, SETTINGS);
 	
@@ -149,13 +144,7 @@ void Config::save (Control *c, bool bigstep, bool add, u32 *pointer){
 	Sram::write(M4G_VERSION);		//version
 	
 	// Palette colors
-	for(i=0;i<8; i++){
-		di = i<<1;
-		Sram::write(VAR_CFG.PAL[ di ].R << 4 | VAR_CFG.PAL[ di ].G);  
-		Sram::write(VAR_CFG.PAL[ di ].B << 4 | VAR_CFG.PAL[di+1].R);			
-		Sram::write(VAR_CFG.PAL[di+1].G << 4 | VAR_CFG.PAL[di+1].B);
-	}
-		
+	ColorEditor::write();
 		
 	// Look And Feel
 	Sram::write( (VAR_CFG.BEHAVIOR.AUTOLOAD<<7) | (VAR_CFG.LOOKNFEEL.STARTUPSFX<<6) | (VAR_CFG.LOOKNFEEL.SHOWLOGO << 5) | (VAR_CFG.LOOKNFEEL.INTERFACE<<0x4) | (VAR_CFG.LOOKNFEEL.FONT << 2) | VAR_CFG.LOOKNFEEL.BORDER);
@@ -229,11 +218,8 @@ void Config::defaults (Control *c, bool bigstep, bool add, u32 *pointer){
 	// RegionHandler::progress.set(0, 233, STATUS_DEFAULTS, STATUS_SETTINGS, &VAR_CFG.loadCount);
 	Progress::enable(0, 233, STATUS_DEFAULTS, STATUS_SETTINGS, &VAR_CFG.loadCount);
 	
-	for(i=0; i<16; i++) {
-		SETTING(PAL[i].R, 0x00);
-		SETTING(PAL[i].G, 0x00);
-		SETTING(PAL[i].B, 0x00);
-	}
+	Gpu::loadPalette();
+	
 	//167
 	SETTING(LOOKNFEEL.INTERFACE, 0x00);
 	SETTING(LOOKNFEEL.FONT, 0x00);

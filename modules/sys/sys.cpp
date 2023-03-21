@@ -28,7 +28,7 @@ u8  	Sys::cursor;
 void Sys::reset(){
 	Sequencer::stop();
 	Mixer::stop();
-	SWI(26);
+	SWI(00);
 }
 
 void Sys::setScreen( eScreens screen ){
@@ -91,9 +91,12 @@ void Sys::init(){
 	Synth::init();
 	Mixer::init();
 
+	// Setup config subelements
+	ColorEditor::init();	
+	
 	// First of all load config
 	Config::load();
-
+	
 	// Initialize Input registers
 	KEYINIT();
 	

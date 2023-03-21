@@ -109,14 +109,17 @@ void LookNFeel::logoFade(){
 void LookNFeel::logoWait(){
 	int freeze=0;
 	
-	Gpu::loadPalette();
+	// Gpu::loadPalette();
+	Config::load(NULL, false);
+	Gpu::set(2, 29, 0, 0x100);
 	while( (freeze < 2048) && !KEYACTIVITY() ){
 		RegionHandler::drawVerticalCache(8,7,&CACHE_LOGOTYPE,0,0);
 		KEYUPDATE();
 		rotateGfx(); 
 		freeze++;
 	}
-	Gpu::loadPalette();
+	Config::load();
+	// Gpu::loadPalette();
 }
 
 void LookNFeel::init(){
