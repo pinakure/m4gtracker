@@ -161,30 +161,30 @@ input:focus {
     overflow-y: auto;
 }
 
-.col-12   { float: left; width:   12.5%; }
-.col-37   { float: left; width:   27.5%; }
-.col-62   { float: left; width:   62.5%; }
-.col-87   { float: left; width:   87.5%; }
-.col-5    { float: left; width:      5%; }
-.col-10   { float: left; width:     10%; }
-.col-15   { float: left; width:     15%; }
-.col-20   { float: left; width:     20%; }
-.col-25   { float: left; width:     25%; }
-.col-30   { float: left; width:     30%; }
-.col-35   { float: left; width:     35%; }
-.col-40   { float: left; width:     40%; }
-.col-45   { float: left; width:     45%; }
-.col-50   { float: left; width:     50%; }
-.col-55   { float: left; width:     55%; }
-.col-60   { float: left; width:     60%; }
-.col-65   { float: left; width:     65%; }
-.col-70   { float: left; width:     70%; }
-.col-75   { float: left; width:     75%; }
-.col-80   { float: left; width:     80%; }
-.col-85   { float: left; width:     85%; }
-.col-90   { float: left; width:     90%; }
-.col-95   { float: left; width:     95%; }            
-.col-100  { float: left; width:    100%; }
-.col-33   { float: left; width:     66%; }
-.col-66   { float: left; width:     66%; }
-.col-99   { float: left; width:     99%; }
+.col-12   { float: left; width:   12.5%; min-height: 8px; }
+.col-37   { float: left; width:   27.5%; min-height: 8px; }
+.col-62   { float: left; width:   62.5%; min-height: 8px; }
+.col-87   { float: left; width:   87.5%; min-height: 8px; }
+.col-5    { float: left; width:      5%; min-height: 8px; }
+.col-10   { float: left; width:     10%; min-height: 8px; }
+.col-15   { float: left; width:     15%; min-height: 8px; }
+.col-20   { float: left; width:     20%; min-height: 8px; }
+.col-25   { float: left; width:     25%; min-height: 8px; }
+.col-30   { float: left; width:     30%; min-height: 8px; }
+.col-35   { float: left; width:     35%; min-height: 8px; }
+.col-40   { float: left; width:     40%; min-height: 8px; }
+.col-45   { float: left; width:     45%; min-height: 8px; }
+.col-50   { float: left; width:     50%; min-height: 8px; }
+.col-55   { float: left; width:     55%; min-height: 8px; }
+.col-60   { float: left; width:     60%; min-height: 8px; }
+.col-65   { float: left; width:     65%; min-height: 8px; }
+.col-70   { float: left; width:     70%; min-height: 8px; }
+.col-75   { float: left; width:     75%; min-height: 8px; }
+.col-80   { float: left; width:     80%; min-height: 8px; }
+.col-85   { float: left; width:     85%; min-height: 8px; }
+.col-90   { float: left; width:     90%; min-height: 8px; }
+.col-95   { float: left; width:     95%; min-height: 8px; }            
+.col-100  { float: left; width:    100%; min-height: 8px; }
+.col-33   { float: left; width:     66%; min-height: 8px; }
+.col-66   { float: left; width:     66%; min-height: 8px; }
+.col-99   { float: left; width:     99%; min-height: 8px; }

@@ -4,9 +4,14 @@
 {% block title %}M4G : M0K1{% endblock %}
 
 {% block content %}
-<div class="col-25">
-</div>
-<div class="col-75">
+<div class="col-40"><img src="{% static 'snapshots/m0-k1.gif' %}"/></div>
+<div class="col-60">
     M0K1 Landing Page
+    <div style="float: right; text-align: right;">
+        <a href="/m0-k1?section=keys" ><i class="m4gicons mi-keypad-left"></i><i class="m4gicons mi-keypad-right"></i> Key Explanation</a><p>
+        <br/>
+        <a href="{% static 'releases/m0-k1.gba' %}" ><i class="m4gicons mi-arrow-down"></i> Download</a>
+    </div>
+
 </div>
 {% endblock %}

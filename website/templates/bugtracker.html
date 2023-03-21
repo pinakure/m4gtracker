@@ -4,18 +4,10 @@
 {% block title %}BUGTracker{% endblock %}
 
 {% block content %}
-<?php error_reporting(E_ALL);
-//include "m4gdraft/api.php"; ?><!DOCTYPE html>
-<html>
-<head>
-<title>M4Geek H.Q. - Bug Reporter</title>
-<meta name="viewport" content="target-densitydpi=device-dpi; width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
-<meta charset="utf-8">
+//include "m4gdraft/api.php"; ?>
 <?php include "../m4gdraft/style.php"; ?>
-</head>
-<body>
 <header id="code">
-<?php
+<!-- <?php
 	$id = false;
 	$bug = false;
 	$auth = false;
@@ -49,7 +41,8 @@
 		file_put_contents('buglist_'.$program.'.txt', $bugs."<div><span class='white'>".$asc_id.'</span> : '.$bug.'</div>');		
 	}
 	
-?></header>
+?> -->
+</header>
 <section id="output" style="width: 100% !important">
 <h1 style="margin-right: 64px !important; text-align: right; width: 100%;">M4GEEK Bug Reporter</h1>
 <hr class="red"/>
@@ -78,14 +71,10 @@
 			<textarea rows="2" noresize="noresize" maxlength="256" style="width: calc(100% - 120px); display:inline-block;" id="bug" name="bug" placeholder="Write bug description here..."></textarea>
 			<input type="hidden" value="<?=$id?>" id="id" name="id"/>
 			<input type="hidden" value="m4g" id="program" name="program"/>
-			<button type="submit" action="index.php?id=<?=$id?>" style="width:100px; display: inline-block;">
-				<a href="#"><h3 class="white" title="Reported by: <?=$asc_id?>" >Report bug</h3></a>
-			</button>
+			<button type="submit" action="index.php?id=<?=$id?>" style="width:100px; display: inline-block;">Report bug</button>
 		</form>
 	</article>
 	<br/>
 	</center>	
 </section>
-</body>
-</html>
 {% endblock %}
