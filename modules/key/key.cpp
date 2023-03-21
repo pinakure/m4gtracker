@@ -1,4 +1,5 @@
 #include "key.hpp"
+#include "../../data/config.hpp"
 
 /*------------------------------------------------------------------------------
                                Key Control Class                                
@@ -12,9 +13,9 @@
 vu16	Key::keytrig;
 u16 	Key::keyinput;
 bool	Key::retrig;
-u16	Key::keyrate;
+u8*		Key::keyrate;
 u16 	Key::keytimer[10];
-u16	Key::keydown;
+u16		Key::keydown;
 u16 	Key::keyup;				
 u16 	Key::keyrepeat;
 u16 	Key::keypress;
@@ -22,7 +23,7 @@ u16 	Key::keypress;
 // INPUT REGISTER = LRdulrsSBA (s=st)
 void Key::init(){
 	*(u16*)REG_KEYCNT = 0x43FF;//Set Key Interrupt on every button
-	keyrate = 40;
+	keyrate = &VAR_CFG.BEHAVIOR.KEYRATE;
 	retrig  = false;
 }
 
@@ -92,16 +93,16 @@ bool Key::up(u16 keyflag){
 	return(false);
 }
 
-bool Key::press(u16 keyflag){	
-	if((keypress & keyflag)==keyflag)return(true);		
-	return(false);
+bool Key::press(u16 keyflag){
+	if((keypress & keyflag)==keyflag)return true ;
+	return false ;
 }
 
 bool Key::repeat(u8 index){
 	u16 keyflag = (1 <<index);
 	if((keypress & keyflag)==keyflag){
 		keytimer[index]++;
-		if(keytimer[index] > keyrate)
+		if(keytimer[index] > *keyrate)
 		{
 			keytimer[index]=0x0;
 			return(true);

@@ -14,12 +14,12 @@ typedef struct _CFG_LOOKNFEEL {
 	u8	 			STARTUPSFX;
 }CFG_LOOKNFEEL;
 
-typedef struct _CFG_LINKMODE {
-	u8 				LINKMODE /*2*/;
-	u8				MASTERCLOCK;
-	u8 				SYNCRATE /*4*/;
-	u8 				SYNCTICKS;
-}CFG_LINKMODE;
+// typedef struct _CFG_LINKMODE {
+	// u8 				LINKMODE /*2*/;
+	// u8				MASTERCLOCK;
+	// u8 				SYNCRATE /*4*/;
+	// u8 				SYNCTICKS;
+// }CFG_LINKMODE;
 
 typedef struct _CFG_BEHAVIOR {
 	u8				AUTOLOAD;
@@ -48,7 +48,7 @@ typedef struct _CFG {
 	u32				loadCount;
 	Color 			PAL[16];
 	CFG_LOOKNFEEL	LOOKNFEEL;
-	CFG_LINKMODE	LINKMODE;
+//	CFG_LINKMODE	LINKMODE;
 	CFG_BEHAVIOR 	BEHAVIOR;
 	CFG_TRACKER		TRACKER;
 	CFG_MEMORY		MEMORY;

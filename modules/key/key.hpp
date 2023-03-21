@@ -81,8 +81,8 @@ class Key {
 		static vu16	keytrig;
 		static u16 	keyinput;
 		static bool	retrig;
-		static u16	keyrate,
-					keytimer[10];
+		static u8*	keyrate;
+		static u16	keytimer[10];
 		static u16	keydown,
 					keyup,				
 					keyrepeat,

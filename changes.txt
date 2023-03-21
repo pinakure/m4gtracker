@@ -155,3 +155,17 @@ Added GATE x4 controls to FMW
 Enhanced Navigation @ FMW Inst Screen
 -------
 Live Performance now sends keys and commands to selected channels
+
+-------------
+ 19-03-2023
+-------------
+Color Editor Layout
+More Stuff I can't remember. I had sleep seizure this day.
+
+------------
+20-03-2003
+------------
+Website Skeleton (django) and templates
+Color Editor Functionality, palette backup and read from SRAM
+Show link status on the bottom of the screen
+Tweak analog sync out timing calculation

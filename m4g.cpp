@@ -50,7 +50,6 @@ int main(void){
 			Sys::update();			
 			RegionHandler::update(1);
 			DEBUG_UPDATE();
-			RegionHandler::new_region = false;
 			if( VAR_CFG.BEHAVIOR.POWERSAVING ) SWI( 0x02 );
 		};
 	}

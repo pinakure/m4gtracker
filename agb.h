@@ -7,6 +7,7 @@
 
 	#define TRANSIENT	
 	#define BACKUP
+	#define BITFIELD(x)		u8
 
 	// If this is defined, each pattern will not have individual transpose setting
 	#include <stdarg.h>

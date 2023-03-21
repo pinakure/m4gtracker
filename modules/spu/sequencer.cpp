@@ -3,6 +3,7 @@
 #include "../net/net.hpp"
 #include "../sram/sram.hpp"
 #include "../../screens/songedit.hpp"
+#include "../../screens/config/linkmode.hpp"
 #include "../../data/channel.hpp"
 #include "../../data/song.hpp"
 #include "../../data/config.hpp"
@@ -166,10 +167,11 @@ void Sequencer::update(){
 	// Prepare analog sync to be written/read
 	Net::clear();// WARNING: This wont allow slave mode to work...
 	
-	if( !( (currentTicks*(VAR_CFG.LINKMODE.SYNCRATE+1)) & ((2<<VAR_CFG.LINKMODE.SYNCTICKS)-1) ) ){
-		Net::update();
-	}
+	// if( !( (currentTicks*( LinkMode::sync_rate + 1)) & ((2 << LinkMode::sync_ticks )-1) ) ){
 	
+	if( !(currentTicks & (( ( LinkMode::sync_rate + 1) * (1 << LinkMode::sync_ticks ) )-1 ) )){
+		Net::update();
+	}	
 	
 	// If current tick%4 == 0, time to trigger a note on every channel
 	if( !( currentTicks & 0x3 ) ){

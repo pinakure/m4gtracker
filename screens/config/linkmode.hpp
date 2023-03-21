@@ -19,12 +19,30 @@ enum E_LINKMODE_CONTROLS {
 };
 
 class LinkMode {
-	public:
+	public BACKUP:
+		static BITFIELD( 2 ) 	mode;
+		static BITFIELD( 1 )	master_clock_enable;
+		static BITFIELD( 8 ) 	sync_rate;
+		static BITFIELD( 8 ) 	sync_ticks;
+
+	public TRANSIENT:
+		static bool needs_redraw;
+		static bool notify_read;
+		static bool notify_write;
+		static u16  notify_timeout;
+		
 		static void update			(  );
 		static void monitor 		(  );
 		static void songRecv		( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void songSend 		( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void toggleMaster	( Control *c, bool bigstep, bool add, u32 *pointer );
+		static void alterMode		( Control *c, bool bigstep, bool add, u32 *pointer );
+		static void notifyStatus 	( );
+		static void notifyDisconnect( );
+		static void notifyClear		( );
+		static void notifyRead 		( );
+		static void notifyWrite		( );
+	
 };
 
 extern const Callback cb_cfg_linkmode;

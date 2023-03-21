@@ -9,15 +9,24 @@
 #include "../modules/spu/synth.hpp"
 #include "../modules/gpu/gpu.hpp"
 #include "../modules/key/key.hpp"
+#include "../screens/config/linkmode.hpp"
 #include "../debug.hpp"
 #include "../data/data.hpp"
 #include "live.hpp"
 #include "snake.hpp"
 #define Snake SnakeGame
 // Callback used @ Slot change
-const Callback 	Config::menuindex 	= { modify5VAL 		, EVENT_MODIFY_B 			, &VAR_CFG.MENUSLOT , NULL };
+
+void Config::alterSlot(Control *c, bool bigstep, bool add, u32 *pointer){
+	modify5VAL(c, bigstep, add, pointer);
+	menuindex_changed=true;
+}
+
+const Callback 	Config::menuindex 	= { Config::alterSlot,EVENT_MODIFY_B 			, &VAR_CFG.MENUSLOT , NULL };
+bool 			Config::menuindex_changed;
 const Callback 	cb_reset		  	= { Config::reset 	, EVENT_PANIC 				, NULL 				, NULL };
 const Callback 	cb_no_callback		= { NULL			, 0x0000 /* No key presses*/, NULL /* No var */	, NULL };/* Last element */
+
 
 void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 	int i;
@@ -58,11 +67,13 @@ void Config::load(Control *c, bool bigstep, bool add, u32 *pointer){
 		
 	/*! Look And Feel																*/
 	readFields	( look_n_feel 														);
+	
 	/*! Link mode																	*/
-	readByte	( VAR_CFG.LINKMODE.LINKMODE 										);
-	readByte	( VAR_CFG.LINKMODE.MASTERCLOCK										);
-	readByte	( VAR_CFG.LINKMODE.SYNCRATE 										);
-	readByte	( VAR_CFG.LINKMODE.SYNCTICKS										);	
+	readByte	( LinkMode::mode													);
+	readByte	( LinkMode::master_clock_enable 									);
+	readByte	( LinkMode::sync_rate            									);
+	readByte	( LinkMode::sync_ticks												);	
+	
 	/*! Behavior, live and tracker													*/
 	readByte	( VAR_CFG.BEHAVIOR.KEYRATE 											);
 	/*! Tracker settings 															*/
@@ -150,10 +161,10 @@ void Config::save (Control *c, bool bigstep, bool add, u32 *pointer){
 	Sram::write( (VAR_CFG.BEHAVIOR.AUTOLOAD<<7) | (VAR_CFG.LOOKNFEEL.STARTUPSFX<<6) | (VAR_CFG.LOOKNFEEL.SHOWLOGO << 5) | (VAR_CFG.LOOKNFEEL.INTERFACE<<0x4) | (VAR_CFG.LOOKNFEEL.FONT << 2) | VAR_CFG.LOOKNFEEL.BORDER);
 	
 	// Link mode
-	Sram::write(VAR_CFG.LINKMODE.LINKMODE);
-	Sram::write(VAR_CFG.LINKMODE.MASTERCLOCK);
-	Sram::write(VAR_CFG.LINKMODE.SYNCRATE);
-	Sram::write(VAR_CFG.LINKMODE.SYNCTICKS);
+	Sram::write(LinkMode::mode);
+	Sram::write(LinkMode::master_clock_enable);
+	Sram::write(LinkMode::sync_rate);
+	Sram::write(LinkMode::sync_ticks);
 	
 	// Behavior
 	Sram::write(VAR_CFG.BEHAVIOR.KEYRATE);
@@ -227,10 +238,10 @@ void Config::defaults (Control *c, bool bigstep, bool add, u32 *pointer){
 	SETTING(LOOKNFEEL.SHOWLOGO, 0x01);
 	SETTING(LOOKNFEEL.STARTUPSFX, 0x01);
 	//172
-	SETTING(LINKMODE.LINKMODE	, 0x00);
-	SETTING(LINKMODE.MASTERCLOCK, 0x01);
-	SETTING(LINKMODE.SYNCRATE	, 0x00); //0-16
-	SETTING(LINKMODE.SYNCTICKS	, 0x00); //0-255
+	LinkMode::mode					= 0x00; VAR_CFG.loadCount++;
+	LinkMode::master_clock_enable	= 0x01; VAR_CFG.loadCount++;
+	LinkMode::sync_rate				= 0x00; VAR_CFG.loadCount++; //0-16
+	LinkMode::sync_ticks			= 0x00; VAR_CFG.loadCount++; //0-255
 	//176
 	SETTING(BEHAVIOR.AUTOLOAD	, 0x01);
 	SETTING(BEHAVIOR.KEYRATE	, 0x08);

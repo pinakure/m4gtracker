@@ -8,13 +8,13 @@
 
 class Sequencer {
 	private:
-		static int	timerTarget;
 		static int  currentPattern; //NOT USED! 
 		static int  currentTicks;
 		static int  beatsPerBar;
 		static int  secPerBeat;
 		
 	public:
+		static int	timerTarget;
 		static int  currentBeats;
 		static bool playing;		
 		static void init( u8 bpm );

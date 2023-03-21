@@ -1,5 +1,6 @@
 #include "net.hpp"
 #include "../../data/data.hpp"
+#include "../../screens/config/linkmode.hpp"
 
 /*
 
@@ -41,7 +42,7 @@ does not expect data to be output there.
 NetMode Net::netmode = NET_GBA;
 
 void Net::init(){
-	setMode( (NetMode) VAR_CFG.LINKMODE.LINKMODE );
+	setMode( (NetMode) LinkMode::mode );
 }
 
 void Net::setMode(NetMode mode){
@@ -77,17 +78,19 @@ void Net::ibmSync(){
 void Net::recvSync(){
 	while(!(RCNT_SIO & RCNT_SI)){
 	}
+	LinkMode::notify_read = true;
 	RCNT_SIO = 0x8100;			
 }
 
 void Net::sendSync(){
 	// Working! Set up your synth to sync @ 48 PPQ, then preferably work using triplets
-	RCNT_SIO = 0x8100 | RCNT_SO | RCNT_SO_OUT;	
+	RCNT_SIO = 0x8100 | RCNT_SO | RCNT_SO_OUT;
+	LinkMode::notify_write = true;
 }
 
 void Net::alterMode(Control *c, bool bigstep, bool add, u32 *pointer){	
-	VAR_CFG.LINKMODE.LINKMODE 	= ( bigstep ? (add?0x3:0) : (VAR_CFG.LINKMODE.LINKMODE + (add?1:-1)) ) & 0x3; 	
-	Transient::bit2 	 		= VAR_CFG.LINKMODE.LINKMODE ; 
+	LinkMode::mode = ( bigstep ? (add?0x3:0) : (LinkMode::mode + (add?1:-1)) ) & 0x3; 	
+	Transient::bit2 	 		= LinkMode::mode; 
 	Transient::changed 			= true;
-	setMode( (eNetMode) VAR_CFG.LINKMODE.LINKMODE );
+	setMode( (eNetMode) LinkMode::mode );
 }
