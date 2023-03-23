@@ -82,6 +82,8 @@ class HudCursor {
 		static Sprite 	sprite[8];
 		static Sprite   clip_icons[4];
 		static Sprite   clip_selection;
+		static Sprite   tsp_table_position;
+		static Sprite   vol_table_position;
 		
 		static void init();
 		static void render();

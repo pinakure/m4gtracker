@@ -1,5 +1,6 @@
 #include "hudcursor.hpp"
 #include "../debug.hpp"
+#include "../screens/instedit.hpp"
 #include "../kernel/gpu/gpu.hpp"
 #include "../kernel/sys/sys.hpp"
 #include "../kernel/key/key.hpp"
@@ -13,6 +14,8 @@ Point 	HudCursor::size;
 Sprite 	HudCursor::playback[24];		
 Sprite 	HudCursor::clip_icons[4];
 Sprite 	HudCursor::clip_selection;
+Sprite 	HudCursor::tsp_table_position;
+Sprite 	HudCursor::vol_table_position;
 
 OBJ_ATTR obj_buffer[128];
 OBJ_AFFINE *const obj_aff_buffer= (OBJ_AFFINE*)obj_buffer;
@@ -100,7 +103,7 @@ void HudCursor::init(){
 	clip_icons[0].tile_number 		= 0x2D0;
 	clip_icons[0].priority 		= 0;
 	clip_icons[0].palette 			= 0x6;
-	/*
+	
 	clip_icons[CLIP_COPY-1].init(33);
 	clip_icons[CLIP_COPY-1].tile_number 	= 0x2D1;
 	clip_icons[CLIP_COPY-1].priority 		= 0;
@@ -115,10 +118,18 @@ void HudCursor::init(){
 	clip_icons[CLIP_PASTE-1].tile_number 	= 0x2D4;
 	clip_icons[CLIP_PASTE-1].priority 		= 0;
 	clip_icons[CLIP_PASTE-1].palette 		= 0x6;
-	*/
+	
 	clip_selection.init(36);
 	clip_selection.priority 	= 1;
 	clip_selection.palette  	= 3;
+	
+	tsp_table_position.init(37);
+	tsp_table_position.tile_number 	= 0x8;
+	tsp_table_position.palette 		= 0x8;
+	
+	vol_table_position.init(38);
+	vol_table_position.tile_number 	= 0x8;
+	vol_table_position.palette 		= 0x8;
 }
 
 void HudCursor::render(){
@@ -168,6 +179,24 @@ void HudCursor::render(){
 		}
 		x++;
 	}
+	
+	/* draw table position cursors */
+	SETTINGS_PWM pwm = InstEdit::unpackPwm(&VAR_INSTRUMENT);
+	u8 pos = VAR_CHANNEL[ VAR_CFG.CURRENTCHANNEL ].tsp_position >> pwm.TSP_SPEED;
+	u8 px = pos &0x3;
+	u8 py = pos >>2;
+	tsp_table_position.position.x = ((9+px)*8)<<3;
+	tsp_table_position.position.y = ((3+py)*8)<<3;
+	tsp_table_position.disable = (VAR_CFG.CURRENTCHANNEL>CHANNEL_NZE) || (VAR_INSTRUMENT.TYPE!= INSTRUMENT_TYPE_PWM) || !AT_INSTRUMENT_SCREEN;
+	tsp_table_position.render();
+	
+	pos = VAR_CHANNEL[ VAR_CFG.CURRENTCHANNEL ].vol_position >> pwm.VOL_SPEED;
+	px = pos &0x3;
+	py = pos >>2;
+	vol_table_position.position.x = (( 9+px)*8)<<3;
+	vol_table_position.position.y = ((11+py)*8)<<3;
+	vol_table_position.disable = (VAR_CFG.CURRENTCHANNEL>CHANNEL_NZE) || (VAR_INSTRUMENT.TYPE!= INSTRUMENT_TYPE_PWM) || !AT_INSTRUMENT_SCREEN;
+	vol_table_position.render();
 	
 	/* draw cliboard icons */
 	// if(!Clip::visible) return;
