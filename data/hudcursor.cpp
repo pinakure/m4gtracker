@@ -3,10 +3,20 @@
 #include "../kernel/gpu/gpu.hpp"
 #include "../kernel/sys/sys.hpp"
 #include "../kernel/key/key.hpp"
+#include "../kernel/clip/clip.hpp"
 #include "../kernel/regionhandler/regionhandler.hpp"
 #include "../data/data.hpp"
 
-		
+Sprite 	HudCursor::sprite[8];
+Point 	HudCursor::target;
+Point 	HudCursor::size;
+Sprite 	HudCursor::playback[24];		
+Sprite 	HudCursor::clip_icons[4];
+Sprite 	HudCursor::clip_selection;
+
+OBJ_ATTR obj_buffer[128];
+OBJ_AFFINE *const obj_aff_buffer= (OBJ_AFFINE*)obj_buffer;
+
 Sprite::Sprite( u8 index, u8 coord_x, u8 coord_y){
 	position.x			= coord_x;		
 	position.y			= coord_y;
@@ -22,7 +32,7 @@ void Sprite::init( u8 index ){
 	tile_number			= 0x18;
 	palette				= 0x3;
 	priority			= 3;
-	rotoscale 			= true;
+	rotoscale 			= false;
 	double_size 		= false;
 	disable				= false;
 	mosaic 				= false;
@@ -36,7 +46,7 @@ void Sprite::render(){
 	(*(u16*)0x4000000) |= 0x1080; 
 	OBJ_ATTR* p = (OBJ_ATTR*)&(*(u16*)(OAM+(index*8)));
 	p->attr0 	= ( (position.y>>3) & 0xFF)
-				| ( (rotoscale^disable) 	<< 8  )
+				| ( (rotoscale) 	<< 8  )
 				| (( double_size || disable ) << 9 )
 				| ( mode 		<< 10 )
 				| ( mosaic 		<< 12 )
@@ -52,15 +62,6 @@ void Sprite::render(){
 				| ( palette  	<< 12 );
 	(*(u16*)0x4000000) &= 0xff7f;
 }
-
-Sprite 	HudCursor::sprite[8];
-Point 	HudCursor::target;
-Point 	HudCursor::size;
-Sprite 	HudCursor::playback[24];		
-
-OBJ_ATTR obj_buffer[128];
-OBJ_AFFINE *const obj_aff_buffer= (OBJ_AFFINE*)obj_buffer;
-
 
 void HudCursor::init(){
 	/*
@@ -80,9 +81,13 @@ void HudCursor::init(){
 	
 	size.x 				= 4;
 	size.y 				= 1;
+	
+	// Control cursor ( max 8 wide )
 	for(int i=0; i<8; i++){
 		sprite[i].init(i);
 	}
+	
+	// Tracker playback cursors ( 1 per channel, 6 total )
 	for(int i=0,x=1; i<24; i++,x++){
 		playback[i].init(8+i);
 		playback[i].palette = 0x5;
@@ -90,6 +95,30 @@ void HudCursor::init(){
 		playback[i].position.x = (x*8)<<3;
 		playback[i].channel_index = i/6;
 	}
+	
+	clip_icons[0].init(32);
+	clip_icons[0].tile_number 		= 0x2D0;
+	clip_icons[0].priority 		= 0;
+	clip_icons[0].palette 			= 0x6;
+	/*
+	clip_icons[CLIP_COPY-1].init(33);
+	clip_icons[CLIP_COPY-1].tile_number 	= 0x2D1;
+	clip_icons[CLIP_COPY-1].priority 		= 0;
+	clip_icons[CLIP_COPY-1].palette 		= 0x6;
+	
+	clip_icons[CLIP_CLONE - 1].init(34);
+	clip_icons[CLIP_CLONE - 1].tile_number 	= 0x2D2;
+	clip_icons[CLIP_CLONE - 1].priority 	= 0;
+	clip_icons[CLIP_CLONE - 1].palette 		= 0x6;
+	
+	clip_icons[CLIP_PASTE-1].init(35);
+	clip_icons[CLIP_PASTE-1].tile_number 	= 0x2D4;
+	clip_icons[CLIP_PASTE-1].priority 		= 0;
+	clip_icons[CLIP_PASTE-1].palette 		= 0x6;
+	*/
+	clip_selection.init(36);
+	clip_selection.priority 	= 1;
+	clip_selection.palette  	= 3;
 }
 
 void HudCursor::render(){
@@ -111,11 +140,12 @@ void HudCursor::render(){
 
 	sprite[0].disable = (size.x == 0) && (!sprite[0].delta.x);
 	
-	/* Copy data to OAM */
+	/* Copy cursor data to OAM */
 	for(int i=0; i<8; i++){
 		sprite[i].render();
 	}
 	
+	/* Update tracker cursors position */
 	u8 positions[6] = {
 		VAR_CHANNEL[0].LASTSTEP,
 		VAR_CHANNEL[1].LASTSTEP,
@@ -123,12 +153,7 @@ void HudCursor::render(){
 		VAR_CHANNEL[3].LASTSTEP,
 		VAR_CHANNEL[4].LASTSTEP,
 		VAR_CHANNEL[5].LASTSTEP,
-	};
-	
-	
-	
-	// VAR_CFG.CURRENTCHANNEL
-	
+	};	
 	for(int i=0, p=0, x=0; i<6; i++){
 		u8 remain = 9;
 		while(remain>0){
@@ -144,6 +169,40 @@ void HudCursor::render(){
 		x++;
 	}
 	
+	/* draw cliboard icons */
+	// if(!Clip::visible) return;
+	// return;
+	int x = Clip::x;
+	int y = Clip::y;
+	
+	clip_icons[ CLIP_CUT	- 1 ].disable    = !Clip::visible;
+	clip_icons[ CLIP_CUT	- 1 ].position.x = ((x+2)*8)<<3;
+	clip_icons[ CLIP_CUT	- 1 ].position.y = ((y+1)*8)<<3;
+	clip_icons[ CLIP_CUT	- 1 ].render();
+	clip_icons[ CLIP_PASTE 	- 1 ].disable    = !Clip::visible;
+	clip_icons[ CLIP_PASTE 	- 1 ].position.x = ((x+1)*8)<<3;
+	clip_icons[ CLIP_PASTE 	- 1 ].position.y = ((y  )*8)<<3;
+	clip_icons[ CLIP_PASTE 	- 1 ].render();
+	clip_icons[ CLIP_COPY 	- 1 ].disable    = !Clip::visible;
+	clip_icons[ CLIP_COPY 	- 1 ].position.x = ((x)*8)<<3;
+	clip_icons[ CLIP_COPY 	- 1 ].position.y = ((y+1)*8)<<3;
+	clip_icons[ CLIP_COPY 	- 1 ].render();
+	clip_icons[ CLIP_CLONE 	- 1 ].disable    = !Clip::visible;
+	clip_icons[ CLIP_CLONE 	- 1 ].position.x = ((x+1)*8)<<3;
+	clip_icons[ CLIP_CLONE 	- 1 ].position.y = ((y+2)*8)<<3;
+	clip_icons[ CLIP_CLONE 	- 1 ].render();
+	
+	clip_selection.disable    = !Clip::visible;
+	if(!Clip::action){
+		clip_selection.position.x = clip_icons[ CLIP_COPY - 1 ].position.x + (8<<3);
+		clip_selection.position.y = clip_icons[ CLIP_COPY - 1 ].position.y;
+		clip_selection.palette = 0x3;
+	} else {
+		clip_selection.position.x = clip_icons[ Clip::action-1 ].position.x;// skip none
+		clip_selection.position.y = clip_icons[ Clip::action-1 ].position.y;// skip none
+		clip_selection.palette = 0x7;
+	}
+	clip_selection.render();
 }
 
 void HudCursor::update(){

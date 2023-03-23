@@ -6,6 +6,9 @@
 #include "../../screens/patedit.hpp"
 #include "../key/key.hpp"
 
+u8 	Clip::x;
+u8 	Clip::y;
+			
 u16 Clipboard::data[16*6];	// 16 rows, 6 channels / 5 fields. If copying patterns, values are lost and viceversa
 u16 Clipboard::len;			// length of the block used currently (0 by default)
 u8 	Clipboard::x;			
@@ -271,6 +274,23 @@ void Clip::show(){
 	redraw  			= true;
 	action  			= CLIP_NONE;
 	
+	// Predraw HUD
+	if(AT_TRACKER_SCREEN){
+		int cc = VAR_CFG.CURRENTCHANNEL;
+		cc = ( cc < 5 ) ? cc *= 4 : 6; 		
+		RegionHandler::drawCache(cc+10, 3, &CACHE_CLIPBOARD2, 0, false);
+		Clip::y = 4;
+	} else {
+		RegionHandler::drawCache(26, 0, &CACHE_CLIPBOARD2, 0, false);
+		// Tweak Hud tiles 
+		Gpu::set(1, 29, 4, 0x0f);
+		Gpu::set(1, 26, 3, 0x08);
+		Gpu::set(1, 26, 4, 0x00);
+		Clip::x = 27;
+		Clip::y = 1;
+	}
+		
+	
 	if(!RegionHandler::control) Debug::panic("No RegionHandler::control", (u32*)&RegionHandler::control );
 }
 
@@ -324,6 +344,7 @@ void Clip::maskMoveVert( bool increase ){
 	if( Clipboard::y + Clipboard::height > 0xF ) {
 		Clipboard::y 	  = 0;
 	}
+	redraw = true;
 }
 
 void Clip::maskMoveHorz( bool increase ){
@@ -332,12 +353,14 @@ void Clip::maskMoveHorz( bool increase ){
 	u8 max = ( AT_TRACKER_SCREEN ? 5 : 6 );
 	Clipboard::x += increase ? 1 : -1;
 	if( Clipboard::x + Clipboard::width > max ) Clipboard::x = 0;
+	redraw = true;
 }
 
 void Clip::maskSizeVert( bool increase ){
 	drawMask(0x00);
 	Clipboard::height += increase ? 1 : -1;
 	if( Clipboard::height > 0xF ) Clipboard::height = 0xF;
+	redraw = true;
 }
 
 void Clip::maskSizeHorz( bool increase ){
@@ -347,6 +370,7 @@ void Clip::maskSizeHorz( bool increase ){
 		if( Clipboard::x + Clipboard::width < max ) Clipboard::width++;
 	} else if( Clipboard::width ) Clipboard::width--;
 	else Clipboard::width = max-(Clipboard::x);
+	redraw = true;
 }
 
 void Clip::setAction( ClipboardAction selected_action ){
@@ -421,14 +445,15 @@ void Clip::draw(  ){
 	int cc = VAR_CFG.CURRENTCHANNEL;
 	cc = ( cc < 5 ) ? cc *= 4 : 6; 
  	if(AT_TRACKER_SCREEN){
+		Clip::x = cc+11;
+		#ifdef BGCURSORS
 		RegionHandler::drawCache(cc+10, 3, &CACHE_CLIPBOARD2, 0, false);
 		Gpu::set(0, cc+12 + int(positions[ (int)action ][0]), 5 + int(positions[ (int)action ][1]), Gpu::blink ? 0x14 : 0x13);
+		#endif
 	} else {
-		RegionHandler::drawCache(26, 0, &CACHE_CLIPBOARD2, 0, false);
+		#ifdef BGCURSORS
 		Gpu::set(0, 28 + int(positions[ (int)action ][0]), 2 + int(positions[ (int)action ][1]), Gpu::blink ? 0x14 : 0x13);
-		Gpu::set(1, 29, 4, 0x0f);
-		Gpu::set(1, 26, 3, 0x08);
-		Gpu::set(1, 26, 4, 0x00);
+		#endif
 	}
 	
 	// draw clipboard mask

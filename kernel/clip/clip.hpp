@@ -55,8 +55,9 @@ class Clip {
 	public:
 		static bool 				visible;
 		static bool 				blink_monitor;
+		static u8 					x;
+		static u8 					y;
 		static ClipboardAction 		action;
-		
 		static void init			();
 		static void draw			(  );
 		static void update			(  );

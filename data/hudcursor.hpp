@@ -80,6 +80,8 @@ class HudCursor {
 		static Point 	target;
 		static Sprite 	playback[24];
 		static Sprite 	sprite[8];
+		static Sprite   clip_icons[4];
+		static Sprite   clip_selection;
 		
 		static void init();
 		static void render();
