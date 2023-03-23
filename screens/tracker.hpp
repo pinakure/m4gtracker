@@ -193,6 +193,11 @@ class Tracker{
 		static void 		processInput		(  );
 		static void 		shift				( int q );
 		static void 		transpose			( int q );
+		
+		static void 		nextPattern			( );
+		static void 		prevPattern			( );
+		static void 		nextChannel			( );
+		static void 		prevChannel			( );
 
 		static void 		alterColumn			( u8 index, u8 min_value, u8 max_value, int q );
 

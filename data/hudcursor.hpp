@@ -84,6 +84,7 @@ class HudCursor {
 		static Sprite   clip_selection;
 		static Sprite   tsp_table_position;
 		static Sprite   vol_table_position;
+		static Sprite   waveform[32];
 		
 		static void init();
 		static void render();

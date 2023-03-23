@@ -16,9 +16,10 @@ Sprite 	HudCursor::clip_icons[4];
 Sprite 	HudCursor::clip_selection;
 Sprite 	HudCursor::tsp_table_position;
 Sprite 	HudCursor::vol_table_position;
+Sprite 	HudCursor::waveform[32];
 
-OBJ_ATTR obj_buffer[128];
-OBJ_AFFINE *const obj_aff_buffer= (OBJ_AFFINE*)obj_buffer;
+// OBJ_ATTR obj_buffer[128];
+//OBJ_AFFINE *const obj_aff_buffer= (OBJ_AFFINE*)obj_buffer;
 
 Sprite::Sprite( u8 index, u8 coord_x, u8 coord_y){
 	position.x			= coord_x;		
@@ -46,7 +47,8 @@ void Sprite::init( u8 index ){
 
 void Sprite::render(){
 	if(!(((R_VCOUNT&0x00FF) >=160)&&((R_VCOUNT&0x00FF) <200))) return;
-	(*(u16*)0x4000000) |= 0x1080; 
+	(*(u16*)0x4000000) |= 0x1000; 
+	// (*(u16*)0x4000000) |= 0x1080; 
 	OBJ_ATTR* p = (OBJ_ATTR*)&(*(u16*)(OAM+(index*8)));
 	p->attr0 	= ( (position.y>>3) & 0xFF)
 				| ( (rotoscale) 	<< 8  )
@@ -67,20 +69,6 @@ void Sprite::render(){
 }
 
 void HudCursor::init(){
-	/*
-	
-	OBJ_AFFINE* p 	= &(*(OBJ_AFFINE*)(OAM+(1*32)));
-	
-	s32 dx = 1200;
-	s32 dy = 0;
-	s32 sx = 3800;
-	s32 sy = 0;
-	
-	p->pa 		  	= dx;
-	p->pb 			= dy;
-	p->pc 		  	= sx;
-	p->pd 			= sy;
-	*/
 	
 	size.x 				= 4;
 	size.y 				= 1;
@@ -99,23 +87,24 @@ void HudCursor::init(){
 		playback[i].channel_index = i/6;
 	}
 	
+	// Clipboard icons (move vars to Clip and function calls to init)
 	clip_icons[0].init(32);
-	clip_icons[0].tile_number 		= 0x2D0;
+	clip_icons[0].tile_number 		= 0x1c;
 	clip_icons[0].priority 		= 0;
 	clip_icons[0].palette 			= 0x6;
 	
 	clip_icons[CLIP_COPY-1].init(33);
-	clip_icons[CLIP_COPY-1].tile_number 	= 0x2D1;
+	clip_icons[CLIP_COPY-1].tile_number 	= 0x1d;
 	clip_icons[CLIP_COPY-1].priority 		= 0;
 	clip_icons[CLIP_COPY-1].palette 		= 0x6;
 	
 	clip_icons[CLIP_CLONE - 1].init(34);
-	clip_icons[CLIP_CLONE - 1].tile_number 	= 0x2D2;
+	clip_icons[CLIP_CLONE - 1].tile_number 	= 0x1e;
 	clip_icons[CLIP_CLONE - 1].priority 	= 0;
 	clip_icons[CLIP_CLONE - 1].palette 		= 0x6;
 	
 	clip_icons[CLIP_PASTE-1].init(35);
-	clip_icons[CLIP_PASTE-1].tile_number 	= 0x2D4;
+	clip_icons[CLIP_PASTE-1].tile_number 	= 0x1f;
 	clip_icons[CLIP_PASTE-1].priority 		= 0;
 	clip_icons[CLIP_PASTE-1].palette 		= 0x6;
 	
@@ -123,6 +112,7 @@ void HudCursor::init(){
 	clip_selection.priority 	= 1;
 	clip_selection.palette  	= 3;
 	
+	// Volume / Transpose indicators ( move vars to instedit and function calls to init)
 	tsp_table_position.init(37);
 	tsp_table_position.tile_number 	= 0x8;
 	tsp_table_position.palette 		= 0x8;
@@ -130,6 +120,16 @@ void HudCursor::init(){
 	vol_table_position.init(38);
 	vol_table_position.tile_number 	= 0x8;
 	vol_table_position.palette 		= 0x8;
+	
+	// Waveform (move vars to instedit and function calls to init)
+	for(int i=0,x=16; i<32; i++,x++){
+		waveform[i].init(40+i);
+		waveform[i].tile_number = ((i&1)?0x1A:0x1A);
+		waveform[i].priority 	= 0;
+		waveform[i].palette 	= 0x6;
+		waveform[i].position.y 	= (10*8)<<3;
+		waveform[i].position.x 	= ((6*8)<<3)+((x*4)<<3);
+	}
 }
 
 void HudCursor::render(){
@@ -178,6 +178,12 @@ void HudCursor::render(){
 			x++;
 		}
 		x++;
+	}
+	
+	/* draw waveform */
+	for(int i=0; i<32; i++){
+		waveform[i].disable = !AT_INSTRUMENT_SCREEN;
+		waveform[i].render();
 	}
 	
 	/* draw table position cursors */

@@ -8,6 +8,7 @@
 #include "../kernel/gpu/gpu.hpp"
 #include "../kernel/gpu/virtualscreen.hpp"
 #include "../kernel/key/key.hpp"
+#include "../data/hudcursor.hpp"
 
 /* Global callbacks ---------------------------------------------------------------------------------------------------------- */
 const Callback cb_ins_index				 = { InstEdit::index		, EVENT_MODIFY_B 	, &VAR_CFG.CURRENTINSTRUMENT	, NULL };
@@ -755,32 +756,60 @@ void InstEdit::smpPreset(Control *c, bool bigstep, bool add, u32 *pointer){
 }
 
 void InstEdit::viewWaveFormFmw( ){
-	VirtualScreen::clear();
+	
+	const u16 center = 40+((15*8)<<3);
+	
+	for(int i=0; i<16; i++){
+		u8 v = VAR_FMW.WAVEDATA[i]>>3;
+		HudCursor::waveform[ i  ].position.y = center - (( ( v ) * 8 ) <<3);
+		HudCursor::waveform[i+16].position.y = center - (( ( v ) * 8 ) <<3);
+	}
+	/*
+	// Antialiase
+	for(int i=0; i<16; i+=2){
+		HudCursor::waveform[i].position.y = (HudCursor::waveform[i+1].position.y +  HudCursor::waveform[i].position.y )>>1;
+	}
+	*/
+	// if(!VirtualScreen::clean) 
+		// VirtualScreen::clear();
+	// VirtualScreen::clean = false;
+	/*
 	for(int x=0; x < 0x40; x+=2){
 		VirtualScreen::set( x>>1, 15 - ( VAR_FMW.WAVEDATA[ x>>2 ]>>2) );
 		VirtualScreen::set( x>>1, 15 + ( VAR_FMW.WAVEDATA[ x>>2 ]>>2) );
 	}
 	VirtualScreen::draw(14,6);
+	*/
 }
 
 void InstEdit::viewWaveFormSmp( ){
-	VirtualScreen::clear();
 	/*
+	VirtualScreen::clear();
 	for(int x=0; x < 0x40; x+=2){
 		VirtualScreen::set( x>>1, 15 - ( VAR_SMP.WAVEDATA[ x>>2 ]>>2) );
 		VirtualScreen::set( x>>1, 15 + ( VAR_SMP.WAVEDATA[ x>>2 ]>>2) );
 	}
-	*/
 	VirtualScreen::draw(14,6);
+	*/
 }
 
 void InstEdit::viewWaveFormWav( ){
+	
+	const u16 center = 40 + ((2*8)<<3);
+	
+	for(int i=0; i<16; i++){
+		u8 v = VAR_WAV.WAVEDATA[i];
+		HudCursor::waveform[  i ].position.y = center + (( ( v ) * 8 ) <<3 );
+		HudCursor::waveform[i+16].position.y = center + (( ( v ) * 8 ) <<3 );
+	}
+	/*
 	VirtualScreen::clear();
 	for(int x=0; x < 0x40; x+=2){
 		VirtualScreen::set( x>>1, 15 - ( VAR_WAV.WAVEDATA[ x>>2 ]) );
 		VirtualScreen::set( x>>1, 15 + ( VAR_WAV.WAVEDATA[ x>>2 ]) );
 	}
 	VirtualScreen::draw(14,6);
+	*/
 }
 
 void InstEdit::clear( u8 index ){

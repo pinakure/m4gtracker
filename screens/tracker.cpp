@@ -175,6 +175,37 @@ void Tracker::drawLine( int channel ){
 	VAR_CHANNEL[ channel ].LASTSTEP = VAR_CHANNEL[ channel ].STEP;	
 }
 
+void Tracker::nextPattern( ){
+	Channel *channel = &VAR_CHANNEL[ VAR_CFG.CURRENTCHANNEL ];
+	channel->POSITION++;
+	Tracker::drawPosition( VAR_CFG.CURRENTCHANNEL );
+	Tracker::clean = false;
+	// must redraw controls
+	syncChannel( VAR_CFG.CURRENTCHANNEL );
+}
+
+void Tracker::prevPattern( ){
+	Channel *channel = &VAR_CHANNEL[ VAR_CFG.CURRENTCHANNEL ];
+	channel->POSITION--;
+	Tracker::drawPosition( VAR_CFG.CURRENTCHANNEL );
+}
+
+void Tracker::nextChannel( ){
+	u8 erase_position = VAR_CFG.CURRENTCHANNEL;
+	VAR_CFG.CURRENTCHANNEL = VAR_CFG.CURRENTCHANNEL<5?VAR_CFG.CURRENTCHANNEL+1:0;
+	Tracker::drawPosition( erase_position 		 	);
+	Tracker::drawPosition( VAR_CFG.CURRENTCHANNEL 	);
+	RegionHandler::updateViewport(&VIEWPORT_TRK, RegionHandler::region->xadd, RegionHandler::region->yadd);
+}
+
+void Tracker::prevChannel( ){
+	u8 erase_position = VAR_CFG.CURRENTCHANNEL;
+	VAR_CFG.CURRENTCHANNEL = VAR_CFG.CURRENTCHANNEL>0?VAR_CFG.CURRENTCHANNEL-1:5;
+	Tracker::drawPosition( erase_position 		 	);
+	Tracker::drawPosition( VAR_CFG.CURRENTCHANNEL 	);
+	RegionHandler::updateViewport(&VIEWPORT_TRK, RegionHandler::region->xadd,RegionHandler::region->yadd);
+}
+
 void Tracker::dispatchMessage(u32 msg){
 	switch(msg){
 		
@@ -190,21 +221,15 @@ void Tracker::dispatchMessage(u32 msg){
 		case MESSAGE_OTHER_PREV:
 			// Jump to previous channel
 			if( Clip::visible ) return;
-			VAR_CFG.CURRENTCHANNEL = VAR_CFG.CURRENTCHANNEL>0?VAR_CFG.CURRENTCHANNEL-1:5;
-			for(int i=0; i < CHANNEL_COUNT ;i++){
-				Tracker::drawPosition( i );
-			}	
-			RegionHandler::updateViewport(&VIEWPORT_TRK, RegionHandler::region->xadd,RegionHandler::region->yadd);
+			if( KEYPRESS_SELECT) prevPattern();
+			else prevChannel();
 			return;
 		
 		case MESSAGE_OTHER_NEXT:
 			// Jump to next channel
 			if( Clip::visible ) return;
-			VAR_CFG.CURRENTCHANNEL = VAR_CFG.CURRENTCHANNEL<5?VAR_CFG.CURRENTCHANNEL+1:0;
-			for(int i=0; i < CHANNEL_COUNT ;i++){
-				Tracker::drawPosition( i );
-			}	
-			RegionHandler::updateViewport(&VIEWPORT_TRK, RegionHandler::region->xadd, RegionHandler::region->yadd);
+			if( KEYPRESS_SELECT) nextPattern();
+			else nextChannel();
 			return;
 	}
 }
