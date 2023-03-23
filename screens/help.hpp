@@ -3,7 +3,7 @@
 
 #include "../agb.h"
 
-#include "../modules/regionhandler/regionhandler.hpp"
+#include "../kernel/regionhandler/regionhandler.hpp"
 
 //Help structs declaration
 typedef struct sHelpTopic helptopic;

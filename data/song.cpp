@@ -1,5 +1,5 @@
 #include "song.hpp"
-#include "../modules/sram/sram.hpp"
+#include "../kernel/sram/sram.hpp"
 #include "../screens/songedit.hpp"
 
 MEM_IN_EWRAM u8 Song::slot;

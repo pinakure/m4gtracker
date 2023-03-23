@@ -5,7 +5,7 @@
 
 #include "../agb.h"
 #include "../data/control.hpp"
-#include "../modules/regionhandler/regionhandler.hpp"
+#include "../kernel/regionhandler/regionhandler.hpp"
 
 class Config {
 	public BACKUP:

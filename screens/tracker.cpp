@@ -1,14 +1,14 @@
 #include "tracker.hpp"
 #include "config.hpp"
 #include "../data/data.hpp"
-#include "../modules/gpu/gpu.hpp"
-#include "../modules/key/key.hpp"
-#include "../modules/spu/mixer.hpp"
-#include "../modules/clip/clip.hpp"
+#include "../kernel/gpu/gpu.hpp"
+#include "../kernel/key/key.hpp"
+#include "../kernel/spu/mixer.hpp"
+#include "../kernel/clip/clip.hpp"
 #include "../data/viewports.hpp"
 #include "../data/channel.hpp"
 #include "../debug.hpp"
-#include "../modules/spu/sequencer.hpp"
+#include "../kernel/spu/sequencer.hpp"
 #include "../macros.h"
 
 #include "tracker/callbacks.c"
@@ -164,12 +164,14 @@ void Tracker::drawPosition( int i ){
 }
 
 void Tracker::drawLine( int channel ){
+	#ifdef BGCURSORS
 	int y = 4 + VAR_CHANNEL[ channel ].STEP;
 	int x = Tracker::columns[ VAR_CFG.CURRENTCHANNEL ][ channel ];
 	for(int i=0, li=( channel==VAR_CFG.CURRENTCHANNEL ? 9 : 3 ); i<li; i++){
 		Gpu::set(0, x+i, 4 + VAR_CHANNEL[ channel ].LASTSTEP , 0x0);
 		Gpu::set(0, x+i, y									, 0x15);
 	}	
+	#endif 
 	VAR_CHANNEL[ channel ].LASTSTEP = VAR_CHANNEL[ channel ].STEP;	
 }
 

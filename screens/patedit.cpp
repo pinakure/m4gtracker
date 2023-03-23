@@ -1,10 +1,10 @@
 #include "patedit.hpp"
 
 #include "../data/data.hpp"
-#include "../modules/key/key.hpp"
-#include "../modules/gpu/gpu.hpp"
-#include "../modules/spu/mixer.hpp"
-#include "../modules/clip/clip.hpp"
+#include "../kernel/key/key.hpp"
+#include "../kernel/gpu/gpu.hpp"
+#include "../kernel/spu/mixer.hpp"
+#include "../kernel/clip/clip.hpp"
 #include "../debug.hpp"
 
 #define COLUMN00	 5

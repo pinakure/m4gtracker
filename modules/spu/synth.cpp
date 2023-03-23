@@ -656,23 +656,101 @@ void Synth::triggerPwm1( Channel *channel ){
 	if( channel->reset ) {
 		channel->tsp_position 	= 0;				
 		channel->vol_position 	= 0;
+		
+		if( pwm.TSP_LOOP == LOOP_BACKWARD ) channel->tsp_loop = LOOP_BACKWARD_FORWARD;
+		if( pwm.TSP_LOOP == LOOP_PINGPONG ) channel->tsp_loop = LOOP_PINGPONG_FORWARD;
+		else channel->tsp_loop = (LoopMode)pwm.TSP_LOOP;
+		
+		if( pwm.VOL_LOOP == LOOP_BACKWARD ) channel->vol_loop = LOOP_BACKWARD_FORWARD;
+		if( pwm.VOL_LOOP == LOOP_PINGPONG ) channel->vol_loop = LOOP_PINGPONG_FORWARD;
+		else channel->vol_loop = (LoopMode)pwm.VOL_LOOP;
+		
 		channel->reset 			= false;				
 		channel->transpose		= 0;
+		channel->tsp_target		= pwm.TSP_LENGTH ;
+		channel->vol_target		= pwm.VOL_LENGTH ;
+		channel->tsp_delta 		= 1;
+		channel->vol_delta 		= 1;
 	}
 	if( pwm.TSP_ENABLE ){				
-		if( channel->tsp_position < pwm.TSP_ENVELOPE ){
-			channel->transpose 	= pwm.TSP[ channel->tsp_position ];
-			channel->retrig 	= true;
-			channel->tsp_position++;
-		}
+		u8 tsp_pos = (channel->tsp_position >> pwm.TSP_SPEED) ;
+		
+		if( channel->tsp_delta+1){
+			if( tsp_pos < channel->tsp_target ){
+				channel->retrig 		= true;
+				channel->transpose 		= pwm.TSP[ tsp_pos ];
+				channel->tsp_position  += channel->tsp_delta;
+			} else {
+				// Hit end going forwards 					
+				if( channel->tsp_loop  != LOOP_NONE){
+					if( channel->tsp_loop  == LOOP_FORWARD) channel->tsp_position=0; 
+					else {
+						if(channel->tsp_loop == LOOP_PINGPONG_FORWARD) channel->tsp_loop = LOOP_PINGPONG; 
+						channel->tsp_delta  =-1;
+						channel->tsp_target = 0;
+					}
+					channel->retrig 		= true;
+				}
+			}
+		} else if(!(channel->tsp_delta+1)){
+			if( tsp_pos > channel->tsp_target ){
+				channel->retrig 		= true;
+				channel->transpose 		= pwm.TSP[ tsp_pos ];		
+				channel->tsp_position  += channel->tsp_delta;
+			} else {
+				// Hit the end going backwards
+				if( channel->tsp_loop  == LOOP_BACKWARD) channel->tsp_position=pwm.TSP_LENGTH-1; 
+				if( channel->tsp_loop  == LOOP_PINGPONG){
+					channel->tsp_loop = LOOP_PINGPONG_FORWARD;
+					channel->tsp_delta  = 1;
+					channel->tsp_position++;
+					channel->tsp_target = pwm.TSP_LENGTH;
+				}				
+				channel->retrig 		= true;
+			}
+		}		
 	}
-	if( pwm.VOL_ENABLE ){
-		if( channel->vol_position < pwm.VOL_ENVELOPE){
-			vol 				= ( vol + pwm.VOL[ channel->vol_position ] ) >> 1;
-			channel->retrig 	= true;
-			channel->vol_position++;
-		}
+	
+	
+	if( pwm.VOL_ENABLE ){				
+		u8 vol_pos = (channel->vol_position >> pwm.VOL_SPEED) ;
+		
+		if( channel->vol_delta+1){
+			if( vol_pos < channel->vol_target ){
+				channel->retrig 		= true;
+				vol 					= ( vol + pwm.VOL[ vol_pos ] ) >> 1;
+				channel->vol_position  += channel->vol_delta;
+			} else {
+				// Hit end going forwards 					
+				if( channel->vol_loop  != LOOP_NONE){
+					if( channel->vol_loop  == LOOP_FORWARD) channel->vol_position=0; 
+					else {
+						if(channel->vol_loop == LOOP_PINGPONG_FORWARD) channel->vol_loop = LOOP_PINGPONG; 
+						channel->vol_delta  =-1;
+						channel->vol_target = 0;
+					}
+					channel->retrig 		= true;
+				}
+			}
+		} else if(!(channel->vol_delta+1)){
+			if( vol_pos > channel->vol_target ){
+				channel->retrig 		= true;
+				vol 					= ( vol + pwm.VOL[ vol_pos ] ) >> 1;
+				channel->vol_position  += channel->vol_delta;
+			} else {
+				// Hit the end going backwards
+				if( channel->vol_loop  == LOOP_BACKWARD) channel->vol_position=pwm.VOL_LENGTH-1; 
+				if( channel->vol_loop  == LOOP_PINGPONG){
+					channel->vol_loop = LOOP_PINGPONG_FORWARD;
+					channel->vol_delta  = 1;
+					channel->vol_position++;
+					channel->vol_target = pwm.VOL_LENGTH;
+				}				
+				channel->retrig 		= true;
+			}
+		}		
 	}
+	
 	if( channel->retrig ){
 		SOUND1CNT_X = ( pwm.SWEEPSTEPS << 4) | (pwm.SWEEPDIR << 3) | ( pwm.SWEEPSPEED );				
 		SOUND1CNT_L = ((pwm.LEVEL*vol>>4) << 12) | (!pwm.ENVELOPEDIR << 11) | (pwm.VOLUMEFADE<<8) | ( pwm.DUTYCYCLE << 6 );				
@@ -688,22 +766,98 @@ void Synth::triggerPwm2( Channel *channel ){
 	if( channel->reset ) {
 		channel->tsp_position 	= 0;				
 		channel->vol_position 	= 0;
+		if( pwm.TSP_LOOP == LOOP_BACKWARD ) channel->tsp_loop = LOOP_BACKWARD_FORWARD;
+		if( pwm.TSP_LOOP == LOOP_PINGPONG ) channel->tsp_loop = LOOP_PINGPONG_FORWARD;
+		else channel->tsp_loop = (LoopMode)pwm.TSP_LOOP;
+		
+		if( pwm.VOL_LOOP == LOOP_BACKWARD ) channel->vol_loop = LOOP_BACKWARD_FORWARD;
+		if( pwm.VOL_LOOP == LOOP_PINGPONG ) channel->vol_loop = LOOP_PINGPONG_FORWARD;
+		else channel->vol_loop = (LoopMode)pwm.VOL_LOOP;
+		
 		channel->reset 			= false;				
 		channel->transpose		= 0;
+		channel->tsp_target		= pwm.TSP_LENGTH ;
+		channel->vol_target		= pwm.VOL_LENGTH ;
+		channel->tsp_delta 		= 1;
+		channel->vol_delta 		= 1;
 	}
 	if( pwm.TSP_ENABLE ){				
-		if( channel->tsp_position < pwm.TSP_ENVELOPE ){
-			channel->transpose 	= pwm.TSP[ channel->tsp_position ];
-			channel->retrig 	= true;
-			channel->tsp_position++;
-		}
+		u8 tsp_pos = (channel->tsp_position >> pwm.TSP_SPEED) ;
+		
+		if( channel->tsp_delta+1){
+			if( tsp_pos < channel->tsp_target ){
+				channel->retrig 		= true;
+				channel->transpose 		= pwm.TSP[ tsp_pos ];
+				channel->tsp_position  += channel->tsp_delta;
+			} else {
+				// Hit end going forwards 					
+				if( channel->tsp_loop  != LOOP_NONE){
+					if( channel->tsp_loop  == LOOP_FORWARD) channel->tsp_position=0; 
+					else {
+						if(channel->tsp_loop == LOOP_PINGPONG_FORWARD) channel->tsp_loop = LOOP_PINGPONG; 
+						channel->tsp_delta  =-1;
+						channel->tsp_target = 0;
+					}
+					channel->retrig 		= true;
+				}
+			}
+		} else if(!(channel->tsp_delta+1)){
+			if( tsp_pos > channel->tsp_target ){
+				channel->retrig 		= true;
+				channel->transpose 		= pwm.TSP[ tsp_pos ];		
+				channel->tsp_position  += channel->tsp_delta;
+			} else {
+				// Hit the end going backwards
+				if( channel->tsp_loop  == LOOP_BACKWARD) channel->tsp_position=pwm.TSP_LENGTH-1; 
+				if( channel->tsp_loop  == LOOP_PINGPONG){
+					channel->tsp_loop = LOOP_PINGPONG_FORWARD;
+					channel->tsp_delta  = 1;
+					channel->tsp_position++;
+					channel->tsp_target = pwm.TSP_LENGTH;
+				}				
+				channel->retrig 		= true;
+			}
+		}		
 	}
-	if( pwm.VOL_ENABLE ){
-		if( channel->vol_position < pwm.VOL_ENVELOPE){
-			vol 				= ( vol + pwm.VOL[ channel->vol_position ] ) >> 1;
-			channel->retrig 	= true;
-			channel->vol_position++;
-		}
+	
+	
+	if( pwm.VOL_ENABLE ){				
+		u8 vol_pos = (channel->vol_position >> pwm.VOL_SPEED) ;
+		
+		if( channel->vol_delta+1){
+			if( vol_pos < channel->vol_target ){
+				channel->retrig 		= true;
+				vol 					= ( vol + pwm.VOL[ vol_pos ] ) >> 1;
+				channel->vol_position  += channel->vol_delta;
+			} else {
+				// Hit end going forwards 					
+				if( channel->vol_loop  != LOOP_NONE){
+					if( channel->vol_loop  == LOOP_FORWARD) channel->vol_position=0; 
+					else {
+						if(channel->vol_loop == LOOP_PINGPONG_FORWARD) channel->vol_loop = LOOP_PINGPONG; 
+						channel->vol_delta  =-1;
+						channel->vol_target = 0;
+					}
+					channel->retrig 		= true;
+				}
+			}
+		} else if(!(channel->vol_delta+1)){
+			if( vol_pos > channel->vol_target ){
+				channel->retrig 		= true;
+				vol 					= ( vol + pwm.VOL[ vol_pos ] ) >> 1;
+				channel->vol_position  += channel->vol_delta;
+			} else {
+				// Hit the end going backwards
+				if( channel->vol_loop  == LOOP_BACKWARD) channel->vol_position=pwm.VOL_LENGTH-1; 
+				if( channel->vol_loop  == LOOP_PINGPONG){
+					channel->vol_loop = LOOP_PINGPONG_FORWARD;
+					channel->vol_delta  = 1;
+					channel->vol_position++;
+					channel->vol_target = pwm.VOL_LENGTH;
+				}				
+				channel->retrig 		= true;
+			}
+		}		
 	}
 	if( channel->retrig ){
 		SOUND2CNT_L = ((pwm.LEVEL*vol>>4) << 12) | (!pwm.ENVELOPEDIR << 11) | (pwm.VOLUMEFADE<<8) | ( pwm.DUTYCYCLE << 6 );				
@@ -719,23 +873,100 @@ void Synth::triggerNze( Channel *channel ){
 	if( channel->reset ) {
 		channel->tsp_position 	= 0;				
 		channel->vol_position 	= 0;
+		if( pwm.TSP_LOOP == LOOP_BACKWARD ) channel->tsp_loop = LOOP_BACKWARD_FORWARD;
+		if( pwm.TSP_LOOP == LOOP_PINGPONG ) channel->tsp_loop = LOOP_PINGPONG_FORWARD;
+		else channel->tsp_loop = (LoopMode)pwm.TSP_LOOP;
+		
+		if( pwm.VOL_LOOP == LOOP_BACKWARD ) channel->vol_loop = LOOP_BACKWARD_FORWARD;
+		if( pwm.VOL_LOOP == LOOP_PINGPONG ) channel->vol_loop = LOOP_PINGPONG_FORWARD;
+		else channel->vol_loop = (LoopMode)pwm.VOL_LOOP;
+		
 		channel->reset 			= false;				
 		channel->transpose		= 0;
+		channel->tsp_target		= pwm.TSP_LENGTH ;
+		channel->vol_target		= pwm.VOL_LENGTH ;
+		channel->tsp_delta 		= 1;
+		channel->vol_delta 		= 1;
 	}
 	if( pwm.TSP_ENABLE ){				
-		if( channel->tsp_position < pwm.TSP_ENVELOPE ){
-			channel->transpose 	= pwm.TSP[ channel->tsp_position ];
-			channel->retrig 	= true;
-			channel->tsp_position++;
-		}
+		u8 tsp_pos = (channel->tsp_position >> pwm.TSP_SPEED) ;
+		
+		if( channel->tsp_delta+1){
+			if( tsp_pos < channel->tsp_target ){
+				channel->retrig 		= true;
+				channel->transpose 		= pwm.TSP[ tsp_pos ];
+				channel->tsp_position  += channel->tsp_delta;
+			} else {
+				// Hit end going forwards 					
+				if( channel->tsp_loop  != LOOP_NONE){
+					if( channel->tsp_loop  == LOOP_FORWARD) channel->tsp_position=0; 
+					else {
+						if(channel->tsp_loop == LOOP_PINGPONG_FORWARD) channel->tsp_loop = LOOP_PINGPONG; 
+						channel->tsp_delta  =-1;
+						channel->tsp_target = 0;
+					}
+					channel->retrig 		= true;
+				}
+			}
+		} else if(!(channel->tsp_delta+1)){
+			if( tsp_pos > channel->tsp_target ){
+				channel->retrig 		= true;
+				channel->transpose 		= pwm.TSP[ tsp_pos ];		
+				channel->tsp_position  += channel->tsp_delta;
+			} else {
+				// Hit the end going backwards
+				if( channel->tsp_loop  == LOOP_BACKWARD) channel->tsp_position=pwm.TSP_LENGTH-1; 
+				if( channel->tsp_loop  == LOOP_PINGPONG){
+					channel->tsp_loop = LOOP_PINGPONG_FORWARD;
+					channel->tsp_delta  = 1;
+					channel->tsp_position++;
+					channel->tsp_target = pwm.TSP_LENGTH;
+				}				
+				channel->retrig 		= true;
+			}
+		}		
 	}
-	if( pwm.VOL_ENABLE ){
-		if( channel->vol_position < pwm.VOL_ENVELOPE){
-			vol 				= ( vol + pwm.VOL[ channel->vol_position ] ) >> 1;
-			channel->retrig 	= true;
-			channel->vol_position++;
-		}
+	
+	
+	if( pwm.VOL_ENABLE ){				
+		u8 vol_pos = (channel->vol_position >> pwm.VOL_SPEED) ;
+		
+		if( channel->vol_delta+1){
+			if( vol_pos < channel->vol_target ){
+				channel->retrig 		= true;
+				vol 					= ( vol + pwm.VOL[ vol_pos ] ) >> 1;
+				channel->vol_position  += channel->vol_delta;
+			} else {
+				// Hit end going forwards 					
+				if( channel->vol_loop  != LOOP_NONE){
+					if( channel->vol_loop  == LOOP_FORWARD) channel->vol_position=0; 
+					else {
+						if(channel->vol_loop == LOOP_PINGPONG_FORWARD) channel->vol_loop = LOOP_PINGPONG; 
+						channel->vol_delta  =-1;
+						channel->vol_target = 0;
+					}
+					channel->retrig 		= true;
+				}
+			}
+		} else if(!(channel->vol_delta+1)){
+			if( vol_pos > channel->vol_target ){
+				channel->retrig 		= true;
+				vol 					= ( vol + pwm.VOL[ vol_pos ] ) >> 1;
+				channel->vol_position  += channel->vol_delta;
+			} else {
+				// Hit the end going backwards
+				if( channel->vol_loop  == LOOP_BACKWARD) channel->vol_position=pwm.VOL_LENGTH-1; 
+				if( channel->vol_loop  == LOOP_PINGPONG){
+					channel->vol_loop = LOOP_PINGPONG_FORWARD;
+					channel->vol_delta  = 1;
+					channel->vol_position++;
+					channel->vol_target = pwm.VOL_LENGTH;
+				}				
+				channel->retrig 		= true;
+			}
+		}		
 	}
+	
 	if( channel->retrig ){
 		SOUND4CNT_L = ( ( pwm.LEVEL * vol >> 4 ) << 12 ) | ( !pwm.ENVELOPEDIR << 11 ) | ( pwm.VOLUMEFADE << 8 ) | ( pwm.DUTYCYCLE << 6 );				
 		noteOnNze( channel );

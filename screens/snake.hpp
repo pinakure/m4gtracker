@@ -3,8 +3,8 @@
 
 #include "../agb.h"
 
-#include "../modules/regionhandler/regionhandler.hpp"
-#include "../modules/gpu/virtualscreen.hpp"
+#include "../kernel/regionhandler/regionhandler.hpp"
+#include "../kernel/gpu/virtualscreen.hpp"
 
 typedef enum eSnakeDirs {
 	SNAKE_UP,

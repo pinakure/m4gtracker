@@ -2,7 +2,7 @@
 #define LOOKNFEEL_HPP
 
 #include "../../agb.h"
-#include "../../modules/regionhandler/regionhandler.hpp"
+#include "../../kernel/regionhandler/regionhandler.hpp"
 
 #define MOSAIC_CNT *(u16*)0x400004C
 #define REG_BG0 *(u16*)0x4000008

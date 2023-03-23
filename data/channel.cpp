@@ -1,8 +1,8 @@
 #include "channel.hpp"
 #include "../debug.hpp"
-#include "../modules/spu/synth.hpp"
-#include "../modules/spu/mixer.hpp"
-#include "../modules/sram/sram.hpp"
+#include "../kernel/spu/synth.hpp"
+#include "../kernel/spu/mixer.hpp"
+#include "../kernel/sram/sram.hpp"
 #include "../screens/tracker.hpp"
 #include "../screens/songedit.hpp"
 #include "../screens/live/performance.hpp"
@@ -49,7 +49,9 @@ void Channel::init( u8 channel_index ){
 	fine_tune		= 0;
 	target_tick		= 0;
 	tsp_position	= 0;
+	tsp_loop 		= LOOP_NONE;
 	vol_position	= 0;
+	vol_loop 		= LOOP_NONE;
 
 	// Bind specific functions ( Channel differs vastly from channel to channel but Im lazy enough to avoid doing a child class )
 	switch( type ){

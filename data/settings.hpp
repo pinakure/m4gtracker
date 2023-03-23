@@ -24,6 +24,8 @@ typedef struct _SETTINGS_PWM {
 	u8				TSP_ENVELOPE;	//      8 : 53
 	u8				TSP[16];		// 4 x 16 : 61
 	u8				VOL[16];		// 4 X 16 : 125
+	u8				TSP_SPEED;		//      4 : 19
+	u8				VOL_SPEED;		//      4 : 43
 									//          189 BITS
 }SETTINGS_PWM;
 

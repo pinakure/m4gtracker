@@ -5,7 +5,7 @@
 
 //#define NDEBUG
 
-#include "modules/regionhandler/regionhandler.hpp"
+#include "kernel/regionhandler/regionhandler.hpp"
 
 
 #ifndef NDEBUG

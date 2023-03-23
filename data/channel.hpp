@@ -3,6 +3,7 @@
 
 #include "../agb.h"
 
+#include "enum.h"
 #include "control.hpp"
 #include "pattern.hpp"
 #include "instrument.hpp"
@@ -55,8 +56,16 @@ public:
 	u8 					transpose;
 	u8 					fine_tune;
 	int 				target_tick;
+	
 	u8 					tsp_position;
+	s8 					tsp_delta;
+	s8 					vol_delta;
+	u8 					tsp_target;
+	u8 					vol_target;
+	LoopMode			tsp_loop;
+	
 	u8 					vol_position;
+	LoopMode			vol_loop;
 		
 	Pattern*			pattern;		// Replaces VAR_PATTERN	[ 6 ] GLOBAL -> Rename to Pattern
 	Pattern*			song_patterns;	// Replaces VAR_SONG.PATTERNS[ 6 ] GLOBAL -> Rename to Order

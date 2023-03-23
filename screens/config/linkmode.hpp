@@ -4,7 +4,7 @@
 #include "../../agb.h"
 
 #include "../../data/control.hpp"
-#include "../../modules/regionhandler/regionhandler.hpp"
+#include "../../kernel/regionhandler/regionhandler.hpp"
 
 enum E_LINKMODE_CONTROLS { 
 	CONTROL_LINKMODE_MENU2,			

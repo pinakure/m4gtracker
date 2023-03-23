@@ -1,10 +1,10 @@
 #include "coloreditor.hpp"
 #include "../../debug.hpp"
-#include "../../modules/gpu/gpu.hpp"
-#include "../../modules/sys/sys.hpp"
-#include "../../modules/key/key.hpp"
-#include "../../modules/spu/sequencer.hpp"
-#include "../../modules/sram/sram.hpp"
+#include "../../kernel/gpu/gpu.hpp"
+#include "../../kernel/sys/sys.hpp"
+#include "../../kernel/key/key.hpp"
+#include "../../kernel/spu/sequencer.hpp"
+#include "../../kernel/sram/sram.hpp"
 
 bool ColorEditor::enabled;
 
@@ -55,9 +55,12 @@ void ColorEditor::setColor( u8 color, u8 r, u8 g, u8 b ){
 	u16 packed = (b << 10) | (g<<5) | r;
 	if( color == 8 ) {
 		*(u16*) BG_PALETTE = packed;
+		*(u16*) OBJ_PALETTE = packed;
 	} else {
 		*(u16*)(BG_PALETTE + ( color * 2)) = packed;
 		*(u16*)(BG_PALETTE + (color*0x20)+0x10)	= packed;
+		*(u16*)(OBJ_PALETTE + ( color * 2)) = packed;
+		*(u16*)(OBJ_PALETTE + (color*0x20)+0x10)= packed;
 	}
 }
 

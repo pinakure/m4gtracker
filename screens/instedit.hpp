@@ -8,7 +8,7 @@
 #include "../data/instrument.hpp"
 #include "../data/display.hpp"
 #include "../data/control.hpp"
-#include "../modules/spu/adsr.hpp"
+#include "../kernel/spu/adsr.hpp"
 
 enum E_INS_PWM_CONTROLS { 
 	CONTROL_INS_PWM_INDEX,

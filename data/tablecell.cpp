@@ -1,5 +1,5 @@
 #include "tablecell.hpp"
-#include "../modules/sram/sram.hpp"
+#include "../kernel/sram/sram.hpp"
 
 static u8 iterator;
 

@@ -1,9 +1,9 @@
 #include "alpha.hpp"
-#include "../modules/gpu/gpu.hpp"
-#include "../modules/key/key.hpp"
-#include "../modules/spu/sequencer.hpp"
-#include "../modules/regionhandler/regionhandler.hpp"
-#include "../modules/sys/sys.hpp"
+#include "../kernel/gpu/gpu.hpp"
+#include "../kernel/key/key.hpp"
+#include "../kernel/spu/sequencer.hpp"
+#include "../kernel/regionhandler/regionhandler.hpp"
+#include "../kernel/sys/sys.hpp"
 
 u8 		AlphaDialog::buffer[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 u8 		AlphaDialog::maxlen		= 0;	

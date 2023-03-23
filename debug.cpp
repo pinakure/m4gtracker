@@ -1,18 +1,18 @@
 #include "debug.hpp"
 
 #include "screens/songedit.hpp"
-#include "modules/gpu/gpu.hpp"
-#include "modules/sys/sys.hpp"
-#include "modules/key/key.hpp"
-#include "modules/sram/sram.hpp"
+#include "kernel/gpu/gpu.hpp"
+#include "kernel/sys/sys.hpp"
+#include "kernel/key/key.hpp"
+#include "kernel/sram/sram.hpp"
 #include "screens/config.hpp"
 #include "data/enum.h"
 #include "data/data.hpp"
-#include "modules/spu/mixer.hpp"
-#include "modules/spu/synth.hpp"
-#include "modules/spu/sequencer.hpp"
+#include "kernel/spu/mixer.hpp"
+#include "kernel/spu/synth.hpp"
+#include "kernel/spu/sequencer.hpp"
 
-#include "modules/clip/clip.hpp"
+#include "kernel/clip/clip.hpp"
 
 #ifndef NDEBUG
 
@@ -23,22 +23,11 @@ static const u16 color_aft = COLOR_GREEN;
 
 #include "data/song.hpp"
 
-
-void Debug::runTests(){
-
-
-	return;
-	memoryTest( NULL, 0, 0, NULL);
-		
-	Mixer::start();
-	Sequencer::playing = true;
-	Gpu::clear();
+#include "data/hudcursor.hpp"
 	
-	while(1){
-		Sequencer::update();	
-	}
-	//error(0xCAFECAFE, true);
-	//error(0xCAFECAFE, false);
+void Debug::runTests(){
+	Gpu::clear(0x0200);
+
 }
 
 VariableWatch	Debug::variables[4];

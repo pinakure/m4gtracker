@@ -3,9 +3,9 @@
 #include "../../debug.hpp" 
 #include "../../data/enum.h" 
 #include "../../data/data.hpp" 
-#include "../../modules/gpu/gpu.hpp" 
-#include "../../modules/net/net.hpp" 
-#include "../../modules/spu/sequencer.hpp" 
+#include "../../kernel/gpu/gpu.hpp" 
+#include "../../kernel/net/net.hpp" 
+#include "../../kernel/spu/sequencer.hpp" 
 
 const Callback cb_cfg_linkmode		= { LinkMode::alterMode			, EVENT_MODIFY_B	, &LinkMode::mode				, NULL };
 const Callback cb_cfg_masterclock	= { LinkMode::toggleMaster		, EVENT_KEYDOWN_B	, &LinkMode::master_clock_enable, NULL };

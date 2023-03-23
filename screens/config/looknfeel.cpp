@@ -2,11 +2,11 @@
 #include "coloreditor.hpp"
 #include "../config.hpp"
 
-#include "../../modules/spu/mixer.hpp"
-#include "../../modules/spu/synth.hpp"
-#include "../../modules/sys/sys.hpp"
-#include "../../modules/gpu/gpu.hpp"
-#include "../../modules/key/key.hpp"
+#include "../../kernel/spu/mixer.hpp"
+#include "../../kernel/spu/synth.hpp"
+#include "../../kernel/sys/sys.hpp"
+#include "../../kernel/gpu/gpu.hpp"
+#include "../../kernel/key/key.hpp"
 #include "../../data/data.hpp"
 
 const Callback cb_cfg_interface		= { modify1BIT					, EVENT_MODIFY_B	, &VAR_CFG.LOOKNFEEL.INTERFACE	, NULL };

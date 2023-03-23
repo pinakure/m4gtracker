@@ -1,12 +1,12 @@
 #include "../live.hpp"
 #include "../../debug.hpp"
 #include "../../data/data.hpp"
-#include "../../modules/key/key.hpp"
-#include "../../modules/gpu/gpu.hpp"
-#include "../../modules/sys/sys.hpp"
-#include "../../modules/spu/sequencer.hpp"
-#include "../../modules/spu/mixer.hpp"
-#include "../../modules/sram/sram.hpp"
+#include "../../kernel/key/key.hpp"
+#include "../../kernel/gpu/gpu.hpp"
+#include "../../kernel/sys/sys.hpp"
+#include "../../kernel/spu/sequencer.hpp"
+#include "../../kernel/spu/mixer.hpp"
+#include "../../kernel/sram/sram.hpp"
 #include "../../screens/songedit.hpp"
 
 MEM_IN_EWRAM u8 		Performance::vars[ CONTROL_LIVE1_MAX ];	

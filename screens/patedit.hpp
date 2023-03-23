@@ -2,7 +2,7 @@
 #define PATEDIT_HPP
 
 #include "../agb.h"
-#include "../modules/regionhandler/regionhandler.hpp"
+#include "../kernel/regionhandler/regionhandler.hpp"
 #include "../data/channel.hpp"
 
 enum E_PAT_CONTROLS { 

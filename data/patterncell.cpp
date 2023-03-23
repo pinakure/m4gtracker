@@ -1,6 +1,6 @@
 #include "patterncell.hpp"
 #include "../debug.hpp"
-#include "../modules/sram/sram.hpp"
+#include "../kernel/sram/sram.hpp"
 #include "../screens/songedit.hpp"
 #include "../screens/live/performance.hpp"
 

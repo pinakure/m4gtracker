@@ -1,6 +1,6 @@
 #include "instrument.hpp"
 #include "../debug.hpp"
-#include "../modules/sram/sram.hpp"
+#include "../kernel/sram/sram.hpp"
 #include "../screens/songedit.hpp"
 #include "../screens/live/performance.hpp"
 
@@ -55,7 +55,7 @@ void readPackedString( const char *output, u8 string_length, u8 char_bit_size ){
 	
 }
 void writePackedString( const char *output, u8 string_length, u8 char_bit_size ){
-	int total_bitsize = (string_length * char_bit_size) / 8;
+	//int total_bitsize = (string_length * char_bit_size) / 8;
 }
 
 void Instrument::read(){

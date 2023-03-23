@@ -5,7 +5,7 @@
 
 #include "../../data/control.hpp"
 #include "../../data/color.hpp"
-#include "../../modules/regionhandler/regionhandler.hpp"
+#include "../../kernel/regionhandler/regionhandler.hpp"
 
 class ColorEditor {
 	public:

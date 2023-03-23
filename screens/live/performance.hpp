@@ -5,7 +5,7 @@
 
 #include "../../data/control.hpp"
 #include "../../data/display.hpp"
-#include "../../modules/regionhandler/regionhandler.hpp"
+#include "../../kernel/regionhandler/regionhandler.hpp"
 
 enum E_LIVE1_CONTROLS { 
 	CONTROL_LIVE1_RETRIG,			CONTROL_LIVE1_SPEED,			CONTROL_LIVE1_QUANTIZE1,

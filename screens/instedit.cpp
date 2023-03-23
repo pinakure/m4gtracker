@@ -3,11 +3,11 @@
 #include "../debug.hpp"
 #include "../data/data.hpp"
 #include "../macros.h"
-#include "../modules/regionhandler/regionhandler.hpp"
-#include "../modules/spu/synth.hpp"
-#include "../modules/gpu/gpu.hpp"
-#include "../modules/gpu/virtualscreen.hpp"
-#include "../modules/key/key.hpp"
+#include "../kernel/regionhandler/regionhandler.hpp"
+#include "../kernel/spu/synth.hpp"
+#include "../kernel/gpu/gpu.hpp"
+#include "../kernel/gpu/virtualscreen.hpp"
+#include "../kernel/key/key.hpp"
 
 /* Global callbacks ---------------------------------------------------------------------------------------------------------- */
 const Callback cb_ins_index				 = { InstEdit::index		, EVENT_MODIFY_B 	, &VAR_CFG.CURRENTINSTRUMENT	, NULL };
@@ -457,8 +457,9 @@ void InstEdit::pack( Instrument* i ){
 SETTINGS_FMW InstEdit::unpackFmw( Instrument *i ){
 	SETTINGS_FMW ret;
 	int c, di;
-	ret.DISTORTION		= EXTRACT(i->SETTINGS[0], 3, 0xF);	// 4
-	ret.ALGORITHM 		= i->SETTINGS[0] & 0x7;				// 3
+	ret.DISTORTION		= EXTRACT(i->SETTINGS[0], 4, 0xF);	// 4
+	if((i->SETTINGS[0] &0x7) > 0x5) i->SETTINGS[0] = (i->SETTINGS[0] & 0xF0) | 5;				// 3
+	ret.ALGORITHM 		= i->SETTINGS[0] &= 0x7;				// 3
 	ret.OP1_TYPE 		= EXTRACT(i->SETTINGS[1], 3, 0x7);	// 3
 	ret.OP2_TYPE 		= i->SETTINGS[1] & 0x7;				// 3
 	ret.OP3_TYPE 		= EXTRACT(i->SETTINGS[2], 3, 0x7);	// 3
@@ -544,15 +545,17 @@ SETTINGS_PWM InstEdit::unpackPwm( Instrument *i ){
 	ret.VOL_LOOP		= i->SETTINGS[1] & 0x3;
 	ret.LENGTH 			= EXTRACT(i->SETTINGS[2], 4, 0xF);
 	ret.LEVEL			= i->SETTINGS[2] & 0xF;
-	ret.TSP_LENGTH		= EXTRACT(i->SETTINGS[3], 4, 0xF);
 	ret.SWEEPSPEED 		= i->SETTINGS[3] & 0xF;
 	ret.SWEEPSTEPS 		= EXTRACT(i->SETTINGS[4], 4, 0xF);
 	ret.VOLUMEFADE		= i->SETTINGS[4] & 0xF;
-	ret.TSP_POSITION	= EXTRACT(i->SETTINGS[5], 4, 0xF);
-	ret.VOL_POSITION	= i->SETTINGS[5] & 0xF;
-	ret.VOL_LENGTH		= EXTRACT(i->SETTINGS[6], 4, 0xF);
 	ret.VOL_ENVELOPE	= i->SETTINGS[7];
 	ret.TSP_ENVELOPE	= i->SETTINGS[8];
+	ret.TSP_POSITION	= 0;// TRANSIENT - remove from struct at SRAM
+	ret.VOL_POSITION	= 0;// TRANSIENT - remove from struct at SRAM
+	ret.TSP_SPEED		= ( ret.TSP_ENVELOPE & 0xF0) >> 4;
+	ret.VOL_SPEED		= ( ret.VOL_ENVELOPE & 0xF0) >> 4;
+	ret.TSP_LENGTH		= ( ret.TSP_ENVELOPE & 0x0F);
+	ret.VOL_LENGTH		= ( ret.VOL_ENVELOPE & 0x0F);
 	for(int c=0; c<0x10; c++){
 		ret.TSP[c]		= EXTRACT(i->SETTINGS[9+c], 4, 0xF);
 		ret.VOL[c]		= i->SETTINGS[9+c] & 0xF;

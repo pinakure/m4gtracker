@@ -1,8 +1,8 @@
 #include "really.hpp"
-#include "../modules/gpu/gpu.hpp"
+#include "../kernel/gpu/gpu.hpp"
 #include "../debug.hpp"
-#include "../modules/key/key.hpp"
-#include "../modules/spu/sequencer.hpp"
+#include "../kernel/key/key.hpp"
+#include "../kernel/spu/sequencer.hpp"
 
 u16 	ReallyDialog::background 	= 0x19;
 bool 	ReallyDialog::result		= false;

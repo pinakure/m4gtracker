@@ -5,7 +5,7 @@
 
 #include "../../data/control.hpp"
 #include "../../data/display.hpp"
-#include "../../modules/regionhandler/regionhandler.hpp"
+#include "../../kernel/regionhandler/regionhandler.hpp"
 
 enum E_LIVE2_CONTROLS { 
 	CONTROL_LIVE2_CHANNEL1,			CONTROL_LIVE2_LIVEMODE,			CONTROL_LIVE2_MIDICHAN2,		CONTROL_LIVE2_OCTAVE,

@@ -1,5 +1,5 @@
 #include "../agb.h"
-#include "../modules/gpu/gpu.hpp"
+#include "../kernel/gpu/gpu.hpp"
 #include "../debug.hpp"
 
 #ifndef NDEBUG

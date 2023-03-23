@@ -1,9 +1,9 @@
 #include "snake.hpp" 
-#include "../modules/gpu/gpu.hpp"
-#include "../modules/key/key.hpp"
-#include "../modules/spu/sequencer.hpp"
-#include "../modules/spu/mixer.hpp"
-#include "../modules/spu/synth.hpp"
+#include "../kernel/gpu/gpu.hpp"
+#include "../kernel/key/key.hpp"
+#include "../kernel/spu/sequencer.hpp"
+#include "../kernel/spu/mixer.hpp"
+#include "../kernel/spu/synth.hpp"
 
 bool 		SnakeGame::turbo;
 bool 		SnakeGame::redraw_game 	= true;

@@ -2,21 +2,21 @@ PROGNAME=m4g
 #rm C:/agb/BATTERY/*.SAV
 # NOTE: REMOVE DEBUG.O FROM OFILES WHEN RELEASING TO STRIP 5 KB OF USELESS DATA
 OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
-		modules/int/int.o \
-		modules/tim/tim.o \
-		modules/sys/sys.o \
-		modules/sram/sram.o \
-		modules/clip/clip.o \
-		modules/key/key.o \
-		modules/regionhandler/cursor.o \
-		modules/regionhandler/regionhandler.o \
-		modules/gpu/virtualscreen.o \
-		modules/gpu/gpu.o \
-		modules/net/net.o \
-		modules/spu/mixer.o \
-		modules/spu/sequencer.o \
-		modules/spu/synth.o \
-		modules/spu/adsr.o \
+		kernel/int/int.o \
+		kernel/tim/tim.o \
+		kernel/sys/sys.o \
+		kernel/sram/sram.o \
+		kernel/clip/clip.o \
+		kernel/key/key.o \
+		kernel/regionhandler/cursor.o \
+		kernel/regionhandler/regionhandler.o \
+		kernel/gpu/virtualscreen.o \
+		kernel/gpu/gpu.o \
+		kernel/net/net.o \
+		kernel/spu/mixer.o \
+		kernel/spu/sequencer.o \
+		kernel/spu/synth.o \
+		kernel/spu/adsr.o \
 		data/tables.o \
 		data/layers.o \
 		data/tileset.o \
@@ -28,6 +28,8 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 		data/patterncell.o \
 		data/control.o \
 		data/instrument.o \
+		data/bitshifter.o \
+		data/hudcursor.o \
 		data/song.o \
 		data/channel.o \
 		data/viewports.o \
@@ -132,25 +134,25 @@ fixheader:
 	$(HAMDIR)/tools/win32/gbafix$(EXEC_POSTFIX) $(PROGNAME).gba -t$(PROGNAME)
 	call patch.bat
 	
-clean-modules: 
+clean-kernel: 
 	@echo -------------------------------------------------------------------------------
-	@echo Cleaning up modules
+	@echo Cleaning up kernel kernel
 	@echo -------------------------------------------------------------------------------
-	 -f modules/int/*.o *.i *.ii *.m4h	
-	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/regionhandler/*.o *.i *.ii *.m4h	
-	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/tim/*.o *.i *.ii *.m4h	
-	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/sys/*.o *.i *.ii *.m4h	
-	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/clip/*.o *.i *.ii *.m4h	
-	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/key/*.o *.i *.ii *.m4h	
-	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/gpu/*.o *.i *.ii *.m4h	
-	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/net/*.o *.i *.ii *.m4h	
-	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/mem/*.o *.i *.ii *.m4h	
-	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/spu/*.o *.i *.ii *.m4h	
-	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/sram/*.o *.i *.ii *.m4h	
-	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/key/*.o *.i *.ii *.m4h	
-	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f modules/clip/*.o *.i *.ii *.m4h	
+	 -f kernel/int/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f kernel/regionhandler/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f kernel/tim/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f kernel/sys/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f kernel/clip/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f kernel/key/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f kernel/gpu/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f kernel/net/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f kernel/mem/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f kernel/spu/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f kernel/sram/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f kernel/key/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f kernel/clip/*.o *.i *.ii *.m4h	
 
-clean-data: clean-modules
+clean-data: clean-kernel
 	@echo -------------------------------------------------------------------------------
 	@echo Cleaning data
 	@echo -------------------------------------------------------------------------------

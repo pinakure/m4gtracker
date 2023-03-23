@@ -3,7 +3,7 @@
 
 #include "../../agb.h"
 
-#include "../../modules/regionhandler/regionhandler.hpp"
+#include "../../kernel/regionhandler/regionhandler.hpp"
 
 enum E_BEHAVIOR_CONTROLS { 
 	CONTROL_BEHAVIOR_MENU3,			CONTROL_BEHAVIOR_AUTOLOAD,		CONTROL_BEHAVIOR_AUTOSAVE,		CONTROL_BEHAVIOR_KEYRATE,

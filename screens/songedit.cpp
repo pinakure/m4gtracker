@@ -4,11 +4,11 @@
 
 #include "../debug.hpp"
 #include "../data/data.hpp"
-#include "../modules/sram/sram.hpp"
-#include "../modules/spu/sequencer.hpp"
-#include "../modules/spu/mixer.hpp"
-#include "../modules/gpu/gpu.hpp"
-#include "../modules/key/key.hpp"
+#include "../kernel/sram/sram.hpp"
+#include "../kernel/spu/sequencer.hpp"
+#include "../kernel/spu/mixer.hpp"
+#include "../kernel/gpu/gpu.hpp"
+#include "../kernel/key/key.hpp"
 
 #define CALLBACK(n, c, t, v, nx)			const Callback n = { c , t , v, nx}
 #define CB_SNG_GROOVE(a)						CALLBACK(cb_sng_groove_0##a, modify8BIT	, EVENT_MODIFY_B, &VAR_SONG.GROOVE.STEP[0x##a],	NULL)

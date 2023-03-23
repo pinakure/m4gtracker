@@ -1,6 +1,6 @@
 #include "m4g.hpp"
 #include "debug.hpp"
-#include "modules/modules.hpp"
+#include "kernel/modules.hpp"
 #include "screens/config.hpp"
 
 vu32 							SYS_TIMER			= 0;

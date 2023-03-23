@@ -7,7 +7,7 @@ This regions must reside in each correspondent callback/xxx file
 
 #include "data.hpp"
 #include "viewports.hpp"
-#include "../modules/spu/mixer.hpp"
+#include "../kernel/spu/mixer.hpp"
 
 void updateCHANNEL0();
 void updateCHANNEL1();

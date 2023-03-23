@@ -1,5 +1,5 @@
 #include "control.hpp"
-#include "../modules/spu/sequencer.hpp"
+#include "../kernel/spu/sequencer.hpp"
 #include "../screens/tracker.hpp"
 #include "data.hpp"
 

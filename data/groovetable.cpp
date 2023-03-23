@@ -1,5 +1,5 @@
 #include "groovetable.hpp"
-#include "../modules/sram/sram.hpp"
+#include "../kernel/sram/sram.hpp"
 #include "../screens/songedit.hpp"
 
 static u8 iterator;

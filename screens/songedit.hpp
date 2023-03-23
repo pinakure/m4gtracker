@@ -3,7 +3,7 @@
 
 #include "../agb.h"
 
-#include "../modules/regionhandler/regionhandler.hpp"
+#include "../kernel/regionhandler/regionhandler.hpp"
 #include "../data/callback.hpp"
 #include "../data/enum.h"
 

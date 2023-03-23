@@ -4,7 +4,7 @@
 #include "../agb.h"
 
 #include "../data/control.hpp"
-#include "../modules/regionhandler/regionhandler.hpp"
+#include "../kernel/regionhandler/regionhandler.hpp"
 #include "../data/channel.hpp"
 
 enum E_TRACKER_CONTROLS { 

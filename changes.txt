@@ -169,3 +169,11 @@ Website Skeleton (django) and templates
 Color Editor Functionality, palette backup and read from SRAM
 Show link status on the bottom of the screen
 Tweak analog sync out timing calculation
+
+
+-----------
+21-03-2023
+-----------
+PWM & NZE Tables are using envelope XY properly : X=speed, Y=length
+Fixed FMW Algorithm value bug
+PWN & NZE Volume and transpose table loop modes working properly. Groove on.
