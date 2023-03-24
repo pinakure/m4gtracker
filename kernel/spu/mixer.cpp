@@ -2,6 +2,12 @@
 #include "../../data/channel.hpp"
 #include "../../debug.hpp"
 #include "../../data/settings.hpp"
+#include "../../gbfs.h"
+
+#include "../gpu/gpu.hpp"
+#include "sequencer.hpp"
+#include "../key/key.hpp"
+
 
 const u16 DSOUND_FREQ_TABLE[] = {
 		// Finetune 0
@@ -163,7 +169,8 @@ void Mixer::mix(){
 //  s16 vol_a = 0xF & 0xF;
 //   s16 vol_b = 0xF & 0xF;
    
-   SoundChannel *fm = &channel[0];
+   SoundChannel *fm 	= &channel[0];
+   SoundChannel *smp 	= &channel[1];
    
    sample_a = 0x00;
    sample_b = 0x00;
@@ -178,53 +185,93 @@ void Mixer::mix(){
 			//sample_a = fm->data[ fm->pos & 0xF ];
 			fm->pos += fm->inc;
 			if(fm->pos >= fm->length ) fm->pos -= fm->length;// This sample loops when finished
-		}
+		} else sample_a = 0;
+		
 		// WORKAROUND
-		sound_buffer.curMixBuffer[i] = sample_a;
-		/*
-			// Pick a sample from SMP sample buffer
-			if(channel[1].pos < channel[1].length){
-				sample_b = channel[1].data[ channel[1].pos>>12 ] * vol_b;
-				channel[1].pos += channel[1].inc;
-				sample_b >>= 2;
-			} else channel[1].pos = channel[1].length;
-			// Sum both input sample bytes into a single output byte 
-			// sound_buffer.curMixBuffer[i] = ( sample_a + sample_b ) >> 1;
-		*/
+		//sound_buffer.curMixBuffer[i] = sample_a;
+		if( smp->data ){
+			sample_b = ( smp->data[ smp->pos>>12 ] ) ;//*0xF;//* vol_b;
+			smp->pos += smp->inc;
+			/* !! */
+			// sample_b >>= 2;
+			/* !! */
+			if( smp->pos >= smp->length) smp->pos -= smp->length;
+			//Gpu::number(22,14, smp->pos>>4, 0x2);
+			//Gpu::number(22,15, smp->length>>4, 0x2);
+		
+		} else sample_b = 0;
+		// Sum both input sample bytes into a single output byte 
+		sound_buffer.curMixBuffer[i] = ( sample_a + sample_b ) >> 1;
 	}
 
 }
 
 void Mixer::noteOn1(u16 freq){
-	channel[0].inc = (freq << 12) / 16000;	
+	// channel[0].inc = (freq << 12) / 16000;	
+	channel[0].inc = (freq << 12) / 5734;	
 }
 
 void Mixer::noteOn2(u16 freq){
+	static u16 chivato=0; Gpu::number(10,0,chivato,0xF); chivato++;
+	channel[1].inc = (freq<<12)/16000;//5734;
+	//channel[1].inc = (freq<<12)/5734;
+	Mixer::load( 0 , 1);
 	//if(new_note[5]){
-		channel[1].pos = 0;
+		// channel[1].pos = 0;
 		//channel[1].inc = (DSOUND_FREQ_TABLE[key_note[5]]<<12) / 16000;//5734;	
-		channel[1].inc = freq;
 	//}
 }
 
 
 #define SAMPLE_COUNT 125
-void Mixer::load(size_t index, int chan){
-	/*//loadSample
+void Mixer::load(size_t index, int chan=1){
+	//loadSample
 	index <<=1;
-	const GBFS_FILE *dat= find_first_gbfs_file((const void*)find_first_gbfs_file);
-	smp_data = (u32*)gbfs_get_nth_obj(dat, index  , NULL, &smp_data_size);
-	smp_name = (char *)gbfs_get_nth_obj(dat, index+1, NULL, NULL);
-	*/
-	// Update channel settings
-	channel[chan].data  	= 0;
-	channel[chan].pos 		= 0;
-	channel[chan].length 	= smp_data_size<<12;
-	channel[chan].inc 		= (4000<<12)/5734;
-	/*
-	//channel[chan].length = smp_data_size - (smp_data_size &0XF); //remove last bytes from sample to ensure it is multiple of 16
+	const GBFS_FILE *dat = find_first_gbfs_file((const void*)find_first_gbfs_file);
+	smp_data 	= (u32*)gbfs_get_nth_obj(dat, index  , NULL, &smp_data_size);
+	smp_name 	= (char *)gbfs_get_nth_obj(dat, index+1, NULL, NULL);
 	
-	channel[chan].data = (s8*)smp_data;
+	channel[1].pos 		= 0;
+	channel[1].data = (s8*)smp_data;
+	//channel[1].length 	= smp_data_size<<12;
+	smp_data_size <<= 12;
+	channel[1].length = smp_data_size - (smp_data_size &0XF); //remove last bytes from sample to ensure it is multiple of 16
+	
+	if(KEYPRESS_SELECT){
+		Gpu::drawDialog(20,0,10,20,"SMP Info");
+		/**/
+		Gpu::ascii (42,1, "smp_data");
+		Gpu::ascii (42,2, "0x", COLOR_CYAN);
+		Gpu::hexnum(22,2,(unsigned int)&smp_data, 0x2);
+		/**/
+		Gpu::ascii (42,3, "smp_name");
+		Gpu::ascii (42,4, smp_name, 0x2);
+		/**/
+		Gpu::ascii (42,5, "index");
+		Gpu::number(21,6, index, 0x2);
+		/**/
+		Gpu::ascii (42,7, "smp_data_size");
+		Gpu::ascii (42,8, "0x", COLOR_CYAN);
+		Gpu::hexnum(22,8,smp_data_size, 0x2);
+		/**/
+		Gpu::ascii (42,9, "dat");
+		Gpu::ascii (42,10, "0x", COLOR_CYAN);
+		Gpu::hexnum(22,10,(unsigned int)&dat, 0x2);
+		/**/
+		Gpu::ascii (42,11, "chan.length");
+		Gpu::ascii (42,12, "0x", COLOR_CYAN);
+		Gpu::number(22,12, channel[1].length, 0x2);
+		/**/
+		Gpu::ascii (42,13, "chan.position");
+		Gpu::ascii (42,14, "0x", COLOR_CYAN);
+		Gpu::number(22,14, channel[1].pos, 0x2);
+		while( KEYPRESS_SELECT ){ Key::update(); }
+	}
+	// Update channel settings
+	// channel[1].data  	= 0;
+	//channel[1].inc 		= (4000<<12)/5734;
+	/*
+	
 	
 	if(chan)noteOnSmp1();
 	else noteOnSmp2(); 

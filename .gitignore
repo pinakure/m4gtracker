@@ -277,3 +277,5 @@ kernel/sys/sys.o
 kernel/sram/sram.o
 hudcursor.s
 a.out
+libgbfs.o
+libgbfs.s

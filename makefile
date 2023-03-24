@@ -52,6 +52,7 @@ OFILES = asm/crt0.o asm/sram.o asm/clock.o asm/sys.o \
 		dialogs/really.o \
 		dialogs/alpha.o \
 		dialogs/progress.o \
+		libgbfs.o \
 		debug.o \
 		m4g.o 
 

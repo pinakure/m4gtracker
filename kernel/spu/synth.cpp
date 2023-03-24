@@ -55,6 +55,7 @@ const u8 operators[8][16] = {
 	/* SQUARE	*/ { 0xC, 0xF, 0xF, 0xF, 0xF, 0xF, 0xF, 0xB, 0x4, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x3 },
 };
 
+
 void Synth::init(){
 	/* ----------------------------------------------------------*/
 	/* INITIALIZE SOUND CHIP 									 */
@@ -179,7 +180,6 @@ void Synth::noteOnFmw( Channel* channel ){
 			+ channel->fine_tune 
 			+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
 	
-	//DECIMAL_DOUBLE_TWOTILES(0,2,0xFF,frq);
 		
 	Mixer::noteOn1( frq );
 	channel->retrig = false;
@@ -998,6 +998,8 @@ void Synth::triggerFmw( Channel* channel ){
 	noteOnFmw( channel );
 }
 
+#include "sequencer.hpp"
+
 void Synth::triggerSmp( Channel* channel ){
 	u8 vol 			 = channel->volume;
 	Instrument *i 	 = &VAR_INSTRUMENTS[ channel->inst ];
@@ -1009,15 +1011,17 @@ void Synth::triggerSmp( Channel* channel ){
 		channel->vol_position	= 0;
 		channel->reset			= false;
 		channel->transpose		= 0;
+		
+		if( channel->retrig ){//&& Sequencer::currentTicks==0){
+			// Regenerate SMP ADSR Table
+			Adsr::updateSmp( &smp );
+			noteOnSmp( channel );
+		}
+		channel->retrig = false;
 	}
 	
-	if( channel->retrig ){
-		// Regenerate SMP ADSR Table
-		Adsr::updateSmp( &smp );
-	}
 	// Regenerate FMW shape (scaled to channel volume)
 	renderSmp( &smp, vol );
-	noteOnSmp( channel );
 }
 /*###########################################################################*/
 

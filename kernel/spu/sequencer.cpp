@@ -173,14 +173,14 @@ void Sequencer::update(){
 		Net::update();
 	}	
 	
+	if( !( currentTicks	& 0x3 ) ){
 	// If current tick%4 == 0, time to trigger a note on every channel
-	if( !( currentTicks & 0x3 ) ){
 		
 		// Send Analog Master Sync signal or Receive Slave sync signal
 		//Net::update();
 		
-		for(int i=0, s = 0; i<6; i++){
-			Channel *channel = &VAR_CHANNEL[ i ];
+		Channel *channel = VAR_CHANNEL;
+		for(int i=0, s = 0; i<6; i++, channel++){
 			
 			channel->retrig = false;
 			
@@ -194,7 +194,9 @@ void Sequencer::update(){
 			
 			// Handle Groove Table
 			//channel->target_tick = 0;
-			
+			// this causes unwanted retriggers
+			//if( ( currentTicks  ) == channel->target_tick ){
+				
 			if( ( currentTicks & 0x3 ) == channel->target_tick ){
 				
 				// trigger sound settings
