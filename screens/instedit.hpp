@@ -9,6 +9,7 @@
 #include "../data/display.hpp"
 #include "../data/control.hpp"
 #include "../kernel/spu/adsr.hpp"
+#include "../data/sprite.hpp"
 
 enum E_INS_PWM_CONTROLS { 
 	CONTROL_INS_PWM_INDEX,
@@ -213,6 +214,13 @@ class InstEdit {
 		static void modAdsrWav				( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void modAdsrFmw 				( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void modAdsrSmp				( Control *c, bool bigstep, bool add, u32 *pointer );
+		
+		
+		static Sprite   					waveform[32];
+		static bool 						clean;// if false, will cause redraw. Please toggle off when read to avoid unneccesary redraws
+		
+		static void enter					();
+		static void exit 					();
 };
 
 

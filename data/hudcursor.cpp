@@ -16,7 +16,6 @@ Sprite 	HudCursor::clip_icons[4];
 Sprite 	HudCursor::clip_selection;
 Sprite 	HudCursor::tsp_table_position;
 Sprite 	HudCursor::vol_table_position;
-Sprite 	HudCursor::waveform[32];
 
 // OBJ_ATTR obj_buffer[128];
 //OBJ_AFFINE *const obj_aff_buffer= (OBJ_AFFINE*)obj_buffer;
@@ -47,7 +46,7 @@ void Sprite::init( u8 index ){
 
 void Sprite::render(){
 	if(!(((R_VCOUNT&0x00FF) >=160)&&((R_VCOUNT&0x00FF) <200))) return;
-	(*(u16*)0x4000000) |= 0x1000; 
+	//(*(u16*)0x4000000) |= 0x1000; 
 	// (*(u16*)0x4000000) |= 0x1080; 
 	OBJ_ATTR* p = (OBJ_ATTR*)&(*(u16*)(OAM+(index*8)));
 	p->attr0 	= ( (position.y>>3) & 0xFF)
@@ -65,13 +64,15 @@ void Sprite::render(){
 	p->attr2 	= ( tile_number & 0x3FF)
 				| ( priority 	<< 10 )
 				| ( palette  	<< 12 );
-	(*(u16*)0x4000000) &= 0xff7f;
+	//(*(u16*)0x4000000) &= 0xff7f;
 }
 
 void HudCursor::init(){
 	
 	size.x 				= 4;
 	size.y 				= 1;
+	
+	(*(u16*)0x4000000) |= 0x1000; 
 	
 	// Control cursor ( max 8 wide )
 	for(int i=0; i<8; i++){
@@ -123,12 +124,12 @@ void HudCursor::init(){
 	
 	// Waveform (move vars to instedit and function calls to init)
 	for(int i=0,x=16; i<32; i++,x++){
-		waveform[i].init(40+i);
-		waveform[i].tile_number = ((i&1)?0x1A:0x1A);
-		waveform[i].priority 	= 0;
-		waveform[i].palette 	= 0x6;
-		waveform[i].position.y 	= (10*8)<<3;
-		waveform[i].position.x 	= ((6*8)<<3)+((x*4)<<3);
+		InstEdit::waveform[i].init(40+i);
+		InstEdit::waveform[i].tile_number = ((i&1)?0x1A:0x1A);
+		InstEdit::waveform[i].priority 	= 0;
+		InstEdit::waveform[i].palette 	= 0x6;
+		InstEdit::waveform[i].position.y 	= (10*8)<<3;
+		InstEdit::waveform[i].position.x 	= ((6*8)<<3)+((x*4)<<3);
 	}
 }
 
@@ -182,8 +183,8 @@ void HudCursor::render(){
 	
 	/* draw waveform */
 	for(int i=0; i<32; i++){
-		waveform[i].disable = !AT_INSTRUMENT_SCREEN;
-		waveform[i].render();
+		InstEdit::waveform[i].disable = !AT_INSTRUMENT_SCREEN;
+		InstEdit::waveform[i].render();
 	}
 	
 	/* draw table position cursors */
@@ -251,14 +252,6 @@ void HudCursor::update(){
 		target.x = RegionHandler::control->x<<6;
 		target.y = RegionHandler::control->y<<6;
 		
-		// (Re) set target point 
-		/*
-		if(KEYPRESS_LEFT	) target.x = ((sprite.x >> 3)- 8)<<3;
-		if(KEYPRESS_RIGHT	) target.x = ((sprite.x >> 3)+ 8)<<3;
-		if(KEYPRESS_DOWN	) target.y = ((sprite.y >> 3)+ 8)<<3;
-		if(KEYPRESS_UP   	) target.y = ((sprite.y >> 3)- 8)<<3;
-		*/
-		
 		
 		// Check if we reached target point
 			 if	( spr->position.x < target.x ) spr->delta.x += ( 1<<3 );
@@ -292,7 +285,6 @@ void HudCursor::update(){
 		if( spr->position.y < 0 ) spr->position.y = 0;
 		if( ( spr->position.x>>3 ) > (240-8)) spr->position.x = (240-8)<<3;
 		if( ( spr->position.y>>3 ) > (160-8)) spr->position.y = (160-8)<<3;
-		Key::update();
 	}
 	render();
 }

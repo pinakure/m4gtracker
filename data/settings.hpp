@@ -42,8 +42,6 @@ typedef struct _SETTINGS_WAV {
 	u8 				OP4_TYPE 		;//   	3 : 38
 	u8 				OP4_ADSR[4] 	;//     4 : 41
 	u8 				WAVEDATA[16] 	;// 4 x 16 : TRANSIENT ;	
-	void 			*WAVPRESET[5] 	;// 4 x 16 : TRANSIENT ;
-											  //173 BITS
 	u8 				OP1_GATE 		;//   	4 : 45
 	u8 				OP2_GATE 		;//   	4 : 49
 	u8 				OP3_GATE 		;//   	4 : 53

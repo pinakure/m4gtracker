@@ -72,6 +72,8 @@ void Sys::init(){
 	timer0.init(0);
 	timer0.setup(0x0004, 1);
 	timer0.enable();
+	
+	timer1.init(1);
 
 	/*!-----------------------------------------------*/
 	/* High level initialization							*/

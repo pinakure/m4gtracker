@@ -9,282 +9,12 @@
 #include "../kernel/gpu/virtualscreen.hpp"
 #include "../kernel/key/key.hpp"
 #include "../data/hudcursor.hpp"
-
-/* Global callbacks ---------------------------------------------------------------------------------------------------------- */
-const Callback cb_ins_index				 = { InstEdit::index		, EVENT_MODIFY_B 	, &VAR_CFG.CURRENTINSTRUMENT	, NULL };
-const Callback cb_ins_name				 = { AlphaDialog::getString , EVENT_KEYUP_A 	, &VAR_INSTRUMENT.NAME			, NULL };
-const Callback cb_ins_type				 = { InstEdit::type			, EVENT_MODIFY_B 	, &VAR_INSTRUMENT.TYPE			, NULL };
-/* PWM instrument settings --------------------------------------------------------------------------------------------------- */            	
-const Callback cb_ins_volumefade		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_PWM.VOLUMEFADE			, NULL };
-const Callback cb_ins_tspenvelope		 = { InstEdit::modByte		, EVENT_MODIFY_B 	, &VAR_PWM.TSP_ENVELOPE			, NULL };
-const Callback cb_ins_tspmode			 = { InstEdit::mod2b		, EVENT_MODIFY_B 	, &VAR_PWM.TSP_LOOP 		 	, NULL };
-const Callback cb_ins_tspenable			 = { InstEdit::modBit		, EVENT_KEYDOWN_B 	, &VAR_PWM.TSP_ENABLE	 		, NULL };
-const Callback cb_ins_volenable			 = { InstEdit::modBit		, EVENT_KEYDOWN_B 	, &VAR_PWM.VOL_ENABLE	 		, NULL };
-const Callback cb_ins_volmode			 = { InstEdit::mod2b		, EVENT_MODIFY_B 	, &VAR_PWM.VOL_LOOP 		 	, NULL };
-const Callback cb_ins_volenvelope		 = { InstEdit::modByte		, EVENT_MODIFY_B 	, &VAR_PWM.VOL_ENVELOPE			, NULL };
-const Callback cb_ins_dutycycle			 = { InstEdit::mod2b		, EVENT_MODIFY_B 	, &VAR_PWM.DUTYCYCLE		 	, NULL };
-const Callback cb_ins_length			 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_PWM.LENGTH		 		, NULL };
-const Callback cb_ins_sweepdir			 = { InstEdit::modBit		, EVENT_KEYDOWN_B	, &VAR_PWM.SWEEPDIR		 		, NULL };
-const Callback cb_ins_sweepspeed		 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.SWEEPSPEED	 		, NULL };
-const Callback cb_ins_sweepsteps 		 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.SWEEPSTEPS	 		, NULL };
-const Callback cb_ins_pwm_level			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.LEVEL				, NULL };
-const Callback cb_ins_envelopedir		 = { InstEdit::modBit		, EVENT_KEYDOWN_B	, &VAR_PWM.ENVELOPEDIR	 		, NULL };
-// PWM Tsp Table
-const Callback cb_ins_tsp_00 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.TSP[ 0x0 ]			, NULL };
-const Callback cb_ins_tsp_01 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.TSP[ 0x1 ]			, NULL };
-const Callback cb_ins_tsp_02 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.TSP[ 0x2 ]			, NULL };
-const Callback cb_ins_tsp_03 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.TSP[ 0x3 ]			, NULL };
-const Callback cb_ins_tsp_04 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.TSP[ 0x4 ]			, NULL };
-const Callback cb_ins_tsp_05 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.TSP[ 0x5 ]			, NULL };
-const Callback cb_ins_tsp_06 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.TSP[ 0x6 ]			, NULL };
-const Callback cb_ins_tsp_07 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.TSP[ 0x7 ]			, NULL };
-const Callback cb_ins_tsp_08 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.TSP[ 0x8 ]			, NULL };
-const Callback cb_ins_tsp_09 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.TSP[ 0x9 ]			, NULL };
-const Callback cb_ins_tsp_0A 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.TSP[ 0xA ]			, NULL };
-const Callback cb_ins_tsp_0B 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.TSP[ 0xB ]			, NULL };
-const Callback cb_ins_tsp_0C 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.TSP[ 0xC ]			, NULL };
-const Callback cb_ins_tsp_0D 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.TSP[ 0xD ]			, NULL };
-const Callback cb_ins_tsp_0E 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.TSP[ 0xE ]			, NULL };
-const Callback cb_ins_tsp_0F 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.TSP[ 0xF ]			, NULL };
-// PWM Vol Table
-const Callback cb_ins_vol_00 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.VOL[ 0x0 ]			, NULL };
-const Callback cb_ins_vol_01 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.VOL[ 0x1 ]			, NULL };
-const Callback cb_ins_vol_02 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.VOL[ 0x2 ]			, NULL };
-const Callback cb_ins_vol_03 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.VOL[ 0x3 ]			, NULL };
-const Callback cb_ins_vol_04 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.VOL[ 0x4 ]			, NULL };
-const Callback cb_ins_vol_05 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.VOL[ 0x5 ]			, NULL };
-const Callback cb_ins_vol_06 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.VOL[ 0x6 ]			, NULL };
-const Callback cb_ins_vol_07 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.VOL[ 0x7 ]			, NULL };
-const Callback cb_ins_vol_08 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.VOL[ 0x8 ]			, NULL };
-const Callback cb_ins_vol_09 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.VOL[ 0x9 ]			, NULL };
-const Callback cb_ins_vol_0A 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.VOL[ 0xA ]			, NULL };
-const Callback cb_ins_vol_0B 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.VOL[ 0xB ]			, NULL };
-const Callback cb_ins_vol_0C 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.VOL[ 0xC ]			, NULL };
-const Callback cb_ins_vol_0D 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.VOL[ 0xD ]			, NULL };
-const Callback cb_ins_vol_0E 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.VOL[ 0xE ]			, NULL };
-const Callback cb_ins_vol_0F 			 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_PWM.VOL[ 0xF ]			, NULL };
-/* WAV instrument settings --------------------------------------------------------------------------------------------------- */            	
-const Callback cb_ins_phase		  		 = { InstEdit::modBit		, EVENT_KEYDOWN_B 	, &VAR_WAV.PHASE	 			, NULL };
-const Callback cb_ins_am		  		 = { InstEdit::modBit		, EVENT_KEYDOWN_B 	, &VAR_WAV.AM		 			, NULL };
-const Callback cb_ins_distortion  		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_WAV.DISTORTION 			, NULL };
-const Callback cb_ins_wav_op1type 		 = { InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_WAV.OP1_TYPE				, NULL };
-const Callback cb_ins_wav_op2type 		 = { InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_WAV.OP2_TYPE				, NULL };
-const Callback cb_ins_wav_op3type 		 = { InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_WAV.OP3_TYPE				, NULL };
-const Callback cb_ins_wav_op4type 		 = { InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_WAV.OP4_TYPE				, NULL };
-const Callback cb_ins_wav_op1gate 		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_WAV.OP1_GATE				, NULL };
-const Callback cb_ins_wav_op2gate 		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_WAV.OP2_GATE				, NULL };
-const Callback cb_ins_wav_op3gate 		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_WAV.OP3_GATE				, NULL };
-const Callback cb_ins_wav_op4gate 		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_WAV.OP4_GATE				, NULL };
-// WAV ADSR OP#1
-const Callback cb_ins_wav_op1adsr_0		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP1_ADSR		[ 0x0 ]	, NULL };
-const Callback cb_ins_wav_op1adsr_1		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP1_ADSR		[ 0x1 ]	, NULL };
-const Callback cb_ins_wav_op1adsr_2		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP1_ADSR		[ 0x2 ]	, NULL };
-const Callback cb_ins_wav_op1adsr_3		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP1_ADSR		[ 0x3 ]	, NULL };
-// WAV ADSR OP#2		                                                                                                
-const Callback cb_ins_wav_op2adsr_0		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP2_ADSR		[ 0x0 ]	, NULL };
-const Callback cb_ins_wav_op2adsr_1		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP2_ADSR		[ 0x1 ]	, NULL };
-const Callback cb_ins_wav_op2adsr_2		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP2_ADSR		[ 0x2 ]	, NULL };
-const Callback cb_ins_wav_op2adsr_3		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP2_ADSR		[ 0x3 ]	, NULL };
-// WAV ADSR OP#3		                                                                                                
-const Callback cb_ins_wav_op3adsr_0		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP3_ADSR		[ 0x0 ]	, NULL };
-const Callback cb_ins_wav_op3adsr_1		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP3_ADSR		[ 0x1 ]	, NULL };
-const Callback cb_ins_wav_op3adsr_2		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP3_ADSR		[ 0x2 ]	, NULL };
-const Callback cb_ins_wav_op3adsr_3		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP3_ADSR		[ 0x3 ]	, NULL };
-// WAV ADSR OP#4                                                                                                        
-const Callback cb_ins_wav_op4adsr_0		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP4_ADSR		[ 0x0 ]	, NULL };
-const Callback cb_ins_wav_op4adsr_1		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP4_ADSR		[ 0x1 ]	, NULL };
-const Callback cb_ins_wav_op4adsr_2		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP4_ADSR		[ 0x2 ]	, NULL };
-const Callback cb_ins_wav_op4adsr_3		 = { InstEdit::modAdsrWav	, EVENT_MODIFY_B 	, &VAR_WAV.OP4_ADSR		[ 0x3 ]	, NULL };
-// WAV PRESETS
-const Callback cb_ins_wav_preset0		 = { InstEdit::wavPreset	, EVENT_KEYUP_B		, &VAR_WAV.WAVPRESET	[ 0x0 ] , NULL };
-const Callback cb_ins_wav_preset1		 = { InstEdit::wavPreset	, EVENT_KEYUP_B		, &VAR_WAV.WAVPRESET	[ 0x1 ] , NULL };
-const Callback cb_ins_wav_preset2		 = { InstEdit::wavPreset	, EVENT_KEYUP_B		, &VAR_WAV.WAVPRESET	[ 0x2 ] , NULL };
-const Callback cb_ins_wav_preset3		 = { InstEdit::wavPreset	, EVENT_KEYUP_B		, &VAR_WAV.WAVPRESET	[ 0x3 ] , NULL };
-const Callback cb_ins_wav_preset4		 = { InstEdit::wavPreset	, EVENT_KEYUP_B		, &VAR_WAV.WAVPRESET	[ 0x4 ] , NULL };
-const Callback cb_ins_wav_preset5		 = { InstEdit::wavPreset	, EVENT_KEYUP_B		, &VAR_WAV.WAVPRESET	[ 0x5 ] , NULL };
-/* FMW instrument settings --------------------------------------------------------------------------------------------------- */            	
-const Callback cb_ins_algorithm			 = { InstEdit::modAlgorithm	, EVENT_MODIFY_B 	, &VAR_FMW.ALGORITHM			, NULL };
-const Callback cb_ins_fm_distortion		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_FMW.DISTORTION			, NULL };
-const Callback cb_ins_fm_op1type		 = { InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_FMW.OP1_TYPE				, NULL };
-const Callback cb_ins_fm_op2type		 = { InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_FMW.OP2_TYPE				, NULL };
-const Callback cb_ins_fm_op3type		 = { InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_FMW.OP3_TYPE				, NULL };
-const Callback cb_ins_fm_op4type		 = { InstEdit::mod3b		, EVENT_MODIFY_B 	, &VAR_FMW.OP4_TYPE				, NULL };
-const Callback cb_ins_fm_op1gate		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_FMW.OP1_GATE				, NULL };
-const Callback cb_ins_fm_op2gate		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_FMW.OP2_GATE				, NULL };
-const Callback cb_ins_fm_op3gate		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_FMW.OP3_GATE				, NULL };
-const Callback cb_ins_fm_op4gate		 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_FMW.OP4_GATE				, NULL };
-// FMW ADSR OP#1
-const Callback cb_ins_fm_op1adsr_0		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP1_ADSR		[ 0x0 ]	, NULL };
-const Callback cb_ins_fm_op1adsr_1		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP1_ADSR		[ 0x1 ]	, NULL };
-const Callback cb_ins_fm_op1adsr_2		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP1_ADSR		[ 0x2 ]	, NULL };
-const Callback cb_ins_fm_op1adsr_3		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP1_ADSR		[ 0x3 ]	, NULL };
-// FMW ADSR OP#2
-const Callback cb_ins_fm_op2adsr_0		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP2_ADSR		[ 0x0 ]	, NULL };
-const Callback cb_ins_fm_op2adsr_1		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP2_ADSR		[ 0x1 ]	, NULL };
-const Callback cb_ins_fm_op2adsr_2		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP2_ADSR		[ 0x2 ]	, NULL };
-const Callback cb_ins_fm_op2adsr_3		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP2_ADSR		[ 0x3 ]	, NULL };
-// FMW ADSR OP#3
-const Callback cb_ins_fm_op3adsr_0		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP3_ADSR		[ 0x0 ]	, NULL };
-const Callback cb_ins_fm_op3adsr_1		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP3_ADSR		[ 0x1 ]	, NULL };
-const Callback cb_ins_fm_op3adsr_2		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP3_ADSR		[ 0x2 ]	, NULL };
-const Callback cb_ins_fm_op3adsr_3		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP3_ADSR		[ 0x3 ]	, NULL };
-// FMW ADSR OP#4
-const Callback cb_ins_fm_op4adsr_0		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP4_ADSR		[ 0x0 ]	, NULL };
-const Callback cb_ins_fm_op4adsr_1		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP4_ADSR		[ 0x1 ]	, NULL };
-const Callback cb_ins_fm_op4adsr_2		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP4_ADSR		[ 0x2 ]	, NULL };
-const Callback cb_ins_fm_op4adsr_3		 = { InstEdit::modAdsrFmw	, EVENT_MODIFY_B 	, &VAR_FMW.OP4_ADSR		[ 0x3 ]	, NULL };
-/* SMP instrument settings --------------------------------------------------------------------------------------------------- */            	
-const Callback cb_ins_smp_start			 = { InstEdit::modByte		, EVENT_MODIFY_B 	, &VAR_SMP.START				, NULL };
-const Callback cb_ins_smp_end			 = { InstEdit::modByte		, EVENT_MODIFY_B 	, &VAR_SMP.END					, NULL };
-const Callback cb_ins_smp_frequency		 = { InstEdit::modByte		, EVENT_MODIFY_B 	, &VAR_SMP.FREQUENCY			, NULL };
-const Callback cb_ins_smp_b				 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_SMP.B					, NULL };
-const Callback cb_ins_smp_s				 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_SMP.S					, NULL };
-const Callback cb_ins_smp_r				 = { InstEdit::modNibble	, EVENT_MODIFY_B 	, &VAR_SMP.R					, NULL };
-const Callback cb_ins_smp_synthmode		 = { InstEdit::modBit		, EVENT_KEYDOWN_B 	, &VAR_SMP.SYNTHMODE			, NULL };
-const Callback cb_ins_smp_loop			 = { InstEdit::mod2b		, EVENT_MODIFY_B 	, &VAR_SMP.LOOP					, NULL };
-const Callback cb_ins_smp_kit			 = { InstEdit::modSmpKit	, EVENT_MODIFY_B 	, &VAR_SMP.KIT					, NULL };
-// SMP Kit													                                                    
-const Callback cb_ins_smpkit_00 		 = { InstEdit::smpPreset	, EVENT_KEYUP_B		, &VAR_SMP.SMPKIT		[ 0x0 ]	, NULL };
-const Callback cb_ins_smpkit_01 		 = { InstEdit::smpPreset	, EVENT_KEYUP_B		, &VAR_SMP.SMPKIT		[ 0x1 ]	, NULL };
-const Callback cb_ins_smpkit_02 		 = { InstEdit::smpPreset	, EVENT_KEYUP_B		, &VAR_SMP.SMPKIT		[ 0x2 ]	, NULL };
-const Callback cb_ins_smpkit_03 		 = { InstEdit::smpPreset	, EVENT_KEYUP_B		, &VAR_SMP.SMPKIT		[ 0x3 ]	, NULL };
-const Callback cb_ins_smpkit_04 		 = { InstEdit::smpPreset	, EVENT_KEYUP_B		, &VAR_SMP.SMPKIT		[ 0x4 ]	, NULL };
-const Callback cb_ins_smpkit_05 		 = { InstEdit::smpPreset	, EVENT_KEYUP_B		, &VAR_SMP.SMPKIT		[ 0x5 ]	, NULL };
-const Callback cb_ins_smpkit_06 		 = { InstEdit::smpPreset	, EVENT_KEYUP_B		, &VAR_SMP.SMPKIT		[ 0x6 ]	, NULL };
-const Callback cb_ins_smpkit_07 		 = { InstEdit::smpPreset	, EVENT_KEYUP_B		, &VAR_SMP.SMPKIT		[ 0x7 ]	, NULL };
-const Callback cb_ins_smpkit_08 		 = { InstEdit::smpPreset	, EVENT_KEYUP_B		, &VAR_SMP.SMPKIT		[ 0x8 ]	, NULL };
-const Callback cb_ins_smpkit_09 		 = { InstEdit::smpPreset	, EVENT_KEYUP_B		, &VAR_SMP.SMPKIT		[ 0x9 ]	, NULL };
-const Callback cb_ins_smpkit_0A 		 = { InstEdit::smpPreset	, EVENT_KEYUP_B		, &VAR_SMP.SMPKIT		[ 0xA ]	, NULL };
-const Callback cb_ins_smpkit_0B 		 = { InstEdit::smpPreset	, EVENT_KEYUP_B		, &VAR_SMP.SMPKIT		[ 0xB ]	, NULL };
-// SMP ADSR											                                                            
-const Callback cb_ins_smp_adsr_0 		 = { InstEdit::modAdsrSmp	, EVENT_MODIFY_B 	, &VAR_SMP.ADSR			[ 0x0 ] , NULL };
-const Callback cb_ins_smp_adsr_1 		 = { InstEdit::modAdsrSmp	, EVENT_MODIFY_B 	, &VAR_SMP.ADSR			[ 0x1 ] , NULL };
-const Callback cb_ins_smp_adsr_2 		 = { InstEdit::modAdsrSmp	, EVENT_MODIFY_B 	, &VAR_SMP.ADSR			[ 0x2 ] , NULL };
-const Callback cb_ins_smp_adsr_3 		 = { InstEdit::modAdsrSmp	, EVENT_MODIFY_B 	, &VAR_SMP.ADSR			[ 0x3 ] , NULL };
-/* --------------------------------------------------------------------------------------------------------------------------- */            	
-
-/* Generic? Instrument tables ------------------------------------------------------------------------------------------------------------ */            	
-const Callback cb_ins_table_transpose_00 = { InstEdit::modByte		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.TRANSPOSE	[ 0x0 ]	, NULL };
-const Callback cb_ins_table_transpose_01 = { InstEdit::modByte		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.TRANSPOSE	[ 0x1 ]	, NULL };
-const Callback cb_ins_table_transpose_02 = { InstEdit::modByte		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.TRANSPOSE	[ 0x2 ]	, NULL };
-const Callback cb_ins_table_transpose_03 = { InstEdit::modByte		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.TRANSPOSE	[ 0x3 ]	, NULL };
-const Callback cb_ins_table_transpose_04 = { InstEdit::modByte		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.TRANSPOSE	[ 0x4 ]	, NULL };
-const Callback cb_ins_table_transpose_05 = { InstEdit::modByte		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.TRANSPOSE	[ 0x5 ]	, NULL };
-const Callback cb_ins_table_transpose_06 = { InstEdit::modByte		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.TRANSPOSE	[ 0x6 ]	, NULL };
-const Callback cb_ins_table_transpose_07 = { InstEdit::modByte		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.TRANSPOSE	[ 0x7 ]	, NULL };
-const Callback cb_ins_table_transpose_08 = { InstEdit::modByte		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.TRANSPOSE	[ 0x8 ]	, NULL };
-const Callback cb_ins_table_transpose_09 = { InstEdit::modByte		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.TRANSPOSE	[ 0x9 ]	, NULL };
-const Callback cb_ins_table_transpose_0A = { InstEdit::modByte		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.TRANSPOSE	[ 0xA ]	, NULL };
-const Callback cb_ins_table_transpose_0B = { InstEdit::modByte		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.TRANSPOSE	[ 0xB ]	, NULL };
-const Callback cb_ins_table_transpose_0C = { InstEdit::modByte		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.TRANSPOSE	[ 0xC ]	, NULL };
-const Callback cb_ins_table_transpose_0D = { InstEdit::modByte		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.TRANSPOSE	[ 0xD ]	, NULL };
-const Callback cb_ins_table_transpose_0E = { InstEdit::modByte		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.TRANSPOSE	[ 0xE ]	, NULL };
-const Callback cb_ins_table_transpose_0F = { InstEdit::modByte		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.TRANSPOSE	[ 0xF ]	, NULL };
-// Volume
-const Callback cb_ins_table_volume_00 	 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VOLUME		[ 0x0 ]	, NULL };
-const Callback cb_ins_table_volume_01 	 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VOLUME		[ 0x1 ]	, NULL };
-const Callback cb_ins_table_volume_02 	 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VOLUME		[ 0x2 ]	, NULL };
-const Callback cb_ins_table_volume_03 	 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VOLUME		[ 0x3 ]	, NULL };
-const Callback cb_ins_table_volume_04 	 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VOLUME		[ 0x4 ]	, NULL };
-const Callback cb_ins_table_volume_05 	 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VOLUME		[ 0x5 ]	, NULL };
-const Callback cb_ins_table_volume_06 	 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VOLUME		[ 0x6 ]	, NULL };
-const Callback cb_ins_table_volume_07 	 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VOLUME		[ 0x7 ]	, NULL };
-const Callback cb_ins_table_volume_08 	 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VOLUME		[ 0x8 ]	, NULL };
-const Callback cb_ins_table_volume_09 	 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VOLUME		[ 0x9 ]	, NULL };
-const Callback cb_ins_table_volume_0A 	 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VOLUME		[ 0xA ]	, NULL };
-const Callback cb_ins_table_volume_0B 	 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VOLUME		[ 0xB ]	, NULL };
-const Callback cb_ins_table_volume_0C 	 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VOLUME		[ 0xC ]	, NULL };
-const Callback cb_ins_table_volume_0D 	 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VOLUME		[ 0xD ]	, NULL };
-const Callback cb_ins_table_volume_0E 	 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VOLUME		[ 0xE ]	, NULL };
-const Callback cb_ins_table_volume_0F 	 = { InstEdit::modNibble	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VOLUME		[ 0xF ]	, NULL };
-// CMD2 & Value1
-const Callback cb_ins_table_value1_00 	 = { InstEdit::modByte 		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 0 ][ 0x0 ] , NULL };
-const Callback cb_ins_table_value1_01 	 = { InstEdit::modByte 		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 0 ][ 0x1 ] , NULL };
-const Callback cb_ins_table_value1_02 	 = { InstEdit::modByte 		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 0 ][ 0x2 ] , NULL };
-const Callback cb_ins_table_value1_03 	 = { InstEdit::modByte 		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 0 ][ 0x3 ] , NULL };
-const Callback cb_ins_table_value1_04 	 = { InstEdit::modByte 		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 0 ][ 0x4 ] , NULL };
-const Callback cb_ins_table_value1_05 	 = { InstEdit::modByte 		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 0 ][ 0x5 ] , NULL };
-const Callback cb_ins_table_value1_06 	 = { InstEdit::modByte 		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 0 ][ 0x6 ] , NULL };
-const Callback cb_ins_table_value1_07 	 = { InstEdit::modByte 		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 0 ][ 0x7 ] , NULL };
-const Callback cb_ins_table_value1_08 	 = { InstEdit::modByte 		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 0 ][ 0x8 ] , NULL };
-const Callback cb_ins_table_value1_09 	 = { InstEdit::modByte 		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 0 ][ 0x9 ] , NULL };
-const Callback cb_ins_table_value1_0A 	 = { InstEdit::modByte 		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 0 ][ 0xA ] , NULL };
-const Callback cb_ins_table_value1_0B 	 = { InstEdit::modByte 		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 0 ][ 0xB ] , NULL };
-const Callback cb_ins_table_value1_0C 	 = { InstEdit::modByte 		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 0 ][ 0xC ] , NULL };
-const Callback cb_ins_table_value1_0D 	 = { InstEdit::modByte 		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 0 ][ 0xD ] , NULL };
-const Callback cb_ins_table_value1_0E 	 = { InstEdit::modByte 		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 0 ][ 0xE ] , NULL };
-const Callback cb_ins_table_value1_0F 	 = { InstEdit::modByte 		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 0 ][ 0xF ] , NULL };
-const Callback cb_ins_table_command1_00  = { InstEdit::modVal27		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 0 ][ 0x0 ] , NULL };
-const Callback cb_ins_table_command1_01  = { InstEdit::modVal27		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 0 ][ 0x1 ] , NULL };
-const Callback cb_ins_table_command1_02  = { InstEdit::modVal27		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 0 ][ 0x2 ] , NULL };
-const Callback cb_ins_table_command1_03  = { InstEdit::modVal27		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 0 ][ 0x3 ] , NULL };
-const Callback cb_ins_table_command1_04  = { InstEdit::modVal27		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 0 ][ 0x4 ] , NULL };
-const Callback cb_ins_table_command1_05  = { InstEdit::modVal27		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 0 ][ 0x5 ] , NULL };
-const Callback cb_ins_table_command1_06  = { InstEdit::modVal27		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 0 ][ 0x6 ] , NULL };
-const Callback cb_ins_table_command1_07  = { InstEdit::modVal27		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 0 ][ 0x7 ] , NULL };
-const Callback cb_ins_table_command1_08  = { InstEdit::modVal27		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 0 ][ 0x8 ] , NULL };
-const Callback cb_ins_table_command1_09  = { InstEdit::modVal27		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 0 ][ 0x9 ] , NULL };
-const Callback cb_ins_table_command1_0A  = { InstEdit::modVal27		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 0 ][ 0xA ] , NULL };
-const Callback cb_ins_table_command1_0B  = { InstEdit::modVal27		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 0 ][ 0xB ] , NULL };
-const Callback cb_ins_table_command1_0C  = { InstEdit::modVal27		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 0 ][ 0xC ] , NULL };
-const Callback cb_ins_table_command1_0D  = { InstEdit::modVal27		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 0 ][ 0xD ] , NULL };
-const Callback cb_ins_table_command1_0E  = { InstEdit::modVal27		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 0 ][ 0xE ] , NULL };
-const Callback cb_ins_table_command1_0F  = { InstEdit::modVal27		, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 0 ][ 0xF ] , NULL };
-// CMD2 & Value2
-const Callback cb_ins_table_value2_00 	 = { InstEdit::modByte   	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 1 ][ 0x0 ]	, NULL };
-const Callback cb_ins_table_value2_01 	 = { InstEdit::modByte   	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 1 ][ 0x1 ]	, NULL };
-const Callback cb_ins_table_value2_02 	 = { InstEdit::modByte   	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 1 ][ 0x2 ]	, NULL };
-const Callback cb_ins_table_value2_03 	 = { InstEdit::modByte   	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 1 ][ 0x3 ]	, NULL };
-const Callback cb_ins_table_value2_04 	 = { InstEdit::modByte   	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 1 ][ 0x4 ]	, NULL };
-const Callback cb_ins_table_value2_05 	 = { InstEdit::modByte   	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 1 ][ 0x5 ]	, NULL };
-const Callback cb_ins_table_value2_06 	 = { InstEdit::modByte   	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 1 ][ 0x6 ]	, NULL };
-const Callback cb_ins_table_value2_07 	 = { InstEdit::modByte   	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 1 ][ 0x7 ]	, NULL };
-const Callback cb_ins_table_value2_08 	 = { InstEdit::modByte   	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 1 ][ 0x8 ]	, NULL };
-const Callback cb_ins_table_value2_09 	 = { InstEdit::modByte   	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 1 ][ 0x9 ]	, NULL };
-const Callback cb_ins_table_value2_0A 	 = { InstEdit::modByte   	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 1 ][ 0xA ]	, NULL };
-const Callback cb_ins_table_value2_0B 	 = { InstEdit::modByte   	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 1 ][ 0xB ]	, NULL };
-const Callback cb_ins_table_value2_0C 	 = { InstEdit::modByte   	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 1 ][ 0xC ]	, NULL };
-const Callback cb_ins_table_value2_0D 	 = { InstEdit::modByte   	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 1 ][ 0xD ]	, NULL };
-const Callback cb_ins_table_value2_0E 	 = { InstEdit::modByte   	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 1 ][ 0xE ]	, NULL };
-const Callback cb_ins_table_value2_0F 	 = { InstEdit::modByte   	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.VALUE  [ 1 ][ 0xF ]	, NULL };
-const Callback cb_ins_table_command2_00  = { InstEdit::modVal27  	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 1 ][ 0x0 ]	, NULL };
-const Callback cb_ins_table_command2_01  = { InstEdit::modVal27  	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 1 ][ 0x1 ]	, NULL };
-const Callback cb_ins_table_command2_02  = { InstEdit::modVal27  	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 1 ][ 0x2 ]	, NULL };
-const Callback cb_ins_table_command2_03  = { InstEdit::modVal27  	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 1 ][ 0x3 ]	, NULL };
-const Callback cb_ins_table_command2_04  = { InstEdit::modVal27  	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 1 ][ 0x4 ]	, NULL };
-const Callback cb_ins_table_command2_05  = { InstEdit::modVal27  	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 1 ][ 0x5 ]	, NULL };
-const Callback cb_ins_table_command2_06  = { InstEdit::modVal27  	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 1 ][ 0x6 ]	, NULL };
-const Callback cb_ins_table_command2_07  = { InstEdit::modVal27  	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 1 ][ 0x7 ]	, NULL };
-const Callback cb_ins_table_command2_08  = { InstEdit::modVal27  	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 1 ][ 0x8 ]	, NULL };
-const Callback cb_ins_table_command2_09  = { InstEdit::modVal27  	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 1 ][ 0x9 ]	, NULL };
-const Callback cb_ins_table_command2_0A  = { InstEdit::modVal27  	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 1 ][ 0xA ]	, NULL };
-const Callback cb_ins_table_command2_0B  = { InstEdit::modVal27  	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 1 ][ 0xB ]	, NULL };
-const Callback cb_ins_table_command2_0C  = { InstEdit::modVal27  	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 1 ][ 0xC ]	, NULL };
-const Callback cb_ins_table_command2_0D  = { InstEdit::modVal27  	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 1 ][ 0xD ]	, NULL };
-const Callback cb_ins_table_command2_0E  = { InstEdit::modVal27  	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 1 ][ 0xE ]	, NULL };
-const Callback cb_ins_table_command2_0F  = { InstEdit::modVal27  	, EVENT_MODIFY_B	, &VAR_INSTRUMENT.TABLE.COMMAND[ 1 ][ 0xF ]	, NULL };
-/*----------------------------------------------------------------------------------------------------------------------------------------- */
-/*! CONTROLS      																															*/
-/*----------------------------------------------------------------------------------------------------------------------------------------- */
+#include "instedit/callbacks.c"
 #include "instedit/controls.c"
-/*----------------------------------------------------------------------------------------------------------------------------------------- */
-/*! DISPLAYS																																*/
-/*----------------------------------------------------------------------------------------------------------------------------------------- */
-const Display TABLE_DISPLAYS[TABLE_DISPLAY_MAX] = { 
-//					{ x	   	, y		, invert	, cache					, var											, active	, redraw	},
-/*	BAR_TSP		*/	{ 0x1e	, 0x16	, false		, &CACHE_TABLEPOSITION	, (u8*)&( VAR_INSTRUMENT.TABLE.POSITION[ 0 ] )	, false		, false 	},
-/*	BAR_VOL		*/	{ 0x22	, 0x16	, false		, &CACHE_TABLEPOSITION	, (u8*)&( VAR_INSTRUMENT.TABLE.POSITION[ 0 ] )	, false		, false 	},
-/*	BAR_CMD1	*/	{ 0x25	, 0x16	, false		, &CACHE_TABLEPOSITION	, (u8*)&( VAR_INSTRUMENT.TABLE.POSITION[ 0 ] )	, false		, false 	},
-/*	BAR_CMD2	*/	{ 0x2a	, 0x16	, false		, &CACHE_TABLEPOSITION	, (u8*)&( VAR_INSTRUMENT.TABLE.POSITION[ 1 ] )	, false		, false 	},
-DISPLAY_TERMINATOR
-};
-const Display VIS_DISPLAYS[VIS_DISPLAY_MAX] = { 
-//					{ x	   	, y		, invert	, cache					, var											, active	, redraw	},
-/*	SAMPLE		*/	{ 0x1e	, 0x26	, false		, &CACHE_VISPOSITION2	, (u8*)&( VAR_INSTRUMENT.VISPOSITION[ 1 ] )		, false		, false 	},
-/*	ENVELOPE	*/	{ 0x1e	, 0x15	, false		, &CACHE_VISPOSITION1	, (u8*)&( VAR_INSTRUMENT.VISPOSITION[ 0 ] )		, false		, false 	},
-DISPLAY_TERMINATOR
-};
-/*----------------------------------------------------------------------------------------------------------------------------------------- */
+#include "instedit/displays.c"
+
+bool InstEdit::clean;
+Sprite InstEdit::waveform[32];
 
 // Called on index change
 void InstEdit::load(){	
@@ -599,18 +329,20 @@ void InstEdit::copy(Instrument *s, Instrument *d){
 }
 
 // Keeps instrument copy updated
-void InstEdit::synchronize(){
-	static u8 LASTINSTRUMENT = 63;
+
+static u8 last_index = 63;
+static u8 last_type	 = 0;
 	
-	if(LASTINSTRUMENT != VAR_CFG.CURRENTINSTRUMENT){
-		InstEdit::copy(&VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT], &VAR_INSTRUMENT);
-		InstEdit::unpack( &VAR_INSTRUMENT );
-		LASTINSTRUMENT = VAR_CFG.CURRENTINSTRUMENT;
-		RegionHandler::redraw = true;
-	} /*else {
-		InstEdit::copy(&VAR_INSTRUMENT, &VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT]);
-		InstEdit::pack( &VAR_INSTRUMENT );
-	}*/
+
+void InstEdit::synchronize(){
+	if ( last_index != VAR_CFG.CURRENTINSTRUMENT ) return;
+	
+	InstEdit::copy(&VAR_INSTRUMENTS[VAR_CFG.CURRENTINSTRUMENT], &VAR_INSTRUMENT);
+	InstEdit::unpack( &VAR_INSTRUMENT );
+	last_index 	= VAR_CFG.CURRENTINSTRUMENT;
+	last_type 	= VAR_INSTRUMENT.TYPE; 
+	
+	//RegionHandler::redraw = true;
 }
 
 void InstEdit::dispatchMessage(u32 msg) {
@@ -648,12 +380,15 @@ void InstEdit::updateWav(  ){
 	STRING(false, cname->x, cname->y, cname->var);
 	
 	static int adsr_position;
-	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_WAV ].inst ) 
-	if( adsr_position != WAV_ADSR_POSITION ){
-		adsr_position = WAV_ADSR_POSITION;
-		if( !KEYPRESS_SELECT ) Adsr::drawX4( Adsr::wav_table, adsr_position);
-		else viewWaveFormWav( );
+	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_WAV ].inst ) {
+		if( !KEYPRESS_SELECT ) {
+			if( adsr_position != WAV_ADSR_POSITION ){
+				adsr_position = WAV_ADSR_POSITION;
+					Adsr::drawX4( Adsr::wav_table, adsr_position);
+			}
+		} else viewWaveFormWav( );
 	}
+	
 	
 	InstEdit::synchronize();
 }
@@ -722,6 +457,18 @@ void InstEdit::modAdsrSmp( Control *c, bool bigstep, bool add, u32 *pointer ){
 	Adsr::updateSmp( &smp ); 
 }
 
+
+const SETTINGS_WAV presets[6] = {
+//	{ PHASE	, AM	, DISTORTION, OP1_TYPE	, OP1_ADSR[4]			, OP2_TYPE	, OP2_ADSR[4]			, OP3_TYPE	, OP3_ADSR[4]			, OP4_TYPE	, OP4_ADSR[4]			, WAVEDATA[16]																			, OP1_GATE	, OP2_GATE 	, OP3_GATE	, OP4_GATE 
+	{ false	, false	, 0x0		, 0			, { 0xF, 0xF, 0xF, 0xE }, 0 		, { 0x0, 0xF, 0x0, 0xF }, 1 		, { 0xF, 0x0, 0xF, 0x0 }, 5			, { 0xF, 0x0, 0x8, 0x0 }, { 0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0 }	, 2			, 4			, 0x4		, 12		},
+	{ true	, false	, 0x2		, 1			, { 0xF, 0xF, 0xF, 0xE }, 5 		, { 0x0, 0xF, 0x0, 0xF }, 2 		, { 0xF, 0x0, 0xF, 0x0 }, 4			, { 0x0, 0xF, 0x0, 0x8 }, { 0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0 }	, 4			, 0xB		, 8			, 12		},
+	{ true	, false	, 0x4		, 2			, { 0xF, 0xF, 0xF, 0xE }, 4 		, { 0x0, 0xF, 0x0, 0xF }, 3 		, { 0xF, 0x0, 0xF, 0x0 }, 3			, { 0xF, 0x0, 0x8, 0x0 }, { 0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0 }	, 2			, 4			, 8			, 0xF 		},
+	{ true	, true	, 0x6		, 3			, { 0xF, 0xF, 0xF, 0xE }, 3 		, { 0x0, 0xF, 0x0, 0xF }, 4 		, { 0xF, 0x0, 0xF, 0x0 }, 2			, { 0x0, 0xF, 0x0, 0x6 }, { 0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0 }	, 8			, 4			, 0xA		, 12		},
+	{ false	, true	, 0x8		, 4			, { 0xF, 0xF, 0xF, 0xE }, 2 		, { 0x0, 0xF, 0x0, 0xF }, 5 		, { 0xF, 0x0, 0xF, 0x0 }, 1			, { 0xF, 0x0, 0x8, 0x0 }, { 0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0 }	, 2			, 0xC		, 8			, 12		},
+	{ false	, true	, 0xa		, 5			, { 0xF, 0xF, 0xF, 0xE }, 1 		, { 0x0, 0xF, 0x0, 0xF }, 0 		, { 0xF, 0x0, 0xF, 0x0 }, 0			, { 0x0, 0xF, 0x0, 0x4 }, { 0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0,  0x0, 0x0, 0x0, 0x0 }	, 0xF		, 4			, 8			, 12		},
+};
+	
+
 void InstEdit::wavPreset(Control *c, bool bigstep, bool add, u32 *pointer){
 	#define MATCH( match ) 	( c == &INS_WAV_CONTROLS[ CONTROL_INS_WAV_##match ] ) 
 	int index 	= MATCH( WAVPRESET_00 ) ? 0x0 
@@ -731,8 +478,35 @@ void InstEdit::wavPreset(Control *c, bool bigstep, bool add, u32 *pointer){
 				: MATCH( WAVPRESET_04 ) ? 0x4 
 				: 0x05;
 	#undef MATCH
-	DECIMAL_TWOTILES( 0, 0, 0xff, index );
-	BREAK
+
+	const SETTINGS_WAV *preset = &presets[ index ];
+	
+	VAR_WAV.PHASE		 = preset->PHASE;
+	VAR_WAV.AM			 = preset->AM;
+	VAR_WAV.DISTORTION	 = preset->DISTORTION;
+	VAR_WAV.OP1_TYPE	 = preset->OP1_TYPE;
+	VAR_WAV.OP2_TYPE	 = preset->OP2_TYPE;
+	VAR_WAV.OP3_TYPE	 = preset->OP3_TYPE;
+	VAR_WAV.OP4_TYPE	 = preset->OP4_TYPE;
+	VAR_WAV.OP1_GATE	 = preset->OP1_GATE;
+	VAR_WAV.OP2_GATE	 = preset->OP2_GATE;
+	VAR_WAV.OP3_GATE	 = preset->OP3_GATE;	
+	VAR_WAV.OP4_GATE 	 = preset->OP4_GATE; 	
+	for(int i=0; i<4; i++){
+		VAR_WAV.OP1_ADSR[i]	 = preset->OP1_ADSR[i];
+		VAR_WAV.OP2_ADSR[i]	 = preset->OP2_ADSR[i];
+		VAR_WAV.OP3_ADSR[i]	 = preset->OP3_ADSR[i];
+		VAR_WAV.OP4_ADSR[i]	 = preset->OP4_ADSR[i];
+	}
+	for(int i=0; i<16; i++){
+		VAR_WAV.WAVEDATA[i] = preset->WAVEDATA[i];
+	}
+	InstEdit::repack(); 
+	RegionHandler::redraw = true;
+	Control *focus = RegionHandler::control;
+	RegionHandler::update(0);
+	RegionHandler::control = focus;
+	synchronize(); 
 }
 
 void InstEdit::smpPreset(Control *c, bool bigstep, bool add, u32 *pointer){
@@ -761,36 +535,14 @@ void InstEdit::viewWaveFormFmw( ){
 	
 	for(int i=0; i<16; i++){
 		u8 v = VAR_FMW.WAVEDATA[i]>>3;
-		HudCursor::waveform[ i  ].position.y = center - (( ( v ) * 8 ) <<3);
-		HudCursor::waveform[i+16].position.y = center - (( ( v ) * 8 ) <<3);
+		waveform[ i  ].position.y = center - (( ( v ) * 8 ) <<3);
+		waveform[i+16].position.y = center - (( ( v ) * 8 ) <<3);
 	}
-	/*
-	// Antialiase
-	for(int i=0; i<16; i+=2){
-		HudCursor::waveform[i].position.y = (HudCursor::waveform[i+1].position.y +  HudCursor::waveform[i].position.y )>>1;
-	}
-	*/
-	// if(!VirtualScreen::clean) 
-		// VirtualScreen::clear();
-	// VirtualScreen::clean = false;
-	/*
-	for(int x=0; x < 0x40; x+=2){
-		VirtualScreen::set( x>>1, 15 - ( VAR_FMW.WAVEDATA[ x>>2 ]>>2) );
-		VirtualScreen::set( x>>1, 15 + ( VAR_FMW.WAVEDATA[ x>>2 ]>>2) );
-	}
-	VirtualScreen::draw(14,6);
-	*/
+
 }
 
 void InstEdit::viewWaveFormSmp( ){
-	/*
-	VirtualScreen::clear();
-	for(int x=0; x < 0x40; x+=2){
-		VirtualScreen::set( x>>1, 15 - ( VAR_SMP.WAVEDATA[ x>>2 ]>>2) );
-		VirtualScreen::set( x>>1, 15 + ( VAR_SMP.WAVEDATA[ x>>2 ]>>2) );
-	}
-	VirtualScreen::draw(14,6);
-	*/
+
 }
 
 void InstEdit::viewWaveFormWav( ){
@@ -799,17 +551,9 @@ void InstEdit::viewWaveFormWav( ){
 	
 	for(int i=0; i<16; i++){
 		u8 v = VAR_WAV.WAVEDATA[i];
-		HudCursor::waveform[  i ].position.y = center + (( ( v ) * 8 ) <<3 );
-		HudCursor::waveform[i+16].position.y = center + (( ( v ) * 8 ) <<3 );
+		waveform[  i ].position.y = center + (( ( v ) * 8 ) <<3 );
+		waveform[i+16].position.y = center + (( ( v ) * 8 ) <<3 );
 	}
-	/*
-	VirtualScreen::clear();
-	for(int x=0; x < 0x40; x+=2){
-		VirtualScreen::set( x>>1, 15 - ( VAR_WAV.WAVEDATA[ x>>2 ]) );
-		VirtualScreen::set( x>>1, 15 + ( VAR_WAV.WAVEDATA[ x>>2 ]) );
-	}
-	VirtualScreen::draw(14,6);
-	*/
 }
 
 void InstEdit::clear( u8 index ){
@@ -851,3 +595,12 @@ void InstEdit::clear( u8 index ){
 	InstEdit::pack( instrument );
 	InstEdit::copy( instrument, &VAR_INSTRUMENT );
 }
+
+void InstEdit::enter(){
+}
+
+void InstEdit::exit(){
+	
+}
+
+

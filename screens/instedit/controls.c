@@ -1,3 +1,5 @@
+extern u8 dummy;
+
 #define INSTRUM(a) ((u8*)&(VAR_INSTRUMENT.a))
 #define THIS(a) &INS_PWM_CONTROLS[CONTROL_INS_PWM_##a]
 #define THISVAR(a) ((u8*)&(VAR_PWM.a))
@@ -92,12 +94,12 @@ const Control INS_WAV_CONTROLS[CONTROL_INS_WAV_MAX] = {
 /* op4_adsr_01  	*/	{	0x0b , 0x11 	, THIS(OP3_ADSR_03)		, THIS(OP4_TYPE)		, THIS(OP4_ADSR_03)		, THIS(OP4_ADSR_00)		, &CACHE_HEXADECIMAL			, THISVAR(OP4_ADSR[1])				, &cb_ins_wav_op4adsr_1	},
 /* op4_adsr_02  	*/	{	0x09 , 0x12 	, THIS(OP4_ADSR_00)		, THIS(OP4_ADSR_03)		, THIS(OP1_ADSR_00)		, THIS(WAVPRESET_05)	, &CACHE_HEXADECIMAL			, THISVAR(OP4_ADSR[2])				, &cb_ins_wav_op4adsr_2	},
 /* op4_adsr_03		*/	{	0x0b , 0x12 	, THIS(OP4_ADSR_01)		, THIS(OP4_TYPE)		, THIS(OP1_ADSR_01)		, THIS(OP4_ADSR_02)		, &CACHE_HEXADECIMAL			, THISVAR(OP4_ADSR[3])				, &cb_ins_wav_op4adsr_3	},
-/* wavpreset_00 	*/	{	0x02 , 0x0d 	, THIS(DISTORTION)		, THIS(OP3_ADSR_02)		, THIS(WAVPRESET_01)	, THIS(OP3_ADSR_03)		, &CACHE_TEXT					, THISVAR(WAVPRESET[0])				, &cb_ins_wav_preset0	},
-/* wavpreset_01		*/	{	0x02 , 0x0e 	, THIS(WAVPRESET_00)	, THIS(OP3_ADSR_02)		, THIS(WAVPRESET_02)	, THIS(OP3_ADSR_03)		, &CACHE_TEXT					, THISVAR(WAVPRESET[1])				, &cb_ins_wav_preset1	},
-/* wavpreset_02 	*/	{	0x02 , 0x0f 	, THIS(WAVPRESET_01)	, THIS(OP4_TYPE)		, THIS(WAVPRESET_03)	, THIS(OP4_TYPE)		, &CACHE_TEXT					, THISVAR(WAVPRESET[2])				, &cb_ins_wav_preset2	},
-/* wavpreset_03 	*/	{	0x02 , 0x10 	, THIS(WAVPRESET_02)	, THIS(OP4_TYPE)		, THIS(WAVPRESET_04)	, THIS(OP4_TYPE)		, &CACHE_TEXT					, THISVAR(WAVPRESET[3])				, &cb_ins_wav_preset3	},
-/* wavpreset_04 	*/	{	0x02 , 0x11 	, THIS(WAVPRESET_03)	, THIS(OP4_ADSR_00)		, THIS(WAVPRESET_05)	, THIS(OP4_ADSR_01)		, &CACHE_TEXT					, THISVAR(WAVPRESET[4])				, &cb_ins_wav_preset4	},
-/* wavpreset_05 	*/	{	0x02 , 0x12 	, THIS(WAVPRESET_04)	, THIS(OP4_ADSR_02)		, THIS(INDEX)			, THIS(OP4_ADSR_03)		, &CACHE_TEXT					, THISVAR(WAVPRESET[5])				, &cb_ins_wav_preset5	},
+/* wavpreset_00 	*/	{	0x02 , 0x0d 	, THIS(DISTORTION)		, THIS(OP3_ADSR_02)		, THIS(WAVPRESET_01)	, THIS(OP3_ADSR_03)		, &CACHE_TEXT					, &dummy							, &cb_ins_wav_preset0	},
+/* wavpreset_01		*/	{	0x02 , 0x0e 	, THIS(WAVPRESET_00)	, THIS(OP3_ADSR_02)		, THIS(WAVPRESET_02)	, THIS(OP3_ADSR_03)		, &CACHE_TEXT					, &dummy							, &cb_ins_wav_preset1	},
+/* wavpreset_02 	*/	{	0x02 , 0x0f 	, THIS(WAVPRESET_01)	, THIS(OP4_TYPE)		, THIS(WAVPRESET_03)	, THIS(OP4_TYPE)		, &CACHE_TEXT					, &dummy							, &cb_ins_wav_preset2	},
+/* wavpreset_03 	*/	{	0x02 , 0x10 	, THIS(WAVPRESET_02)	, THIS(OP4_TYPE)		, THIS(WAVPRESET_04)	, THIS(OP4_TYPE)		, &CACHE_TEXT					, &dummy							, &cb_ins_wav_preset3	},
+/* wavpreset_04 	*/	{	0x02 , 0x11 	, THIS(WAVPRESET_03)	, THIS(OP4_ADSR_00)		, THIS(WAVPRESET_05)	, THIS(OP4_ADSR_01)		, &CACHE_TEXT					, &dummy							, &cb_ins_wav_preset4	},
+/* wavpreset_05 	*/	{	0x02 , 0x12 	, THIS(WAVPRESET_04)	, THIS(OP4_ADSR_02)		, THIS(INDEX)			, THIS(OP4_ADSR_03)		, &CACHE_TEXT					, &dummy							, &cb_ins_wav_preset5	},
 CONTROL_TERMINATOR
 };
 #undef THISVAR

@@ -11,7 +11,7 @@
 #include "../../screens/instedit.hpp"
 #include "../../kernel/gpu/gpu.hpp"
 
-static bool swap_bank = false;
+bool swap_bank = false;
 
 u16	Synth::lfo					= 0;
 
@@ -140,6 +140,9 @@ void Synth::noteOnNze( Channel* channel ){
 	channel->retrig = false;
 }
 
+#include "../tim/tim.hpp"
+extern Timer timer1;
+
 void Synth::noteOnWav( Channel* channel ){
 	u8 key	= channel->key 
 			+ channel->transpose
@@ -151,7 +154,16 @@ void Synth::noteOnWav( Channel* channel ){
 			+ channel->fine_tune
 			+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
 	
-	REG_SOUND3CNT_X = SOUND3INIT | SOUND3PLAYLOOP | frq;
+	static u16 lastfrq = 0;
+	if(lastfrq != frq){
+		REG_SOUND3CNT_H &= 0x7000;
+		REG_SOUND3CNT_X = SOUND3INIT | SOUND3PLAYLOOP | frq;
+		lastfrq = frq;
+		timer1.setup(0xFFFF-frq, 1);
+		timer1.enable();
+	
+		swap_bank ^=1;
+	}
 	//REG_SOUNDCNT_L = 0xFFff;			
 	channel->retrig = false;
 }
@@ -216,72 +228,38 @@ void Synth::renderWav( SETTINGS_WAV *wav, u8 vol){
 	operator_volume[ 2 ] = (( Adsr::wav_table[ 2 ][ WAV_ADSR_POSITION ] >> 4 ) * vol)>>4;
 	operator_volume[ 3 ] = (( Adsr::wav_table[ 3 ][ WAV_ADSR_POSITION ] >> 4 ) * vol)>>4;
 
-	// Normalize operator volumes
-	/*
-	u8 output[4] = {
-		operator_volume[ 0 ] 
-		+ (0xF - operator_volume[1]) 
-		+ (0xF - operator_volume[2]) 
-		+ (0xF - operator_volume[3]),
-		operator_volume[ 1 ] 
-		+ (0xF - operator_volume[0]) 
-		+ (0xF - operator_volume[2]) 
-		+ (0xF - operator_volume[3]),
-		operator_volume[ 2 ] 
-		+ (0xF - operator_volume[0]) 
-		+ (0xF - operator_volume[1]) 
-		+ (0xF - operator_volume[3]),
-		operator_volume[ 3 ] 
-		+ (0xF - operator_volume[0]) 
-		+ (0xF - operator_volume[1]) 
-		+ (0xF - operator_volume[2])
-	};
-	// Overwrite with normalized values
-	operator_volume[0] = output[0]>>2;
-	operator_volume[1] = output[1]>>2;
-	operator_volume[2] = output[2]>>2;
-	operator_volume[3] = output[3]>>2;
-	*/
 	#ifndef DISTORTION
-	operator_volume[ 0 ] = operator_volume[ 0 ] > 0xF ? operator_volume[ 0 ] : 0xF;
-	operator_volume[ 1 ] = operator_volume[ 1 ] > 0xF ? operator_volume[ 1 ] : 0xF;
-	operator_volume[ 2 ] = operator_volume[ 2 ] > 0xF ? operator_volume[ 2 ] : 0xF;
-	operator_volume[ 3 ] = operator_volume[ 3 ] > 0xF ? operator_volume[ 3 ] : 0xF;
+	operator_volume[ 0 ] = operator_volume[ 0 ] < 0xF ? operator_volume[ 0 ] : 0xF;
+	operator_volume[ 1 ] = operator_volume[ 1 ] < 0xF ? operator_volume[ 1 ] : 0xF;
+	operator_volume[ 2 ] = operator_volume[ 2 ] < 0xF ? operator_volume[ 2 ] : 0xF;
+	operator_volume[ 3 ] = operator_volume[ 3 ] < 0xF ? operator_volume[ 3 ] : 0xF;
 	#endif 
 	
 	// Advance adsr table common index
+	
 	Adsr::wav_position	= ( Adsr::wav_position < ( ( ADSR_TABLE_LENGTH - 1 ) << 1 ) ) 
 							?	Adsr::wav_position + 1 
 							: ( ADSR_TABLE_LENGTH - 1 );
 	
 	
-	#define OPERATOR1( a )	((u8)((u32)( operators[ wav->OP1_TYPE ][ a ] * operator_volume[0] ) >> 4))
-	#define OPERATOR2( a )	((u8)((u32)( operators[ wav->OP2_TYPE ][ a ] * operator_volume[1] ) >> 4))
-	#define OPERATOR3( a )	((u8)((u32)( operators[ wav->OP3_TYPE ][ a ] * operator_volume[2] ) >> 4))
-	#define OPERATOR4( a )	((u8)((u32)( operators[ wav->OP4_TYPE ][ a ] * operator_volume[3] ) >> 4))
 	
 	// Mix shapes
-	wav->WAVEDATA[ 0] = (u8)((u32)( OPERATOR1( 0x0 ) + OPERATOR2( 0x0 ) + OPERATOR3( 0x0 ) + OPERATOR4( 0x0 ) ) >> 2);
-	wav->WAVEDATA[ 1] = (u8)((u32)( OPERATOR1( 0x1 ) + OPERATOR2( 0x1 ) + OPERATOR3( 0x1 ) + OPERATOR4( 0x1 ) ) >> 2);
-	wav->WAVEDATA[ 2] = (u8)((u32)( OPERATOR1( 0x2 ) + OPERATOR2( 0x2 ) + OPERATOR3( 0x2 ) + OPERATOR4( 0x2 ) ) >> 2);
-	wav->WAVEDATA[ 3] = (u8)((u32)( OPERATOR1( 0x3 ) + OPERATOR2( 0x3 ) + OPERATOR3( 0x3 ) + OPERATOR4( 0x3 ) ) >> 2);
-	wav->WAVEDATA[ 4] = (u8)((u32)( OPERATOR1( 0x4 ) + OPERATOR2( 0x4 ) + OPERATOR3( 0x4 ) + OPERATOR4( 0x4 ) ) >> 2);
-	wav->WAVEDATA[ 5] = (u8)((u32)( OPERATOR1( 0x5 ) + OPERATOR2( 0x5 ) + OPERATOR3( 0x5 ) + OPERATOR4( 0x5 ) ) >> 2);
-	wav->WAVEDATA[ 6] = (u8)((u32)( OPERATOR1( 0x6 ) + OPERATOR2( 0x6 ) + OPERATOR3( 0x6 ) + OPERATOR4( 0x6 ) ) >> 2);
-	wav->WAVEDATA[ 7] = (u8)((u32)( OPERATOR1( 0x7 ) + OPERATOR2( 0x7 ) + OPERATOR3( 0x7 ) + OPERATOR4( 0x7 ) ) >> 2);				
-	wav->WAVEDATA[ 8] = (u8)((u32)( OPERATOR1( 0x8 ) + OPERATOR2( 0x8 ) + OPERATOR3( 0x8 ) + OPERATOR4( 0x8 ) ) >> 2);
-	wav->WAVEDATA[ 9] = (u8)((u32)( OPERATOR1( 0x9 ) + OPERATOR2( 0x9 ) + OPERATOR3( 0x9 ) + OPERATOR4( 0x9 ) ) >> 2);
-	wav->WAVEDATA[10] = (u8)((u32)( OPERATOR1( 0xA ) + OPERATOR2( 0xA ) + OPERATOR3( 0xA ) + OPERATOR4( 0xA ) ) >> 2);
-	wav->WAVEDATA[11] = (u8)((u32)( OPERATOR1( 0xB ) + OPERATOR2( 0xB ) + OPERATOR3( 0xB ) + OPERATOR4( 0xB ) ) >> 2);
-	wav->WAVEDATA[12] = (u8)((u32)( OPERATOR1( 0xC ) + OPERATOR2( 0xC ) + OPERATOR3( 0xC ) + OPERATOR4( 0xC ) ) >> 2);
-	wav->WAVEDATA[13] = (u8)((u32)( OPERATOR1( 0xD ) + OPERATOR2( 0xD ) + OPERATOR3( 0xD ) + OPERATOR4( 0xD ) ) >> 2);
-	wav->WAVEDATA[14] = (u8)((u32)( OPERATOR1( 0xE ) + OPERATOR2( 0xE ) + OPERATOR3( 0xE ) + OPERATOR4( 0xE ) ) >> 2);
-	wav->WAVEDATA[15] = (u8)((u32)( OPERATOR1( 0xF ) + OPERATOR2( 0xF ) + OPERATOR3( 0xF ) + OPERATOR4( 0xF ) ) >> 2);
-	
-	#undef OPERATOR4
-	#undef OPERATOR3
-	#undef OPERATOR2
-	#undef OPERATOR1
+	u8 *p = wav->WAVEDATA;
+	const u8 *op1 = &operators[ wav->OP1_TYPE ][0];
+	const u8 *op2 = &operators[ wav->OP2_TYPE ][0];
+	const u8 *op3 = &operators[ wav->OP3_TYPE ][0];
+	const u8 *op4 = &operators[ wav->OP4_TYPE ][0];
+	const u8 *opvol1 = &operator_volume[0];
+	const u8 *opvol2 = &operator_volume[1];
+	const u8 *opvol3 = &operator_volume[2];
+	const u8 *opvol4 = &operator_volume[3];
+	for(u8 *end = p + 16;p<end;p++,op1++,op2++,op3++,op4++){
+		*p  =(((*op1 * *opvol1)>>4) 
+			+ ((*op2 * *opvol2)>>4) 
+			+ ((*op3 * *opvol3)>>4) 
+			+ ((*op4 * *opvol4)>>4) 
+			) >> 2;
+	}
 	
 	loadWav( wav->WAVEDATA );
 }
@@ -596,17 +574,18 @@ void Synth::loadSmp( u8 data[16] ){
 	// TODO
 }
 
+
 void Synth::loadWav( u8 data[16] ){
 	//select bank 0 for writing (bank 1 playing)
-	
+	// if(! VAR_CHANNEL[ CHANNEL_WAV ].render )return;
+	// VAR_CHANNEL[ CHANNEL_WAV ].render = false;
 	// Copy rendered sample to buffer to be displayed later
-	for(int i=0; i < 16; i++){
-		VAR_WAV.WAVEDATA[i] = data[i];
-	}
+	DmaCopy(3, data, VAR_WAV.WAVEDATA,  0x10, 16);//512 tiles
 	
 	
-	swap_bank ^=1; 
-	REG_SOUND3CNT_L = SOUND3PLAY | SOUND3BANK32 | (swap_bank ? SOUND3SETBANK0 : SOUND3SETBANK1);
+	swap_bank ^=1;
+	//REG_SOUND3CNT_L = SOUND3PLAY | SOUND3BANK32 | (swap_bank ? SOUND3SETBANK0 : SOUND3SETBANK1);
+	//REG_SOUND3CNT_L = SOUND3BANK32 | (swap_bank ? SOUND3SETBANK0 : SOUND3SETBANK1);
 	
 	//load the wave ram bank 0
 	WAVE_RAM0_H = ( (data[0x1] ) << 12) 
@@ -641,9 +620,11 @@ void Synth::loadWav( u8 data[16] ){
 				| ( (data[0xc] ) <<  8) 
 				| ( (data[0xf] ) <<  4) 
 				| ( (data[0xe] ) <<  0); 	
+	
 				
 	//select bank 0 for playing
-	REG_SOUND3CNT_L = SOUND3PLAY | SOUND3BANK32 | (swap_bank ? SOUND3SETBANK1 : SOUND3SETBANK0);
+	swap_bank ^=1; 
+	REG_SOUND3CNT_L = SOUND3PLAY | SOUND3BANK32 | (swap_bank ? SOUND3SETBANK0 : SOUND3SETBANK1);
 }
 
 /*###########################################################################*/
@@ -979,6 +960,7 @@ void Synth::triggerWav( Channel* channel ){
 	SETTINGS_WAV wav = InstEdit::unpackWav( i );
 	
 	if( channel->reset ) {
+		Adsr::wav_position 		= 0;
 		channel->tsp_position 	= 0;				
 		channel->vol_position 	= 0;
 		channel->transpose 		= 0;
@@ -1000,6 +982,7 @@ void Synth::triggerFmw( Channel* channel ){
 	SETTINGS_FMW fmw = InstEdit::unpackFmw( i );
 	
 	if( channel->reset ){
+		Adsr::fmw_position 		= 0;
 		channel->tsp_position	= 0;
 		channel->vol_position	= 0;
 		channel->transpose		= 0;
@@ -1021,6 +1004,7 @@ void Synth::triggerSmp( Channel* channel ){
 	SETTINGS_SMP smp = InstEdit::unpackSmp( i );
 	
 	if( channel->reset ){
+		Adsr::smp_position 		= 0;
 		channel->tsp_position	= 0;
 		channel->vol_position	= 0;
 		channel->reset			= false;

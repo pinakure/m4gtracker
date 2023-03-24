@@ -276,3 +276,4 @@ kernel/tim/tim.o
 kernel/sys/sys.o
 kernel/sram/sram.o
 hudcursor.s
+a.out

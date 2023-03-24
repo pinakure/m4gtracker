@@ -1,5 +1,6 @@
 #include "int.hpp"
 #include "../dma/dma.h"
+#include "../../debug.hpp"
 
 extern int main(); //Needed by INTERRUPTS!!!
 
@@ -128,7 +129,7 @@ extern "C" void IntHandler(){
 	DEFINT(1, HBLANK_IF);
 	//DEFINT(2, VCOUNT_IF);
 	DEFINT(3, TIMER0_IF);
-	//DEFINT(4, TIMER1_IF);
+	DEFINT(4, TIMER1_IF);
 	//DEFINT(5, TIMER2_IF);
 	//DEFINT(6, TIMER3_IF);
 	//DEFINT(12,KEYPAD_IF);
@@ -152,13 +153,14 @@ also know a second has elapsed, so it's time to calculate the CPS rate
 (cycles of program per second), but call it SYS_FPS to be more convenient
 */
     R_IME=0x0;
+	/*
 	SYS_TIMER++;
 	if(SYS_TIMER==60){
 		SYS_FPS=SYS_FRAMES;
 		SYS_FRAMES = 0;
 		SYS_TIMER=0;		
 	}
-	
+	*/
 	// From M0-K1
 	if(sound_buffer.activeBuffer == 1)	// buffer 1 just got over
 	{
@@ -212,8 +214,12 @@ static void INT_Timer0(){
 	R_IME=0x1;
 }
 
+extern bool swap_bank;
 static void INT_Timer1(){
 	R_IME=0x0;
+	swap_bank^=1;
+	VAR_CHANNEL[ CHANNEL_WAV ].render = true;
+	//HALT
 	//fmwRenderInterrupt();
 	REG_IFBIOS = TIMER1_IF; //Interrupt ACK!!
 	R_IME=0x1;

@@ -51,6 +51,7 @@ public:
 	u8					NEXTPOSITION /*8*/; // Next index on channel pattern order array
 	u8					LASTPOSITION /*8*/; // Next index on channel pattern order array
 	
+	bool 				render;
 	bool 				reset;
 	bool 				retrig;
 	u8 					transpose;
