@@ -211,7 +211,7 @@ void Sram::songLoad( bool verbose ){
 	Tracker::syncPattern();
 	// Update controls to show recently loaded data
 	for(int i=0; i<CHANNEL_COUNT; i++){
-		Tracker::syncChannel(i);
+		Tracker::syncChannel( VAR_CHANNEL + i );
 	}
 	// No need to redraw here
 	PatEdit::sync(verbose);

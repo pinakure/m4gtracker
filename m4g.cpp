@@ -45,8 +45,8 @@ int main(void){
 	 			if(!lock					) { lock = true	; continue; }
 			#endif
 			Sys::update();			
-			RegionHandler::update(1);
-			DEBUG_UPDATE();
+				RegionHandler::update(1);
+				DEBUG_UPDATE();
 			if( VAR_CFG.BEHAVIOR.POWERSAVING ) SWI( 0x02 );
 		};
 	}

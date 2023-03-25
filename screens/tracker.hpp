@@ -169,19 +169,16 @@ enum E_CHANNEL5_DISPLAYS { CHAN5_DISPLAY_CHAN2, CHAN5_DISPLAY_CHAN4, CHAN5_DISPL
 class Tracker{
 	public:
 		static const u8 	columns			[ CHANNEL_COUNT ][ CHANNEL_COUNT ];
-		static const u8 	positions_x		[ CHANNEL_COUNT ];
-		static const u8 	positions_y		[ CHANNEL_COUNT ];
-		static const u16 	channel_symbols	[ CHANNEL_COUNT ][ CHANNEL_COUNT ];
 		static bool  		clean; // true if tracker not needing redraw
 
 		static void 		syncPattern			( );
-		static void 		syncChannel			( u8 channel_index );
-		static void 		copyChannel			( u8 channel_index );
+		static void 		syncChannel			( Channel *channel );
+		static void 		copyChannel			( Channel *channel );
 		static void 		globalUpdate		(  );
 
-		static void 		drawPosition		( int channel );
+		static void 		drawPosition		( Channel *channel );
 		static void 		drawTransientInfo	( );
-		static void 		drawLine			( int channel );
+		static void 		drawLine			( Channel *channel );
 		static void 		dispatchMessage		( u32 msg);
 
 		static void 		update				(  );// Update function for Config Tracker Suboption!

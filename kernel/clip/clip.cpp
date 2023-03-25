@@ -160,7 +160,7 @@ void Clip::cut(){
 			if( Clipboard::content & CLIPDATA_NOTE			) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ wpos ] = 0x00;
 		}
 		
-		Tracker::copyChannel( TRACKER_ACTIVE_CHANNEL );
+		Tracker::copyChannel( VAR_CHANNEL + TRACKER_ACTIVE_CHANNEL );
 		return;
 	}
 
@@ -206,7 +206,7 @@ void Clip::paste(){
 			if( Clipboard::content & CLIPDATA_NOTE			) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ wpos ] = Clipboard::data[ rpos     ];
 		}
 		
-		Tracker::copyChannel( TRACKER_ACTIVE_CHANNEL );
+		Tracker::copyChannel( VAR_CHANNEL + TRACKER_ACTIVE_CHANNEL );
 		
 		return;
 	}
@@ -247,7 +247,7 @@ void Clip::clone(){
 			if( Clipboard::type & CLIPDATA_NOTE			) VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ wpos ] = Clipboard::data[ rpos + 0 ];
 		}
 		
-		Tracker::copyChannel( TRACKER_ACTIVE_CHANNEL );
+		Tracker::copyChannel( VAR_CHANNEL + TRACKER_ACTIVE_CHANNEL );
 		return;
 	}	
 
@@ -301,8 +301,9 @@ void Clip::hide(){
 	RegionHandler::draw();
 
 	if( AT_TRACKER_SCREEN ){
-		for(int i=0; i<6; i++){
-			Tracker::drawPosition(i);
+		Channel *channel = VAR_CHANNEL;
+		for(int i=0; i<6; i++, channel++){
+			Tracker::drawPosition( channel );
 		}
 		Transient::changed = true;
 	} else {

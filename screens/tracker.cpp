@@ -15,33 +15,9 @@
 #include "tracker/controls.c"
 #include "tracker/displays.c"
 
-//move to Channel if more apropiate
-const u8 Tracker::columns[ CHANNEL_COUNT ][ CHANNEL_COUNT ]	= {
-	{ 1, 11, 15, 19, 23, 27 },
-	{ 1,  5, 15, 19, 23, 27 },
-	{ 1,  5,  9, 19, 23, 27 },
-	{ 1,  5,  9, 13, 23, 27 },
-	{ 1,  5,  9, 13, 17, 27 },
-	{ 1,  5,  9, 13, 17, 21 }
-};
-//move to Channel if more apropiate
-const u8 	Tracker::positions_x[ CHANNEL_COUNT ] = { 15, 20, 25, 15, 20, 25 };    
-//move to Channel if more apropiate
-const u8 	Tracker::positions_y[ CHANNEL_COUNT ] = {  1,  1,  1,  2,  2,  2 };    
-//move to Channel if more apropiate
-const u16 	Tracker::channel_symbols[ CHANNEL_COUNT ][ CHANNEL_COUNT ] = {
-	{ 0x7035, 0xB035, 0xB036, 0xB037, 0xB038, 0xB039 },
-	{ 0xB035, 0x7035, 0xB036, 0xB037, 0xB038, 0xB039 },
-	{ 0xB035, 0xB035, 0x7036, 0xB037, 0xB038, 0xB039 },
-	{ 0xB035, 0xB035, 0xB036, 0x7037, 0xB038, 0xB039 },
-	{ 0xB035, 0xB035, 0xB036, 0xB037, 0x7038, 0xB039 },
-	{ 0xB035, 0xB035, 0xB036, 0xB037, 0xB038, 0x7039 }	
-};
-
 bool 	Tracker::clean = false;
 
 // TBC on All Channel Data Update
-// move to channel if more apropiate
 void Tracker::syncPattern(){
 	for(int c=0; c < CHANNEL_COUNT; c++){
 		for(int i=0, pattern; i<0x10; i++){
@@ -80,13 +56,12 @@ typedef struct sCellPointer {
 		
 }CellPointer;
 
-void Tracker::syncChannel( u8 c ){
+void Tracker::syncChannel( Channel *channel ){
 
 	static CellPointer src;
 	static CellPointer dst;
 	
 	// Setup pointers
-	Channel *channel = &VAR_CHANNEL[ c ];
 	src.set( &VAR_DATA[  channel->song_patterns->ORDER[ channel->POSITION ]  ]	);
 	dst.set( channel->cells	);
 	
@@ -105,28 +80,27 @@ void Tracker::syncChannel( u8 c ){
 	int  len = (VAR_CFG.CURRENTCHANNEL==channel->index ? (0x10 * (CHANNEL_COUNT-1) ): 0x10);
 	
 	channel = VAR_CHANNEL + (TRACKER_ACTIVE_CHANNEL);	// maybe c instead of TRACKER_ACTIVE_CHANNEL
-	const Control *controls = channel->tracker_controls[ c ];
+	const Control *controls = channel->tracker_controls[ channel->index ];
 	for(int i=0; i<len; i++){ 
 		RegionHandler::drawControl( controls + i ); 
 	} 
 }
 
 // TBC on channel data change
-void Tracker::copyChannel(u8 channel){
+void Tracker::copyChannel( Channel *channel ){
 		
-	for(int i=0, pattern; i<0x10;i++){		
-		
-		pattern = VAR_SONG.PATTERNS[channel].ORDER[VAR_CHANNEL[channel].POSITION];
-		
-		VAR_DATA[ pattern ].KEY[ i ] = VAR_CELLS[ channel ].KEY[ i ];
-		VAR_DATA[ pattern ].INS[ i ] = VAR_CELLS[ channel ].INS[ i ];
-		VAR_DATA[ pattern ].VOL[ i ] = VAR_CELLS[ channel ].VOL[ i ];
-		VAR_DATA[ pattern ].CMD[ i ] = VAR_CELLS[ channel ].CMD[ i ];
-		VAR_DATA[ pattern ].VAL[ i ] = VAR_CELLS[ channel ].VAL[ i ];
+	int pattern 		= channel->song_patterns->ORDER[ channel->POSITION ];
+	PatternCell *data 	= VAR_DATA + pattern; 
+	for(int i=0; i<0x10;i++){		
+		data->KEY[ i ] = channel->cells->KEY[ i ];
+		data->INS[ i ] = channel->cells->INS[ i ];
+		data->VOL[ i ] = channel->cells->VOL[ i ];
+		data->CMD[ i ] = channel->cells->CMD[ i ];
+		data->VAL[ i ] = channel->cells->VAL[ i ];
 	}
 	for(int i=0; i < CHANNEL_COUNT;i++){
-		if( i == channel )continue;
-		Tracker::syncChannel( i );
+		if( i == channel->index )continue;
+		Tracker::syncChannel( channel );
 	}
 }
 
@@ -142,7 +116,7 @@ void modifyNote(Control *c, bool bigstep, bool add, u32 *pointer){
 	
 	Transient::note 	= U8P( c->var );
 	Transient::changed 	= true;
-	Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL );
+	Tracker::copyChannel( VAR_CHANNEL + VAR_CFG.CURRENTCHANNEL );
 }
 
 void Tracker::drawTransientInfo(){
@@ -154,55 +128,57 @@ void Tracker::drawTransientInfo(){
 	Transient::changed = false;
 }
 
-void Tracker::drawPosition( int i ){
-	bool hl = i==VAR_CFG.CURRENTCHANNEL;
-	Gpu::set( 2 , 			Tracker::positions_x[ i ]		, Tracker::positions_y[ i ] , Tracker::channel_symbols[ VAR_CFG.CURRENTCHANNEL ][ i ] );
-	HEXADECIMAL( 			Tracker::positions_x[ i ] + 1	, Tracker::positions_y[ i ] , 0x1 + hl 		, VAR_CHANNEL[ i ].POSITION >>  4 );
-	HEXADECIMAL( 			Tracker::positions_x[ i ] + 2	, Tracker::positions_y[ i ] , 0x1 + hl 		, VAR_CHANNEL[ i ].POSITION & 0xf );
-	HEXADECIMAL_TWOTILES( 	Tracker::positions_x[ i ] + 3 	, Tracker::positions_y[ i ] , hl ? 0x6 : 0xD 	, VAR_SONG.PATTERNS[ i ].ORDER[ VAR_CHANNEL[ i ].POSITION ] );
-	VAR_CHANNEL[ i ].LASTPOSITION = VAR_CHANNEL[ i ].POSITION;
+void Tracker::drawPosition( Channel *channel ){
+	bool hl = channel->index == VAR_CFG.CURRENTCHANNEL;
+		
+	Gpu::set( 2 , 			channel->tracker_position.x		, channel->tracker_position.y , channel->symbols[ channel->index ] );
+	HEXADECIMAL( 			channel->tracker_position.x + 1	, channel->tracker_position.y , 0x1 + hl 		, channel->POSITION >>  4 );
+	HEXADECIMAL( 			channel->tracker_position.x + 2	, channel->tracker_position.y , 0x1 + hl 		, channel->POSITION & 0xf );
+	HEXADECIMAL_TWOTILES( 	channel->tracker_position.x + 3 , channel->tracker_position.y , hl ? 0x6 : 0xD 	, channel->song_patterns->ORDER[ channel->POSITION ] );
+
+	channel->LASTPOSITION = channel->POSITION;
 }
 
-void Tracker::drawLine( int channel ){
+void Tracker::drawLine( Channel *channel ){
 	#ifdef BGCURSORS
-	int y = 4 + VAR_CHANNEL[ channel ].STEP;
-	int x = Tracker::columns[ VAR_CFG.CURRENTCHANNEL ][ channel ];
-	for(int i=0, li=( channel==VAR_CFG.CURRENTCHANNEL ? 9 : 3 ); i<li; i++){
-		Gpu::set(0, x+i, 4 + VAR_CHANNEL[ channel ].LASTSTEP , 0x0);
+	int y = 4 + channel->STEP;
+	int x = Tracker::columns[ VAR_CFG.CURRENTCHANNEL ][ channel->index ];
+	for(int i=0, li=( channel->index == VAR_CFG.CURRENTCHANNEL ? 9 : 3 ); i<li; i++){
+		Gpu::set(0, x+i, 4 + channel->LASTSTEP , 0x0);
 		Gpu::set(0, x+i, y									, 0x15);
 	}	
 	#endif 
-	VAR_CHANNEL[ channel ].LASTSTEP = VAR_CHANNEL[ channel ].STEP;	
+	channel->LASTSTEP = channel->STEP;	
 }
 
 void Tracker::nextPattern( ){
 	Channel *channel = &VAR_CHANNEL[ VAR_CFG.CURRENTCHANNEL ];
 	channel->POSITION++;
-	Tracker::drawPosition( VAR_CFG.CURRENTCHANNEL );
+	Tracker::drawPosition( channel );
 	Tracker::clean = false;
 	// must redraw controls
-	syncChannel( VAR_CFG.CURRENTCHANNEL );
+	syncChannel( channel );
 }
 
 void Tracker::prevPattern( ){
 	Channel *channel = &VAR_CHANNEL[ VAR_CFG.CURRENTCHANNEL ];
 	channel->POSITION--;
-	Tracker::drawPosition( VAR_CFG.CURRENTCHANNEL );
+	Tracker::drawPosition( channel );
 }
 
 void Tracker::nextChannel( ){
-	u8 erase_position = VAR_CFG.CURRENTCHANNEL;
+	Channel *before = VAR_CHANNEL + VAR_CFG.CURRENTCHANNEL;
 	VAR_CFG.CURRENTCHANNEL = VAR_CFG.CURRENTCHANNEL<5?VAR_CFG.CURRENTCHANNEL+1:0;
-	Tracker::drawPosition( erase_position 		 	);
-	Tracker::drawPosition( VAR_CFG.CURRENTCHANNEL 	);
+	Tracker::drawPosition( before								);
+	Tracker::drawPosition( VAR_CHANNEL + VAR_CFG.CURRENTCHANNEL	);
 	RegionHandler::updateViewport(&VIEWPORT_TRK, RegionHandler::region->xadd, RegionHandler::region->yadd);
 }
 
 void Tracker::prevChannel( ){
-	u8 erase_position = VAR_CFG.CURRENTCHANNEL;
+	Channel *before = VAR_CHANNEL + VAR_CFG.CURRENTCHANNEL;
 	VAR_CFG.CURRENTCHANNEL = VAR_CFG.CURRENTCHANNEL>0?VAR_CFG.CURRENTCHANNEL-1:5;
-	Tracker::drawPosition( erase_position 		 	);
-	Tracker::drawPosition( VAR_CFG.CURRENTCHANNEL 	);
+	Tracker::drawPosition( before 								);
+	Tracker::drawPosition( VAR_CHANNEL + VAR_CFG.CURRENTCHANNEL	);
 	RegionHandler::updateViewport(&VIEWPORT_TRK, RegionHandler::region->xadd,RegionHandler::region->yadd);
 }
 
@@ -211,11 +187,11 @@ void Tracker::dispatchMessage(u32 msg){
 		
 		case MESSAGE_CANCEL:
 			RegionHandler::controlClear	( RegionHandler::control );
-			Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL );	//dispatchMessage		( MESSAGE_OTHER_REFRESH_DATA );
+			Tracker::copyChannel( VAR_CHANNEL + VAR_CFG.CURRENTCHANNEL );	//dispatchMessage		( MESSAGE_OTHER_REFRESH_DATA );
 			return;
 		
 		case MESSAGE_OTHER_REFRESH_DATA:
-			Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL );	
+			Tracker::copyChannel( VAR_CHANNEL + VAR_CFG.CURRENTCHANNEL );	
 			return;
 			
 		case MESSAGE_OTHER_PREV:
@@ -239,34 +215,41 @@ void Tracker::globalUpdate(  ){
 
 	Clip::update( );
 	
-	Gpu::set(2,0,1, Sequencer::playing ? 0xF08D  : 0x31FE );
-	Gpu::set(1,0,0, Sequencer::playing ? ((Sequencer::currentBeats) == 0?0x32 : ((Sequencer::currentBeats&3) == 0?0x34 : 0x33)):0x33);
-		
-	if( Transient::changed || RegionHandler::redraw) Tracker::drawTransientInfo();
+	// Draw Metronome and Play / Stop icon
+	static bool transient_playing;
+	static u8 	transient_currentBeats;
+	if( (transient_playing != Sequencer::playing) || RegionHandler::redraw || (transient_currentBeats != Sequencer::currentBeats) ){
+		Gpu::set(2,0,1, Sequencer::playing ? 0xF08D  : 0x31FE );
+		Gpu::set(1,0,0, Sequencer::playing ? ((Sequencer::currentBeats) == 0?0x32 : ((Sequencer::currentBeats&3) == 0?0x34 : 0x33)):0x33);
+		transient_currentBeats = Sequencer::currentBeats;
+		transient_playing = Sequencer::playing;
+	}
+	
+	if( Transient::changed || RegionHandler::redraw ) Tracker::drawTransientInfo();
 
-	for(int i=0; i < CHANNEL_COUNT ;i++){
+	Channel *channel = VAR_CHANNEL;
+	for( int i=0; i < CHANNEL_COUNT ;i++, channel++ ){
 		if( RegionHandler::redraw ) 
-			Tracker::drawPosition( i );
-		
+			Tracker::drawPosition( channel );
+
 		if( !Sequencer::playing) continue;
 		
-		Channel *channel = &VAR_CHANNEL[i];
 		// Update vumeters
 		u8 last_peak = channel->lastpeak;
-		u8 peak = channel->peak;
+		u8 peak 	 = channel->peak;
 		if( last_peak != peak ) VUMETER_V3(8+i, 0, 0x0, peak>12?12:peak);			
 		
 		// Update next step (cell) reactive elements
-		if(channel->LASTSTEP != channel->STEP) Tracker::drawLine(i);
+		if(channel->LASTSTEP != channel->STEP) Tracker::drawLine( channel );
 		
 		// Update next pattern reactive elements
 		if((channel->LASTPOSITION != channel->POSITION) || RegionHandler::redraw) {
-			Tracker::drawPosition( i );
-			Tracker::syncChannel( i );
+			Tracker::drawPosition( channel );
+			Tracker::syncChannel( channel );
 			channel->LASTPOSITION =  channel->POSITION;
 		}
 	}
-	
+		
 	if( !Sequencer::playing){
 		Tracker::clean = false;
 		return;
@@ -308,25 +291,28 @@ void Tracker::update(  ){
 void Tracker::shift( int q ){
 	bool expr = (q<0);
 	Notifier::icon( 0, 0x7112, expr ? 0x408C : 0x408E);
-	PatternCell copy = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ];
+	
+	Channel *channel = &VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ];
+	
+	PatternCell copy = *channel->cells;
 	
 	for(int i = 0; i<0x10; i++){
-		VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ expr ? i&0xF : 0xF - (i&0xF) ] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ expr ? (i+1)&0xF : 0xF - ((i+1)&0xF) ];
-		VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].INS[ expr ? i&0xF : 0xF - (i&0xF) ] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].INS[ expr ? (i+1)&0xF : 0xF - ((i+1)&0xF) ];
-		VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VOL[ expr ? i&0xF : 0xF - (i&0xF) ] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VOL[ expr ? (i+1)&0xF : 0xF - ((i+1)&0xF) ];
-		VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].CMD[ expr ? i&0xF : 0xF - (i&0xF) ] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].CMD[ expr ? (i+1)&0xF : 0xF - ((i+1)&0xF) ];
-		VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VAL[ expr ? i&0xF : 0xF - (i&0xF) ] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VAL[ expr ? (i+1)&0xF : 0xF - ((i+1)&0xF) ];
+		channel->cells->KEY[ expr ? i&0xF : 0xF - (i&0xF) ] = channel->cells->KEY[ expr ? (i+1)&0xF : 0xF - ((i+1)&0xF) ];
+		channel->cells->INS[ expr ? i&0xF : 0xF - (i&0xF) ] = channel->cells->INS[ expr ? (i+1)&0xF : 0xF - ((i+1)&0xF) ];
+		channel->cells->VOL[ expr ? i&0xF : 0xF - (i&0xF) ] = channel->cells->VOL[ expr ? (i+1)&0xF : 0xF - ((i+1)&0xF) ];
+		channel->cells->CMD[ expr ? i&0xF : 0xF - (i&0xF) ] = channel->cells->CMD[ expr ? (i+1)&0xF : 0xF - ((i+1)&0xF) ];
+		channel->cells->VAL[ expr ? i&0xF : 0xF - (i&0xF) ] = channel->cells->VAL[ expr ? (i+1)&0xF : 0xF - ((i+1)&0xF) ];
 	} 
-	VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ expr ? 0xF : 0x0 ] = copy.KEY[ expr ? 0x0 : 0xF ];
-	VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].INS[ expr ? 0xF : 0x0 ] = copy.INS[ expr ? 0x0 : 0xF ];
-	VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VOL[ expr ? 0xF : 0x0 ] = copy.VOL[ expr ? 0x0 : 0xF ];
-	VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].CMD[ expr ? 0xF : 0x0 ] = copy.CMD[ expr ? 0x0 : 0xF ];
-	VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].VAL[ expr ? 0xF : 0x0 ] = copy.VAL[ expr ? 0x0 : 0xF ];
+	channel->cells->KEY[ expr ? 0xF : 0x0 ] = copy.KEY[ expr ? 0x0 : 0xF ];
+	channel->cells->INS[ expr ? 0xF : 0x0 ] = copy.INS[ expr ? 0x0 : 0xF ];
+	channel->cells->VOL[ expr ? 0xF : 0x0 ] = copy.VOL[ expr ? 0x0 : 0xF ];
+	channel->cells->CMD[ expr ? 0xF : 0x0 ] = copy.CMD[ expr ? 0x0 : 0xF ];
+	channel->cells->VAL[ expr ? 0xF : 0x0 ] = copy.VAL[ expr ? 0x0 : 0xF ];
 	
 	// Copy temporary data to pattern data
-	Tracker::copyChannel( TRACKER_ACTIVE_CHANNEL );
+	Tracker::copyChannel( channel );
 	// Reload data from pattern data to temporary AND REDRAW CURRENT CHANNEL (not needed if playing since it will be updated automatically and quickly)
-	if(!Sequencer::playing) Tracker::syncChannel( TRACKER_ACTIVE_CHANNEL );
+	if(!Sequencer::playing) Tracker::syncChannel( channel );
 }
 
 void Tracker::alterColumn( u8 index, u8 min_value, u8 max_value, int q ){
@@ -337,8 +323,9 @@ void Tracker::alterColumn( u8 index, u8 min_value, u8 max_value, int q ){
 	u8  icons[2]		= { (iconlist[ index ]>>8), iconlist[ index ] & 0xFF };
 	u8  arrow 			= ( q > 0 ) ? arrows[ 1 ] : arrows[ 0 ];
 	
+	Channel *channel = &VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ];
 	// Select which array will be modified
-	PatternCell *cell 	= &VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ];
+	PatternCell *cell 	= channel->cells;
 	u8 *array			= NULL;
 	switch( index ){
 		case 0: HALT;//array = &cell.KEY; break; // WHY THE HELL KEY has 2 BYTES WIDTH ? max value is 160!!!
@@ -373,10 +360,10 @@ void Tracker::alterColumn( u8 index, u8 min_value, u8 max_value, int q ){
 	}
 	
 	// Copy temporary data to pattern data
-	Tracker::copyChannel( TRACKER_ACTIVE_CHANNEL );
+	Tracker::copyChannel( channel );
 	
 	// Reload data from pattern data to temporary AND REDRAW CURRENT CHANNEL (not needed if playing since it will be updated automatically and quickly)
-	if(!Sequencer::playing) Tracker::syncChannel( TRACKER_ACTIVE_CHANNEL );
+	if(!Sequencer::playing) Tracker::syncChannel( channel );
 }
 
 void Tracker::transpose( int q ){
@@ -390,29 +377,31 @@ void Tracker::transpose( int q ){
 		default: break;
 	}
 	
+	Channel *channel = &VAR_CHANNEL[TRACKER_ACTIVE_CHANNEL];
+	
 	Notifier::icon( 0x306D, q > 0 ? 0x308C : 0x308E, 0x8A);
 	// Check first we dont destroy data 
 	for(int i = 0; i<16; i++){
 		// Ignore silenced cells 
-		if(VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ i ] == 0) continue;
+		if( channel->cells->KEY[ i ] == 0) continue;
 		// Abort operation if transformation would move the lowest note into a silence
-		if(( VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ i ] + q) ==   0) return;
+		if(( channel->cells->KEY[ i ] + q) ==   0) return;
 		// Abort operation if transformation would move the highest note out of range
-		if(( VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ i ] + q) >= 160) return;
+		if(( channel->cells->KEY[ i ] + q) >= 160) return;
 	}
 	Notifier::icon( 0, 0x706D, q > 0 ? 0x408C : 0x408E);
 	// Transpose notes
 	for(int i = 0; i<16; i++){
 		// Ignore silenced cells 
-		if(VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ i ] == 0) continue; 
+		if( channel->cells->KEY[ i ] == 0) continue; 
 		// Transpose note
-		VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ i ] = VAR_CELLS[ TRACKER_ACTIVE_CHANNEL ].KEY[ i ] + q;
+		channel->cells->KEY[ i ] = channel->cells->KEY[ i ] + q;
 	}
 
 	// Copy temporary data to pattern data
-	Tracker::copyChannel( TRACKER_ACTIVE_CHANNEL );
+	Tracker::copyChannel( channel );
 	// Reload data from pattern data to temporary AND REDRAW CURRENT CHANNEL (not needed if playing since it will be updated automatically and quickly)
-	if(!Sequencer::playing) Tracker::syncChannel( TRACKER_ACTIVE_CHANNEL );
+	if(!Sequencer::playing) Tracker::syncChannel( channel );
 }
 
 void Tracker::processInput( ){

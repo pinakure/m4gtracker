@@ -7,6 +7,7 @@
 #include "control.hpp"
 #include "pattern.hpp"
 #include "instrument.hpp"
+#include "sprite.hpp"
 
 #define CHANNEL_COUNT 			6
 
@@ -80,6 +81,12 @@ public:
 	void 				(*disable	)();
 	
 	void init( u8 channel_index );
+	
+	const u16*  		symbols;
+	const u8*			columns;
+		
+	
+	Point 				tracker_position;// Coordinates where position display is located, in Tracker screen top section
 	
 	// SRAM Functions
 	static void 		seek();

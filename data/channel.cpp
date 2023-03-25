@@ -8,6 +8,20 @@
 #include "../screens/live/performance.hpp"
 #include "../data/song.hpp"
 
+const u16 symbolsPwm1[ CHANNEL_COUNT ] = { 0x7035, 0xB035, 0xB036, 0xB037, 0xB038, 0xB039 };
+const u16 symbolsPwm2[ CHANNEL_COUNT ] = { 0xB035, 0x7035, 0xB036, 0xB037, 0xB038, 0xB039 };
+const u16 symbolsNze [ CHANNEL_COUNT ] = { 0xB035, 0xB035, 0x7036, 0xB037, 0xB038, 0xB039 };
+const u16 symbolsWav [ CHANNEL_COUNT ] = { 0xB035, 0xB035, 0xB036, 0x7037, 0xB038, 0xB039 };
+const u16 symbolsFmw [ CHANNEL_COUNT ] = { 0xB035, 0xB035, 0xB036, 0xB037, 0x7038, 0xB039 };
+const u16 symbolsSmp [ CHANNEL_COUNT ] = { 0xB035, 0xB035, 0xB036, 0xB037, 0xB038, 0x7039 };
+const u8  columnsPwm1[ CHANNEL_COUNT ] = { 1, 11, 15, 19, 23, 27 };
+const u8  columnsPwm2[ CHANNEL_COUNT ] = { 1,  5, 15, 19, 23, 27 };
+const u8  columnsNze [ CHANNEL_COUNT ] = { 1,  5,  9, 19, 23, 27 };
+const u8  columnsWav [ CHANNEL_COUNT ] = { 1,  5,  9, 13, 23, 27 };
+const u8  columnsFmw [ CHANNEL_COUNT ] = { 1,  5,  9, 13, 17, 27 };
+const u8  columnsSmp [ CHANNEL_COUNT ] = { 1,  5,  9, 13, 17, 21 };
+
+
 void Channel::init( u8 channel_index ){
 	
 	pattern			= &VAR_PATTERN[ channel_index ];
@@ -52,17 +66,22 @@ void Channel::init( u8 channel_index ){
 	tsp_loop 		= LOOP_NONE;
 	vol_position	= 0;
 	vol_loop 		= LOOP_NONE;
-
+	
+		
 	// Bind specific functions ( Channel differs vastly from channel to channel but Im lazy enough to avoid doing a child class )
 	switch( type ){
-		case CHANNEL_PWM1	: trigger = &Synth::triggerPwm1	; noteOn = &Synth::noteOnPwm1	; noteOff = &Synth::noteOffPwm1	; disable = &Mixer::disablePwm1	; enable = &Mixer::enablePwm1	; break;
-		case CHANNEL_PWM2	: trigger = &Synth::triggerPwm2	; noteOn = &Synth::noteOnPwm2	; noteOff = &Synth::noteOffPwm2	; disable = &Mixer::disablePwm2	; enable = &Mixer::enablePwm2	; break;
-		case CHANNEL_NZE	: trigger = &Synth::triggerNze	; noteOn = &Synth::noteOnNze	; noteOff = &Synth::noteOffNze	; disable = &Mixer::disableNze	; enable = &Mixer::enableNze	; break;
-		case CHANNEL_WAV	: trigger = &Synth::triggerWav	; noteOn = &Synth::noteOnWav	; noteOff = &Synth::noteOffWav	; disable = &Mixer::disableWav	; enable = &Mixer::enableWav	; break;
-		case CHANNEL_FMW	: trigger = &Synth::triggerFmw	; noteOn = &Synth::noteOnFmw	; noteOff = &Synth::noteOffFmw	; disable = &Mixer::disableFmw	; enable = &Mixer::enableFmw	; break;
-		case CHANNEL_SMP	: trigger = &Synth::triggerSmp	; noteOn = &Synth::noteOnSmp	; noteOff = &Synth::noteOffSmp	; disable = &Mixer::disableSmp	; enable = &Mixer::enableSmp	; break;
+		case CHANNEL_PWM1	: 
+			columns = columnsPwm1 ; 
+			symbols = symbolsPwm1 ; 
+			tracker_position.x = 15; 
+			tracker_position.y = 1; 
+			trigger = &Synth::triggerPwm1	; noteOn = &Synth::noteOnPwm1	; noteOff = &Synth::noteOffPwm1	; disable = &Mixer::disablePwm1	; enable = &Mixer::enablePwm1	; break;
+		case CHANNEL_PWM2	: columns = columnsPwm2 ; symbols = symbolsPwm2	; tracker_position.x = 20; tracker_position.y = 1; trigger = &Synth::triggerPwm2	; noteOn = &Synth::noteOnPwm2	; noteOff = &Synth::noteOffPwm2	; disable = &Mixer::disablePwm2	; enable = &Mixer::enablePwm2	; break;
+		case CHANNEL_NZE	: columns = columnsNze  ; symbols = symbolsNze	; tracker_position.x = 25; tracker_position.y = 1; trigger = &Synth::triggerNze	; noteOn = &Synth::noteOnNze	; noteOff = &Synth::noteOffNze	; disable = &Mixer::disableNze	; enable = &Mixer::enableNze	; break;
+		case CHANNEL_WAV	: columns = columnsWav  ; symbols = symbolsWav	; tracker_position.x = 15; tracker_position.y = 2; trigger = &Synth::triggerWav	; noteOn = &Synth::noteOnWav	; noteOff = &Synth::noteOffWav	; disable = &Mixer::disableWav	; enable = &Mixer::enableWav	; break;
+		case CHANNEL_FMW	: columns = columnsFmw  ; symbols = symbolsFmw	; tracker_position.x = 20; tracker_position.y = 2; trigger = &Synth::triggerFmw	; noteOn = &Synth::noteOnFmw	; noteOff = &Synth::noteOffFmw	; disable = &Mixer::disableFmw	; enable = &Mixer::enableFmw	; break;
+		case CHANNEL_SMP	: columns = columnsSmp  ; symbols = symbolsSmp	; tracker_position.x = 25; tracker_position.y = 2; trigger = &Synth::triggerSmp	; noteOn = &Synth::noteOnSmp	; noteOff = &Synth::noteOffSmp	; disable = &Mixer::disableSmp	; enable = &Mixer::enableSmp	; break;
 	}
-	
 	// Bind Tracker controls to each channel accordingly
 	switch( type ){
 		case CHANNEL_PWM1:	

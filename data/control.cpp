@@ -52,7 +52,7 @@ void modifyCommand (Control *c, bool bigstep, bool add, u32 *pointer){
 	Transient::command = VARIABLE;
 	Transient::changed = true;
 	
-	Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL );
+	Tracker::copyChannel( VAR_CHANNEL + VAR_CFG.CURRENTCHANNEL );
 }
 
 void modifyInst ( Control *c, bool bigstep, bool add, u32 *pointer ){
@@ -61,7 +61,7 @@ void modifyInst ( Control *c, bool bigstep, bool add, u32 *pointer ){
 	Transient::instrument= VARIABLE; 
 	Transient::changed	= true; 
 	if( VARIABLE == 0 ) VARIABLE = 1;
-	Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); 
+	Tracker::copyChannel( VAR_CHANNEL + VAR_CFG.CURRENTCHANNEL ); 
 }
 
 void modifyVolume (Control *c, bool bigstep, bool add, u32 *pointer){
@@ -69,7 +69,7 @@ void modifyVolume (Control *c, bool bigstep, bool add, u32 *pointer){
 	VARIABLE 			= ( bigstep ? (add?0xF:0) : (VARIABLE + (add?1:-1)) ) & 0xF; 	
 	Transient::volume 	= VARIABLE; 
 	Transient::changed 	= true; 
-	Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); 
+	Tracker::copyChannel( VAR_CHANNEL + VAR_CFG.CURRENTCHANNEL ); 
 }	
 
 void modifyValue (Control *c, bool bigstep, bool add, u32 *pointer){
@@ -77,7 +77,7 @@ void modifyValue (Control *c, bool bigstep, bool add, u32 *pointer){
 	VARIABLE 			= (VARIABLE + ((bigstep?0x10:0x1)* (add?1:-1)) ) & 0xFF;
 	Transient::value		= VARIABLE; 
 	Transient::changed 	= true; 
-	Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); 
+	Tracker::copyChannel( VAR_CHANNEL + VAR_CFG.CURRENTCHANNEL ); 
 }
 
 void paste2BIT(Control *c, bool bigstep, bool add, u32 *pointer){ if(VARIABLE == 0x00){ VARIABLE = Transient::bit2; return; } Transient::bit2 = VARIABLE; Transient::changed = true; }
@@ -92,7 +92,7 @@ void pasteCommand (Control *c, bool bigstep, bool add, u32 *pointer){
 	if(VARIABLE == 0x00){
 		if(CURRENT_PATTERN == 0x00) return; 
 		VARIABLE = Transient::command; 		
-		Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); 
+		Tracker::copyChannel( VAR_CHANNEL + VAR_CFG.CURRENTCHANNEL ); 
 		return; 
 	} 
 	Transient::command = VARIABLE; 
@@ -103,7 +103,7 @@ void pasteInst (Control *c, bool bigstep, bool add, u32 *pointer){
 	if(VARIABLE == 0x00){
 		if(CURRENT_PATTERN == 0x00)return; 
 		VARIABLE = Transient::instrument; 	
-		Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); 
+		Tracker::copyChannel( VAR_CHANNEL + VAR_CFG.CURRENTCHANNEL ); 
 		return; 
 	} 
 	Transient::instrument = VARIABLE; 
@@ -114,7 +114,7 @@ void pasteNote (Control *c, bool bigstep, bool add, u32 *pointer){
 	if(VARIABLE == 0x00){
 		if(CURRENT_PATTERN == 0x00) return; 
 		VARIABLE = Transient::note; 			
-		Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); 
+		Tracker::copyChannel( VAR_CHANNEL + VAR_CFG.CURRENTCHANNEL ); 
 		return; 
 	} 
 	Transient::note 		= VARIABLE; 
@@ -125,7 +125,7 @@ void pasteVolume (Control *c, bool bigstep, bool add, u32 *pointer){
 	if(VARIABLE == 0x00){
 		if(CURRENT_PATTERN == 0x00) return; 
 		VARIABLE = Transient::volume;
-		Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL );
+		Tracker::copyChannel( VAR_CHANNEL + VAR_CFG.CURRENTCHANNEL );
 		return; 
 	} 
 	Transient::volume	= VARIABLE; 
@@ -136,7 +136,7 @@ void pasteValue	(Control *c, bool bigstep, bool add, u32 *pointer){
 	if(VARIABLE == 0x00){
 		if(CURRENT_PATTERN == 0x00) return; 
 		VARIABLE = Transient::value;
-		Tracker::copyChannel( VAR_CFG.CURRENTCHANNEL ); 
+		Tracker::copyChannel( VAR_CHANNEL + VAR_CFG.CURRENTCHANNEL ); 
 		return; 
 	} 
 	Transient::value 	= VARIABLE; 
