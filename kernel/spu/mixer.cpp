@@ -218,7 +218,7 @@ void Mixer::mix(){
 
 void Mixer::noteOn1(u16 freq){
 	// dsound[0].inc = (freq << 12) / 16000;	
-	dsound[0].inc = (freq << 12) / 5734;	
+	dsound[0].inc = (freq << 12) / 16000;//5734;	
 }
 
 void Mixer::noteOn2(u16 freq){
@@ -290,7 +290,7 @@ void Mixer::enablePwm2(){ (*(vu16*)0x4000080)|= 0x2277; }
 void Mixer::enableWav (){ (*(vu16*)0x4000080)|= 0x4477; }
 void Mixer::enableNze (){ (*(vu16*)0x4000080)|= 0x8877; }
 void Mixer::enableFmw (){ 
-	dsound_mute[0] = true;
+	dsound_mute[0] = false;
 	(*(vu16*)0x4000082)|= 0xBB0E; 
 } // 0x0800:FIFOA RESET | 0x0000:DSOUND0TIMER0 | 0x0200:DSOUND0LEFT | 0x0100:DSOUND0RIGHT | 0x0008:DSOUND1VOL100 | 0x0004:DSOUND0VOL100 | 0x0002:DMGSOUNDVOL100
 void Mixer::enableSmp (){ 
