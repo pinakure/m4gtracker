@@ -36,6 +36,8 @@ class Synth {
 		
 		static void init();
 		
+
+		static u8 	loop_smp;
 		
 		static void loadWav( u8 data[ 16 ] );
 		static void loadFmw( u8 data[ 16 ] , u8 mult );

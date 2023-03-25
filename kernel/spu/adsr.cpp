@@ -21,31 +21,28 @@ void Adsr::drawX4( u8 adsr_tables[ 4 ][ ADSR_TABLE_LENGTH ] , u8 adsr_position )
 	
 	if( RegionHandler::region != &REGION_MAP_2_INS ) return;
 	
-	if( ( last_position == adsr_position ) || redraw ) return;
-	last_position = adsr_position;
+	// if( ( last_position == adsr_position ) || !redraw ) return;
+	//last_position = adsr_position;
 	
-	arrow_position = adsr_position>>(1+ADSR_LENGTH_SCALE);
+	arrow_position = adsr_position>>1;
 
 	if( adsr_position < (ADSR_TABLE_LENGTH-2) ){
 		
 		VirtualScreen::clear();
 		
-		for( int x = 0 , half = 0, quad = 0	
-			; x < ( VIRTUALSCREEN_WIDTH << 1 ) 
-			; x+=2 , quad = x << 2, half = x >> 1
-		){
-			VirtualScreen::set( half ,  7 - ( adsr_tables[ 0 ][ quad ] >> 5  ) );
-			VirtualScreen::set( half , 15 - ( adsr_tables[ 1 ][ quad ] >> 5  ) );
-			VirtualScreen::set( half , 23 - ( adsr_tables[ 2 ][ quad ] >> 5  ) );
-			VirtualScreen::set( half , 31 - ( adsr_tables[ 3 ][ quad ] >> 5  ) );
+		for( int x = 0 , half = 0; x < ( VIRTUALSCREEN_WIDTH << 1 ) ; x+=2 , half = x >> 1 ){
+			VirtualScreen::set( half ,  7 - ( adsr_tables[ 0 ][ x ] >> 5  ) );
+			VirtualScreen::set( half , 15 - ( adsr_tables[ 1 ][ x ] >> 5  ) );
+			VirtualScreen::set( half , 23 - ( adsr_tables[ 2 ][ x ] >> 5  ) );
+			VirtualScreen::set( half , 31 - ( adsr_tables[ 3 ][ x ] >> 5  ) );			
 		}
 		//Gpu::number(26, 1, ADSR_TABLE_LENGTH, COLOR_RED);
 
-		Gpu::set( last_arrow_position 	& 1 ? 2 : 1 , 14 + ( last_arrow_position 	>> 1 ) , 18 , 0x0100 ); 
-		Gpu::set( arrow_position 			& 1 ? 2 : 1 , 14 + ( arrow_position			>> 1 ) , 18 , 0x711E ); 
+		Gpu::set((( last_arrow_position	) & 1) ? 2 : 1 , 14 + ( last_arrow_position 		>>1) , 18 , 0x0100 ); 
+		Gpu::set((( arrow_position 	  	) & 1) ? 2 : 1 , 14 + ( arrow_position				>>1) , 18 , 0x711E ); 
 		last_arrow_position = arrow_position;
 		
-		//DECIMAL_DOUBLE(28,1,adsr_position < (ADSR_TABLE_LENGTH-1)?COLOR_YELLOW:COLOR_ORANGE ,adsr_position/100);
+		//DECIMAL_DOUBLE(28,1,COLOR_YELLOW,adsr_position);
 		//DECIMAL_DOUBLE(29,1,adsr_position < (ADSR_TABLE_LENGTH-1)?COLOR_YELLOW:COLOR_ORANGE ,adsr_position);
 		
 		VirtualScreen::draw(14,6);

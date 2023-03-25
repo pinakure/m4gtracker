@@ -13,7 +13,8 @@
 
 bool swap_bank = false;
 
-u16	Synth::lfo					= 0;
+u16		Synth::lfo					= 0;
+u8		Synth::loop_smp				= 0;
 
 const u16 SMP_FREQ_TABLE[120]={ 
 	0xF8DD	,0xF917	,0xF94F ,0xF995	,0xF9D7	,0xFA22	,0xFA68	,0xFAB2	,0xFAF8	,0xFB3E	,0xFB80, 0xFBC0,
@@ -237,7 +238,7 @@ void Synth::renderWav( SETTINGS_WAV *wav, u8 vol){
 	
 	// Advance adsr table common index
 	
-	Adsr::wav_position	= ( Adsr::wav_position < ( ( ADSR_TABLE_LENGTH - 1 ) << 1 ) ) 
+	Adsr::wav_position	= ( Adsr::wav_position < ( ( ADSR_TABLE_LENGTH - 1 )  ) ) 
 							?	Adsr::wav_position + 1 
 							: ( ADSR_TABLE_LENGTH - 1 );
 	

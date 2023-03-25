@@ -200,7 +200,7 @@ void Sequencer::update(){
 			// Handle Groove Table
 			//channel->target_tick = 0;
 			// this causes unwanted retriggers
-			if( ( currentTicks &0x7 ) == channel->target_tick ){
+			if( ( currentTicks) == channel->target_tick ){
 				
 			//if( ( currentTicks & 0x3 ) == channel->target_tick ){
 				

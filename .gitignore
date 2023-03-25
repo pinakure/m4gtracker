@@ -288,3 +288,5 @@ makefile_old
 makefilegood
 modules.s
 main.bak
+makefile.bak
+makefile_new

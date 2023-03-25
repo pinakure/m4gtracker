@@ -8,17 +8,17 @@
 //#define ADSR_LENGTH_SCALE 		0
 //#define ADSR_RANGE_SCALE 			0
 
-#define FM_ADSR_SCALE 				1
-#define ADSR_LENGTH_SCALE 			1+FM_ADSR_SCALE
+#define FM_ADSR_SCALE 				0//1
+#define ADSR_LENGTH_SCALE 			0//1+FM_ADSR_SCALE
 
 //#define ADSR_RANGE_SCALE 			0
 #define ADSR_TABLE_SIZE				0x40 // DO NOT CHANGE THIS VALUE, CHANGE SCALE INSTEAD
 #define ADSR_RANGE 					0xF0
-#define ADSR_TABLE_LENGTH 			( ADSR_TABLE_SIZE << ADSR_LENGTH_SCALE )
+#define ADSR_TABLE_LENGTH 			ADSR_TABLE_SIZE //(1 + ( ADSR_TABLE_SIZE << ADSR_LENGTH_SCALE ))
 
-#define WAV_ADSR_POSITION 			( Adsr::wav_position >> FM_ADSR_SCALE )
-#define FMW_ADSR_POSITION 			( Adsr::fmw_position >> FM_ADSR_SCALE )
-#define SMP_ADSR_POSITION 			( Adsr::smp_position >> FM_ADSR_SCALE )
+#define WAV_ADSR_POSITION 			 Adsr::wav_position //( Adsr::wav_position >> FM_ADSR_SCALE )
+#define FMW_ADSR_POSITION 			 Adsr::fmw_position //( Adsr::fmw_position >> FM_ADSR_SCALE )
+#define SMP_ADSR_POSITION 			 Adsr::smp_position //( Adsr::smp_position >> FM_ADSR_SCALE )
 
 class Adsr {
 	

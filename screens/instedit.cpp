@@ -529,8 +529,8 @@ void InstEdit::smpPreset(Control *c, bool bigstep, bool add, u32 *pointer){
 	DECIMAL_DOUBLE( 1, 2, 0x33, index + offset);
 	//BREAK
 	VAR_SMP.KITINDEX = index;
-	InstEdit::repack();
-	synchronize();
+	InstEdit::pack(&VAR_INSTRUMENT);
+	repack();
 }
 
 void InstEdit::viewWaveFormFmw( ){
