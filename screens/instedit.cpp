@@ -511,7 +511,8 @@ void InstEdit::wavPreset(Control *c, bool bigstep, bool add, u32 *pointer){
 
 void InstEdit::smpPreset(Control *c, bool bigstep, bool add, u32 *pointer){
 	#define MATCH( match ) 	( c == &INS_SMP_CONTROLS[ CONTROL_INS_SMP_##match ] ) 
-	int offset  = unpackSmp( &VAR_INSTRUMENT ).KIT * 0xB;
+	SETTINGS_SMP smp = unpackSmp( &VAR_INSTRUMENT );
+	int offset  = smp.KIT*0xC;
 	int index 	= MATCH( SMPKIT_00 ) ? 0x0 
 				: MATCH( SMPKIT_01 ) ? 0x1 
 				: MATCH( SMPKIT_02 ) ? 0x2 
@@ -527,11 +528,15 @@ void InstEdit::smpPreset(Control *c, bool bigstep, bool add, u32 *pointer){
 	#undef MATCH
 	DECIMAL_DOUBLE( 1, 2, 0x33, index + offset);
 	//BREAK
+	VAR_SMP.KITINDEX = index;
+	InstEdit::repack();
+	synchronize();
 }
 
 void InstEdit::viewWaveFormFmw( ){
 	
 	const u16 center = 40+((15*8)<<3);
+	VirtualScreen::clear();
 	
 	for(int i=0; i<16; i++){
 		u8 v = VAR_FMW.WAVEDATA[i]>>3;
@@ -548,6 +553,7 @@ void InstEdit::viewWaveFormSmp( ){
 void InstEdit::viewWaveFormWav( ){
 	
 	const u16 center = 40 + ((2*8)<<3);
+	VirtualScreen::clear();
 	
 	for(int i=0; i<16; i++){
 		u8 v = VAR_WAV.WAVEDATA[i];

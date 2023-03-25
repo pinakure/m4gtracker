@@ -88,6 +88,7 @@ PATH       +=;$(GCCARM)
 STRIP       = $(GCC_BINDIR)/$(PFX)strip
 CC          = $(GCC_BINDIR)/$(PFX)g++
 AS          = $(GCC_BINDIR)/$(PFX)as
+GDB         = $(GCC_BINDIR)/$(PFX)gdb
 LD          = $(GCC_BINDIR)/$(PFX)ld
 OBJCOPY     = $(GCC_BINDIR)/$(PFX)objcopy
 SHELL       = $(HAMDIR)/tools/win32/sh$(EXEC_POSTFIX) 
@@ -119,6 +120,27 @@ index.m4h: index.hml
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f *.o *.i *.ii *.m4h	
 	$(ROOT)/tools/helpcode/helpcode.exe index.hml index.m4h /c help /v -l -t
 #----------------------------------------------------------------------------------------#
+#include $(HAMDIR)/system/standard-targets.mak
+
+gdb: clean all fixheader
+	$(HAMDIR)/tools/win32/vba$(EXEC_POSTFIX) -Gtcp &
+	$(HAMDIR)/tools/win32/echo "file $(PROGNAME).elf" > insight.ini
+	$(HAMDIR)/tools/win32/echo "target remote 127.0.0.1:55555" >> insight.ini
+	$(HAMDIR)/tools/win32/echo "load $(PROGNAME).elf" >> insight.ini
+	$(HAMDIR)/tools/win32/echo "b main" >> insight.ini
+	$(HAMDIR)/tools/win32/echo "directory $(GDB_SOURCE_DIRS)" >> insight.ini
+	$(HAMDIR)/tools/win32/echo "c" >> insight.ini
+	$(GDB) --command=insight.ini $(PROGNAME).elf
+rungdb:
+	$(HAMDIR)/tools/win32/vba$(EXEC_POSTFIX) -Gtcp &
+	$(HAMDIR)/tools/win32/echo "file $(PROGNAME).elf" > insight.ini
+	$(HAMDIR)/tools/win32/echo "target remote 127.0.0.1:55555" >> insight.ini
+	$(HAMDIR)/tools/win32/echo "load $(PROGNAME).elf" >> insight.ini
+	$(HAMDIR)/tools/win32/echo "b main" >> insight.ini
+	$(HAMDIR)/tools/win32/echo "directory $(GDB_SOURCE_DIRS)" >> insight.ini
+	$(HAMDIR)/tools/win32/echo "c" >> insight.ini
+	$(GDB) --command=insight.ini $(PROGNAME).elf
+
 all : $(PROGNAME).gba
 	$(GCC_BINDIR)/$(PFX)nm $(PROGNAME).elf > syms.txt
 
@@ -137,9 +159,9 @@ fixheader:
 	
 clean-kernel: 
 	@echo -------------------------------------------------------------------------------
-	@echo Cleaning up kernel kernel
+	@echo Cleaning up kernel
 	@echo -------------------------------------------------------------------------------
-	 -f kernel/int/*.o *.i *.ii *.m4h	
+	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f kernel/int/*.o *.i *.ii *.m4h	
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f kernel/regionhandler/*.o *.i *.ii *.m4h	
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f kernel/tim/*.o *.i *.ii *.m4h	
 	$(HAMDIR)/tools/win32/rm$(EXEC_POSTFIX) -f kernel/sys/*.o *.i *.ii *.m4h	

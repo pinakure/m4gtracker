@@ -180,14 +180,19 @@ void Sequencer::update(){
 		//Net::update();
 		
 		Channel *channel = VAR_CHANNEL;
-		for(int i=0, s = 0; i<6; i++, channel++){
+		for(Channel *end = channel+CHANNEL_COUNT; channel<end; channel++ ){
 			
 			channel->retrig = false;
 			
-			s = channel->STEP;
-			if( VAR_CELLS[ i ].KEY[ s ] > 0x0) setKey( channel, VAR_CELLS[i].KEY[s] , VAR_CELLS[i].VOL[s] ); 
-			if( VAR_CELLS[ i ].INS[ s ] > 0x0) setIns( channel, VAR_CELLS[i].INS[s] , VAR_CELLS[i].VOL[s] ); 
-			if( VAR_CELLS[ i ].CMD[ s ] > 0x0) setCmd( channel, VAR_CELLS[i].CMD[s] , VAR_CELLS[i].VAL[s] ); 
+			u8 key = *(channel->cells->KEY + channel->STEP);
+			u8 ins = *(channel->cells->INS + channel->STEP);
+			u8 cmd = *(channel->cells->CMD + channel->STEP);
+			u8 vol = *(channel->cells->VOL + channel->STEP);
+			u8 val = *(channel->cells->VAL + channel->STEP);
+			
+			if( key ) setKey( channel, key , vol ); 
+			if( ins ) setIns( channel, ins , vol ); 
+			if( cmd ) setCmd( channel, cmd , val ); 
 			
 			// Handle Commands
 			// ...
@@ -195,9 +200,9 @@ void Sequencer::update(){
 			// Handle Groove Table
 			//channel->target_tick = 0;
 			// this causes unwanted retriggers
-			//if( ( currentTicks  ) == channel->target_tick ){
+			if( ( currentTicks &0x7 ) == channel->target_tick ){
 				
-			if( ( currentTicks & 0x3 ) == channel->target_tick ){
+			//if( ( currentTicks & 0x3 ) == channel->target_tick ){
 				
 				// trigger sound settings
 				channel->trigger( channel );

@@ -36,11 +36,11 @@ typedef struct soundBuffer {
 extern SoundBuffer sound_buffer;
 
 typedef struct _soundChannel {
-   s8 *data;   // pointer to the raw sound data in ROM
-   u32 pos;    // current position in the data
-   u32 length; // length of the whole sound
-   u32 inc;
-   u32 vol;
+   s8*	data;   // pointer to the raw sound data in ROM
+   u32 	pos;    // current position in the data
+   u32 	length; // length of the whole sound
+   u32 	inc;
+   u32 	vol;
 } SoundChannel;
 // extern SoundChannel channel[ VIRTUAL_CHANNEL_COUNT ];
 
@@ -60,7 +60,8 @@ class Mixer {
 		static void disableFmw();
 		static void disableSmp();
 
-		static SoundChannel channel[ VIRTUAL_CHANNEL_COUNT ];
+		static SoundChannel dsound		[ VIRTUAL_CHANNEL_COUNT ];
+		static bool 		dsound_mute	[ VIRTUAL_CHANNEL_COUNT];
 	public:
 		friend class Channel;
 		
@@ -85,10 +86,8 @@ class Mixer {
 		static void noteOn1	(u16 freq);// move to seq or synth
 		static void noteOn2	(u16 freq);// move to seq or synth
 
-		static void enable	(u8 channel);// move to mixer
-		static void disable	(u8 channel);// move to mixer
-		static void mute	(int channel);// move to mixer
-		static void solo	(int channel);// move to mixer
+		static void mute	(u8 channel_index);// move to mixer
+		static void solo	(u8 channel_index);// move to mixer
 		
 		// These are interacted through Cfg Screen
 		static void show 	( Control* c, bool bigstep, bool add, u32* pointer );

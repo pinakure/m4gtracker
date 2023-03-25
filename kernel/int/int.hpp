@@ -41,10 +41,7 @@ class Interrupt {
 
 extern volatile bool 	SYS_QUERYKEY;		 //True when a key is triggered
 extern u32				SYS_PROFILEDTIME;				 //Profiled time (Debug Only)
-extern volatile bool 	SYS_SOUNDTIME;		 //Sound processing flag
-extern vu32 				SYS_PROFILETIMER;			 //Profiling timer (Debug Only)
-extern vu32 				SYS_FPS;						 //Frames(program cycles) / sec
-extern vu32 				SYS_FRAMES;					 //Current framecount	
-extern vu32 				SYS_TIMER;					 //Global program timer
+extern vu32 			SYS_PROFILETIMER;			 //Profiling timer (Debug Only)
+extern vu32 			SYS_TIMER;					 //Global program timer
 
 #endif 

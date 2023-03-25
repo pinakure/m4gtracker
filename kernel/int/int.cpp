@@ -130,7 +130,7 @@ extern "C" void IntHandler(){
 	//DEFINT(2, VCOUNT_IF);
 	DEFINT(3, TIMER0_IF);
 	DEFINT(4, TIMER1_IF);
-	//DEFINT(5, TIMER2_IF);
+	DEFINT(5, TIMER2_IF);
 	//DEFINT(6, TIMER3_IF);
 	//DEFINT(12,KEYPAD_IF);
 	DEFINT(13,AGBPAK_IF);
@@ -153,14 +153,7 @@ also know a second has elapsed, so it's time to calculate the CPS rate
 (cycles of program per second), but call it SYS_FPS to be more convenient
 */
     R_IME=0x0;
-	/*
-	SYS_TIMER++;
-	if(SYS_TIMER==60){
-		SYS_FPS=SYS_FRAMES;
-		SYS_FRAMES = 0;
-		SYS_TIMER=0;		
-	}
-	*/
+	
 	// From M0-K1
 	if(sound_buffer.activeBuffer == 1)	// buffer 1 just got over
 	{
@@ -183,12 +176,13 @@ also know a second has elapsed, so it's time to calculate the CPS rate
 	  sound_buffer.activeBuffer = 1;
 	}
 	
-	SYS_SOUNDTIME=true;
 	REG_IFBIOS = VBLANK_IF; //Interrupt ACK!!
 	/***************************************************************************/
 	SYS_QUERYKEY = true;	
 	/***************************************************************************/
+	
 	R_IME=0x1;
+	
 	return Mixer::mix();
 }
 
@@ -219,8 +213,6 @@ static void INT_Timer1(){
 	R_IME=0x0;
 	swap_bank^=1;
 	VAR_CHANNEL[ CHANNEL_WAV ].render = true;
-	//HALT
-	//fmwRenderInterrupt();
 	REG_IFBIOS = TIMER1_IF; //Interrupt ACK!!
 	R_IME=0x1;
 }
@@ -228,11 +220,14 @@ static void INT_Timer1(){
 static void INT_Timer2(){
 	R_IME=0x0;
 	REG_IFBIOS = TIMER2_IF; //Interrupt ACK!!
+	Debug::panic("Unexpected Timer Interrupt", NULL);
+	
 	R_IME=0x1;
 }
 	
 static void INT_Timer3(){
 	R_IME=0x0;
+	Debug::panic("Unexpected Timer Interrupt", NULL);
 	REG_IFBIOS = TIMER3_IF; //Interrupt ACK!!
 	R_IME=0x1;
 }

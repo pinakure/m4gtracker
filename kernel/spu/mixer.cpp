@@ -5,6 +5,7 @@
 #include "../../gbfs.h"
 
 #include "../gpu/gpu.hpp"
+#include "../gpu/virtualscreen.hpp"
 #include "sequencer.hpp"
 #include "../key/key.hpp"
 
@@ -111,8 +112,8 @@ const u16 DSOUND_FREQ_TABLE[] = {
 
 MEM_IN_EWRAM s8 sound_mix_buffer[ SMP_BUFFER_SIZE*4 ];
 SoundBuffer		sound_buffer;
-// SoundChannel	channel[ VIRTUAL_CHANNEL_COUNT ];
-SoundChannel	Mixer::channel[ VIRTUAL_CHANNEL_COUNT ];
+SoundChannel	Mixer::dsound[ VIRTUAL_CHANNEL_COUNT ];
+bool			Mixer::dsound_mute[ VIRTUAL_CHANNEL_COUNT ];
 u32*			smp_data;
 u32 			smp_data_size;
 char*			smp_name;
@@ -129,15 +130,15 @@ void Mixer::init(){
 	
 	enabled = false;
 	
-	channel[0].pos 		= 0;
-	channel[0].inc 		= 0;
-	channel[0].data 	= (s8*) FMDATA;
-	channel[0].length 	= FM_BUFFER_SIZE << 12;
+	dsound[0].pos 		= 0;
+	dsound[0].inc 		= 0;
+	dsound[0].data 	= (s8*) FMDATA;
+	dsound[0].length 	= FM_BUFFER_SIZE << 12;
 	
-	channel[1].pos 		= 0;
-	channel[1].length 	= 0;
-	channel[1].inc 		= 0;
-	channel[1].data 	= NULL;
+	dsound[1].pos 		= 0;
+	dsound[1].length 	= 0;
+	dsound[1].inc 		= 0;
+	dsound[1].data 	= NULL;
 	
 	sound_buffer.mixBufferBase = sound_mix_buffer;
 	
@@ -169,18 +170,19 @@ void Mixer::mix(){
 //  s16 vol_a = 0xF & 0xF;
 //   s16 vol_b = 0xF & 0xF;
    
-   SoundChannel *fm 	= &channel[0];
-   SoundChannel *smp 	= &channel[1];
+   SoundChannel *fm 	= &dsound[0];
+   SoundChannel *smp 	= &dsound[1];
    
    sample_a = 0x00;
    sample_b = 0x00;
+   
    for(i = 0; i < sound_buffer.mixBufferSize; i++){
 
 		// copy a sample
 		//sample_b = 0x00;
 		
 		// Pick a sample from FMW buffer
-		if( fm->data ){
+		if( fm->data && !*dsound_mute){
 			sample_a = ( fm->data[ fm->pos>>12 ] );
 			//sample_a = fm->data[ fm->pos & 0xF ];
 			fm->pos += fm->inc;
@@ -189,16 +191,13 @@ void Mixer::mix(){
 		
 		// WORKAROUND
 		//sound_buffer.curMixBuffer[i] = sample_a;
-		if( smp->data ){
+		if( smp->data && !*(dsound_mute+1) ){
 			sample_b = ( smp->data[ smp->pos>>12 ] ) ;//*0xF;//* vol_b;
 			smp->pos += smp->inc;
 			/* !! */
 			// sample_b >>= 2;
 			/* !! */
 			if( smp->pos >= smp->length) smp->pos -= smp->length;
-			//Gpu::number(22,14, smp->pos>>4, 0x2);
-			//Gpu::number(22,15, smp->length>>4, 0x2);
-		
 		} else sample_b = 0;
 		// Sum both input sample bytes into a single output byte 
 		sound_buffer.curMixBuffer[i] = ( sample_a + sample_b ) >> 1;
@@ -207,18 +206,19 @@ void Mixer::mix(){
 }
 
 void Mixer::noteOn1(u16 freq){
-	// channel[0].inc = (freq << 12) / 16000;	
-	channel[0].inc = (freq << 12) / 5734;	
+	// dsound[0].inc = (freq << 12) / 16000;	
+	dsound[0].inc = (freq << 12) / 5734;	
 }
 
 void Mixer::noteOn2(u16 freq){
 	static u16 chivato=0; Gpu::number(10,0,chivato,0xF); chivato++;
-	channel[1].inc = (freq<<12)/16000;//5734;
-	//channel[1].inc = (freq<<12)/5734;
-	Mixer::load( 0 , 1);
+	dsound[1].inc = (freq<<12)/16000;//5734;
+	//dsound[1].inc = (freq<<12)/5734;
+	SETTINGS_SMP smp = InstEdit::unpackSmp(&VAR_INSTRUMENTS[ VAR_CHANNEL[ CHANNEL_SMP ].inst]);
+	Mixer::load( (smp.KIT*0xC) + smp.KITINDEX , 1);
 	//if(new_note[5]){
-		// channel[1].pos = 0;
-		//channel[1].inc = (DSOUND_FREQ_TABLE[key_note[5]]<<12) / 16000;//5734;	
+		// dsound[1].pos = 0;
+		//dsound[1].inc = (DSOUND_FREQ_TABLE[key_note[5]]<<12) / 16000;//5734;	
 	//}
 }
 
@@ -231,14 +231,16 @@ void Mixer::load(size_t index, int chan=1){
 	smp_data 	= (u32*)gbfs_get_nth_obj(dat, index  , NULL, &smp_data_size);
 	smp_name 	= (char *)gbfs_get_nth_obj(dat, index+1, NULL, NULL);
 	
-	channel[1].pos 		= 0;
-	channel[1].data = (s8*)smp_data;
-	//channel[1].length 	= smp_data_size<<12;
+	dsound[1].pos 		= 0;
+	dsound[1].data = (s8*)smp_data;
+	//dsound[1].length 	= smp_data_size<<12;
 	smp_data_size <<= 12;
-	channel[1].length = smp_data_size - (smp_data_size &0XF); //remove last bytes from sample to ensure it is multiple of 16
+	dsound[1].length = smp_data_size - (smp_data_size &0XF); //remove last bytes from sample to ensure it is multiple of 16
+	
 	
 	if(KEYPRESS_SELECT){
-		Gpu::drawDialog(20,0,10,20,"SMP Info");
+		VirtualScreen::clear();
+		Gpu::drawDialog(13,0,17,20,"SMP Info");
 		/**/
 		Gpu::ascii (42,1, "smp_data");
 		Gpu::ascii (42,2, "0x", COLOR_CYAN);
@@ -260,133 +262,105 @@ void Mixer::load(size_t index, int chan=1){
 		/**/
 		Gpu::ascii (42,11, "chan.length");
 		Gpu::ascii (42,12, "0x", COLOR_CYAN);
-		Gpu::number(22,12, channel[1].length, 0x2);
+		Gpu::number(22,12, dsound[1].length, 0x2);
 		/**/
 		Gpu::ascii (42,13, "chan.position");
 		Gpu::ascii (42,14, "0x", COLOR_CYAN);
-		Gpu::number(22,14, channel[1].pos, 0x2);
-		while( KEYPRESS_SELECT ){ Key::update(); }
+		Gpu::number(22,14, dsound[1].pos, 0x2);
+		// while( KEYPRESS_SELECT ){ Key::update(); }
 	}
-	// Update channel settings
-	// channel[1].data  	= 0;
-	//channel[1].inc 		= (4000<<12)/5734;
-	/*
-	
-	
-	if(chan)noteOnSmp1();
-	else noteOnSmp2(); 
-	drawSampleData();
-	*/
 }
 
 void Mixer::enablePwm1(){ (*(vu16*)0x4000080)|= 0x1177; }
 void Mixer::enablePwm2(){ (*(vu16*)0x4000080)|= 0x2277; }
 void Mixer::enableWav (){ (*(vu16*)0x4000080)|= 0x4477; }
 void Mixer::enableNze (){ (*(vu16*)0x4000080)|= 0x8877; }
-void Mixer::enableFmw (){ (*(vu16*)0x4000082)|= 0x0B0E; } // 0x0800:FIFOA RESET | 0x0000:DSOUND0TIMER0 | 0x0200:DSOUND0LEFT | 0x0100:DSOUND0RIGHT | 0x0008:DSOUND1VOL100 | 0x0004:DSOUND0VOL100 | 0x0002:DMGSOUNDVOL100
-void Mixer::enableSmp (){ (*(vu16*)0x4000082)|= 0xB00E; } // 0x8000:FIFOB RESET | 0x4000:DSOUND1TIMER1 | 0x2000:DSOUND1LEFT | 0x1000:DSOUND1RIGHT | 0x0008:DSOUND1VOL100 | 0x0004:DSOUND0VOL100 | 0x0002:DMGSOUNDVOL100
+void Mixer::enableFmw (){ 
+	dsound_mute[0] = true;
+	(*(vu16*)0x4000082)|= 0xBB0E; 
+} // 0x0800:FIFOA RESET | 0x0000:DSOUND0TIMER0 | 0x0200:DSOUND0LEFT | 0x0100:DSOUND0RIGHT | 0x0008:DSOUND1VOL100 | 0x0004:DSOUND0VOL100 | 0x0002:DMGSOUNDVOL100
+void Mixer::enableSmp (){ 
+	dsound_mute[1] = false;
+	(*(vu16*)0x4000082)|= 0xBB0E; 
+} // 0x8000:FIFOB RESET | 0x4000:DSOUND1TIMER1 | 0x2000:DSOUND1LEFT | 0x1000:DSOUND1RIGHT | 0x0008:DSOUND1VOL100 | 0x0004:DSOUND0VOL100 | 0x0002:DMGSOUNDVOL100
 
-void Mixer::start(){
-	if( !VAR_CHANNEL[0].mute ) enablePwm1();
-	if( !VAR_CHANNEL[1].mute ) enablePwm2();
-	if( !VAR_CHANNEL[2].mute ) enableNze();
-	if( !VAR_CHANNEL[3].mute ) enableWav();
-	if( !VAR_CHANNEL[4].mute ) enableFmw();
-	if( !VAR_CHANNEL[5].mute ) enableSmp();
-	enabled = true;
-}
 
 void Mixer::disablePwm1(){ (*(vu16*)0x4000080) &= ~0x1100; }
 void Mixer::disablePwm2(){ (*(vu16*)0x4000080) &= ~0x2200; }
 void Mixer::disableWav (){ (*(vu16*)0x4000080) &= ~0x4400; }
 void Mixer::disableNze (){ (*(vu16*)0x4000080) &= ~0x8800; }
-void Mixer::disableSmp (){ (*(vu16*)0x4000082) &= ~0xB000; }
 void Mixer::disableFmw (){ 
-	(*(vu16*)0x4000082) &= ~0x0B00; 
+	dsound_mute[0] = true;
 	memset( (void*)FMDATA, 0, sizeof(u8)*FM_BUFFER_SIZE);
+	// (*(vu16*)0x4000082) &= ~0x0B00;
+}
+void Mixer::disableSmp (){ 
+	dsound_mute[1] = true;
+	// (*(vu16*)0x4000082) &= ~0xB000; 
+}
+
+void Mixer::start(){
+	for(Channel *channel = VAR_CHANNEL, *end= channel + CHANNEL_COUNT; channel<end; channel++){
+		if( !channel->mute ) channel->enable();
+	}
+	enabled = true;
 }
 
 void Mixer::stop(){
-	disablePwm1();
-	disablePwm2();
-	disableNze();
-	disableWav();
-	disableFmw();
-	disableSmp();
+	for(Channel *channel=VAR_CHANNEL, *end=channel+CHANNEL_COUNT; channel<end; channel++){
+		channel->disable();
+	}
 	enabled = false;
 }
 
-void Mixer::disable( u8 channel ){
-	switch(channel){
-		case 0: return disablePwm1();
-		case 1: return disablePwm2();
-		case 2: return disableNze();
-		case 3: return disableWav();
-		case 4: return disableFmw();
-		case 5: return disableSmp();
-	}
-}
-
-void Mixer::enable( u8 channel ){
-	switch(channel){
-		case 0: return enablePwm1();
-		case 1: return enablePwm2();
-		case 2: return enableNze();
-		case 3: return enableWav();
-		case 4: return enableFmw();
-		case 5: return enableSmp();
-	}
-}
-
-/*###########################################################################*/
-
 void Mixer::updateMetronome( u8 time, u8 beats_per_bar ) {
-	if( time + 1 == 0 ){
+	if( time + 1 == 0 ){						// beep	
 		*((volatile u16*)0x04000068) = 0x8181;
-		*((volatile u16*)0x0400006C) = 0xC7b7;				
-	} else 
-	if(!(( time + 1 ) % beats_per_bar)){								
-		*((volatile u16*)0x04000068) = 0x8181;
-		*((volatile u16*)0x0400006C) = 0xC770;
+		*((volatile u16*)0x0400006C) = 0xC7b7;		
+	} else if(!(( time + 1 ) % beats_per_bar)){	// boop, boop, boop						
+		*((volatile u16*)0x04000068) = 0x8181; 
+		*((volatile u16*)0x0400006C) = 0xC770;	
 	}
 }	
 
-/*###########################################################################*/
-void Mixer::mute( int channel ){
-	VAR_CHANNEL[channel].mute ^= 1;
+void Mixer::mute( u8 channel_index ){//TODO: replace by channel pointer 
+	Channel *channel = VAR_CHANNEL + channel_index;
+	channel->mute ^= 1;
 	// Since a channel was unmuted, disable solo on every channel 
 	// Sync with audio registers
-	if( VAR_CHANNEL[channel].mute ) Mixer::disable( channel );
-	else Mixer::enable( channel );
+	if( channel->mute ) channel->disable();
+	else channel->enable( );
 	
-	if(VAR_CHANNEL[channel].mute) return;
+	if(channel->mute) return;
 	// If a channel was unmuted, disable solo on every channel 
-	for(int i=0; i<6;i++){
+	for(int i=0; i<CHANNEL_COUNT;i++){
 		VAR_CHANNEL[i].solo = false;
 	}
 }
 
-void Mixer::solo(int channel){
+void Mixer::solo(u8 channel_index){
+	Channel *channel = VAR_CHANNEL + channel_index;
 	// If channel has solo enabled unmute channels and disable solo 
-	if(VAR_CHANNEL[channel].solo){
-		for(int i=0; i<6;i++){
-			VAR_CHANNEL[channel].solo = false;
-			VAR_CHANNEL[i].mute = false;
-			if( channel == i ) continue;
-			enable( i );
+	if(channel->solo){
+		Channel *p = VAR_CHANNEL;
+		for(Channel *end = VAR_CHANNEL + CHANNEL_COUNT; p<end; p++){
+			p->solo = false;
+			p->mute = false;
+			if( p == channel) continue;
+			channel->enable();
 		}
 		return;
 	}
 		
-	if( VAR_CHANNEL[channel].mute ) enable( channel );
-	VAR_CHANNEL[channel].solo = true;
-	VAR_CHANNEL[channel].mute = false;
+	if( channel->mute ) channel->enable() ;
+	channel->solo = true;
+	channel->mute = false;
 	
 	// Mute all channels 
-	for(int i=0; i<6;i++){
-		if( channel == i ) continue;
-		VAR_CHANNEL[i].mute = true;
-		disable( i );
+	for(Channel *p = VAR_CHANNEL, *end = p+CHANNEL_COUNT; p<end; p++){
+		if( channel == p ) continue;
+		p->mute = true;
+		p->disable();
 	}
 	
 	// Unmute and enable solo on selected channel 

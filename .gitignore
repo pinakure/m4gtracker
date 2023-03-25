@@ -279,3 +279,12 @@ hudcursor.s
 a.out
 libgbfs.o
 libgbfs.s
+data/help.bak
+gnu_stub.sav
+insight.ini
+kernel/modules.o
+main.s
+makefile_old
+makefilegood
+modules.s
+main.bak

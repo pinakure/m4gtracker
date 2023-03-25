@@ -6,9 +6,6 @@
 vu32 							SYS_TIMER			= 0;
 u32								SYS_PROFILEDTIME	= 0;
 vu32 							SYS_PROFILETIMER	= 0;
-vu32 							SYS_FPS				= 0;
-vu32 							SYS_FRAMES			= 0;
-volatile bool 					SYS_SOUNDTIME  		= false;
 u8 								SYS_ACTIVESCREEN	= 0;
 u8 								SYS_PARAM			= 0;
 bool 							SYS_SYNCTRACKER 	= false;

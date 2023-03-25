@@ -190,3 +190,16 @@ Cursors are sprite based now
 Tables show their position when at instrument editor
 Clipboard is no more laggy
 Pattern navigation possible in tracker screen using B+SELECT+ LEFT/RIGHT
+
+-----------
+24-03-2023
+----------
+Fixed Wav channel sound rendering issues
+Added basic SMP functionality 
+
+-----------
+25-03-2023
+-----------
+Ability to select different SMP kit
+Optimized mixer routines
+Fixed FMW & SMP mute/solo issues
