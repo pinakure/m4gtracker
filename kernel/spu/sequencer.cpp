@@ -173,17 +173,54 @@ void Sequencer::update(){
 		Net::update();
 	}	
 	
-	if( !( currentTicks	& 0x3 ) ){
+	// if( !( currentTicks	& 0x3 ) ){
+	// // If current tick%4 == 0, time to trigger a note on every channel
+		
+		// // Send Analog Master Sync signal or Receive Slave sync signal
+		// //Net::update();
+		
+		// Channel *channel = VAR_CHANNEL;
+		// for(Channel *end = channel+CHANNEL_COUNT; channel<end; channel++ ){
+			
+			// channel->retrig = false;
+			
+			// u8 key = *(channel->cells->KEY + channel->STEP);
+			// u8 ins = *(channel->cells->INS + channel->STEP);
+			// u8 cmd = *(channel->cells->CMD + channel->STEP);
+			// u8 vol = *(channel->cells->VOL + channel->STEP);
+			// u8 val = *(channel->cells->VAL + channel->STEP);
+			
+			// if( key ) setKey( channel, key , vol ); 
+			// if( ins ) setIns( channel, ins , vol ); 
+			// if( cmd ) setCmd( channel, cmd , val ); 
+			
+			// // Handle Commands
+			// // ...
+			
+			// // Handle Groove Table
+			// //channel->target_tick = 0;
+			// // this causes unwanted retriggers
+			// if( ( currentTicks &0x3) == channel->target_tick ){
+				
+			// //if( ( currentTicks & 0x3 ) == channel->target_tick ){
+				
+				// // trigger sound settings
+				// channel->trigger( channel );
+				// channel->target_tick = 0;
+			// }
+		// }
+		
 	// If current tick%4 == 0, time to trigger a note on every channel
 		
 		// Send Analog Master Sync signal or Receive Slave sync signal
 		//Net::update();
 		
-		Channel *channel = VAR_CHANNEL;
-		for(Channel *end = channel+CHANNEL_COUNT; channel<end; channel++ ){
-			
-			channel->retrig = false;
-			
+	Channel *channel = VAR_CHANNEL;
+	for(Channel *end = channel+CHANNEL_COUNT; channel<end; channel++ ){
+		
+		channel->retrig = false;
+		
+		if( currentTicks	 == channel->target_tick ){
 			u8 key = *(channel->cells->KEY + channel->STEP);
 			u8 ins = *(channel->cells->INS + channel->STEP);
 			u8 cmd = *(channel->cells->CMD + channel->STEP);
@@ -193,23 +230,23 @@ void Sequencer::update(){
 			if( key ) setKey( channel, key , vol ); 
 			if( ins ) setIns( channel, ins , vol ); 
 			if( cmd ) setCmd( channel, cmd , val ); 
+		}
+		// Handle Commands
+		// ...
+		
+		// Handle Groove Table
+		//channel->target_tick = 0;
+		// this causes unwanted retriggers
+		if( !( currentTicks & 1) ){
 			
-			// Handle Commands
-			// ...
+		//if( ( currentTicks & 0x3 ) == channel->target_tick ){
 			
-			// Handle Groove Table
-			//channel->target_tick = 0;
-			// this causes unwanted retriggers
-			if( ( currentTicks) == channel->target_tick ){
-				
-			//if( ( currentTicks & 0x3 ) == channel->target_tick ){
-				
-				// trigger sound settings
-				channel->trigger( channel );
-				channel->target_tick = 0;
-			}
+			// trigger sound settings
+			channel->trigger( channel );
+			channel->target_tick = 0;
 		}
 	}
+
 	
 	currentTicks++;	
 

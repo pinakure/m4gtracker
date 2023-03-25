@@ -214,7 +214,6 @@ void Synth::renderSmp( SETTINGS_SMP *smp, u8 vol){
 							?	Adsr::smp_position + 1 
 							: ( ADSR_TABLE_LENGTH - 1 );
 	
-	
 	#define OPERATOR( a )	((u8)((u32)( operators[ smp->OP1_TYPE ][ a ] * operator_volume ) >> 4))
 	#undef OPERATOR
 	//loadSmp( smp->WAVEDATA );
@@ -696,7 +695,6 @@ void Synth::triggerPwm1( Channel *channel ){
 	
 	if( pwm.VOL_ENABLE ){				
 		u8 vol_pos = (channel->vol_position >> pwm.VOL_SPEED) ;
-		
 		if( channel->vol_delta+1){
 			if( vol_pos < channel->vol_target ){
 				channel->retrig 		= true;
@@ -1019,10 +1017,10 @@ void Synth::triggerSmp( Channel* channel ){
 			noteOnSmp( channel );
 		}
 		channel->retrig = false;
-	}
 	
-	// Regenerate FMW shape (scaled to channel volume)
-	renderSmp( &smp, vol );
+		// Regenerate FMW shape (scaled to channel volume)
+		renderSmp( &smp, vol );
+	}
 }
 /*###########################################################################*/
 
