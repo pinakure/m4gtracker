@@ -645,7 +645,7 @@ void PatEdit::sync( bool verbose ){
 	}
 }
 
-void PatEdit::dispatchMessage(u32 msg){
+void PatEdit::dispatchMessage( u32 msg, u32 pointer ){
 	u8 x, y;
 	
 	bool modifier = KEYPRESS_SELECT;
@@ -653,6 +653,15 @@ void PatEdit::dispatchMessage(u32 msg){
 	Channel *channel = &VAR_CHANNEL[TRACKER_ACTIVE_CHANNEL];
 	
 	switch(msg){
+		
+		/* Navigation */
+		case MESSAGE_NAVIGATE_LEFT	: RegionHandler::load( ((Region*)pointer)->left ); break;
+		case MESSAGE_NAVIGATE_RIGHT	: RegionHandler::load( ((Region*)pointer)->right); break;
+		case MESSAGE_NAVIGATE_DOWN	: RegionHandler::load( ((Region*)pointer)->down ); break;
+		case MESSAGE_NAVIGATE_UP	: RegionHandler::load( ((Region*)pointer)->up   ); break;
+		case MESSAGE_ENTER			: break;
+		case MESSAGE_EXIT			: break;
+		
 		case MESSAGE_CANCEL: // Erase
 			// Clear Arrow on current channel 
 			// y = VAR_CHANNEL[ TRACKER_ACTIVE_CHANNEL ].POSITION - VAR_CFG.ORDERPOSITION;
@@ -668,7 +677,7 @@ void PatEdit::dispatchMessage(u32 msg){
 			copy( channel ); 			
 			channel->LASTPOSITION = channel->POSITION;
 			sync();
-			dispatchMessage		( MESSAGE_OTHER_REFRESH_DATA );
+			dispatchMessage( MESSAGE_OTHER_REFRESH_DATA );
 			clean = false;
 			return;
 		

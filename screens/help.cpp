@@ -179,3 +179,17 @@ void Help::update(){
 		button_redraw = false;
 	}
 }
+
+void Help::dispatchMessage( u32 msg, u32 pointer){
+	
+	switch( msg ){
+		
+		/* Navigation */
+		case MESSAGE_NAVIGATE_LEFT	: RegionHandler::load( ((Region*)pointer)->left ); break;
+		case MESSAGE_NAVIGATE_RIGHT	: RegionHandler::load( ((Region*)pointer)->right); break;
+		case MESSAGE_NAVIGATE_DOWN	: RegionHandler::load( ((Region*)pointer)->down ); break;
+		case MESSAGE_NAVIGATE_UP	: RegionHandler::load( ((Region*)pointer)->up   ); break;
+		case MESSAGE_ENTER			: break;
+		case MESSAGE_EXIT			: break;
+	}
+}

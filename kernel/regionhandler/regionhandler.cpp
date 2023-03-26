@@ -9,6 +9,11 @@
 #include "../../screens/patedit.hpp"
 #include "../../screens/instedit.hpp"
 #include "../../screens/config.hpp"
+#include "../../screens/help.hpp"
+#include "../../screens/snake.hpp"
+#include "../../screens/songedit.hpp"
+#include "../../screens/live/piano.hpp"
+#include "../../screens/live/performance.hpp"
 #include "../../data/data.hpp"
 
 const unsigned short*	RegionHandler::map0;
@@ -46,27 +51,44 @@ void RegionHandler::init(){
 RegionHandler::RegionHandler(){
 }
 
+void RegionHandler::sendMessageToRegion( Region *r, u32 msg , u32 pointer ){
+	if(region == &REGION_MAP_1_LIVE1	) { Performance	::dispatchMessage( msg, pointer ); } else 
+	if(region == &REGION_MAP_1_LIVE2	) { Piano		::dispatchMessage( msg, pointer ); } else 
+	if(region == &REGION_MAP_1_HLP		) { Help		::dispatchMessage( msg, pointer ); } else 
+	if(region == &REGION_MAP_2_PAT		) { PatEdit		::dispatchMessage( msg, pointer ); } else 
+	if(region == &REGION_MAP_3_TRK		) { Tracker		::dispatchMessage( msg, pointer ); } else 
+	if(region == &REGION_MAP_2_INS		) { InstEdit	::dispatchMessage( msg, pointer ); } else 
+	if(region == &REGION_MAP_2_SNG		) { SongEdit	::dispatchMessage( msg, pointer ); } else 
+	if(region == &REGION_MAP_4_CFG		) { Config		::dispatchMessage( msg, pointer ); } else 
+	if(region == &REGION_MAP_4_SNK		) { SnakeGame	::dispatchMessage( msg, pointer ); } else 	
+	Debug::panic("Cannot send message : Unknown Region", &pointer);
+}
+
 void RegionHandler::dispatchMessages(){
 	int max = 0;
 	u32 m;
 	u32 pv;
+	u32 msg;
 	
 	//const Region *r;
 	//u8 i=0;
 	
 	while(messagecount > 0){
 		messagecount--;
-		m  = messages[messagecount]&0xF0000000;
-		pv = messages[messagecount]&0x0FFFFFFF;
+		msg = messages[messagecount];
+		m  = msg&0xF0000000;
+		pv = msg&0x0FFFFFFF;
 		
 		switch(m){
 			
 			/* Navigation */
-			case MESSAGE_NAVIGATE_LEFT	: load( ((Region*)pv)->left ); break;
-			case MESSAGE_NAVIGATE_RIGHT	: load( ((Region*)pv)->right); break;
-			case MESSAGE_NAVIGATE_DOWN	: load( ((Region*)pv)->down ); break;
-			case MESSAGE_NAVIGATE_UP	: load( ((Region*)pv)->up   ); break;
-			
+			case MESSAGE_NAVIGATE_LEFT	: 
+			case MESSAGE_NAVIGATE_RIGHT	: 
+			case MESSAGE_NAVIGATE_DOWN	: 
+			case MESSAGE_NAVIGATE_UP	: 
+				sendMessageToRegion( region, m, pv );
+				return;
+					
 			/* Direct callback */
 			case MESSAGE_ACTIVATE		: 
 				if( Clip::visible ) 
@@ -80,9 +102,9 @@ void RegionHandler::dispatchMessages(){
 				if( Clip::visible ) 
 					Clip::hide(); 
 				else 
-					if(region == &REGION_MAP_3_TRK) { Tracker::dispatchMessage ( m ); } else 
-					if(region == &REGION_MAP_2_PAT) { PatEdit::dispatchMessage ( m ); } else 
-					if(region == &REGION_MAP_2_INS) { InstEdit::dispatchMessage( m ); } else 
+					if(region == &REGION_MAP_3_TRK) { Tracker::dispatchMessage ( m , pv ); } else 
+					if(region == &REGION_MAP_2_PAT) { PatEdit::dispatchMessage ( m , pv ); } else 
+					if(region == &REGION_MAP_2_INS) { InstEdit::dispatchMessage( m , pv ); } else 
 					RegionHandler::controlClear	( (Control*)pv );
 				break;
 				
@@ -111,12 +133,14 @@ void RegionHandler::dispatchMessages(){
 				break;
 			
 			case MESSAGE_OTHER:						
-				// This is where to attach custom message dispatchers for each screen. 
+				sendMessageToRegion( region, pv, 0);
+				/*// This is where to attach custom message dispatchers for each screen. 
 				// Notice you can only send notifications, neither pointers can be passed, 
 				// unless we speak of offsets (16 bit)
-				if(region == &REGION_MAP_2_INS) { InstEdit::dispatchMessage( pv ); break; }
-				if(region == &REGION_MAP_3_TRK) { Tracker::dispatchMessage( pv ); break; }
-				if(region == &REGION_MAP_2_PAT) { PatEdit::dispatchMessage( pv ); break; }
+				if(region == &REGION_MAP_2_INS) { InstEdit::dispatchMessage( pv ,0 ); break; }
+				if(region == &REGION_MAP_3_TRK) { Tracker::dispatchMessage ( pv ,0 ); break; }
+				if(region == &REGION_MAP_2_PAT) { PatEdit::dispatchMessage ( pv ,0 ); break; }
+				*/
 				break;
 
 			case MESSAGE_KEYPRESS:
@@ -138,7 +162,8 @@ void RegionHandler::sendMessage(u32 message){
 }
 
 void RegionHandler::load(const Region *r){
-	if( Clip::visible )return;
+	//if( Clip::visible )return;
+	if(region) RegionHandler::sendMessageToRegion( region, MESSAGE_EXIT );
 	region = (Region*)r;
 	control = r->focus?(Control*)r->focus:NULL;
 	redraw = true;
@@ -146,6 +171,7 @@ void RegionHandler::load(const Region *r){
 	// Set new dirty zone
 	dirty = (Cache*)region->dirty;
 	viewportLastValue = 0xFF;
+	if( r ) RegionHandler::sendMessageToRegion( (Region*)r, MESSAGE_ENTER );
 }
 
 void RegionHandler::drawCache(u8 x, u8 y, const Cache *c, u8 var, bool highlight){

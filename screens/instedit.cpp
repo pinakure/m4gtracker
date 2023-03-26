@@ -5,6 +5,7 @@
 #include "../macros.h"
 #include "../kernel/regionhandler/regionhandler.hpp"
 #include "../kernel/spu/synth.hpp"
+#include "../kernel/spu/sequencer.hpp"
 #include "../kernel/gpu/gpu.hpp"
 #include "../kernel/gpu/virtualscreen.hpp"
 #include "../kernel/key/key.hpp"
@@ -349,9 +350,19 @@ void InstEdit::synchronize(){
 	//RegionHandler::redraw = true;
 }
 
-void InstEdit::dispatchMessage(u32 msg) {
+void InstEdit::dispatchMessage( u32 msg, u32 pointer ) {
+
+
 	switch(msg) {
-		
+
+		/* Navigation */
+		case MESSAGE_NAVIGATE_LEFT	: dispatchMessage(MESSAGE_EXIT); RegionHandler::load( ((Region*)pointer)->left ); break;
+		case MESSAGE_NAVIGATE_RIGHT	: dispatchMessage(MESSAGE_EXIT); RegionHandler::load( ((Region*)pointer)->right); break;
+		case MESSAGE_NAVIGATE_DOWN	: dispatchMessage(MESSAGE_EXIT); RegionHandler::load( ((Region*)pointer)->down ); break;
+		case MESSAGE_NAVIGATE_UP	: dispatchMessage(MESSAGE_EXIT); RegionHandler::load( ((Region*)pointer)->up   ); break;
+		case MESSAGE_ENTER			: enter	(); break;
+		case MESSAGE_EXIT			: exit	(); break;
+	
 		case MESSAGE_CANCEL:			
 			RegionHandler::controlClear	( RegionHandler::control );
 			repack();//dispatchMessage		( MESSAGE_OTHER_REFRESH_DATA );
@@ -379,23 +390,33 @@ void InstEdit::dispatchMessage(u32 msg) {
 	}	
 }
 
+bool display_waveform_mode = false;
+
 void InstEdit::updateWav(  ){
 	const Control *cname = &INS_WAV_CONTROLS[CONTROL_INS_WAV_NAME];
 	STRING(false, cname->x, cname->y, cname->var);
 	
 	static int adsr_position;
 	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_WAV ].inst ) {
-		if( !KEYPRESS_SELECT ) {
-			if( adsr_position != WAV_ADSR_POSITION ){
-				adsr_position = WAV_ADSR_POSITION;
-					Adsr::drawX4( Adsr::wav_table, adsr_position);
-			}
-		} else viewWaveFormWav( );
+		if( KEYDOWN_SELECT ) {
+			display_waveform_mode ^= 1;
+			VirtualScreen::clear();
+			VirtualScreen::draw(14,6);
+			for(int i=0;i<32;i++){
+				waveform[i].disable = !display_waveform_mode;
+			} 
+		}
+		if( display_waveform_mode ) viewWaveFormWav( );
+		else {//if(( adsr_position != WAV_ADSR_POSITION )||(!Sequencer::playing)){
+			adsr_position = WAV_ADSR_POSITION;
+			Adsr::drawX4( Adsr::wav_table, adsr_position);
+		}
 	}
 	
 	
 	InstEdit::synchronize();
 }
+
 
 void InstEdit::updateFmw(  ){
 	const Control *cname = &INS_FMW_CONTROLS[CONTROL_INS_FMW_NAME];
@@ -408,8 +429,19 @@ void InstEdit::updateFmw(  ){
 	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_FMW ].inst ) 
 	if( adsr_position != FMW_ADSR_POSITION ){
 		adsr_position = FMW_ADSR_POSITION;
-		if( !KEYPRESS_SELECT ) Adsr::drawX4( Adsr::fmw_table, adsr_position);
-		else viewWaveFormFmw();
+		if( KEYDOWN_SELECT ) {
+			display_waveform_mode ^= 1;
+			VirtualScreen::clear();
+			VirtualScreen::draw(14,6);
+			for(int i=0;i<32;i++){
+				waveform[i].disable = !display_waveform_mode;
+			}
+		}
+		if( display_waveform_mode ) viewWaveFormFmw();
+		else {//if(( adsr_position != FMW_ADSR_POSITION)||(!Sequencer::playing)){
+			adsr_position = FMW_ADSR_POSITION;
+			Adsr::drawX4( Adsr::fmw_table, adsr_position);
+		}
 	}
 	
 	InstEdit::synchronize();
@@ -423,8 +455,19 @@ void InstEdit::updateSmp(  ){
 	if( VAR_CFG.CURRENTINSTRUMENT == VAR_CHANNEL[ CHANNEL_SMP ].inst ) 
 	if( adsr_position != SMP_ADSR_POSITION ){
 		adsr_position = SMP_ADSR_POSITION;
-		if( !KEYPRESS_SELECT ) Adsr::draw( Adsr::smp_table, adsr_position );
-		else viewWaveFormSmp();
+		if( KEYDOWN_SELECT ) {
+			display_waveform_mode ^= 1;
+			VirtualScreen::clear();
+			VirtualScreen::draw(14,6);
+			for(int i=0;i<32;i++){
+				waveform[i].disable = !display_waveform_mode;
+			}
+		}
+		if( display_waveform_mode ) viewWaveFormSmp();
+		else {//if(( adsr_position != SMP_ADSR_POSITION )||(!Sequencer::playing)){
+			adsr_position = SMP_ADSR_POSITION;
+			Adsr::draw( Adsr::smp_table, adsr_position );
+		}
 	}
 	
 	InstEdit::synchronize();
@@ -540,7 +583,6 @@ void InstEdit::smpPreset(Control *c, bool bigstep, bool add, u32 *pointer){
 void InstEdit::viewWaveFormFmw( ){
 	
 	const u16 center = 40+((15*8)<<3);
-	VirtualScreen::clear();
 	
 	for(int i=0; i<16; i++){
 		u8 v = VAR_FMW.WAVEDATA[i]>>3;
@@ -557,7 +599,6 @@ void InstEdit::viewWaveFormSmp( ){
 void InstEdit::viewWaveFormWav( ){
 	
 	const u16 center = 40 + ((2*8)<<3);
-	VirtualScreen::clear();
 	
 	for(int i=0; i<16; i++){
 		u8 v = VAR_WAV.WAVEDATA[i];
@@ -607,9 +648,18 @@ void InstEdit::clear( u8 index ){
 }
 
 void InstEdit::enter(){
+	for(int i=0; i<32; i++){
+		InstEdit::waveform[i].disable = !display_waveform_mode;
+		InstEdit::waveform[i].render();
+	}
 }
 
 void InstEdit::exit(){
+	/* disable waveform */
+	for(int i=0; i<32; i++){
+		InstEdit::waveform[i].disable = true;
+		InstEdit::waveform[i].render();
+	}
 	
 }
 

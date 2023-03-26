@@ -182,8 +182,15 @@ void Tracker::prevChannel( ){
 	RegionHandler::updateViewport(&VIEWPORT_TRK, RegionHandler::region->xadd,RegionHandler::region->yadd);
 }
 
-void Tracker::dispatchMessage(u32 msg){
+void Tracker::dispatchMessage(u32 msg, u32 pointer){
+	
 	switch(msg){
+		case MESSAGE_NAVIGATE_LEFT	: dispatchMessage(MESSAGE_EXIT); RegionHandler::load( ((Region*)pointer)->left ); break;
+		case MESSAGE_NAVIGATE_RIGHT	: dispatchMessage(MESSAGE_EXIT); RegionHandler::load( ((Region*)pointer)->right); break;
+		case MESSAGE_NAVIGATE_DOWN	: dispatchMessage(MESSAGE_EXIT); RegionHandler::load( ((Region*)pointer)->down ); break;
+		case MESSAGE_NAVIGATE_UP	: dispatchMessage(MESSAGE_EXIT); RegionHandler::load( ((Region*)pointer)->up   ); break;
+		case MESSAGE_ENTER			: break;
+		case MESSAGE_EXIT			: break;
 		
 		case MESSAGE_CANCEL:
 			RegionHandler::controlClear	( RegionHandler::control );

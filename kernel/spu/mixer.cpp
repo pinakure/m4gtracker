@@ -205,13 +205,13 @@ void Mixer::load( SETTINGS_SMP *smp, int chan=1){
 	dsound[1].length = smp_data_size - (smp_data_size &0XF); //remove last bytes from sample to ensure it is multiple of 16
 	Synth::smp_start = (dsound[1].length >>8 ) * smp->START;
 	Synth::smp_end 	 = (smp->END > smp->START) ? (dsound[1].length >>8 ) * smp->END : dsound[1].length;
-	Gpu::number(10, 0, dsound[1].length	, 0x2);
-	Gpu::number(10, 1, smp->START, 0x4);
-	Gpu::number(20, 1, smp->END, 0x4);
-	Gpu::number(10, 2, Synth::smp_start , 0xf);
-	Gpu::number(20, 2, Synth::smp_end, 0x3);
 	dsound[1].length = (smp->END > smp->START) ? Synth::smp_end - Synth::smp_start : dsound[1].length - Synth::smp_start; //remove last bytes from sample to ensure it is multiple of 16
 	dsound[1].pos 	 = Synth::smp_start;
+	if( AT_INSTRUMENT_SCREEN && (VAR_INSTRUMENT.TYPE==INSTRUMENT_TYPE_SMP)){
+		Gpu::number(15, 1, dsound[1].length	, 0x2);
+		Gpu::number(20, 1, Synth::smp_start , 0xf);
+		Gpu::number(25, 1, Synth::smp_end, 0x3);
+	}
 	
 	// if(KEYPRESS_SELECT){
 		// VirtualScreen::clear();

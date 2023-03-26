@@ -82,7 +82,7 @@ class PatEdit {
 		static void copy				( Channel *channel );
 		static void globalUpdate		(  );
 		static void update				(  );
-		static void dispatchMessage		( u32 msg );
+		static void dispatchMessage		( u32 msg , u32 pointer=0 );
 		static void solo				( Control *c, bool bigstep, bool add, u32 *pointer );
 		static void mute				( Control *c, bool bigstep, bool add, u32 *pointer );
 

@@ -92,6 +92,8 @@ class Performance{
 		static void clear	( );
 		static void write	( );
 		static void read	( );
+
+		static void dispatchMessage	( u32 msg, u32 pointer=0 );
 };
 
 extern const Control LIVE1_CONTROLS[ CONTROL_LIVE1_MAX ];

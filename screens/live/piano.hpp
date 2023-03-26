@@ -38,6 +38,8 @@ class Piano{
 		MEM_IN_EWRAM static u8 last_value;
 
 		static void update(  );
+		
+		static void dispatchMessage( u32 msg, u32 pointer=0 );
 };
 
 extern const Control LIVE2_CONTROLS[CONTROL_LIVE2_MAX];

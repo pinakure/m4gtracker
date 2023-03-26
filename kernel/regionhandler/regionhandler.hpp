@@ -32,8 +32,8 @@ class RegionHandler {
 		
 		RegionHandler					( );
 		static void	init				( );
-		static void dispatchMessages			( );
-		static void draw						( );
+		static void dispatchMessages	( );
+		static void draw				( );
 		
 		static void sendMessage			( u32 message										);
 		static void load				( const Region *r									);
@@ -50,7 +50,7 @@ class RegionHandler {
 		static void controlClear		( const Control *c									);
 		static void controlModify		( const Control *c, bool big, bool add				);
 		static void update				( u8 delta											);
-
+		static void sendMessageToRegion	( Region *r, u32 msg, u32 pointer=0					);
 		static void dispatchCallback	( const Callback *cb, const Control *ctl, u8 add, u8 bigstep, u16 msg );
 };
 

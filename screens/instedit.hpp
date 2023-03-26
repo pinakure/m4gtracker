@@ -175,7 +175,7 @@ class RegionHandler;
 class InstEdit {
 	public:
 	
-		static void dispatchMessage			(u32 msg);
+		static void dispatchMessage			( u32 msg, u32 pointer=0 );
 	
 		// Specific type modifiers
 		static void updateWav				(  );

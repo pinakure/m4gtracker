@@ -179,7 +179,7 @@ class Tracker{
 		static void 		drawPosition		( Channel *channel );
 		static void 		drawTransientInfo	( );
 		static void 		drawLine			( Channel *channel );
-		static void 		dispatchMessage		( u32 msg);
+		static void 		dispatchMessage		( u32 msg, u32 pointer=0 );
 
 		static void 		update				(  );// Update function for Config Tracker Suboption!
 		static void 		updateVis			(  );

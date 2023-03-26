@@ -65,6 +65,7 @@ class Mixer {
 		static bool 		dsound_mute	[ VIRTUAL_CHANNEL_COUNT];
 	public:
 		friend class Channel;
+		friend class Adsr;
 		
 		static bool enable_metronome;
 		static bool enabled;

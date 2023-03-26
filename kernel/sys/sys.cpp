@@ -259,10 +259,12 @@ void Sys::updateInput(){
 	if( KEYPRESS_B && RegionHandler::control) {
 		
 		
+		/*
 		if( KEYPRESS_A ) {
 			RegionHandler::sendMessage(MESSAGE_PASTE | (unsigned)RegionHandler::control);
 			return;		
 		}
+		*/
 		
 		msg	= KEYDOWN_LEFT 	? MESSAGE_OTHER_PREV 
 				: KEYDOWN_RIGHT	? MESSAGE_OTHER_NEXT 

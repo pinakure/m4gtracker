@@ -42,8 +42,9 @@ class SongEdit {
 		static void setTempo		( Control *c	 		, bool bigstep		 	, bool add		 	, u32 *pointer		 );
 		static void select			( Control *c	 		, bool bigstep		 	, bool add		 	, u32 *pointer		 );
 		static void toggleGroove	( Control *c	 		, bool bigstep		 	, bool add		 	, u32 *pointer		 );
-		static void redrawCtl		(eSngControl control);
-		static void focusCtl		(eSngControl control);
+		static void redrawCtl		( eSngControl control );
+		static void focusCtl		( eSngControl control );
+		static void dispatchMessage ( u32 msg , u32 pointer=0 );
 };
 
 extern const Control SNG_CONTROLS[CONTROL_SNG_MAX];

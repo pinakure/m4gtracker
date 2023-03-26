@@ -145,6 +145,7 @@ class Help {
 		static void activateButton();
 		static void updateButtons();
 		static void update(  );
+		static void dispatchMessage( u32 msg, u32 pointer=0 );
 		
 };
 
