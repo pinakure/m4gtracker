@@ -38,6 +38,8 @@ class Synth {
 		
 
 		static u8 	loop_smp;
+		static u32 	smp_start;
+		static u32 	smp_end;
 		
 		static void loadWav( u8 data[ 16 ] );
 		static void loadFmw( u8 data[ 16 ] , u8 mult );

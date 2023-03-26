@@ -171,14 +171,19 @@ void InstEdit::pack( Instrument* i ){
 			return;
 
 		case INSTRUMENT_TYPE_SMP:
-			i->SETTINGS[0] = (VAR_SMP.START<<4) | VAR_SMP.END;
-			i->SETTINGS[1] = (VAR_SMP.KIT<<3) | (VAR_SMP.LOOP<<1) | VAR_SMP.SYNTHMODE;
-			i->SETTINGS[2] = VAR_SMP.FREQUENCY;
-			i->SETTINGS[3] = (VAR_SMP.ADSR[0]<<4) | VAR_SMP.ADSR[1];
-			i->SETTINGS[4] = (VAR_SMP.ADSR[2]<<4) | VAR_SMP.ADSR[3];
-			i->SETTINGS[5] = (VAR_SMP.KITINDEX<<4) | VAR_SMP.B;
-			i->SETTINGS[6] = (VAR_SMP.S<<4) | VAR_SMP.R;
-			// TODO: Reload SMPKIT pointers (12)
+		
+			i->SETTINGS[ SETTING_SMP_START		] = VAR_SMP.START;
+			i->SETTINGS[ SETTING_SMP_END		] = VAR_SMP.END;
+			i->SETTINGS[ SETTING_SMP_KIT		] = VAR_SMP.KIT;
+			i->SETTINGS[ SETTING_SMP_KITINDEX	] = VAR_SMP.KITINDEX;
+			i->SETTINGS[ SETTING_SMP_LOOP		] = VAR_SMP.LOOP;
+			i->SETTINGS[ SETTING_SMP_SYNTHMODE	] = VAR_SMP.SYNTHMODE;
+			i->SETTINGS[ SETTING_SMP_FREQUENCY	] = VAR_SMP.FREQUENCY;
+			i->SETTINGS[ SETTING_SMP_ADSR_A		] = (VAR_SMP.ADSR[0]<<4) | VAR_SMP.ADSR[1];
+			i->SETTINGS[ SETTING_SMP_ADSR_S		] = (VAR_SMP.ADSR[2]<<4) | VAR_SMP.ADSR[3];
+			i->SETTINGS[ SETTING_SMP_B			] = VAR_SMP.B;
+			i->SETTINGS[ SETTING_SMP_S			] = VAR_SMP.S;
+			i->SETTINGS[ SETTING_SMP_R			] = VAR_SMP.R;
 			return;
 	}
 }
@@ -217,22 +222,21 @@ SETTINGS_FMW InstEdit::unpackFmw( Instrument *i ){
 
 SETTINGS_SMP InstEdit::unpackSmp( Instrument *i ){
 	SETTINGS_SMP ret;
-	ret.START 	  = EXTRACT(i->SETTINGS[0], 4, 0xF);	// 8
-	ret.END 	  = i->SETTINGS[0] & 0xF;				// 8
-	ret.KIT 	  = EXTRACT(i->SETTINGS[1], 3, 0x1F);	// 5
-	ret.LOOP 	  = EXTRACT(i->SETTINGS[1], 1, 0x3);	// 2
-	ret.SYNTHMODE = i->SETTINGS[1] & 0x1;				// 1
-	ret.FREQUENCY = i->SETTINGS[2];						// 8
-	ret.ADSR[0]   = EXTRACT(i->SETTINGS[3], 4, 0xF);	// 4
-	ret.ADSR[1]   = i->SETTINGS[3] & 0xF;				// 4
-	ret.ADSR[2]   = EXTRACT(i->SETTINGS[4], 4, 0xF);	// 4
-	ret.ADSR[3]   = i->SETTINGS[4] & 0xF;				// 4
-	ret.KITINDEX  = EXTRACT(i->SETTINGS[5], 4, 0xF);	// 4
-	ret.B 		  = i->SETTINGS[5];						// 4
-	ret.S 		  = EXTRACT(i->SETTINGS[6], 4, 0xF);	// 4
-	ret.R 		  = i->SETTINGS[6];						// 4
+	ret.START 	  = 		 i->SETTINGS[ SETTING_SMP_START		];				// 8
+	ret.END 	  = 		 i->SETTINGS[ SETTING_SMP_END		];				// 8
+	ret.KIT 	  = 		 i->SETTINGS[ SETTING_SMP_KIT		];				// 5
+	ret.LOOP 	  = 		 i->SETTINGS[ SETTING_SMP_LOOP 		];				// 2
+	ret.SYNTHMODE = 		 i->SETTINGS[ SETTING_SMP_SYNTHMODE	];				// 1
+	ret.FREQUENCY = 		 i->SETTINGS[ SETTING_SMP_FREQUENCY ];				// 8
+	ret.ADSR[0]   = EXTRACT( i->SETTINGS[ SETTING_SMP_ADSR_A 	],  4, 	0xF);	// 4
+	ret.ADSR[1]   = 		 i->SETTINGS[ SETTING_SMP_ADSR_D	]	& 	0xF;	// 4
+	ret.ADSR[2]   = EXTRACT( i->SETTINGS[ SETTING_SMP_ADSR_S	],  4, 	0xF);	// 4
+	ret.ADSR[3]   = 		 i->SETTINGS[ SETTING_SMP_ADSR_R	]	& 	0xF;	// 4
+	ret.KITINDEX  =			 i->SETTINGS[ SETTING_SMP_KITINDEX  ];				// 4
+	ret.B 		  = 		 i->SETTINGS[ SETTING_SMP_B			];				// 4
+	ret.S 		  = 		 i->SETTINGS[ SETTING_SMP_S			];				// 4
+	ret.R 		  = 		 i->SETTINGS[ SETTING_SMP_R			];				// 4
 	// TODO: Reload SMPKIT pointers (12)
-	
 	return ret;
 }
 

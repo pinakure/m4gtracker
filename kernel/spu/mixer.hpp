@@ -6,6 +6,7 @@
 #include "../../data/control.hpp"
 #include "../../data/channel.hpp"
 #include "../regionhandler/regionhandler.hpp"
+#include "../../data/settings.hpp"
 
 
 #define TIMER0			(*(u32*)0x4000100)
@@ -75,7 +76,7 @@ class Mixer {
 
 		static void init();
 		static void mix();
-		static void load(size_t index, int chan);
+		static void load( SETTINGS_SMP *smp, int chan);
 		
 		static void start();
 		
@@ -83,8 +84,8 @@ class Mixer {
 		
 		static void stop();
 		
-		static void noteOn1	(u16 freq);// move to seq or synth
-		static void noteOn2	(u16 freq);// move to seq or synth
+		static void noteOn1	(u32 freq);// move to seq or synth
+		static void noteOn2	(u32 freq);// move to seq or synth
 
 		static void mute	(u8 channel_index);// move to mixer
 		static void solo	(u8 channel_index);// move to mixer
@@ -94,6 +95,6 @@ class Mixer {
 		static void update  (  );
 };
 
-extern const u16 DSOUND_FREQ_TABLE[];
+extern const u32 DSOUND_FREQ_TABLE[];
 
 #endif

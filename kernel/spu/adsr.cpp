@@ -97,7 +97,7 @@ void Adsr::render( u8 adsr[ 4 ], u8 adsr_table[ ADSR_TABLE_LENGTH ] , u8 gate){
 	for( int position=0; position < ADSR_TABLE_LENGTH; position++){
 		TABLE = SUSTAIN<<4;
 	}
-	
+	gate<<=1;
 	u8 quantum;
 	u16 level = ATTACK > 0 ? 0 : ADSR_RANGE-1;
 	
@@ -157,10 +157,10 @@ void Adsr::render( u8 adsr[ 4 ], u8 adsr_table[ ADSR_TABLE_LENGTH ] , u8 gate){
 void Adsr::updateWav( SETTINGS_WAV *wav ){
 	wav_position = 0;
 	
-	render( wav->OP1_ADSR, wav_table[0] );
-	render( wav->OP2_ADSR, wav_table[1] );
-	render( wav->OP3_ADSR, wav_table[2] );
-	render( wav->OP4_ADSR, wav_table[3] );
+	render( wav->OP1_ADSR, wav_table[0] , wav->OP1_GATE );
+	render( wav->OP2_ADSR, wav_table[1] , wav->OP2_GATE );
+	render( wav->OP3_ADSR, wav_table[2] , wav->OP3_GATE );
+	render( wav->OP4_ADSR, wav_table[3] , wav->OP4_GATE );
 	// If we're on instrument editor and displayed instrument is WAV type, display ADSR
 	// TODO: Lock to display only instrument being edit
 	if		( VAR_INSTRUMENT.TYPE != INSTRUMENT_TYPE_WAV ) return;
@@ -170,10 +170,10 @@ void Adsr::updateWav( SETTINGS_WAV *wav ){
 void Adsr::updateFmw( SETTINGS_FMW *fmw ){
 	fmw_position = 0;
 	
-	render( fmw->OP1_ADSR, fmw_table[0] );
-	render( fmw->OP2_ADSR, fmw_table[1] );
-	render( fmw->OP3_ADSR, fmw_table[2] );
-	render( fmw->OP4_ADSR, fmw_table[3] );
+	render( fmw->OP1_ADSR, fmw_table[0] , fmw->OP1_GATE );
+	render( fmw->OP2_ADSR, fmw_table[1] , fmw->OP2_GATE );
+	render( fmw->OP3_ADSR, fmw_table[2] , fmw->OP3_GATE );
+	render( fmw->OP4_ADSR, fmw_table[3] , fmw->OP4_GATE );
 	// If we're on instrument editor and displayed instrument is FMW type, display ADSR
 	// TODO: Lock to display only instrument being edit
 	if		( VAR_INSTRUMENT.TYPE != INSTRUMENT_TYPE_FMW ) return;

@@ -15,6 +15,8 @@ bool swap_bank = false;
 
 u16		Synth::lfo					= 0;
 u8		Synth::loop_smp				= 0;
+u32		Synth::smp_start			= 0;
+u32		Synth::smp_end				= 0;
 
 const u16 SMP_FREQ_TABLE[120]={ 
 	0xF8DD	,0xF917	,0xF94F ,0xF995	,0xF9D7	,0xFA22	,0xFA68	,0xFAB2	,0xFAF8	,0xFB3E	,0xFB80, 0xFBC0,
@@ -176,11 +178,10 @@ void Synth::noteOnFmw( Channel* channel ){
 			+ channel->song_patterns->TRANSPOSE[ channel->POSITION ] 
 			+ VAR_SONG.TRANSPOSE 
 			+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 );
-				  
-	u16 frq	= DSOUND_FREQ_TABLE[ key ]
+	key &= 0x7f;
+	u32 frq	= DSOUND_FREQ_TABLE[ key ]
 			+ channel->fine_tune 
 			+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
-	
 		
 	Mixer::noteOn1( frq );
 	channel->retrig = false;
@@ -192,8 +193,8 @@ void Synth::noteOnSmp( Channel* channel ){
 			+ channel->song_patterns->TRANSPOSE[ channel->POSITION ] 
 			+ VAR_SONG.TRANSPOSE 
 			+ ( VAR_CFG.TRACKER.TRANSPOSE - 0x80 );
-	
-	u16 frq	= DSOUND_FREQ_TABLE[ key ] 
+	key &= 0x7f;
+	u32 frq	= DSOUND_FREQ_TABLE[ key ] 
 			+ channel->fine_tune
 			+ ( VAR_CFG.TRACKER.FINETUNE << 1 );
 	
