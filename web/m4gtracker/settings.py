@@ -4,7 +4,7 @@ DEBUG = True
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-85tr_zw9wffbv-m^m8ylw+@965#yffob(09sot#kz*n&0v4p3^'
+SECRET_KEY = os.environ.get('DJANGO_SECRET')
 
 ALLOWED_HOSTS = [
     'm4gtracker.ddns.net',
