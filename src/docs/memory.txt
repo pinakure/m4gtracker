@@ -1,0 +1,10 @@
+MEMORY POOL
+----------------------
+
+structura chunk - describe fragmentos de memoria, inicializados al inicio del progama.
+                  tiene punteros hacia el elemento detras y el de delante (lista enlazada)
+                  es como una cabecera que va antes de los bloques de memoria.
+                  
+                  Los bloques pueden estar ocupados o libres. 
+                  
+                  

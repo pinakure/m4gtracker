@@ -1,0 +1,51 @@
+{% load static %}
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        <style>{% include 'font.css'        %}</style>
+        <style>{% include 'm4geek.css'      %}</style>
+        <style>{% include 'm4gicons.css'    %}</style>
+        <meta name="viewport" content="target-densitydpi=device-dpi; width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+    </head>
+    <body>
+        <!-- Preload Font data -->
+        <img src="{% static 'tileset.png'               %}" style="display: none"/>
+        <img src="{% static 'tileset-black.png'         %}" style="display: none"/>
+        <img src="{% static 'tileset-white.png'         %}" style="display: none"/>
+        <img src="{% static 'tileset-gray.png'          %}" style="display: none"/>
+        <img src="{% static 'tileset-orange.png'        %}" style="display: none"/>
+        <img src="{% static 'tileset-brown.png'         %}" style="display: none"/>
+        <img src="{% static 'tileset-yellow.png'        %}" style="display: none"/>
+        <img src="{% static 'tileset-olive.png'         %}" style="display: none"/>
+        <img src="{% static 'tileset-red.png'           %}" style="display: none"/>
+        <img src="{% static 'tileset-dark_red.png'      %}" style="display: none"/>
+        <img src="{% static 'tileset-green.png'         %}" style="display: none"/>
+        <img src="{% static 'tileset-dark_green.png'    %}" style="display: none"/>
+        <img src="{% static 'tileset-cyan.png'          %}" style="display: none"/>
+        <img src="{% static 'tileset-dark_cyan.png'     %}" style="display: none"/>
+        <img src="{% static 'tileset-blue.png'          %}" style="display: none"/>
+        <img src="{% static 'tileset-dark_blue.png'     %}" style="display: none"/>
+        <div class="fullwidth fullheight" style="background: #0ff" >
+            <div class="fullheight" style="background: #ff0; width: 112px;">
+                <div style="height: 40px; ">
+                    <div style="cursor: pointer" class="logo" onclick="window.location='/';"></div>
+                </div>
+                <div class="fullwidth scrollable" style="padding: 8px; height: calc( 100% - 40px );">
+                    {% block navy %}{% include 'navigation.html' %}{% endblock %}
+                </div>
+            </div>
+            <div class="fullheight" style="height: calc( 100% - 16px ); position: absolute; top: 8px; left: 120px; width: calc( 100% - 128px );min-width: calc( 100% - 128px ); max-width: calc( 100% - 128px );background: #0f0;">
+                <div class="fullwidth" style="padding-left: 8px; padding-top: 8px; height: 40px;">
+                    {% include 'download-widget.html' %}
+                    {% include 'profile-widget.html' %}
+                    {% block header %}{% endblock %}
+                </div>
+                <div class="fullwidth scrollable" style="padding: 8px; height: calc( 100% - 40px );min-height: calc( 100% - 40px );max-height: calc( 100% - 40px );">
+                    <h2>{{section}}</h2>
+                    <hr/>
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

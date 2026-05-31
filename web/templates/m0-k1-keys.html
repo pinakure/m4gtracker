@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block content %}
+<?php error_reporting(E_ALL);
+?><!DOCTYPE html>
+<html>
+<head>
+<title>M4Geek H.Q. - M0-K1 Keys</title>
+<meta name="viewport" content="target-densitydpi=device-dpi; width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta name="Document-Owner" content="Smiker Pinakure (pinakure@gmail.com, smiker@m4gtracker.xyz)"> 
+<meta name="Author" content="Smiker Pinakure (pinakure@gmail.com, smiker@m4gtracker.xyz)"> 
+<meta name="description" content= "Key Help for M0-K1 Game Boy Advance Synthesizer">
+<meta charset="utf-8">
+<?php include "../m4gdraft/style.php"; ?>
+</head>
+<body>
+<aside id="code"></aside>
+<section id="output" style="width: 100% !important">
+<center>
+	<article style="text-align: left; width: 240px !important">
+		<div style="position: relative; left: 0px; top: 0px; width: 100%; display: inline-block;">
+		<br/>
+<pre>
+Button Operation
+ <h3 style="display: inline-block">Toggle Button      </h3> A
+
+Rotary/Slider Operation
+ <h3 style="display: inline-block">Move to Maximum    </h3> A<b>+</b>Ò
+ <h3 style="display: inline-block">Move to Minimum    </h3> A<b>+</b>Ð
+ <h3 style="display: inline-block">Decrease Value     </h3> A<b>+</b>Ó
+ <h3 style="display: inline-block">Increase Value     </h3> A<b>+</b>Ñ
+
+Transpose active channel steps
+ <h3 style="display: inline-block">Transpose Up       </h3> B<b>+</b>Ò
+ <h3 style="display: inline-block">Transpose Down     </h3> B<b>+</b>Ð
+
+Shift active channel steps
+ <h3 style="display: inline-block">Shift Pattern Left </h3> B<b>+</b>Ñ
+ <h3 style="display: inline-block">Shift Pattern Right</h3> B<b>+</b>Ó
+
+Change instrument preset
+ <h3 style="display: inline-block">Previous Preset    </h3> SELECT<b>+</b>L
+ <h3 style="display: inline-block">Next Preset        </h3> SELECT<b>+</b>R
+
+Jump to Pattern
+ <h3 style="display: inline-block">Previous Pattern   </h3> SELECT<b>+</b>Ò
+ <h3 style="display: inline-block">Next Pattern       </h3> SELECT<b>+</b>Ð
+
+Select active step
+ <h3 style="display: inline-block">Previous Step      </h3> SELECT<b>+</b>Ñ
+ <h3 style="display: inline-block">Next Step          </h3> SELECT<b>+</b>Ó
+ 
+Copy / Paste Pattern 
+ <h3 style="display: inline-block">Copy Pattern       </h3> SELECT<b>+</b>B
+ <h3 style="display: inline-block">Paste pattern      </h3> SELECT<b>+</b>A
+
+ Copy / Paste Active Steps 
+<span class="brown" style="text-shadow: 0px 0px 0px #000 !important">when Step controls selected</span>
+ <h3 style="display: inline-block">Copy Active Steps  </h3> SELECT<b>+</b>B
+ <h3 style="display: inline-block">Paste Active Steps </h3> SELECT<b>+</b>A
+ 
+Play controls
+<span class="brown" style="text-shadow: 0px 0px 0px #000 !important">when Preset controls selected</span>
+ <h3 style="display: inline-block">Play               </h3> START
+ <h3 style="display: inline-block">Play from Start    </h3> B<b>+</b>START
+ <h3 style="display: inline-block">Toggle Loop        </h3> L 
+ <h3 style="display: inline-block">Reset Pattern      </h3> R
+ <h3 style="display: inline-block">Sync. Reset Pattern</h3> B<b>+</b>R
+</pre>{% endblock %}

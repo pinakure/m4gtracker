@@ -1,0 +1,298 @@
+extern u8 dummy;
+
+#define INSTRUM(a) ((u8*)&(VAR_INSTRUMENT.a))
+#define THIS(a) &INS_PWM_CONTROLS[CONTROL_INS_PWM_##a]
+#define THISVAR(a) ((u8*)&(VAR_PWM.a))
+const Control INS_PWM_CONTROLS[CONTROL_INS_PWM_MAX] = { 
+	//	x	 y		up						right					down					left					cache							var									callback
+	{	0x05 , 0x04 , THIS(VOLUMEFADE)		, THIS(TSP_TABLE_04)	, THIS(NAME)			, THIS(TSP_TABLE_07)	, &CACHE_HEXADECIMAL_INSTRUMENT	, (u8*)&(VAR_CFG.CURRENTINSTRUMENT)	, &cb_ins_index			},
+	{	0x09 , 0x03 , THIS(TSP_ENVELOPE)	, THIS(TSP_TABLE_01)	, THIS(TSP_TABLE_04)	, THIS(INDEX)			, &CACHE_HEXADECIMAL			, THISVAR(TSP[0])					, &cb_ins_tsp_00			},
+	{	0x0a , 0x03 , THIS(TSP_ENVELOPE)	, THIS(TSP_TABLE_02)	, THIS(TSP_TABLE_05)	, THIS(TSP_TABLE_00)	, &CACHE_HEXADECIMAL			, THISVAR(TSP[1])					, &cb_ins_tsp_01			},
+	{	0x0b , 0x03 , THIS(TSP_ENVELOPE)	, THIS(TSP_TABLE_03)	, THIS(TSP_TABLE_06)	, THIS(TSP_TABLE_01)	, &CACHE_HEXADECIMAL			, THISVAR(TSP[2])					, &cb_ins_tsp_02			},
+	{	0x0c , 0x03 , THIS(TSP_ENVELOPE)	, THIS(INDEX)			, THIS(TSP_TABLE_07)	, THIS(TSP_TABLE_02)	, &CACHE_HEXADECIMAL			, THISVAR(TSP[3])					, &cb_ins_tsp_03			},
+	{	0x09 , 0x04 , THIS(TSP_TABLE_00)	, THIS(TSP_TABLE_05)	, THIS(TSP_TABLE_08)	, THIS(INDEX)			, &CACHE_HEXADECIMAL			, THISVAR(TSP[4])					, &cb_ins_tsp_04			},
+	{	0x0a , 0x04 , THIS(TSP_TABLE_01)	, THIS(TSP_TABLE_06)	, THIS(TSP_TABLE_09)	, THIS(TSP_TABLE_04)	, &CACHE_HEXADECIMAL			, THISVAR(TSP[5])					, &cb_ins_tsp_05			},
+	{	0x0b , 0x04 , THIS(TSP_TABLE_02)	, THIS(TSP_TABLE_07)	, THIS(TSP_TABLE_0A)	, THIS(TSP_TABLE_05)	, &CACHE_HEXADECIMAL			, THISVAR(TSP[6])					, &cb_ins_tsp_06			},
+	{	0x0c , 0x04 , THIS(TSP_TABLE_03)	, THIS(INDEX)			, THIS(TSP_TABLE_0B)	, THIS(TSP_TABLE_06)	, &CACHE_HEXADECIMAL			, THISVAR(TSP[7])					, &cb_ins_tsp_07			},
+	{	0x09 , 0x05 , THIS(TSP_TABLE_04)	, THIS(TSP_TABLE_09)	, THIS(TSP_TABLE_0C)	, THIS(NAME)			, &CACHE_HEXADECIMAL			, THISVAR(TSP[8])					, &cb_ins_tsp_08			},
+	{	0x0a , 0x05 , THIS(TSP_TABLE_05)	, THIS(TSP_TABLE_0A)	, THIS(TSP_TABLE_0D)	, THIS(TSP_TABLE_08)	, &CACHE_HEXADECIMAL			, THISVAR(TSP[9])					, &cb_ins_tsp_09			},
+	{	0x0b , 0x05 , THIS(TSP_TABLE_06)	, THIS(TSP_TABLE_0B)	, THIS(TSP_TABLE_0E)	, THIS(TSP_TABLE_09)	, &CACHE_HEXADECIMAL			, THISVAR(TSP[10])					, &cb_ins_tsp_0A			},
+	{	0x0c , 0x05 , THIS(TSP_TABLE_07)	, THIS(NAME)			, THIS(TSP_TABLE_0F)	, THIS(TSP_TABLE_0A)	, &CACHE_HEXADECIMAL			, THISVAR(TSP[11])					, &cb_ins_tsp_0B			},
+	{	0x09 , 0x06 , THIS(TSP_TABLE_08)	, THIS(TSP_TABLE_0D)	, THIS(VOL_ENABLE)		, THIS(TYPE)			, &CACHE_HEXADECIMAL			, THISVAR(TSP[12])					, &cb_ins_tsp_0C			},
+	{	0x0a , 0x06 , THIS(TSP_TABLE_09)	, THIS(TSP_TABLE_0E)	, THIS(VOL_ENABLE)		, THIS(TSP_TABLE_0C)	, &CACHE_HEXADECIMAL			, THISVAR(TSP[13])					, &cb_ins_tsp_0D			},
+	{	0x0b , 0x06 , THIS(TSP_TABLE_0A)	, THIS(TSP_TABLE_0F)	, THIS(VOL_ENABLE)		, THIS(TSP_TABLE_0D)	, &CACHE_HEXADECIMAL			, THISVAR(TSP[14])					, &cb_ins_tsp_0E			},
+	{	0x0c , 0x06 , THIS(TSP_TABLE_0B)	, THIS(TYPE)			, THIS(VOL_ENABLE)		, THIS(TSP_TABLE_0E)	, &CACHE_HEXADECIMAL			, THISVAR(TSP[15])					, &cb_ins_tsp_0F			},
+	{	0x0c , 0x12 , THIS(STARTLEVEL)		, NULL					, THIS(TSP_ENABLE)		, NULL					, &CACHE_HEXADECIMAL			, THISVAR(VOLUMEFADE)				, &cb_ins_volumefade		},
+	{	0x0c , 0x02 , THIS(TSP_MODE)		, THIS(INDEX)			, THIS(TSP_TABLE_03)	, THIS(INDEX)			, &CACHE_HEXADECIMAL_DOUBLE		, THISVAR(TSP_ENVELOPE)				, &cb_ins_tspenvelope 	},
+	{	0x0c , 0x01 , THIS(TSP_ENABLE)		, THIS(INDEX)			, THIS(TSP_ENVELOPE)	, THIS(INDEX)			, &CACHE_PLAYMODES				, THISVAR(TSP_LOOP)					, &cb_ins_tspmode		},
+	{	0x0c , 0x00 , THIS(VOLUMEFADE)		, THIS(INDEX)			, THIS(TSP_MODE)		, THIS(INDEX)			, &CACHE_CHECK					, THISVAR(TSP_ENABLE)				, &cb_ins_tspenable		},
+	{	0x0c , 0x08 , THIS(TSP_TABLE_0F)	, THIS(DUTYCYCLE)		, THIS(VOL_MODE)		, THIS(DUTYCYCLE)		, &CACHE_CHECK					, THISVAR(VOL_ENABLE)				, &cb_ins_volenable		},
+	{	0x0c , 0x09 , THIS(VOL_ENABLE)		, THIS(DUTYLEN)			, THIS(VOL_ENVELOPE)	, THIS(DUTYLEN)			, &CACHE_PLAYMODES				, THISVAR(VOL_LOOP)					, &cb_ins_volmode		},
+	{	0x0c , 0x0a , THIS(VOL_MODE)		, THIS(DUTYLEN)			, THIS(VOL_TABLE_03)	, THIS(DUTYLEN)			, &CACHE_HEXADECIMAL_DOUBLE		, THISVAR(VOL_ENVELOPE)				, &cb_ins_volenvelope	},
+	{	0x01 , 0x05 , THIS(INDEX)			, THIS(TSP_TABLE_08)	, THIS(TYPE)			, THIS(TSP_TABLE_0B)	, &CACHE_TEXT					, INSTRUM(NAME)						, &cb_ins_name			},
+	{	0x06 , 0x07 , THIS(NAME)			, THIS(TSP_TABLE_0C)	, THIS(DUTYCYCLE)		, THIS(TSP_TABLE_0F)	, &CACHE_INSTYPES				, INSTRUM(TYPE)						, &cb_ins_type			},
+	{	0x06 , 0x08 , THIS(TYPE)			, THIS(VOL_ENABLE)		, THIS(DUTYLEN)			, THIS(VOL_ENABLE)		, &CACHE_DUTYCYCLES				, THISVAR(DUTYCYCLE)				, &cb_ins_dutycycle		},
+	{	0x06 , 0x09 , THIS(DUTYCYCLE)		, THIS(VOL_MODE)		, THIS(SWEEPDIR)		, THIS(VOL_MODE)		, &CACHE_HEXADECIMAL			, THISVAR(LENGTH)					, &cb_ins_length			},
+	{	0x06 , 0x0c , THIS(DUTYLEN)			, THIS(VOL_TABLE_04)	, THIS(SWEEPSPEED)		, THIS(VOL_TABLE_07)	, &CACHE_FADES					, THISVAR(SWEEPDIR)					, &cb_ins_sweepdir		},
+	{	0x06 , 0x0d , THIS(SWEEPDIR)		, THIS(VOL_TABLE_08)	, THIS(SWEEPSTEPS)		, THIS(VOL_TABLE_0B)	, &CACHE_HEXADECIMAL			, THISVAR(SWEEPSPEED)				, &cb_ins_sweepspeed		},
+	{	0x06 , 0x0e , THIS(SWEEPSPEED)		, THIS(VOL_TABLE_0C)	, THIS(ENVELOPEDIR)		, THIS(VOL_TABLE_0F)	, &CACHE_HEXADECIMAL			, THISVAR(SWEEPSTEPS)				, &cb_ins_sweepsteps		},
+	{	0x0c , 0x11 , THIS(ENVELOPEDIR)		, NULL					, THIS(VOLUMEFADE)		, NULL					, &CACHE_HEXADECIMAL			, THISVAR(LEVEL)					, &cb_ins_pwm_level		},
+	{	0x0c , 0x10 , THIS(VOL_TABLE_0F)	, NULL					, THIS(STARTLEVEL)		, NULL					, &CACHE_FADES					, THISVAR(ENVELOPEDIR)				, &cb_ins_envelopedir	},
+	{	0x09 , 0x0b , THIS(VOL_ENVELOPE)	, THIS(VOL_TABLE_01)	, THIS(VOL_TABLE_04)	, THIS(SWEEPDIR)		, &CACHE_HEXADECIMAL			, THISVAR(VOL[0])					, &cb_ins_vol_00			},
+	{	0x0a , 0x0b , THIS(VOL_ENVELOPE)	, THIS(VOL_TABLE_02)	, THIS(VOL_TABLE_05)	, THIS(VOL_TABLE_00)	, &CACHE_HEXADECIMAL			, THISVAR(VOL[1])					, &cb_ins_vol_01			},
+	{	0x0b , 0x0b , THIS(VOL_ENVELOPE)	, THIS(VOL_TABLE_03)	, THIS(VOL_TABLE_06)	, THIS(VOL_TABLE_01)	, &CACHE_HEXADECIMAL			, THISVAR(VOL[2])					, &cb_ins_vol_02			},
+	{	0x0c , 0x0b , THIS(VOL_ENVELOPE)	, THIS(SWEEPDIR)		, THIS(VOL_TABLE_07)	, THIS(VOL_TABLE_02)	, &CACHE_HEXADECIMAL			, THISVAR(VOL[3])					, &cb_ins_vol_03			},
+	{	0x09 , 0x0c , THIS(VOL_TABLE_00)	, THIS(VOL_TABLE_05)	, THIS(VOL_TABLE_08)	, THIS(SWEEPDIR)		, &CACHE_HEXADECIMAL			, THISVAR(VOL[4])					, &cb_ins_vol_04			},
+	{	0x0a , 0x0c , THIS(VOL_TABLE_01)	, THIS(VOL_TABLE_06)	, THIS(VOL_TABLE_09)	, THIS(VOL_TABLE_04)	, &CACHE_HEXADECIMAL			, THISVAR(VOL[5])					, &cb_ins_vol_05			},
+	{	0x0b , 0x0c , THIS(VOL_TABLE_02)	, THIS(VOL_TABLE_07)	, THIS(VOL_TABLE_0A)	, THIS(VOL_TABLE_05)	, &CACHE_HEXADECIMAL			, THISVAR(VOL[6])					, &cb_ins_vol_06			},
+	{	0x0c , 0x0c , THIS(VOL_TABLE_03)	, THIS(SWEEPDIR)		, THIS(VOL_TABLE_0B)	, THIS(VOL_TABLE_06)	, &CACHE_HEXADECIMAL			, THISVAR(VOL[7])					, &cb_ins_vol_07			},
+	{	0x09 , 0x0d , THIS(VOL_TABLE_04)	, THIS(VOL_TABLE_09)	, THIS(VOL_TABLE_0C)	, THIS(SWEEPSPEED)		, &CACHE_HEXADECIMAL			, THISVAR(VOL[8])					, &cb_ins_vol_08			},
+	{	0x0a , 0x0d , THIS(VOL_TABLE_05)	, THIS(VOL_TABLE_0A)	, THIS(VOL_TABLE_0D)	, THIS(VOL_TABLE_08)	, &CACHE_HEXADECIMAL			, THISVAR(VOL[9])					, &cb_ins_vol_09			},
+	{	0x0b , 0x0d , THIS(VOL_TABLE_06)	, THIS(VOL_TABLE_0B)	, THIS(VOL_TABLE_0E)	, THIS(VOL_TABLE_09)	, &CACHE_HEXADECIMAL			, THISVAR(VOL[10])					, &cb_ins_vol_0A			},
+	{	0x0c , 0x0d , THIS(VOL_TABLE_07)	, THIS(SWEEPSPEED)		, THIS(VOL_TABLE_0F)	, THIS(VOL_TABLE_0A)	, &CACHE_HEXADECIMAL			, THISVAR(VOL[11])					, &cb_ins_vol_0B			},
+	{	0x09 , 0x0e , THIS(VOL_TABLE_08)	, THIS(VOL_TABLE_0D)	, THIS(ENVELOPEDIR)		, THIS(SWEEPSTEPS)		, &CACHE_HEXADECIMAL			, THISVAR(VOL[12])					, &cb_ins_vol_0C			},
+	{	0x0a , 0x0e , THIS(VOL_TABLE_09)	, THIS(VOL_TABLE_0E)	, THIS(ENVELOPEDIR)		, THIS(VOL_TABLE_0C)	, &CACHE_HEXADECIMAL			, THISVAR(VOL[13])					, &cb_ins_vol_0D			},
+	{	0x0b , 0x0e , THIS(VOL_TABLE_0A)	, THIS(VOL_TABLE_0F)	, THIS(ENVELOPEDIR)		, THIS(VOL_TABLE_0D)	, &CACHE_HEXADECIMAL			, THISVAR(VOL[14])					, &cb_ins_vol_0E			},
+	{	0x0c , 0x0e , THIS(VOL_TABLE_0B)	, THIS(SWEEPSTEPS)		, THIS(ENVELOPEDIR)		, THIS(VOL_TABLE_0E)	, &CACHE_HEXADECIMAL			, THISVAR(VOL[15])					, &cb_ins_vol_0F			},
+	CONTROL_TERMINATOR
+};
+#undef THIS
+#undef THISVAR
+
+#define THIS(a) &INS_WAV_CONTROLS[CONTROL_INS_WAV_##a]
+#define THISVAR(a) ((u8*)&(VAR_WAV.a))
+
+const Control INS_WAV_CONTROLS[CONTROL_INS_WAV_MAX] = { 
+//  					{ 	x	 , y		, up					, right					, down					, left					, cache							, var								, callback				},	
+/* index			*/	{	0x05 , 0x04 	, THIS(WAVPRESET_05)	, THIS(OP1_ADSR_02)		, THIS(NAME)			, THIS(OP1_TYPE)		, &CACHE_HEXADECIMAL_INSTRUMENT	, (u8*)&(VAR_CFG.CURRENTINSTRUMENT)	, &cb_ins_index			},
+/* name				*/	{	0x01 , 0x05 	, THIS(INDEX)			, THIS(OP2_ADSR_00)		, THIS(TYPE)			, THIS(OP2_TYPE)		, &CACHE_TEXT					, INSTRUM(NAME)						, &cb_ins_name			},
+/* type				*/	{	0x06 , 0x07 	, THIS(NAME)			, THIS(OP2_ADSR_00)		, THIS(PHASE)			, THIS(OP2_TYPE)		, &CACHE_INSTYPES				, INSTRUM(TYPE)						, &cb_ins_type			},
+/* phase			*/	{	0x06 , 0x08 	, THIS(TYPE)			, THIS(OP2_ADSR_02)		, THIS(AM)				, THIS(OP2_TYPE)		, &CACHE_CHECK					, THISVAR(PHASE)					, &cb_ins_phase			},
+/* am				*/	{	0x06 , 0x09 	, THIS(PHASE)			, THIS(OP2_ADSR_02)		, THIS(DISTORTION)		, THIS(OP3_TYPE)		, &CACHE_CHECK					, THISVAR(AM)						, &cb_ins_am			},
+/* distortion		*/	{	0x06 , 0x0a 	, THIS(AM)				, THIS(OP3_ADSR_00)		, THIS(WAVPRESET_00)	, THIS(OP3_TYPE)		, &CACHE_HEXADECIMAL			, THISVAR(DISTORTION)				, &cb_ins_distortion	},
+/* op1_type	 		*/	{	0x0c , 0x00 	, THIS(OP4_GATE)		, THIS(INDEX)			, THIS(OP1_GATE)		, THIS(OP1_ADSR_01)		, &CACHE_OPERATORS				, THISVAR(OP1_TYPE)					, &cb_ins_wav_op1type	},
+/* op1_gate	 		*/	{	0x0c , 0x01 	, THIS(OP1_TYPE)		, THIS(INDEX)			, THIS(OP2_TYPE)		, THIS(OP1_ADSR_01)		, &CACHE_HEXADECIMAL			, THISVAR(OP1_GATE)					, &cb_ins_wav_op1gate	},
+/* op1_adsr_00		*/	{	0x09 , 0x02 	, THIS(OP4_ADSR_02)		, THIS(OP1_ADSR_01)		, THIS(OP1_ADSR_02)		, THIS(INDEX)			, &CACHE_HEXADECIMAL			, THISVAR(OP1_ADSR[0])				, &cb_ins_wav_op1adsr_0	},
+/* op1_adsr_01  	*/	{	0x0b , 0x02 	, THIS(OP4_ADSR_03)		, THIS(OP1_TYPE)		, THIS(OP1_ADSR_03)		, THIS(OP1_ADSR_00)		, &CACHE_HEXADECIMAL			, THISVAR(OP1_ADSR[1])				, &cb_ins_wav_op1adsr_1	},
+/* op1_adsr_02  	*/	{	0x09 , 0x03 	, THIS(OP1_ADSR_00)		, THIS(OP1_ADSR_03)		, THIS(OP2_ADSR_00)		, THIS(INDEX)			, &CACHE_HEXADECIMAL			, THISVAR(OP1_ADSR[2])				, &cb_ins_wav_op1adsr_2	},
+/* op1_adsr_03		*/	{	0x0b , 0x03 	, THIS(OP1_ADSR_01)		, THIS(OP1_TYPE)		, THIS(OP2_ADSR_01)		, THIS(OP1_ADSR_02)		, &CACHE_HEXADECIMAL			, THISVAR(OP1_ADSR[3])				, &cb_ins_wav_op1adsr_3	},
+/* op2_type	 		*/	{	0x0c , 0x05 	, THIS(OP1_GATE)		, THIS(NAME)			, THIS(OP2_GATE)		, THIS(OP2_ADSR_01)		, &CACHE_OPERATORS				, THISVAR(OP2_TYPE)					, &cb_ins_wav_op2type	},
+/* op2_gate	 		*/	{	0x0c , 0x06 	, THIS(OP2_TYPE)		, THIS(NAME)			, THIS(OP3_TYPE)		, THIS(OP2_ADSR_01)		, &CACHE_HEXADECIMAL			, THISVAR(OP2_GATE)					, &cb_ins_wav_op2gate	},
+/* op2_adsr_00		*/	{	0x09 , 0x07 	, THIS(OP1_ADSR_02)		, THIS(OP2_ADSR_01)		, THIS(OP2_ADSR_02)		, THIS(TYPE)			, &CACHE_HEXADECIMAL			, THISVAR(OP2_ADSR[0])				, &cb_ins_wav_op2adsr_0	},
+/* op2_adsr_01  	*/	{	0x0b , 0x07 	, THIS(OP1_ADSR_03)		, THIS(OP2_TYPE)		, THIS(OP2_ADSR_03)		, THIS(OP2_ADSR_00)		, &CACHE_HEXADECIMAL			, THISVAR(OP2_ADSR[1])				, &cb_ins_wav_op2adsr_1	},
+/* op2_adsr_02  	*/	{	0x09 , 0x08 	, THIS(OP2_ADSR_00)		, THIS(OP2_ADSR_03)		, THIS(OP3_ADSR_00)		, THIS(PHASE)			, &CACHE_HEXADECIMAL			, THISVAR(OP2_ADSR[2])				, &cb_ins_wav_op2adsr_2	},
+/* op2_adsr_03		*/	{	0x0b , 0x08 	, THIS(OP2_ADSR_01)		, THIS(OP2_TYPE)		, THIS(OP3_ADSR_01)		, THIS(OP2_ADSR_02)		, &CACHE_HEXADECIMAL			, THISVAR(OP2_ADSR[3])				, &cb_ins_wav_op2adsr_3	},
+/* op3_type	 		*/	{	0x0c , 0x0a 	, THIS(OP2_GATE)		, THIS(DISTORTION)		, THIS(OP3_GATE)		, THIS(OP3_ADSR_01)		, &CACHE_OPERATORS				, THISVAR(OP3_TYPE)					, &cb_ins_wav_op3type	},
+/* op3_gate	 		*/	{	0x0c , 0x0b 	, THIS(OP3_TYPE)		, THIS(DISTORTION)		, THIS(OP4_TYPE)		, THIS(OP3_ADSR_01)		, &CACHE_HEXADECIMAL			, THISVAR(OP3_GATE)					, &cb_ins_wav_op3gate	},
+/* op3_adsr_00		*/	{	0x09 , 0x0c 	, THIS(OP2_ADSR_02)		, THIS(OP3_ADSR_01)		, THIS(OP3_ADSR_02)		, THIS(DISTORTION)		, &CACHE_HEXADECIMAL			, THISVAR(OP3_ADSR[0])				, &cb_ins_wav_op3adsr_0	},
+/* op3_adsr_01  	*/	{	0x0b , 0x0c 	, THIS(OP2_ADSR_03)		, THIS(OP3_TYPE)		, THIS(OP3_ADSR_03)		, THIS(OP3_ADSR_00)		, &CACHE_HEXADECIMAL			, THISVAR(OP3_ADSR[1])				, &cb_ins_wav_op3adsr_1	},
+/* op3_adsr_02  	*/	{	0x09 , 0x0d 	, THIS(OP3_ADSR_00)		, THIS(OP3_ADSR_03)		, THIS(OP4_ADSR_00)		, THIS(WAVPRESET_00)	, &CACHE_HEXADECIMAL			, THISVAR(OP3_ADSR[2])				, &cb_ins_wav_op3adsr_2	},
+/* op3_adsr_03		*/	{	0x0b , 0x0d 	, THIS(OP3_ADSR_01)		, THIS(OP3_TYPE)		, THIS(OP4_ADSR_01)		, THIS(OP3_ADSR_02)		, &CACHE_HEXADECIMAL			, THISVAR(OP3_ADSR[3])				, &cb_ins_wav_op3adsr_3	},
+/* op4_type	 		*/	{	0x0c , 0x0F 	, THIS(OP3_GATE)		, THIS(WAVPRESET_03)	, THIS(OP4_GATE)		, THIS(OP4_ADSR_01)		, &CACHE_OPERATORS				, THISVAR(OP4_TYPE)					, &cb_ins_wav_op4type	},
+/* op4_gate	 		*/	{	0x0c , 0x10 	, THIS(OP4_TYPE)		, THIS(WAVPRESET_03)	, THIS(OP1_TYPE)		, THIS(OP4_ADSR_01)		, &CACHE_HEXADECIMAL			, THISVAR(OP4_GATE)					, &cb_ins_wav_op4gate	},
+/* op4_adsr_00		*/	{	0x09 , 0x11 	, THIS(OP3_ADSR_02)		, THIS(OP4_ADSR_01)		, THIS(OP4_ADSR_02)		, THIS(WAVPRESET_04)	, &CACHE_HEXADECIMAL			, THISVAR(OP4_ADSR[0])				, &cb_ins_wav_op4adsr_0	},
+/* op4_adsr_01  	*/	{	0x0b , 0x11 	, THIS(OP3_ADSR_03)		, THIS(OP4_TYPE)		, THIS(OP4_ADSR_03)		, THIS(OP4_ADSR_00)		, &CACHE_HEXADECIMAL			, THISVAR(OP4_ADSR[1])				, &cb_ins_wav_op4adsr_1	},
+/* op4_adsr_02  	*/	{	0x09 , 0x12 	, THIS(OP4_ADSR_00)		, THIS(OP4_ADSR_03)		, THIS(OP1_ADSR_00)		, THIS(WAVPRESET_05)	, &CACHE_HEXADECIMAL			, THISVAR(OP4_ADSR[2])				, &cb_ins_wav_op4adsr_2	},
+/* op4_adsr_03		*/	{	0x0b , 0x12 	, THIS(OP4_ADSR_01)		, THIS(OP4_TYPE)		, THIS(OP1_ADSR_01)		, THIS(OP4_ADSR_02)		, &CACHE_HEXADECIMAL			, THISVAR(OP4_ADSR[3])				, &cb_ins_wav_op4adsr_3	},
+/* wavpreset_00 	*/	{	0x02 , 0x0d 	, THIS(DISTORTION)		, THIS(OP3_ADSR_02)		, THIS(WAVPRESET_01)	, THIS(OP3_ADSR_03)		, &CACHE_TEXT					, &dummy							, &cb_ins_wav_preset0	},
+/* wavpreset_01		*/	{	0x02 , 0x0e 	, THIS(WAVPRESET_00)	, THIS(OP3_ADSR_02)		, THIS(WAVPRESET_02)	, THIS(OP3_ADSR_03)		, &CACHE_TEXT					, &dummy							, &cb_ins_wav_preset1	},
+/* wavpreset_02 	*/	{	0x02 , 0x0f 	, THIS(WAVPRESET_01)	, THIS(OP4_TYPE)		, THIS(WAVPRESET_03)	, THIS(OP4_TYPE)		, &CACHE_TEXT					, &dummy							, &cb_ins_wav_preset2	},
+/* wavpreset_03 	*/	{	0x02 , 0x10 	, THIS(WAVPRESET_02)	, THIS(OP4_TYPE)		, THIS(WAVPRESET_04)	, THIS(OP4_TYPE)		, &CACHE_TEXT					, &dummy							, &cb_ins_wav_preset3	},
+/* wavpreset_04 	*/	{	0x02 , 0x11 	, THIS(WAVPRESET_03)	, THIS(OP4_ADSR_00)		, THIS(WAVPRESET_05)	, THIS(OP4_ADSR_01)		, &CACHE_TEXT					, &dummy							, &cb_ins_wav_preset4	},
+/* wavpreset_05 	*/	{	0x02 , 0x12 	, THIS(WAVPRESET_04)	, THIS(OP4_ADSR_02)		, THIS(INDEX)			, THIS(OP4_ADSR_03)		, &CACHE_TEXT					, &dummy							, &cb_ins_wav_preset5	},
+CONTROL_TERMINATOR
+};
+#undef THISVAR
+#undef THIS
+	
+#define CTL(a) &INS_FMW_CONTROLS[CONTROL_INS_FMW_##a]
+#define VAR(a) ((u8*)&(VAR_FMW.a))
+const Control INS_FMW_CONTROLS[CONTROL_INS_FMW_MAX] = { 
+//  					{ x	 	,	y		, up				 , right				 , down					 , left					 , cache							, var								, callback				},		
+/* index			*/	{ 0x05	,	0x04	, CTL( ALGORITHM	), CTL( FM2_ADSR_00		), CTL( NAME			), CTL( INDEX			), &CACHE_HEXADECIMAL_INSTRUMENT	, (u8*)&(VAR_CFG.CURRENTINSTRUMENT)	, &cb_ins_index			},		
+/* name				*/	{ 0x01	,	0x05 	, CTL( INDEX		), CTL( FM2_ADSR_00		), CTL( TYPE			), CTL( NAME 			), &CACHE_TEXT						, INSTRUM(NAME)						, &cb_ins_name			},		
+/* type				*/	{ 0x06	,	0x07 	, CTL( NAME			), CTL( FM2_ADSR_00		), CTL( FM1_GATE		), CTL( TYPE			), &CACHE_INSTYPES					, INSTRUM(TYPE)						, &cb_ins_type			},		
+		
+/* fm_op1gate		*/	{ 0x06  ,	0x09 	, CTL( TYPE			), CTL( FM3_ADSR_00		), CTL( FM2_GATE		), CTL( FM1_GATE		), &CACHE_HEXADECIMAL				, VAR(OP1_GATE)						, &cb_ins_fm_op1gate	},		
+/* fm_op2gate		*/	{ 0x06  ,	0x0a 	, CTL( FM1_GATE		), CTL( FM3_ADSR_02		), CTL( FM3_GATE		), CTL( FM2_GATE		), &CACHE_HEXADECIMAL				, VAR(OP2_GATE)						, &cb_ins_fm_op2gate	},		
+/* fm_op3gate		*/	{ 0x06  ,	0x0b 	, CTL( FM2_GATE		), CTL( FM4_TYPE		), CTL( FM4_GATE		), CTL( FM3_GATE		), &CACHE_HEXADECIMAL				, VAR(OP3_GATE)						, &cb_ins_fm_op3gate	},		
+/* fm_op4gate		*/	{ 0x06  ,	0x0c 	, CTL( FM3_GATE		), CTL( FM4_ADSR_00		), CTL( DISTORTION		), CTL( FM4_GATE		), &CACHE_HEXADECIMAL				, VAR(OP4_GATE)						, &cb_ins_fm_op4gate	},		
+
+/* fm_distortion	*/	{ 0x06	,	0x0d 	, CTL( FM4_GATE		), CTL( FM4_ADSR_00		), CTL( ALGORITHM		), CTL( DISTORTION		), &CACHE_HEXADECIMAL				, VAR(DISTORTION)					, &cb_ins_fm_distortion	},		
+/* algorithm		*/	{ 0x02	,	0x10 	, CTL( DISTORTION	), CTL( FM4_ADSR_02		), CTL( INDEX			), CTL( ALGORITHM		), &CACHE_ALGORITHMS				, VAR(ALGORITHM)					, &cb_ins_algorithm		},		
+			
+/* fm_op1type		*/	{ 0x0c  ,	0x00 	, CTL( ALGORITHM	), CTL( FM1_TYPE		), CTL( FM1_ADSR_01		), CTL( FM1_ADSR_01		), &CACHE_OPERATORS					, VAR(OP1_TYPE)						, &cb_ins_fm_op1type	},		
+/* fm_op1adsr_0		*/	{ 0x09	,	0x01 	, CTL( FM1_TYPE		), CTL( FM1_ADSR_01		), CTL( FM1_ADSR_02		), CTL( FM1_TYPE		), &CACHE_HEXADECIMAL				, VAR(OP1_ADSR[0])					, &cb_ins_fm_op1adsr_0	},		
+/* fm_op1adsr_1		*/	{ 0x0b	,	0x01 	, CTL( FM1_TYPE		), CTL( FM1_TYPE		), CTL( FM1_ADSR_03		), CTL( FM1_ADSR_00		), &CACHE_HEXADECIMAL				, VAR(OP1_ADSR[1])					, &cb_ins_fm_op1adsr_1	},		
+/* fm_op1adsr_2		*/	{ 0x09	,	0x02 	, CTL( FM1_ADSR_00	), CTL( FM1_ADSR_03		), CTL( FM2_ADSR_00		), CTL( FM1_ADSR_03 	), &CACHE_HEXADECIMAL				, VAR(OP1_ADSR[2])					, &cb_ins_fm_op1adsr_2	},		
+/* fm_op1adsr_3		*/	{ 0x0b	,	0x02 	, CTL( FM1_ADSR_01	), CTL( FM1_TYPE		), CTL( FM2_TYPE		), CTL( FM1_ADSR_02		), &CACHE_HEXADECIMAL				, VAR(OP1_ADSR[3])					, &cb_ins_fm_op1adsr_3	},		
+			
+/* fm_op2type		*/	{ 0x0c  ,	0x04 	, CTL( FM1_ADSR_03	), CTL( FM2_TYPE		), CTL( FM2_ADSR_01		), CTL( FM2_ADSR_01		), &CACHE_OPERATORS					, VAR(OP2_TYPE)						, &cb_ins_fm_op2type	},		
+/* fm_op2adsr_0		*/	{ 0x09	,	0x05 	, CTL( FM1_ADSR_02	), CTL( FM2_ADSR_01		), CTL( FM2_ADSR_02		), CTL( NAME			), &CACHE_HEXADECIMAL				, VAR(OP2_ADSR[0])					, &cb_ins_fm_op2adsr_0	},		
+/* fm_op2adsr_1		*/	{ 0x0b	,	0x05 	, CTL( FM2_TYPE 	), CTL( FM2_TYPE		), CTL( FM2_ADSR_03		), CTL( FM2_ADSR_00		), &CACHE_HEXADECIMAL				, VAR(OP2_ADSR[1])					, &cb_ins_fm_op2adsr_1	},		
+/* fm_op2adsr_2		*/	{ 0x09	,	0x06 	, CTL( FM2_ADSR_00	), CTL( FM2_ADSR_03		), CTL( FM3_ADSR_00		), CTL( TYPE			), &CACHE_HEXADECIMAL				, VAR(OP2_ADSR[2])					, &cb_ins_fm_op2adsr_2	},		
+/* fm_op2adsr_3		*/	{ 0x0b	,	0x06 	, CTL( FM2_ADSR_01	), CTL( FM2_TYPE		), CTL( FM3_TYPE		), CTL( FM2_ADSR_02		), &CACHE_HEXADECIMAL				, VAR(OP2_ADSR[3])					, &cb_ins_fm_op2adsr_3	},		
+			
+/* fm_op3type		*/	{ 0x0c  ,	0x08 	, CTL( FM2_ADSR_03	), CTL( FM3_TYPE		), CTL( FM3_ADSR_01		), CTL( FM3_ADSR_01		), &CACHE_OPERATORS					, VAR(OP3_TYPE)						, &cb_ins_fm_op3type	},		
+/* fm_op3adsr_0		*/	{ 0x09	,	0x09 	, CTL( FM2_ADSR_02	), CTL( FM3_ADSR_01		), CTL( FM3_ADSR_02		), CTL( FM1_GATE		), &CACHE_HEXADECIMAL				, VAR(OP3_ADSR[0])					, &cb_ins_fm_op3adsr_0	},		
+/* fm_op3adsr_1		*/	{ 0x0b	,	0x09 	, CTL( FM3_TYPE 	), CTL( FM3_TYPE		), CTL( FM3_ADSR_03		), CTL( FM3_ADSR_00		), &CACHE_HEXADECIMAL				, VAR(OP3_ADSR[1])					, &cb_ins_fm_op3adsr_1	},		
+/* fm_op3adsr_2		*/	{ 0x09	,	0x0a 	, CTL( FM3_ADSR_00	), CTL( FM3_ADSR_03		), CTL( FM4_ADSR_00		), CTL( FM2_GATE		), &CACHE_HEXADECIMAL				, VAR(OP3_ADSR[2])					, &cb_ins_fm_op3adsr_2	},		
+/* fm_op3adsr_3		*/	{ 0x0b	,	0x0a 	, CTL( FM3_ADSR_01	), CTL( FM3_TYPE		), CTL( FM4_TYPE		), CTL( FM3_ADSR_02		), &CACHE_HEXADECIMAL				, VAR(OP3_ADSR[3])					, &cb_ins_fm_op3adsr_3	},		
+			
+/* fm_op4type		*/	{ 0x0c  ,	0x0c 	, CTL( FM3_ADSR_03	), CTL( FM4_TYPE		), CTL( FM4_ADSR_01		), CTL( FM4_ADSR_01		), &CACHE_OPERATORS					, VAR(OP4_TYPE)						, &cb_ins_fm_op4type	},		
+/* fm_op4adsr_0		*/	{ 0x09	,	0x0d 	, CTL( FM3_ADSR_02	), CTL( FM4_ADSR_01		), CTL( FM4_ADSR_02		), CTL( DISTORTION		), &CACHE_HEXADECIMAL				, VAR(OP4_ADSR[0])					, &cb_ins_fm_op4adsr_0	},		
+/* fm_op4adsr_1		*/	{ 0x0b	,	0x0d 	, CTL( FM4_TYPE 	), CTL( FM4_TYPE		), CTL( FM4_ADSR_03		), CTL( FM4_ADSR_00		), &CACHE_HEXADECIMAL				, VAR(OP4_ADSR[1])					, &cb_ins_fm_op4adsr_1	},		
+/* fm_op4adsr_2		*/	{ 0x09	,	0x0e 	, CTL( FM4_ADSR_00	), CTL( FM4_ADSR_03		), CTL( FM1_ADSR_00		), CTL( FM4_ADSR_03		), &CACHE_HEXADECIMAL				, VAR(OP4_ADSR[2])					, &cb_ins_fm_op4adsr_2	},		
+/* fm_op4adsr_3		*/	{ 0x0b	,	0x0e 	, CTL( FM4_ADSR_01	), CTL( FM4_ADSR_02		), CTL( ALGORITHM		), CTL( FM4_ADSR_02		), &CACHE_HEXADECIMAL				, VAR(OP4_ADSR[3])					, &cb_ins_fm_op4adsr_3	},		
+CONTROL_TERMINATOR
+};
+#undef VAR
+#undef CTL
+
+const Control INS_SMP_CONTROLS[CONTROL_INS_SMP_MAX] = { 
+#define THIS(a) &INS_SMP_CONTROLS[CONTROL_INS_SMP_##a]
+#define THISVAR(a) ((u8*)&(VAR_SMP.a))
+//  	x	 y		up						right					down					left					cache							var									callback				}
+	{	0x05 , 0x04 , THIS(SMPKIT_0A)		, THIS(B)				, THIS(NAME)			, THIS(B)				, &CACHE_HEXADECIMAL_INSTRUMENT	, (u8*)&(VAR_CFG.CURRENTINSTRUMENT)	, &cb_ins_index			},			
+	{	0x01 , 0x05 , THIS(INDEX)			, THIS(S)				, THIS(TYPE)			, THIS(S)				, &CACHE_TEXT					, INSTRUM(NAME)						, &cb_ins_name			},			
+	{	0x06 , 0x07 , THIS(NAME)			, THIS(R)				, THIS(START)			, THIS(R)				, &CACHE_INSTYPES				, INSTRUM(TYPE)						, &cb_ins_type			},			
+	{	0x06 , 0x08 , THIS(TYPE)			, THIS(PLAYMODE)		, THIS(END)				, THIS(PLAYMODE)		, &CACHE_HEXADECIMAL_DOUBLE		, THISVAR(START)					, &cb_ins_smp_start		},			
+	{	0x06 , 0x09 , THIS(START)			, THIS(LOOPMODE)		, THIS(KIT)				, THIS(LOOPMODE)		, &CACHE_HEXADECIMAL_DOUBLE		, THISVAR(END)						, &cb_ins_smp_end		},			
+	{	0x0c , 0x01 , THIS(SMPKIT_0B)		, THIS(INDEX)			, THIS(ADSR_01)			, THIS(ADSR_01)			, &CACHE_HEXADECIMAL_DOUBLE		, THISVAR(FREQUENCY)				, &cb_ins_smp_frequency	},			
+	{	0x0b , 0x04 , THIS(ADSR_03)			, THIS(INDEX)			, THIS(S)				, THIS(INDEX)			, &CACHE_HEXADECIMAL			, THISVAR(B)						, &cb_ins_smp_b			},			
+	{	0x0b , 0x05 , THIS(B)				, THIS(NAME)			, THIS(R)				, THIS(NAME)			, &CACHE_HEXADECIMAL			, THISVAR(S)						, &cb_ins_smp_s			},			
+	{	0x0b , 0x06 , THIS(S)				, THIS(TYPE)			, THIS(PLAYMODE)		, THIS(TYPE)			, &CACHE_HEXADECIMAL			, THISVAR(R)						, &cb_ins_smp_r			},			
+	{	0x0c , 0x08 , THIS(R)				, THIS(START)			, THIS(LOOPMODE)		, THIS(START)			, &CACHE_PLAYMODES				, THISVAR(SYNTHMODE)				, &cb_ins_smp_synthmode	},			
+	{	0x0c , 0x09 , THIS(PLAYMODE)		, THIS(END)				, THIS(KIT)				, THIS(END)				, &CACHE_LOOPMODES				, THISVAR(LOOP)						, &cb_ins_smp_loop		},			
+	{	0x04 , 0x0b , THIS(END)				, THIS(KIT)				, THIS(SMPKIT_00)		, THIS(KIT)				, &CACHE_HEXADECIMAL_INSTRUMENT	, THISVAR(KIT)						, &cb_ins_smp_kit		},			
+	{	0x01 , 0x0d , THIS(KIT)				, THIS(SMPKIT_01)		, THIS(SMPKIT_02)		, THIS(SMPKIT_00)		, &CACHE_TEXT					, THISVAR(SMPKIT[0])				, &cb_ins_smpkit_00		},			
+	{	0x07 , 0x0d , THIS(KIT)				, THIS(SMPKIT_0B)		, THIS(SMPKIT_03)		, THIS(SMPKIT_00)		, &CACHE_TEXT					, THISVAR(SMPKIT[1])				, &cb_ins_smpkit_01		},			
+	{	0x01 , 0x0e , THIS(SMPKIT_00)		, THIS(SMPKIT_03)		, THIS(SMPKIT_04)		, THIS(SMPKIT_00)		, &CACHE_TEXT					, THISVAR(SMPKIT[2])				, &cb_ins_smpkit_02		},			
+	{	0x07 , 0x0e , THIS(SMPKIT_01)		, THIS(SMPKIT_0B)		, THIS(SMPKIT_05)		, THIS(SMPKIT_02)		, &CACHE_TEXT					, THISVAR(SMPKIT[3])				, &cb_ins_smpkit_03		},			
+	{	0x01 , 0x0f , THIS(SMPKIT_02)		, THIS(SMPKIT_05)		, THIS(SMPKIT_06)		, THIS(SMPKIT_00)		, &CACHE_TEXT					, THISVAR(SMPKIT[4])				, &cb_ins_smpkit_04		},			
+	{	0x07 , 0x0f , THIS(SMPKIT_03)		, THIS(SMPKIT_0B)		, THIS(SMPKIT_07)		, THIS(SMPKIT_04)		, &CACHE_TEXT					, THISVAR(SMPKIT[5])				, &cb_ins_smpkit_05		},			
+	{	0x01 , 0x10 , THIS(SMPKIT_04)		, THIS(SMPKIT_07)		, THIS(SMPKIT_08)		, THIS(SMPKIT_00)		, &CACHE_TEXT					, THISVAR(SMPKIT[6])				, &cb_ins_smpkit_06		},			
+	{	0x07 , 0x10 , THIS(SMPKIT_05)		, THIS(SMPKIT_0B)		, THIS(SMPKIT_09)		, THIS(SMPKIT_06)		, &CACHE_TEXT					, THISVAR(SMPKIT[7])				, &cb_ins_smpkit_07		},			
+	{	0x01 , 0x11 , THIS(SMPKIT_06)		, THIS(SMPKIT_09)		, THIS(SMPKIT_0A)		, THIS(SMPKIT_00)		, &CACHE_TEXT					, THISVAR(SMPKIT[8])				, &cb_ins_smpkit_08		},			
+	{	0x07 , 0x11 , THIS(SMPKIT_07)		, THIS(SMPKIT_0B)		, THIS(SMPKIT_0B)		, THIS(SMPKIT_08)		, &CACHE_TEXT					, THISVAR(SMPKIT[9])				, &cb_ins_smpkit_09		},			
+	{	0x01 , 0x12 , THIS(SMPKIT_08)		, THIS(SMPKIT_0B)		, THIS(INDEX)			, THIS(SMPKIT_00)		, &CACHE_TEXT					, THISVAR(SMPKIT[10])				, &cb_ins_smpkit_0A		},			
+	{	0x07 , 0x12 , THIS(SMPKIT_09)		, THIS(SMPKIT_0B)		, THIS(INDEX)			, THIS(SMPKIT_0A)		, &CACHE_TEXT					, THISVAR(SMPKIT[11])				, &cb_ins_smpkit_0B		},			
+	{	0x09 , 0x02 , THIS(FREQUENCY)		, THIS(ADSR_01)			, THIS(ADSR_02)			, THIS(INDEX)			, &CACHE_HEXADECIMAL			, THISVAR(ADSR[0])   				, &cb_ins_smp_adsr_0	},			
+	{	0x0b , 0x02 , THIS(FREQUENCY)		, THIS(FREQUENCY)		, THIS(ADSR_03)			, THIS(ADSR_00)			, &CACHE_HEXADECIMAL			, THISVAR(ADSR[1])   				, &cb_ins_smp_adsr_1	},			
+	{	0x09 , 0x03 , THIS(ADSR_00)			, THIS(ADSR_03)			, THIS(B)				, THIS(INDEX)			, &CACHE_HEXADECIMAL			, THISVAR(ADSR[2])   				, &cb_ins_smp_adsr_2	},			
+	{	0x0b , 0x03 , THIS(ADSR_01)			, THIS(FREQUENCY)		, THIS(B)				, THIS(ADSR_02)			, &CACHE_HEXADECIMAL			, THISVAR(ADSR[3])   				, &cb_ins_smp_adsr_3	},				
+	CONTROL_TERMINATOR
+};
+#undef THIS
+#undef THISVAR
+#undef INSTRUM
+
+
+//
+// Instrument table hidden region controls
+//
+
+const Control TABLE_CONTROLS[CONTROL_TABLE_MAX] = { 
+#define THIS(a) &TABLE_CONTROLS[CONTROL_TABLE_##a]
+#define INSTRUM(a) ((u8*)&(VAR_INSTRUMENT.a))
+	//  x	 y		up						right					down					left					cache							var									callback		
+	{	0x0f , 0x01 , THIS(TRANSPOSE_0F)	, THIS(VOLUME_00)		, THIS(TRANSPOSE_01)	, THIS(COMMAND2_00)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.TRANSPOSE[0]) 		, &cb_ins_table_transpose_00	}, 
+	{	0x0f , 0x02 , THIS(TRANSPOSE_00)	, THIS(VOLUME_01)		, THIS(TRANSPOSE_02)	, THIS(COMMAND2_01)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.TRANSPOSE[1]) 		, &cb_ins_table_transpose_01	}, 
+	{	0x0f , 0x03 , THIS(TRANSPOSE_01)	, THIS(VOLUME_02)		, THIS(TRANSPOSE_03)	, THIS(COMMAND2_02)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.TRANSPOSE[2]) 		, &cb_ins_table_transpose_02	}, 
+	{	0x0f , 0x04 , THIS(TRANSPOSE_02)	, THIS(VOLUME_03)		, THIS(TRANSPOSE_04)	, THIS(COMMAND2_03)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.TRANSPOSE[3]) 		, &cb_ins_table_transpose_03	}, 
+	{	0x0f , 0x05 , THIS(TRANSPOSE_03)	, THIS(VOLUME_04)		, THIS(TRANSPOSE_05)	, THIS(COMMAND2_04)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.TRANSPOSE[4]) 		, &cb_ins_table_transpose_04	}, 
+	{	0x0f , 0x06 , THIS(TRANSPOSE_04)	, THIS(VOLUME_05)		, THIS(TRANSPOSE_06)	, THIS(COMMAND2_05)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.TRANSPOSE[5]) 		, &cb_ins_table_transpose_05	}, 
+	{	0x0f , 0x07 , THIS(TRANSPOSE_05)	, THIS(VOLUME_06)		, THIS(TRANSPOSE_07)	, THIS(COMMAND2_06)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.TRANSPOSE[6]) 		, &cb_ins_table_transpose_06	}, 
+	{	0x0f , 0x08 , THIS(TRANSPOSE_06)	, THIS(VOLUME_07)		, THIS(TRANSPOSE_08)	, THIS(COMMAND2_07)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.TRANSPOSE[7]) 		, &cb_ins_table_transpose_07	}, 
+	{	0x0f , 0x09 , THIS(TRANSPOSE_07)	, THIS(VOLUME_08)		, THIS(TRANSPOSE_09)	, THIS(COMMAND2_08)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.TRANSPOSE[8]) 		, &cb_ins_table_transpose_08	}, 
+	{	0x0f , 0x0a , THIS(TRANSPOSE_08)	, THIS(VOLUME_09)		, THIS(TRANSPOSE_0A)	, THIS(COMMAND2_09)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.TRANSPOSE[9]) 		, &cb_ins_table_transpose_09	}, 
+	{	0x0f , 0x0b , THIS(TRANSPOSE_09)	, THIS(VOLUME_0A)		, THIS(TRANSPOSE_0B)	, THIS(COMMAND2_0A)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.TRANSPOSE[10])		, &cb_ins_table_transpose_0A	}, 
+	{	0x0f , 0x0c , THIS(TRANSPOSE_0A)	, THIS(VOLUME_0B)		, THIS(TRANSPOSE_0C)	, THIS(COMMAND2_0B)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.TRANSPOSE[11])		, &cb_ins_table_transpose_0B	}, 
+	{	0x0f , 0x0d , THIS(TRANSPOSE_0B)	, THIS(VOLUME_0C)		, THIS(TRANSPOSE_0D)	, THIS(COMMAND2_0C)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.TRANSPOSE[12])		, &cb_ins_table_transpose_0C	}, 
+	{	0x0f , 0x0e , THIS(TRANSPOSE_0C)	, THIS(VOLUME_0D)		, THIS(TRANSPOSE_0E)	, THIS(COMMAND2_0D)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.TRANSPOSE[13])		, &cb_ins_table_transpose_0D	}, 
+	{	0x0f , 0x0f , THIS(TRANSPOSE_0D)	, THIS(VOLUME_0E)		, THIS(TRANSPOSE_0F)	, THIS(COMMAND2_0E)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.TRANSPOSE[14])		, &cb_ins_table_transpose_0E	}, 
+	{	0x0f , 0x10 , THIS(TRANSPOSE_0E)	, THIS(VOLUME_0F)		, THIS(TRANSPOSE_00)	, THIS(COMMAND2_0F)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.TRANSPOSE[15])		, &cb_ins_table_transpose_0F	}, 
+	{	0x13 , 0x01 , THIS(VOLUME_0F)		, THIS(COMMAND1_00)		, THIS(VOLUME_01)		, THIS(TRANSPOSE_00)	, &CACHE_HEXADECIMAL			, INSTRUM(TABLE.VOLUME[0]) 			, &cb_ins_table_volume_00	}, 
+	{	0x13 , 0x02 , THIS(VOLUME_00)		, THIS(COMMAND1_01)		, THIS(VOLUME_02)		, THIS(TRANSPOSE_01)	, &CACHE_HEXADECIMAL			, INSTRUM(TABLE.VOLUME[1]) 			, &cb_ins_table_volume_01	}, 
+	{	0x13 , 0x03 , THIS(VOLUME_01)		, THIS(COMMAND1_02)		, THIS(VOLUME_03)		, THIS(TRANSPOSE_02)	, &CACHE_HEXADECIMAL			, INSTRUM(TABLE.VOLUME[2]) 			, &cb_ins_table_volume_02	}, 
+	{	0x13 , 0x04 , THIS(VOLUME_02)		, THIS(COMMAND1_03)		, THIS(VOLUME_04)		, THIS(TRANSPOSE_03)	, &CACHE_HEXADECIMAL			, INSTRUM(TABLE.VOLUME[3]) 			, &cb_ins_table_volume_03	}, 
+	{	0x13 , 0x05 , THIS(VOLUME_03)		, THIS(COMMAND1_04)		, THIS(VOLUME_05)		, THIS(TRANSPOSE_04)	, &CACHE_HEXADECIMAL			, INSTRUM(TABLE.VOLUME[4]) 			, &cb_ins_table_volume_04	}, 
+	{	0x13 , 0x06 , THIS(VOLUME_04)		, THIS(COMMAND1_05)		, THIS(VOLUME_06)		, THIS(TRANSPOSE_05)	, &CACHE_HEXADECIMAL			, INSTRUM(TABLE.VOLUME[5]) 			, &cb_ins_table_volume_05	}, 
+	{	0x13 , 0x07 , THIS(VOLUME_05)		, THIS(COMMAND1_06)		, THIS(VOLUME_07)		, THIS(TRANSPOSE_06)	, &CACHE_HEXADECIMAL			, INSTRUM(TABLE.VOLUME[6]) 			, &cb_ins_table_volume_06	}, 
+	{	0x13 , 0x08 , THIS(VOLUME_06)		, THIS(COMMAND1_07)		, THIS(VOLUME_08)		, THIS(TRANSPOSE_07)	, &CACHE_HEXADECIMAL			, INSTRUM(TABLE.VOLUME[7]) 			, &cb_ins_table_volume_07	}, 
+	{	0x13 , 0x09 , THIS(VOLUME_07)		, THIS(COMMAND1_08)		, THIS(VOLUME_09)		, THIS(TRANSPOSE_08)	, &CACHE_HEXADECIMAL			, INSTRUM(TABLE.VOLUME[8]) 			, &cb_ins_table_volume_08	}, 
+	{	0x13 , 0x0a , THIS(VOLUME_08)		, THIS(COMMAND1_09)		, THIS(VOLUME_0A)		, THIS(TRANSPOSE_09)	, &CACHE_HEXADECIMAL			, INSTRUM(TABLE.VOLUME[9]) 			, &cb_ins_table_volume_09	}, 
+	{	0x13 , 0x0b , THIS(VOLUME_09)		, THIS(COMMAND1_0A)		, THIS(VOLUME_0B)		, THIS(TRANSPOSE_0A)	, &CACHE_HEXADECIMAL			, INSTRUM(TABLE.VOLUME[10])			, &cb_ins_table_volume_0A	}, 
+	{	0x13 , 0x0c , THIS(VOLUME_0A)		, THIS(COMMAND1_0B)		, THIS(VOLUME_0C)		, THIS(TRANSPOSE_0B)	, &CACHE_HEXADECIMAL			, INSTRUM(TABLE.VOLUME[11])			, &cb_ins_table_volume_0B	}, 
+	{	0x13 , 0x0d , THIS(VOLUME_0B)		, THIS(COMMAND1_0C)		, THIS(VOLUME_0D)		, THIS(TRANSPOSE_0C)	, &CACHE_HEXADECIMAL			, INSTRUM(TABLE.VOLUME[12])			, &cb_ins_table_volume_0C	}, 
+	{	0x13 , 0x0e , THIS(VOLUME_0C)		, THIS(COMMAND1_0D)		, THIS(VOLUME_0E)		, THIS(TRANSPOSE_0D)	, &CACHE_HEXADECIMAL			, INSTRUM(TABLE.VOLUME[13])			, &cb_ins_table_volume_0D	}, 
+	{	0x13 , 0x0f , THIS(VOLUME_0D)		, THIS(COMMAND1_0E)		, THIS(VOLUME_0F)		, THIS(TRANSPOSE_0E)	, &CACHE_HEXADECIMAL			, INSTRUM(TABLE.VOLUME[14])			, &cb_ins_table_volume_0E	}, 
+	{	0x13 , 0x10 , THIS(VOLUME_0E)		, THIS(COMMAND1_0F)		, THIS(VOLUME_00)		, THIS(TRANSPOSE_0F)	, &CACHE_HEXADECIMAL			, INSTRUM(TABLE.VOLUME[15])			, &cb_ins_table_volume_0F	}, 
+	{	0x17 , 0x01 , THIS(VALUE1_0F)		, THIS(COMMAND2_00)		, THIS(VALUE1_01)		, THIS(COMMAND1_00)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[0][0]) 		, &cb_ins_table_value1_00	}, 
+	{	0x17 , 0x02 , THIS(VALUE1_00)		, THIS(COMMAND2_01)		, THIS(VALUE1_02)		, THIS(COMMAND1_01)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[0][1]) 		, &cb_ins_table_value1_01	}, 
+	{	0x17 , 0x03 , THIS(VALUE1_01)		, THIS(COMMAND2_02)		, THIS(VALUE1_03)		, THIS(COMMAND1_02)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[0][2]) 		, &cb_ins_table_value1_02	}, 
+	{	0x17 , 0x04 , THIS(VALUE1_02)		, THIS(COMMAND2_03)		, THIS(VALUE1_04)		, THIS(COMMAND1_03)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[0][3]) 		, &cb_ins_table_value1_03	}, 
+	{	0x17 , 0x05 , THIS(VALUE1_03)		, THIS(COMMAND2_04)		, THIS(VALUE1_05)		, THIS(COMMAND1_04)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[0][4]) 		, &cb_ins_table_value1_04	}, 
+	{	0x17 , 0x06 , THIS(VALUE1_04)		, THIS(COMMAND2_05)		, THIS(VALUE1_06)		, THIS(COMMAND1_05)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[0][5]) 		, &cb_ins_table_value1_05	}, 
+	{	0x17 , 0x07 , THIS(VALUE1_05)		, THIS(COMMAND2_06)		, THIS(VALUE1_07)		, THIS(COMMAND1_06)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[0][6]) 		, &cb_ins_table_value1_06	}, 
+	{	0x17 , 0x08 , THIS(VALUE1_06)		, THIS(COMMAND2_07)		, THIS(VALUE1_08)		, THIS(COMMAND1_07)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[0][7]) 		, &cb_ins_table_value1_07	}, 
+	{	0x17 , 0x09 , THIS(VALUE1_07)		, THIS(COMMAND2_08)		, THIS(VALUE1_09)		, THIS(COMMAND1_08)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[0][8]) 		, &cb_ins_table_value1_08	}, 
+	{	0x17 , 0x0a , THIS(VALUE1_08)		, THIS(COMMAND2_09)		, THIS(VALUE1_0A)		, THIS(COMMAND1_09)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[0][9]) 		, &cb_ins_table_value1_09	}, 
+	{	0x17 , 0x0b , THIS(VALUE1_09)		, THIS(COMMAND2_0A)		, THIS(VALUE1_0B)		, THIS(COMMAND1_0A)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[0][10])		, &cb_ins_table_value1_0A	}, 
+	{	0x17 , 0x0c , THIS(VALUE1_0A)		, THIS(COMMAND2_0B)		, THIS(VALUE1_0C)		, THIS(COMMAND1_0B)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[0][11])		, &cb_ins_table_value1_0B	}, 
+	{	0x17 , 0x0d , THIS(VALUE1_0B)		, THIS(COMMAND2_0C)		, THIS(VALUE1_0D)		, THIS(COMMAND1_0C)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[0][12])		, &cb_ins_table_value1_0C	}, 
+	{	0x17 , 0x0e , THIS(VALUE1_0C)		, THIS(COMMAND2_0D)		, THIS(VALUE1_0E)		, THIS(COMMAND1_0D)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[0][13])		, &cb_ins_table_value1_0D	}, 
+	{	0x17 , 0x0f , THIS(VALUE1_0D)		, THIS(COMMAND2_0E)		, THIS(VALUE1_0F)		, THIS(COMMAND1_0E)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[0][14])		, &cb_ins_table_value1_0E	}, 
+	{	0x17 , 0x10 , THIS(VALUE1_0E)		, THIS(COMMAND2_0F)		, THIS(VALUE1_00)		, THIS(COMMAND1_0F)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[0][15])		, &cb_ins_table_value1_0F	}, 
+	{	0x16 , 0x01 , THIS(COMMAND1_0F)		, THIS(VALUE1_00)		, THIS(COMMAND1_01)		, THIS(VOLUME_00)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[0][0]) 		, &cb_ins_table_command1_00	},
+	{	0x16 , 0x02 , THIS(COMMAND1_00)		, THIS(VALUE1_01)		, THIS(COMMAND1_02)		, THIS(VOLUME_01)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[0][1]) 		, &cb_ins_table_command1_01	},
+	{	0x16 , 0x03 , THIS(COMMAND1_01)		, THIS(VALUE1_02)		, THIS(COMMAND1_03)		, THIS(VOLUME_02)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[0][2]) 		, &cb_ins_table_command1_02	},
+	{	0x16 , 0x04 , THIS(COMMAND1_02)		, THIS(VALUE1_03)		, THIS(COMMAND1_04)		, THIS(VOLUME_03)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[0][3]) 		, &cb_ins_table_command1_03	},
+	{	0x16 , 0x05 , THIS(COMMAND1_03)		, THIS(VALUE1_04)		, THIS(COMMAND1_05)		, THIS(VOLUME_04)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[0][4]) 		, &cb_ins_table_command1_04	},
+	{	0x16 , 0x06 , THIS(COMMAND1_04)		, THIS(VALUE1_05)		, THIS(COMMAND1_06)		, THIS(VOLUME_05)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[0][5]) 		, &cb_ins_table_command1_05	},
+	{	0x16 , 0x07 , THIS(COMMAND1_05)		, THIS(VALUE1_06)		, THIS(COMMAND1_07)		, THIS(VOLUME_06)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[0][6]) 		, &cb_ins_table_command1_06	},
+	{	0x16 , 0x08 , THIS(COMMAND1_06)		, THIS(VALUE1_07)		, THIS(COMMAND1_08)		, THIS(VOLUME_07)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[0][7]) 		, &cb_ins_table_command1_07	},
+	{	0x16 , 0x09 , THIS(COMMAND1_07)		, THIS(VALUE1_08)		, THIS(COMMAND1_09)		, THIS(VOLUME_08)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[0][8]) 		, &cb_ins_table_command1_08	},
+	{	0x16 , 0x0a , THIS(COMMAND1_08)		, THIS(VALUE1_09)		, THIS(COMMAND1_0A)		, THIS(VOLUME_09)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[0][9]) 		, &cb_ins_table_command1_09	},
+	{	0x16 , 0x0b , THIS(COMMAND1_09)		, THIS(VALUE1_0A)		, THIS(COMMAND1_0B)		, THIS(VOLUME_0A)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[0][10])		, &cb_ins_table_command1_0A	},
+	{	0x16 , 0x0c , THIS(COMMAND1_0A)		, THIS(VALUE1_0B)		, THIS(COMMAND1_0C)		, THIS(VOLUME_0B)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[0][11])		, &cb_ins_table_command1_0B	},
+	{	0x16 , 0x0d , THIS(COMMAND1_0B)		, THIS(VALUE1_0C)		, THIS(COMMAND1_0D)		, THIS(VOLUME_0C)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[0][12])		, &cb_ins_table_command1_0C	},
+	{	0x16 , 0x0e , THIS(COMMAND1_0C)		, THIS(VALUE1_0D)		, THIS(COMMAND1_0E)		, THIS(VOLUME_0D)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[0][13])		, &cb_ins_table_command1_0D	},
+	{	0x16 , 0x0f , THIS(COMMAND1_0D)		, THIS(VALUE1_0E)		, THIS(COMMAND1_0F)		, THIS(VOLUME_0E)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[0][14])		, &cb_ins_table_command1_0E	},
+	{	0x16 , 0x10 , THIS(COMMAND1_0E)		, THIS(VALUE1_0F)		, THIS(COMMAND1_00)		, THIS(VOLUME_0F)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[0][15])		, &cb_ins_table_command1_0F	},
+	{	0x1c , 0x01 , THIS(VALUE2_0F)		, THIS(TRANSPOSE_00)	, THIS(VALUE2_01)		, THIS(COMMAND2_00)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[1][0]) 		, &cb_ins_table_value2_00	},
+	{	0x1c , 0x02 , THIS(VALUE2_00)		, THIS(TRANSPOSE_01)	, THIS(VALUE2_02)		, THIS(COMMAND2_01)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[1][1]) 		, &cb_ins_table_value2_01	},
+	{	0x1c , 0x03 , THIS(VALUE2_01)		, THIS(TRANSPOSE_02)	, THIS(VALUE2_03)		, THIS(COMMAND2_02)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[1][2]) 		, &cb_ins_table_value2_02	},
+	{	0x1c , 0x04 , THIS(VALUE2_02)		, THIS(TRANSPOSE_03)	, THIS(VALUE2_04)		, THIS(COMMAND2_03)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[1][3]) 		, &cb_ins_table_value2_03	},
+	{	0x1c , 0x05 , THIS(VALUE2_03)		, THIS(TRANSPOSE_04)	, THIS(VALUE2_05)		, THIS(COMMAND2_04)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[1][4]) 		, &cb_ins_table_value2_04	},
+	{	0x1c , 0x06 , THIS(VALUE2_04)		, THIS(TRANSPOSE_05)	, THIS(VALUE2_06)		, THIS(COMMAND2_05)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[1][5]) 		, &cb_ins_table_value2_05	},
+	{	0x1c , 0x07 , THIS(VALUE2_05)		, THIS(TRANSPOSE_06)	, THIS(VALUE2_07)		, THIS(COMMAND2_06)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[1][6]) 		, &cb_ins_table_value2_06	},
+	{	0x1c , 0x08 , THIS(VALUE2_06)		, THIS(TRANSPOSE_07)	, THIS(VALUE2_08)		, THIS(COMMAND2_07)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[1][7]) 		, &cb_ins_table_value2_07	},
+	{	0x1c , 0x09 , THIS(VALUE2_07)		, THIS(TRANSPOSE_08)	, THIS(VALUE2_09)		, THIS(COMMAND2_08)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[1][8]) 		, &cb_ins_table_value2_08	},
+	{	0x1c , 0x0a , THIS(VALUE2_08)		, THIS(TRANSPOSE_09)	, THIS(VALUE2_0A)		, THIS(COMMAND2_09)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[1][9]) 		, &cb_ins_table_value2_09	},
+	{	0x1c , 0x0b , THIS(VALUE2_09)		, THIS(TRANSPOSE_0A)	, THIS(VALUE2_0B)		, THIS(COMMAND2_0A)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[1][10])		, &cb_ins_table_value2_0A	},
+	{	0x1c , 0x0c , THIS(VALUE2_0A)		, THIS(TRANSPOSE_0B)	, THIS(VALUE2_0C)		, THIS(COMMAND2_0B)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[1][11])		, &cb_ins_table_value2_0B	},
+	{	0x1c , 0x0d , THIS(VALUE2_0B)		, THIS(TRANSPOSE_0C)	, THIS(VALUE2_0D)		, THIS(COMMAND2_0C)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[1][12])		, &cb_ins_table_value2_0C	},
+	{	0x1c , 0x0e , THIS(VALUE2_0C)		, THIS(TRANSPOSE_0D)	, THIS(VALUE2_0E)		, THIS(COMMAND2_0D)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[1][13])		, &cb_ins_table_value2_0D	},
+	{	0x1c , 0x0f , THIS(VALUE2_0D)		, THIS(TRANSPOSE_0E)	, THIS(VALUE2_0F)		, THIS(COMMAND2_0E)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[1][14])		, &cb_ins_table_value2_0E	},
+	{	0x1c , 0x10 , THIS(VALUE2_0E)		, THIS(TRANSPOSE_0F)	, THIS(VALUE2_00)		, THIS(COMMAND2_0F)		, &CACHE_HEXADECIMAL_TWOTILES	, INSTRUM(TABLE.VALUE[1][15])		, &cb_ins_table_value2_0F	},
+	{	0x1b , 0x01 , THIS(COMMAND2_0F)		, THIS(VALUE2_00)		, THIS(COMMAND2_01)		, THIS(VALUE1_00)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][0]) 		, &cb_ins_table_command2_00	},
+	{	0x1b , 0x02 , THIS(COMMAND2_00)		, THIS(VALUE2_01)		, THIS(COMMAND2_02)		, THIS(VALUE1_01)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][1]) 		, &cb_ins_table_command2_01	},
+	{	0x1b , 0x03 , THIS(COMMAND2_01)		, THIS(VALUE2_02)		, THIS(COMMAND2_03)		, THIS(VALUE1_02)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][2]) 		, &cb_ins_table_command2_02	},
+	{	0x1b , 0x04 , THIS(COMMAND2_02)		, THIS(VALUE2_03)		, THIS(COMMAND2_04)		, THIS(VALUE1_03)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][3]) 		, &cb_ins_table_command2_03	},
+	{	0x1b , 0x05 , THIS(COMMAND2_03)		, THIS(VALUE2_04)		, THIS(COMMAND2_05)		, THIS(VALUE1_04)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][4]) 		, &cb_ins_table_command2_04	},
+	{	0x1b , 0x06 , THIS(COMMAND2_04)		, THIS(VALUE2_05)		, THIS(COMMAND2_06)		, THIS(VALUE1_05)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][5]) 		, &cb_ins_table_command2_05	},
+	{	0x1b , 0x07 , THIS(COMMAND2_05)		, THIS(VALUE2_06)		, THIS(COMMAND2_07)		, THIS(VALUE1_06)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][6]) 		, &cb_ins_table_command2_06	},
+	{	0x1b , 0x08 , THIS(COMMAND2_06)		, THIS(VALUE2_07)		, THIS(COMMAND2_08)		, THIS(VALUE1_07)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][7]) 		, &cb_ins_table_command2_07	},
+	{	0x1b , 0x09 , THIS(COMMAND2_07)		, THIS(VALUE2_08)		, THIS(COMMAND2_09)		, THIS(VALUE1_08)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][8]) 		, &cb_ins_table_command2_08	},
+	{	0x1b , 0x0a , THIS(COMMAND2_08)		, THIS(VALUE2_09)		, THIS(COMMAND2_0A)		, THIS(VALUE1_09)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][9]) 		, &cb_ins_table_command2_09	},
+	{	0x1b , 0x0b , THIS(COMMAND2_09)		, THIS(VALUE2_0A)		, THIS(COMMAND2_0B)		, THIS(VALUE1_0A)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][10])		, &cb_ins_table_command2_0A	},
+	{	0x1b , 0x0c , THIS(COMMAND2_0A)		, THIS(VALUE2_0B)		, THIS(COMMAND2_0C)		, THIS(VALUE1_0B)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][11])		, &cb_ins_table_command2_0B	},
+	{	0x1b , 0x0d , THIS(COMMAND2_0B)		, THIS(VALUE2_0C)		, THIS(COMMAND2_0D)		, THIS(VALUE1_0C)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][12])		, &cb_ins_table_command2_0C	},
+	{	0x1b , 0x0e , THIS(COMMAND2_0C)		, THIS(VALUE2_0D)		, THIS(COMMAND2_0E)		, THIS(VALUE1_0D)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][13])		, &cb_ins_table_command2_0D	},
+	{	0x1b , 0x0f , THIS(COMMAND2_0D)		, THIS(VALUE2_0E)		, THIS(COMMAND2_0F)		, THIS(VALUE1_0E)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][14])		, &cb_ins_table_command2_0E	},
+	{	0x1b , 0x10 , THIS(COMMAND2_0E)		, THIS(VALUE2_0F)		, THIS(COMMAND2_00)		, THIS(VALUE1_0F)		, &CACHE_COMMANDS				, INSTRUM(TABLE.COMMAND[1][15])		, &cb_ins_table_command2_0F	},
+	CONTROL_TERMINATOR
+};
+#undef THIS 
+#undef INSTRUM

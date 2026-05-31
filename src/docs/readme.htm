@@ -1,0 +1,137 @@
+﻿<pre class="m4g">
+<bold>
+                                   <span style="font-weight: bold;">M4GEEK01</span> 
+                        by Joichiro Nishi a.k.a Smiker 
+                                 <span style="font-weight: bold;">M4Geek, 2011</span>
+_______________________________________________________________________________
+
+M4GEEK01 is meant to be the codename for the final, aimed to be stable version 
+of the M4GTracker program.
+
+We'll try to focus on the audio tasks, sync issues and all the critical stuff 
+from the early stages until the end, trying to not commit the same mistakes we 
+did before on the last (and who forced to code a catastrophic) version. 
+
+This is not only a premise, is the reality, since we're on the stage 0.13a of 
+the M4GeekAGB Engine, our own way to provide the scene with powerful, fast and
+light weighted software in better release time than EVER in our short history. 
+_______________________________________________________________________________
+
+During the development process we will go through the following stages:
+Program version means exactly the most advanced milestone obtained in the table
+below without using any lib than m4geekAGB.
+</bold>
+<ul>
+<LI class="ok">  0 . Grafical Processing Unit Elementals
+<LI class="ok">    0.1 . GPU Internals
+<LI class="ok">      0.1.1 . LoadPalette
+<LI class="ok">      0.1.2 . LoadTileSet
+<LI class="ok">      0.1.3 . LoadMap
+<LI class="ok">      0.1.4 . InsertMap
+<LI class="no">      0.1.5 . InsertTileSet
+<LI class="ok">      0.1.6 . SetTile
+<LI class="ok">    0.2 . Timers and Interrupts
+<LI class="ok">      0.2.1 . VBL
+<LI class="ok">      0.2.2 . HBL
+<LI class="ok">      0.2.3 . VCT
+<LI class="ok">      0.2.4 . TIM
+<LI class="no">      0.2.5 . DMA
+<LI class="no">      0.2.6 . SIO
+<LI class="ok">      0.2.7 . KEY
+<LI class="ok">    0.3 . Debug Systems
+<LI class="ok">      0.3.1 . PrintF
+<LI class="ok">      0.3.2 . Stop
+<LI class="ok">      0.3.3 . Assert
+<LI class="ok">      0.3.4 . BreakPoint 
+<LI class="ok">      0.3.5 . StackTrace (Guard & Unguard)
+<LI class="ok">      0.3.6 . Profiling Timer System (CLOCK & UNCLOCK)
+<LI class="ok">      0.3.7 . DEBUG_START & DEBUG_END
+<LI class="wp">  1 . Graphical User Interface
+<LI class="wp">    1.1 . GUI Design                 
+<LI class="wp">      1.1.1 . Dialog Interface       
+<LI class="ok">        1.1.1.1 . Dialog Manager Class       
+<LI class="ok">        1.1.1.2 . Dialog Map Patching       
+<LI class="no">        1.1.1.3 . Dialog I / O Interface
+<LI class="ok">      1.1.2 . Key Input
+<LI class="ok">        1.1.2.1 . Key Repeat
+<LI class="ok">        1.1.2.2 . Key Down
+<LI class="ok">        1.1.2.3 . Key Up            
+<LI class="wp">      1.1.3 . CUR System
+<LI class="ok">        1.1.3.1 . Global Keycombos
+<LI class="ok">        1.1.3.2 . Live1 Cursors             
+<LI class="ok">          1.1.2.1 . Live1 Lock / Unlock
+<LI class="ok">          1.1.2.2 . Live1 Setup Cursors
+<LI class="wp">        1.1.2.3 . Live1 Trigger Keys
+<LI class="ok">        1.1.3.3 . Live2 Cursors      
+<LI class="wp">          1.1.3.1 . Live2 Lock / Unlock
+<LI class="wp">          1.1.3.2 . Live Mode Offline
+<LI class="wp">          1.1.3.3 . Live Mode Keyboard
+<LI class="wp">          1.1.3.4 . Live Mode MI-DI In
+<LI class="wp">        1.1.3.4 . Help Screen 
+<LI class="ok">          1.1.3.4.1 . HELP.h parser
+<LI class="ok">          1.1.3.4.2 . HELP.h parser
+<LI class="ok">          1.1.3.4.3 . Linked Navigation
+<LI class="ok">          1.1.3.4.4 . Localization
+<LI class="wp">        1.1.3.5 . Pattern Arranger   
+<LI class="wp">        1.1.3.6 . Tracker            
+<LI class="wp">        1.1.3.7 . Instrument Editor  
+<LI class="wp">        1.1.3.8 . Song Editor        
+<LI class="wp">        1.1.3.9 . Config Screen      
+<LI class="wp">        1.1.3.a . Snake Screen
+<LI class="wp">          1.1.3.a.1 . Global Keys
+<LI class="wp">          1.1.3.a.2 . CheatCodes
+<LI class="wp">          1.1.3.a.3 . HISCORE name input            
+<LI class="no">  2 . SRAM Handler 
+<LI class="no">    2.1 . SRAM Erase
+<LI class="no">    2.2 . SRAM Flush
+<LI class="no">    2.3 . SRAM Save
+<LI class="no">      2.3.1 . Save Config
+<LI class="no">      2.3.1 . Save Song
+<LI class="no">    2.4 . SRAM Load
+<LI class="no">      2.4.1 . Load Config
+<LI class="no">      2.4.1 . Load Song     
+<LI class="no">  3 . Sound Processing Unit
+<LI class="no">    3.1 . Pulse Wave Modulation 
+<LI class="no">      3.1.1 . PWM1
+<LI class="no">        3.1.1.1 . Setup Registers
+<LI class="no">        3.1.1.2 . Play Channel
+<LI class="no">        3.1.1.3 . Stop Channel
+<LI class="no">      3.1.2 . PWM2
+<LI class="no">        3.1.2.1 . Setup Registers
+<LI class="no">        3.1.2.2 . Play Channel
+<LI class="no">        3.1.2.3 . Stop Channel
+<LI class="no">    3.2 . Pseudo Noise Channel
+<LI class="no">      3.2.1 . Setup Registers
+<LI class="no">      3.2.2 . Play Channel
+<LI class="no">      3.2.3 . Stop Channel
+<LI class="no">    3.3 . Wave Channel
+<LI class="no">      3.3.1 . Setup Registers
+<LI class="no">      3.3.2 . Play Channel
+<LI class="no">      3.3.3 . Stop Channel
+<LI class="no">      3.3.4 . Calculate Envelopes
+<LI class="no">    3.4 . Frequency Modulation
+<LI class="no">      3.4.1 . Setup Registers
+<LI class="no">      3.4.2 . Play Channel
+<LI class="no">      3.4.3 . Stop Channel
+<LI class="no">      3.4.4 . Calculate Envelopes
+<LI class="no">    3.5 . Frequency Modulation
+<LI class="no">      3.5.1 . Sampled Kit Mode
+<LI class="no">      3.5.2 . Sampled Synth Mode  
+<LI class="no">  4 . Effect Handler
+<LI class="no">    4.1 . Arpeggio
+<LI class="no">    4.2 . Freq Sweep
+<LI class="no">    4.3 . Portamento
+<LI class="no">    4.4 . Vibrato
+<LI class="no">    4.5 . Note Delay
+<LI class="no">    4.6 . Pattern Jump / Goto
+<LI class="no">    4.7 . Set Tempo / Speed
+<LI class="no">  5 . Bug Review
+<LI class="no">    5.1 . Bug Test 
+<LI class="no">    5.2 . Bug List
+</ul>
+When these steps are done, release! It'll be the end of the nightmare!
+We go for it!
+
+
+
+</pre>

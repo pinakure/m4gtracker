@@ -1,0 +1,23 @@
+networks:
+  proxy_sql-network:
+    external: true
+
+services:
+  m4gtracker-service:
+    build: /src/m4gtracker/web
+    container_name: m4gtracker
+    hostname: m4gtracker
+    networks:
+      - proxy_sql-network
+    volumes:
+      - /src/m4gtracker/web:/src/m4gtracker/
+      - /static/m4gtracker:/static/m4gtracker
+      - /media/m4gtracker:/media/m4gtracker
+      - /var/log:/var/log
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      KC_SECRET: ${KC_SECRET}
+    restart: unless-stopped

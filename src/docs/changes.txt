@@ -1,0 +1,205 @@
+Changes
+-------------------
+02-03-2023
+-------------------
+PWM 1 & 2 Fine tune
+PWM 1 & 2 Volume Table (Forward)
+PWM 1 & 2 Transpose Table (Forward)
+PWM 1 Sweep
+PWM 1 & 2 Global Transpose
+PWM 1 & 2 Song Transpose
+-------------------
+03-03-2023
+-------------------
+ANALOG MASTER SYNC OUT (Enabled by default, 48 PPQ)
+ANALOG SLAVE SYNC IN ( To be tested, accesible via cfg linkmode menu )
+Swapped MIDI and SYNC symbols
+Noise Channel Using PWM Instruments
+Erase notes by pressing R while editing a note (Note controls)
+-------------------
+04-03-2023
+-------------------
+Wave Channel Basic Operators
+Brought mixer code from M0-k1
+-------------------
+05-03-2023
+-------------------
+Refactored SPU into 3 separate classes, enhancing rom speed in the process
+Added boot logotype functionality
+Added boot logo sfx and animation
+-------------------
+06-03-2023
+-------------------
+Refactored INS Screen Callbacks into InstEdit class methods
+Refactored PAT Screen Callbacks into PatEdit class methods
+Refactored TRK Screen Callbacks into Tracker class methods
+Refactored HLP Screen Callbacks into Help class methods - 508160
+Channel Muting and soloing
+Controls can be set to Zero by using A+B
+--- addendum ---
+Refactored SNK screen callbacks into SnakeGame class 
+Added hud element displaying @ snake
+Fixed bug @ boot time
+Debugging class and helpers ( Debug::error, Debug::halt ) 
+Moved cfg.linkmode control list to separate file
+-------------------
+07-03-2023
+-------------------
+Clipboard Menu Interface working
+SMP Envelope visualization
+ADSR Envelope positions are drawn and autoupdated if playing on any channel (visible @ InstEdit screen, current instrument)
+Refactored Gpu class to allow external header inclusion
+Moved SNG Controls to sng callback file
+Change clipboar menu hotkey
+Selection Mask on both tracker and pattern screens
+Track transpose hotkey, shift hotkey ( lack functionality )
+
+-------------------
+08-03-2023
+-------------------
+Debug::panic( message, *pointer );
+Debug::watch( varname, var );
+WATCH macro
+-------------------
+09-03-2023
+-------------------
+Copy, Cut, Paste & Clone Channel @ Tracker Screen ( L + SELECT , L + ARROWS )
+Copy, Cut, Paste & Clone Pattern @ Pattern Screen ( L + SELECT , L + ARROWS )
+WATCHARRAY macro
+Bugfixed pattern editor bug affecting correct scrolling  at rows 0xA ~ 0xF
+Swapped clipboard action and clipboard mask size buttons
+Channel shift up/down ( R + UP / DOWN )
+Channel transpose up/down ( R + LEFT/RIGHT )
+-------------------
+10-03-2023
+-------------------
+Redraw issues fixing
+SRAM code cleanup
+Documentation update
+Milestone clearance
+-------------------
+11-03-2023
+-------------------
+Pattern chain shift up/down using R + UP/DOWN
+Created HEXADECIMAL_DOUBLE_DASH cache and print function to allow 00 values to be represented as --
+Modified PatEdit screen to acommodate transpose per pattern 
+Tracker screen whole column value modification
+Fixed bug allowing clipboard mask being bigger than displayable room
+Snake eat sounds
+---------------
+12-03-2023
+---------------
+Add Transpose controls @ pattern screen
+Code cleanup (Remove VAR_SONGS[6] )
+
+
+---------------
+13-03-2023
+---------------
+Fixed bug involving ReallyDialog spawning twice when invoked
+Fixed bug making Bpm running wild when no song is loaded
+Fixed bug on empty pattern deletion
+Fixed mistyped PatternCell note size ( it should be u8 and it was u16! )
+Fixed bug involving AlphaDialog spawning twice when invoked
+Made AlphaDialog and ReallyDialog static
+Reduced ROM size in 50KB
+Separated compilation of static dialogs (ReallyDialog, AlphaDialog, Progress)
+Pattern chain transpose is working ( To be tested during cold-load, replay, and more case scenarios)
+
+---------------
+14-03-2023
+---------------
+Groove Table position drawing
+ADSR routines Rewritten
+SNG screen now indicates which slot is currently loaded, if any
+Removed useless option 'COPY' from SNG screen
+Added secondary SLOT control on SNG Screen, for the dummies.
+Several small Bugfixes
+Pattern pagination ( B+SELECT+ LEFT/RIGHT )
+
+---------------
+15-03-2023
+---------------
+Made Sys class static
+Made VirtualScreen static
+Replaced gpu instance with Gpu static class
+
+
+-------------
+16-03-2023
+-------------
+Fixed issue causing the program to not boot if no valid SRAM data was present.
+Fixed issue causing warnings on No$GBA due to 8 bit writes to VRAM, which are illegal
+Basic power saving ( still not activable anywhere, but will be under CFG->behavior )
+
+-------------
+17-03-2023
+-------------
+Stop groove table arrows if no groove enabled
+Apply Pattern length setting to groove table
+Renamed Tempo tap to Reset bar @ SNG
+Replaced CFG.MEMORY.BACKUP by CFG.BEHAVIOR.POWERSAVING
+Snake HiScore Backup
+Enhanced Navigation & UX @ SNG Groovetable
+Moved OSC Type to Upper tile @ WAV
+Added Gate x4 @ WAV
+------------
+ 18-03-2023
+------------
+Removed MULT parameter from FMW instruments
+Removed MIX% parameter from WAV instruments
+Added DIST (distortion) parameter to FMW instruments
+Added DIST (distortion) parameter to WAV instruments
+Placed OP type controls with each matching OP @FMW
+Added GATE x4 controls to FMW
+Enhanced Navigation @ FMW Inst Screen
+-------
+Live Performance now sends keys and commands to selected channels
+
+-------------
+ 19-03-2023
+-------------
+Color Editor Layout
+More Stuff I can't remember. I had sleep seizure this day.
+
+------------
+20-03-2003
+------------
+Website Skeleton (django) and templates
+Color Editor Functionality, palette backup and read from SRAM
+Show link status on the bottom of the screen
+Tweak analog sync out timing calculation
+
+
+-----------
+21-03-2023
+-----------
+PWM & NZE Tables are using envelope XY properly : X=speed, Y=length
+Fixed FMW Algorithm value bug
+PWN & NZE Volume and transpose table loop modes working properly. Groove on.
+
+----------
+22-03-2023
+----------
+Sprite and cursor skeleton
+
+---------------
+23-03-2023
+--------------
+Cursors are sprite based now
+Tables show their position when at instrument editor
+Clipboard is no more laggy
+Pattern navigation possible in tracker screen using B+SELECT+ LEFT/RIGHT
+
+-----------
+24-03-2023
+----------
+Fixed Wav channel sound rendering issues
+Added basic SMP functionality 
+
+-----------
+25-03-2023
+-----------
+Ability to select different SMP kit
+Optimized mixer routines
+Fixed FMW & SMP mute/solo issues

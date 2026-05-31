@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ section }}{% endblock %}
+
+{% block content %}
+{% for file in data %}
+    {% if file != 'm0-k1.gif'  %}
+        {% if file != 'm0-k1.png' %}
+        <img src="{% static 'snapshots' %}/{{ file }}" width="120" height="80" />
+        {% endif %}
+    {% endif %}
+{% endfor %}
+{% endblock %}

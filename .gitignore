@@ -1,0 +1,8 @@
+*.s
+*.ii
+*.tmp
+*.stackdump
+*.rar
+*.s_OLD
+*.old
+.env

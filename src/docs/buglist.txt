@@ -1,0 +1,3 @@
+BUGLIST
+------------------------
+Channel VUMETERS @ tracker screen won't update if values are always the same.

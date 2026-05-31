@@ -1,0 +1,7 @@
+#include "input.hpp"
+#include "song.hpp"
+#include "tablecell.hpp"
+#include "settings.hpp"
+#include "instrument.hpp"
+#include "config.hpp"
+#include "channel.hpp"

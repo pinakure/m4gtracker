@@ -1,0 +1,19 @@
+{% load static %}
+{% load socialaccount %}
+{% if user.is_authenticated %}
+<div style="float: right; padding-right: 8px;">
+
+    <a href="/profile/"><i class="m4gicons mi-at"></i>PROFILE&nbsp;</a>
+    <p>&nbsp;</p>
+    <form method="post" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        <button type="submit">
+            <i class="m4gicons mi-times"></i>&nbsp;Log Out
+        </button>
+    </form>
+</div>
+{% else %}
+    <a href="{% provider_login_url 'openid_connect' provider_id='keycloak'%}">
+        <i class="m4gicons mi-key"></i>&nbsp;Log In
+    </a>
+{% endif %}

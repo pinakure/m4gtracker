@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}M4G - Profile{% endblock %}
+
+{% block content %}
+<div class="col-12">
+    <img src="{% static 'avatars/smlrother.gif' %}" width="64" height="64" >
+</div>
+<div class="col-87">
+    <p>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" value="{{ user.username }}" readonly="readonly"/>
+    </p>
+    <p>
+        <form action="/profile/change/" method="post">
+            {% csrf_token %}
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password"/>
+            <button type="submit">Change Password</button>
+        </form>
+    </p>
+    <hr/><br/><br/>
+    <h2>Profile Details</h2>
+    <br/><br/>
+    <p>
+        <form action="/profile/update/" method="post">
+            {% csrf_token %}
+            <label for="field1">Field1</label><input type="text" id="field1" name="field1"/><br/><br/>
+            <label for="field2">Field2</label><input type="text" id="field2" name="field2"/><br/><br/>
+            <label for="field3">Field3</label><input type="text" id="field3" name="field3"/><br/><br/>
+            <label for="field4">Field4</label><input type="text" id="field4" name="field4"/><br/><br/>
+            <label for="field5">Field5</label><input type="text" id="field5" name="field5"/><br/><br/>
+            <label for="field6">Field6</label><input type="text" id="field6" name="field6"/><br/><br/>
+            
+            <!-- customizable profile fields -->
+            <!-- profile activity stats -->
+            
+            <br/>
+            <button type="submit"><i class="m4gicons mi-loop"></i> Update Profile</button>
+        </form>
+        <!-- Delete profile :( -->
+        <form style="float: right" action="/profile/delete/" method="post">
+            {% csrf_token %}
+            <button type="submit"><i class="m4gicons mi-times"></i> Delete Profile</button>
+        </form>
+    </p>
+</div>
+{% endblock %}
