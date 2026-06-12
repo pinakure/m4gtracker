@@ -15,6 +15,8 @@ services:
       - /media/m4gtracker:/media/m4gtracker
       - /var/log:/var/log
     environment:
+      SITE_NAME: ${SITE_NAME}
+      SITE_HOST: ${SITE_HOST}
       DB_HOST: ${DB_HOST}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}

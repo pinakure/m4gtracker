@@ -1,4 +1,3 @@
-
 psycopg2-binary
 requests
 PyJWT<3
@@ -6,3 +5,4 @@ cryptography
 gunicorn
 django
 django-allauth
+django-cors-headers
